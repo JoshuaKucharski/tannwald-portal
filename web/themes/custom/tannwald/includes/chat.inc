@@ -27,7 +27,8 @@ use Drupal\Core\Url;
 function _tannwald_chat_props(?int $maschineNid, ?string $machineLabel, string $mode = 'embedded'): array {
   $settings = \Drupal::config('tannwald_assistant.settings');
   $limitNotice = NULL;
-  // Abgeschalteter Assistent: derselbe Hinweis, den der Endpunkt als 503 liefert.
+  // Abgeschalteter Assistent: derselbe Hinweis, den der Endpunkt als 503
+  // liefert.
   if ($settings->get('assistant_enabled') === FALSE) {
     $limitNotice = (string) t('The assistant is currently unavailable. You can still use the search.');
   }

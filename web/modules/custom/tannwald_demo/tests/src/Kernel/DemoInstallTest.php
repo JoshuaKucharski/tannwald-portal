@@ -266,7 +266,8 @@ class DemoInstallTest extends KernelTestBase {
     $this->assertSame('redaktion', $srv->getOwner()->getAccountName());
     $this->assertSame((new \DateTimeImmutable('2026-08-22 08:00', new \DateTimeZone('Europe/Zurich')))->getTimestamp(), (int) $srv->getCreatedTime());
     $this->assertSame('sicherheit', $this->loadNode((int) $lookup->nidOf('SB-2026-07'))->get('field_bulletin_art')->value);
-    // 6.1: Manifest-Feld status → SB-2026-08 wartet auf die Freigabe (Vier-Augen).
+    // 6.1: Manifest-Feld status → SB-2026-08 wartet auf die Freigabe
+    // (Vier-Augen).
     $sb08 = $this->loadNode((int) $lookup->nidOf('SB-2026-08'));
     $this->assertSame('zur_pruefung', $sb08->get('moderation_state')->value);
     $this->assertFalse($sb08->isPublished());

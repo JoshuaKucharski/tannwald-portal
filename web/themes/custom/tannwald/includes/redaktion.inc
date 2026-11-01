@@ -161,7 +161,9 @@ function _tannwald_redaktion_counts(): array {
 }
 
 /**
- * Queue-Stand „Queue: n offen“ aus tannwald_embed, tannwald_summarize, tannwald_notify.
+ * Queue-Stand „Queue: n offen“ aus den drei Queues.
+ *
+ * Queues: tannwald_embed, tannwald_summarize, tannwald_notify.
  *
  * @return array{open: int, label: mixed, detail: string}
  *   Summe, Label und Aufschlüsselung.
@@ -202,7 +204,9 @@ function _tannwald_redaktion_page_prepare(array &$variables): void {
 }
 
 /**
- * Review-Karten der View redaktion_freigaben: je Zeile Props für tannwald:review-card.
+ * Review-Karten der View redaktion_freigaben (Props je Zeile).
+ *
+ * Ziel: Komponente tannwald:review-card.
  */
 function _tannwald_review_cards(array &$variables): void {
   $variables['cards'] = [];
@@ -221,7 +225,9 @@ function _tannwald_review_cards(array &$variables): void {
 }
 
 /**
- * Props einer Review-Karte aus D's tannwald_ingest_review_card() (Vertrag 5.3 d).
+ * Props einer Review-Karte aus D's tannwald_ingest_review_card().
+ *
+ * Vertrag 5.3 d.
  *
  * @return array
  *   card (Props tannwald:review-card), body_html, form, checks[], word_count,

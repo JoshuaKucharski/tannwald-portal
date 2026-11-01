@@ -181,7 +181,8 @@ function tannwald_preprocess(array &$variables, string $hook): void {
 /**
  * Implements hook_theme_suggestions_HOOK_alter() for page templates.
  *
- * /redaktion/* und /compliance/* bekommen page--redaktion.html.twig (linke Navigation).
+ * /redaktion/* und /compliance/* bekommen page--redaktion.html.twig (linke
+ * Navigation).
  */
 function tannwald_theme_suggestions_page_alter(array &$suggestions, array $variables): void {
   if (_tannwald_redaktion_is_path(_tannwald_redaktion_current_path()) && _tannwald_redaktion_visible(\Drupal::currentUser())) {
@@ -217,7 +218,11 @@ function tannwald_preprocess_views_view_table__redaktion_unbeantwortet(array &$v
  * Zurückweisen Warnfarbe); Textarea trägt den Wortzähler (SDC review-actions).
  */
 function tannwald_form_tannwald_ingest_review_form_alter(array &$form, FormStateInterface $form_state): void {
-  $classes = ['freigeben' => ['btn', 'btn-primary'], 'entwurf_speichern' => ['btn', 'btn-outline'], 'zurueckweisen' => ['btn', 'btn-warn']];
+  $classes = [
+    'freigeben' => ['btn', 'btn-primary'],
+    'entwurf_speichern' => ['btn', 'btn-outline'],
+    'zurueckweisen' => ['btn', 'btn-warn'],
+  ];
   foreach ($classes as $transition => $class) {
     if (isset($form['actions'][$transition])) {
       $form['actions'][$transition]['#attributes']['class'] = $class;
@@ -237,7 +242,8 @@ function tannwald_form_tannwald_ingest_review_form_alter(array &$form, FormState
  * Implements hook_form_FORM_ID_alter() for content_moderation_entity_moderation_form.
  *
  * Vier-Augen-Hinweis auf Sicherheits-Bulletins der eigenen Erstellung (C's
- * Constraint NotOwnBulletinApproval meldet beim Freigeben); Buttons im Theme-Stil.
+ * Constraint NotOwnBulletinApproval meldet beim Freigeben); Buttons im
+ * Theme-Stil.
  */
 function tannwald_form_content_moderation_entity_moderation_form_alter(array &$form, FormStateInterface $form_state): void {
   if (isset($form['submit'])) {
