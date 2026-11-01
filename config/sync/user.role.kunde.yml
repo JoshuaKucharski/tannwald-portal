@@ -4,9 +4,11 @@ status: true
 dependencies:
   module:
     - system
+    - tannwald_access
 id: kunde
 label: Kunde
 weight: 3
 is_admin: false
 permissions:
   - 'access content'
+  - 'tannwald view own company documents'

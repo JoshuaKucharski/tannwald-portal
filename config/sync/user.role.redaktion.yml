@@ -14,6 +14,7 @@ dependencies:
     - filter
     - node
     - system
+    - tannwald_access
 id: redaktion
 label: Redaktion
 weight: 6
@@ -32,6 +33,7 @@ permissions:
   - 'edit any dokument content'
   - 'edit any zusammenfassung content'
   - 'revert all revisions'
+  - 'tannwald view all documents'
   - 'translate bulletin node'
   - 'translate dokument node'
   - 'translate zusammenfassung node'

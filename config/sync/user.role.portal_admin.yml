@@ -15,6 +15,7 @@ dependencies:
     - navigation
     - node
     - system
+    - tannwald_access
     - taxonomy
 id: portal_admin
 label: Portal-Admin
@@ -40,6 +41,9 @@ permissions:
   - 'edit any dokument content'
   - 'edit any zusammenfassung content'
   - 'revert all revisions'
+  - 'tannwald manage export rules'
+  - 'tannwald view all documents'
+  - 'tannwald view audit log'
   - 'translate bulletin node'
   - 'translate dokument node'
   - 'translate zusammenfassung node'

@@ -5,10 +5,12 @@ dependencies:
   module:
     - node
     - system
+    - tannwald_access
 id: techniker
 label: Techniker
 weight: 5
 is_admin: false
 permissions:
   - 'access content'
+  - 'tannwald view all documents'
   - 'view all revisions'
