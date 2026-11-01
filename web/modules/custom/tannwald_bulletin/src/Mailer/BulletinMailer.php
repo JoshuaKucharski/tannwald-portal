@@ -22,8 +22,8 @@ use Drupal\user\UserInterface;
  * Benachrichtigung zu Bulletins mit Bestätigungspflicht.
  *
  * Sprache: symfony_mailer schaltet beim Bauen auf preferred_langcode des
- * Empfängers um. Englisch ist Quelle, Deutsch kommt aus translations/de.po,
- * Französisch steht vorerst als Konstante hier (6.5 verfeinert).
+ * Empfängers um. Englisch ist Quelle, Deutsch und Französisch kommen aus
+ * translations/de.po und translations/fr.po (6.1: Konstante FRENCH entfernt).
  */
 #[MailerInfo(
   base_tag: 'tannwald_bulletin',
@@ -40,17 +40,6 @@ class BulletinMailer extends ComponentMailerBase implements BulletinMailerInterf
     'intro' => 'Tannwald has released a safety bulletin for the following machines:',
     'read' => 'Read bulletin',
     'confirm' => 'Please confirm in the portal that you have read it ("Confirm as read").',
-  ];
-
-  /**
-   * Französische Fassung bis 6.5.
-   */
-  public const FRENCH = [
-    'subject' => 'Bulletin de sécurité @id : @title — confirmation de lecture requise',
-    'greeting' => 'Bonjour @name,',
-    'intro' => 'Tannwald a publié un bulletin de sécurité pour les machines suivantes :',
-    'read' => 'Lire le bulletin',
-    'confirm' => 'Veuillez confirmer la lecture dans le portail (« Confirmer la lecture »).',
   ];
 
   public function __construct(
@@ -127,9 +116,6 @@ class BulletinMailer extends ComponentMailerBase implements BulletinMailerInterf
    *   Platzhalter.
    */
   public function text(string $key, string $langcode, array $args = []): string {
-    if ($langcode === 'fr') {
-      return strtr(self::FRENCH[$key], $args);
-    }
     // phpcs:ignore Drupal.Semantics.FunctionT.NotLiteralString
     return (string) new TranslatableMarkup(self::SOURCE[$key], $args, ['langcode' => $langcode]);
   }
