@@ -6,7 +6,6 @@ namespace Drupal\tannwald_access\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\node\NodeAccessRebuild;
 use Drupal\tannwald_access\AuditLogger;
 use Drupal\tannwald_access\ExportRuleService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -22,17 +21,11 @@ final class ExportRulesForm extends ConfigFormBase {
   protected AuditLogger $audit;
 
   /**
-   * Neuaufbau der Node-Grants.
-   */
-  protected NodeAccessRebuild $nodeAccessRebuild;
-
-  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): static {
     $form = parent::create($container);
     $form->audit = $container->get('tannwald_access.audit');
-    $form->nodeAccessRebuild = $container->get(NodeAccessRebuild::class);
     return $form;
   }
 
@@ -117,15 +110,16 @@ final class ExportRulesForm extends ConfigFormBase {
       ];
     }
     // Speichern invalidiert config:tannwald_access.settings und damit den
-    // Cache der Nutzer-Keys.
+    // Cache der Nutzer-Keys. Die Records in node_access hängen nicht an den
+    // Exportregeln (die Klasse steckt in den Nutzer-Keys); ein Neuaufbau ist
+    // darum nicht nötig (Entscheid Master, 2.4).
     $config->set('export_rules', $after)->save();
     $this->audit->logEntry('exportregel_geaendert', 'config', ExportRuleService::CONFIG, [
       'vorher' => $before,
       'nachher' => $after,
     ]);
-    $this->nodeAccessRebuild->setNeedsRebuild();
-    $this->messenger()->addStatus($this->t('Access permissions are being recalculated.'));
-    parent::submitForm($form, $form_state);
+    // Ohne parent::submitForm(): eigene Meldung statt der Standardmeldung.
+    $this->messenger()->addStatus($this->t('Export rules saved; they take effect immediately.'));
   }
 
   /**

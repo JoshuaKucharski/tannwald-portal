@@ -42,7 +42,7 @@ final class ExportRulesFormTest extends BrowserTestBase {
   }
 
   /**
-   * Speichern validiert, schreibt Konfiguration und Audit, stösst Rebuild an.
+   * Speichern validiert, schreibt Konfiguration und Audit, ohne Rebuild-Flag.
    */
   public function testSaveWritesAuditAndCsv(): void {
     $this->drupalGet('compliance/exportregeln');
@@ -78,7 +78,8 @@ final class ExportRulesFormTest extends BrowserTestBase {
       'klasse_2_countries' => 'CH, DE',
       'klasse_2_blocked' => '1001, 1001',
     ], 'Save configuration');
-    $this->assertSession()->pageTextContains('Access permissions are being recalculated.');
+    $this->assertSession()->pageTextContains('Export rules saved; they take effect immediately.');
+    $this->assertSession()->pageTextNotContains('The configuration options have been saved.');
     // Der Testprozess cacht Konfiguration und State; die Seite schrieb im
     // Kindprozess.
     $this->container->get('config.factory')->reset(ExportRuleService::CONFIG);
@@ -87,7 +88,7 @@ final class ExportRulesFormTest extends BrowserTestBase {
       'klasse_1' => ['laender' => ['CH', 'DE', 'BR'], 'gesperrte_firmen' => []],
       'klasse_2' => ['laender' => ['CH', 'DE'], 'gesperrte_firmen' => ['1001']],
     ], $this->container->get('config.factory')->get(ExportRuleService::CONFIG)->get('export_rules'));
-    $this->assertTrue($this->container->get(NodeAccessRebuild::class)->needsRebuild());
+    $this->assertFalse($this->container->get(NodeAccessRebuild::class)->needsRebuild(), 'Kein Rebuild-Flag.');
 
     $rows = $this->container->get('database')->select('tannwald_audit', 'a')
       ->fields('a', ['uid', 'ereignis', 'entity_type', 'entity_id', 'details'])

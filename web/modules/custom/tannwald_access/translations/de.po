@@ -62,8 +62,8 @@ msgstr "%code ist kein ISO-3166-1-Alpha-2-Code in Grossbuchstaben."
 msgid "%value is not a valid SAP number."
 msgstr "%value ist keine gültige SAP-Nummer."
 
-msgid "Access permissions are being recalculated."
-msgstr "Zugriffsrechte werden neu berechnet."
+msgid "Export rules saved; they take effect immediately."
+msgstr "Exportregeln gespeichert, sie wirken sofort."
 
 msgid "Safety bulletins must not be approved by the person who created them (four-eyes principle)."
 msgstr "Sicherheits-Bulletins dürfen nicht von der Erstellerin oder dem Ersteller freigegeben werden (Vier-Augen-Prinzip)."
