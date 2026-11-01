@@ -188,6 +188,7 @@ final class ContentModelTest extends UnitTestCase {
       $this->assertNotContains('bypass node access', $role['permissions'], "$rid: kein bypass node access");
     }
     $this->assertFileDoesNotExist($this->syncFile('user.role.content_editor'), 'Rolle content_editor ist gelöscht');
+    $this->assertNotContains('access content', $this->readSync('user.role.anonymous')['permissions'], 'Portal hinter dem Login');
     foreach (glob($this->syncFile('user.role.*')) as $file) {
       $role = Yaml::decode((string) file_get_contents($file));
       if ($role['id'] !== 'administrator') {
