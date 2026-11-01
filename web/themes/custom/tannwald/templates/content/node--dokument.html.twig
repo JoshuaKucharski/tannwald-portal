@@ -45,6 +45,10 @@
       {% endif %}
     </div>
   </header>
+  {# 6.1 (E): Moderations-Formular (Freigeben/Zurückweisen) auf /latest für redaktion und compliance. #}
+  {% if content.content_moderation_control|render|trim %}
+    <div class="card p-4 md:p-6">{{ content.content_moderation_control }}</div>
+  {% endif %}
 
   <div class="flex flex-wrap items-start gap-6">
     {% if toc %}

@@ -23,17 +23,13 @@
     <span class="meta">
       {{ 'Generated @date'|t({'@date': generated_at}) }}
       {%- if model %} · {{ 'Model @model'|t({'@model': model}) }}{% endif %}
-      {%- if tokens is not null %} · {{ '@count tokens'|t({'@count': tokens}) }}{% endif %}
+      {%- if tokens is not null %} · {{ '@count tokens'|t({'@count': tokens|number_format(0, '.', '’')}) }}{% endif %}
       {%- if created_by %} · {{ 'new revision by @name'|t({'@name': created_by}) }}{% endif %}
     </span>
     {% if change_note %}
       <span class="meta">{{ 'Change note: @note'|t({'@note': change_note}) }}</span>
     {% endif %}
-    {% if safety_mentioned %}
-      <span class="inline-flex items-center gap-1.5 text-sm text-ok"><span aria-hidden="true">✓</span> {{ 'Safety-relevant chapters mentioned'|t }}</span>
-    {% else %}
-      <span class="inline-flex items-center gap-1.5 text-sm text-warn"><span aria-hidden="true">!</span> {{ 'Safety-relevant chapters not mentioned'|t }}</span>
-    {% endif %}
+    {# 6.1 (E): Sicherheitszeile nur noch in den Prüfpunkten (redaktion.inc), nicht doppelt im Kopf. #}
   </header>
   <div class="prose-doc px-6 py-4">
     {% block body %}{% endblock %}
