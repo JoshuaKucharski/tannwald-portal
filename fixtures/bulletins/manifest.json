@@ -23,6 +23,7 @@
     "id": "SB-2026-08",
     "titel": "Heizpatronen Siegelbacken",
     "art": "sicherheit",
+    "status": "zur_pruefung",
     "maschinentypen": ["TB-200"],
     "bestaetigung_pflicht": true,
     "veroeffentlicht_am": "2026-10-30",
