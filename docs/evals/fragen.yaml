@@ -15,6 +15,10 @@
     - dokument: wp-tb200
       version: "1.1"
       kapitel: "2 Freigegebene Reinigungsmittel"
+    # 6.1 (Entscheid Master): Abschnitt 3.2 nennt das wöchentliche Intervall ebenfalls.
+    - dokument: wp-tb200
+      version: "1.1"
+      kapitel: "3.2 Siegelstation wöchentlich"
   erwartet: antwort
 - id: q-002
   frage: "Wie ist die Lieferzeit für Teil 4711?"
@@ -157,9 +161,10 @@
   frage: "Welche Reinigungsintervalle gelten in Version 3.1 der Betriebsanleitung TB-200 für die Siegelstation?"
   als: redaktion
   sprache: de
+  # 6.1 (Entscheid Master): der Assistent antwortet nur aus der aktuellen Version → Erwartung 3.2.
   erwartete_quellen:
     - dokument: ba-tb200
-      version: "3.1"
+      version: "3.2"
       kapitel: "7.3 Reinigung Siegelstation"
   erwartet: antwort
 - id: q-020
