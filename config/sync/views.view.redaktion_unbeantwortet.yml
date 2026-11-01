@@ -116,17 +116,13 @@ display:
           plugin_id: standard
           order: DESC
       filters:
-        created:
-          id: created
+        current_month:
+          id: current_month
           table: tannwald_assistant_log
-          field: created
+          field: current_month
           relationship: none
           group_type: group
-          plugin_id: date
-          operator: '>='
-          value:
-            value: 'first day of this month 00:00:00'
-            type: offset
+          plugin_id: tannwald_current_month
           group: 1
         status:
           id: status
