@@ -169,9 +169,15 @@ final class PromptBuilder {
     }
     if ($safetyNumbers !== []) {
       $citations[] = $safetyNumbers[0];
-      $second = $safetyNumbers[1] ?? ($safetyNumbers[0] !== 1 ? 1 : NULL);
-      if ($second !== NULL && $result->hit($second) !== NULL) {
-        $citations[] = $second;
+      // 6.1: zweite Stelle nie dasselbe Kapitel in einer anderen Sprache.
+      $first = self::chapterKey($result->hit($safetyNumbers[0]) ?? []);
+      $candidates = array_merge(array_slice($safetyNumbers, 1), [1]);
+      foreach ($candidates as $candidate) {
+        $hit = $result->hit($candidate);
+        if ($candidate !== $safetyNumbers[0] && $hit !== NULL && self::chapterKey($hit) !== $first) {
+          $citations[] = $candidate;
+          break;
+        }
       }
     }
     elseif (!$result->isEmpty()) {
@@ -187,6 +193,18 @@ final class PromptBuilder {
       . '<p>' . Html::escape(AnswerTexts::get(AnswerTexts::SAFETY_FULL_INSTRUCTIONS, $langcode)) . '</p>'
       . '<p>' . Html::escape(AnswerTexts::get(AnswerTexts::SUPPORT_HINT, $langcode)) . '</p>';
     return ['html' => $html, 'citations' => $citations];
+  }
+
+  /**
+   * Kapitel-Schlüssel eines Treffers: nid und Kapitelnummer (sprachneutral).
+   *
+   * Ohne Nummer gilt die letzte Überschrift; so bleiben 2.2 de und 2.2 en
+   * desselben Dokuments ein Kapitel.
+   */
+  public static function chapterKey(array $hit): string {
+    $heading = self::lastHeading((string) ($hit['heading_path'] ?? ''));
+    $key = preg_match('/^(\d+(?:\.\d+)*)\b/', $heading, $match) === 1 ? $match[1] : $heading;
+    return ($hit['nid'] ?? '') . ':' . $key;
   }
 
   /**

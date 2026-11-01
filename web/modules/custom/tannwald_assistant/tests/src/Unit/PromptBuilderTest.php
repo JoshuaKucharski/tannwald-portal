@@ -173,6 +173,28 @@ final class PromptBuilderTest extends UnitTestCase {
     $this->assertSame([1], $en['citations']);
     $this->assertStringContainsString('The complete instructions apply; no summary is given.', $en['html']);
     $this->assertStringContainsString('Les instructions complètes s’appliquent', $builder->safetyAnswer($noSafetyHeading, 'fr')['html']);
+
+    // 6.1: dasselbe Kapitel in zwei Sprachen zählt einmal; die zweite Stelle
+    // ist das nächste andere Kapitel.
+    $hit = static fn (int $id, int $nid, string $path): array => [
+      'chunk_id' => $id,
+      'nid' => $nid,
+      'title' => 'Betriebsanleitung TB-200',
+      'version' => '3.2',
+      'heading_path' => $path,
+    ];
+    $twoLanguages = new RetrievalResult('Verriegelung überbrücken?', 'de', 'hybrid', [
+      $hit(10, 5, '2 Sicherheit › 2.2 Schutzhaube und Verriegelung'),
+      $hit(11, 5, '2 Safety › 2.2 Protective hood and interlock'),
+      $hit(12, 5, '2 Sicherheit › 2.3 Stromlos schalten'),
+    ]);
+    $this->assertSame([1, 3], $builder->safetyAnswer($twoLanguages, 'de')['citations']);
+    $this->assertSame('5:2.2', PromptBuilder::chapterKey($hit(11, 5, '2 Safety › 2.2 Protective hood and interlock')));
+    $onlyDuplicate = new RetrievalResult('Verriegelung überbrücken?', 'de', 'hybrid', [
+      $hit(10, 5, '2 Sicherheit › 2.2 Schutzhaube und Verriegelung'),
+      $hit(11, 5, '2 Safety › 2.2 Protective hood and interlock'),
+    ]);
+    $this->assertSame([1], $builder->safetyAnswer($onlyDuplicate, 'de')['citations'], 'Kein Duplikat als zweite Stelle.');
   }
 
   /**
