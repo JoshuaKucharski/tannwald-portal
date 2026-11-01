@@ -1,0 +1,26 @@
+services:
+  _defaults:
+    autowire: true
+
+  tannwald_access.export_rules:
+    class: Drupal\tannwald_access\ExportRuleService
+  Drupal\tannwald_access\ExportRuleService: '@tannwald_access.export_rules'
+
+  tannwald_access.entitlement:
+    class: Drupal\tannwald_access\EntitlementService
+    arguments:
+      $cache: '@cache.default'
+  Drupal\tannwald_access\EntitlementService: '@tannwald_access.entitlement'
+
+  tannwald_access.audit:
+    class: Drupal\tannwald_access\AuditLogger
+  Drupal\tannwald_access\AuditLogger: '@tannwald_access.audit'
+
+  tannwald_access.bulletin_approval_guard:
+    class: Drupal\tannwald_access\BulletinApprovalGuard
+  Drupal\tannwald_access\BulletinApprovalGuard: '@tannwald_access.bulletin_approval_guard'
+
+  tannwald_access.access_denied_subscriber:
+    class: Drupal\tannwald_access\EventSubscriber\AccessDeniedSubscriber
+    tags:
+      - { name: event_subscriber }

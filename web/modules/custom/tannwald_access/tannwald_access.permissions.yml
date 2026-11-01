@@ -1,0 +1,14 @@
+tannwald view own company documents:
+  title: 'View own company documents'
+  description: 'Shows the document lists of the own company. Visibility itself is computed from company, machine types and export rules.'
+tannwald view all documents:
+  title: 'View all documents'
+  description: 'Internal roles: shows lists across all companies. Export rules still apply.'
+tannwald manage export rules:
+  title: 'Manage export rules'
+  description: 'Edit allowed countries and blocked companies per export class.'
+  restrict access: true
+tannwald view audit log:
+  title: 'View audit log'
+  description: 'View and export the audit log.'
+  restrict access: true
