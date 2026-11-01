@@ -1,0 +1,36 @@
+# German translation of tannwald_ingest (de-CH: "ss" statt "ß", Anrede Sie).
+msgid ""
+msgstr ""
+"Project-Id-Version: tannwald_ingest\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: de\n"
+
+msgid "Tannwald chunk embedding"
+msgstr "Tannwald: Chunks einbetten"
+
+msgid "Invalid tannwald_embed payload dropped: @payload"
+msgstr "Ungültiger tannwald_embed-Job verworfen: @payload"
+
+msgid "Indexing node @nid revision @vid (@lang) failed, attempt @attempt of @max, requeued: @message"
+msgstr "Indexierung von Node @nid, Revision @vid (@lang) fehlgeschlagen, Versuch @attempt von @max, erneut eingestellt: @message"
+
+msgid "Indexing node @nid revision @vid (@lang) failed after @attempt attempts, job dropped: @message"
+msgstr "Indexierung von Node @nid, Revision @vid (@lang) nach @attempt Versuchen fehlgeschlagen, Job verworfen: @message"
+
+msgid "tannwald_access.entitlement missing: chunks of node @nid are stored without access keys (invisible)."
+msgstr "tannwald_access.entitlement fehlt: Chunks von Node @nid werden ohne Access-Keys gespeichert (unsichtbar)."
+
+msgid "Table in section %path has @tokens tokens (more than @max); kept as one chunk."
+msgstr "Tabelle im Abschnitt %path hat @tokens Tokens (mehr als @max); bleibt ein Chunk."
+
+msgid "similar() scanned @rows chunk rows in PHP (more than @max); consider the OpenSearch store (ADR-003)."
+msgstr "similar() hat @rows Chunk-Zeilen in PHP verglichen (mehr als @max); OpenSearch-Store prüfen (ADR-003)."
+
+msgid "Queued @jobs index jobs for @nodes nodes (tannwald_embed now holds @total items)."
+msgstr "@jobs Index-Jobs für @nodes Nodes eingestellt (tannwald_embed enthält jetzt @total Einträge)."
+
+msgid "tannwald_embed empty: @ok ok, @skipped skipped, @retry retried, @failed failed in @seconds s."
+msgstr "tannwald_embed leer: @ok ok, @skipped übersprungen, @retry wiederholt, @failed fehlgeschlagen in @seconds s."
