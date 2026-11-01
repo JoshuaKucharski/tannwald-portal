@@ -44,7 +44,9 @@ final class ConfirmController implements ContainerInjectionInterface {
    * Zugriff: Bundle bulletin und ein gültiges Token.
    *
    * JSON-Weg: Header X-CSRF-Token (Wert von /session/token); Formular-Weg:
-   * form_token des Formulars tannwald_bulletin_confirm_form.
+   * form_token des Formulars tannwald_bulletin_confirm_form. Core bildet das
+   * Formular-Token über den Platzhalter "form_token_placeholder_<hash>"
+   * (FormBuilder::prepareForm), nicht über die Formular-ID selbst.
    */
   public function access(NodeInterface $node, Request $request): AccessResultInterface {
     if ($node->bundle() !== 'bulletin') {
@@ -53,7 +55,7 @@ final class ConfirmController implements ContainerInjectionInterface {
     $header = $request->headers->get('X-CSRF-Token');
     $valid = $header !== NULL
       ? $this->csrfToken->validate($header, CsrfRequestHeaderAccessCheck::TOKEN_KEY)
-      : $this->csrfToken->validate((string) $request->request->get('form_token', ''), ConfirmForm::FORM_ID);
+      : $this->csrfToken->validate((string) $request->request->get('form_token', ''), ConfirmForm::tokenSeed());
     return AccessResult::allowedIf($valid)->setCacheMaxAge(0);
   }
 

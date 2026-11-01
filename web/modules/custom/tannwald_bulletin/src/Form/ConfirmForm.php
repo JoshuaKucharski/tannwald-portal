@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\tannwald_bulletin\Form;
 
+use Drupal\Component\Utility\Crypt;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
@@ -18,9 +19,18 @@ use Drupal\node\NodeInterface;
 final class ConfirmForm extends FormBase {
 
   /**
-   * Formular-ID; zugleich Wert, gegen den der Controller form_token prüft.
+   * Formular-ID.
    */
   public const FORM_ID = 'tannwald_bulletin_confirm_form';
+
+  /**
+   * Wert, gegen den Core das form_token dieses Formulars erzeugt.
+   *
+   * @see \Drupal\Core\Form\FormBuilder::prepareForm()
+   */
+  public static function tokenSeed(): string {
+    return 'form_token_placeholder_' . Crypt::hashBase64(self::FORM_ID);
+  }
 
   /**
    * {@inheritdoc}
