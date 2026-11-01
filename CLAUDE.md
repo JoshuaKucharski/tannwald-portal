@@ -37,6 +37,7 @@ Alle Befehle im Repo-Ordner `/Users/myki/dev/helga/tannwald-portal` (`ddev` brau
 | Konfiguration | `ddev drush config:status` (muss leer sein) · Export nur der Besitzer: `ddev drush config:export -y` | 2 s · 3 s |
 | Caches | `ddev drush cr` | 5 s |
 | Login ohne Passwort | `ddev drush user:login --name=admin --no-browser` (lokal admin / `demo`) | — |
+| Ingestion (3.1) | `ddev drush tannwald:reindex [--nid=]` (Jobs für alle veröffentlichten Revisionen) · `ddev drush tannwald:queue-run` (Queue `tannwald_embed` bis leer, echtes Ollama) · `ddev drush tannwald:chunk-stats` | 28 Chunks: 2 Batches, 5.9 s warm; erster Embedding-Aufruf kalt 2.5 s |
 
 **Adressen:** Site `https://tannwald-portal.ddev.site:30001` (Port fest in `.ddev/config.yaml`, weil Laravel Valets
 nginx auf dem Mac 80/443 hält) · Mailpit `https://tannwald-portal.ddev.site:8026` · Ollama aus dem Container
