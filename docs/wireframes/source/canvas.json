@@ -1,0 +1,20 @@
+{
+  "v": 3,
+  "createdOnFiles": {"v": 1, "at": "2026-10-31T12:00:00Z"},
+  "title": "myTannwald Wireframes",
+  "launch": {"view": "canvas"},
+  "pages": [],
+  "boards": {
+    "Main.dc.html": {"x": 0, "y": 0, "w": 1440, "h": 1180, "title": "1 · Maschinen-Detail mit Assistent", "expand": "fill", "is_interactive": true},
+    "Suche.dc.html": {"x": 1520, "y": 0, "w": 1440, "h": 1060, "title": "2 · Suche: Hybrid / Nur Volltext", "expand": "fill", "is_interactive": true},
+    "Freigabe.dc.html": {"x": 3040, "y": 0, "w": 1440, "h": 1060, "title": "3 · Redaktion: Freigabe-Queue", "expand": "fill", "is_interactive": true}
+  },
+  "order": ["Main.dc.html", "Suche.dc.html", "Freigabe.dc.html"],
+  "notes": {
+    "t1": {"x": 0, "y": -300, "text": "myTannwald Kundenportal · Wireframes für Block 5 (Theme, Portal, Suche, Chat, Views)", "kind": "title1", "maxW": 4480},
+    "n1": {"x": 0, "y": 1260, "w": 600, "text": "Demo-Momente auf diesem Screen: Sicherheits-Bulletin bestätigen (wird protokolliert) · Dual-Use-Badge am Schaltplan · Anlagendokumentation nur für Pharmalog · Assistent antwortet mit Zitaten, Klick springt ins Kapitel · Ablehnung mit Support-Anfrage", "fill": "blue"},
+    "n2": {"x": 1520, "y": 1140, "w": 600, "text": "Demo-Moment: Schalter Hybrid / Nur Volltext. «Folie reisst beim Siegeln» findet Kap. 9.4 nur im Hybrid-Modus, weil kein Wort übereinstimmt. «E-4711» trifft in beiden Modi die Störungstabelle.", "fill": "blue"},
+    "n3": {"x": 3040, "y": 1140, "w": 600, "text": "Demo-Moment: Freigeben → Zusammenfassung erscheint am Dokument, Indexierung läuft über die Queue. Zurückweisen → bleibt unsichtbar. Sicherheits-Bulletins: Vier-Augen-Prinzip, Erstellerin darf nicht freigeben.", "fill": "blue"}
+  },
+  "designSystems": []
+}

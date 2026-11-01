@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Redaktion – Freigabe-Queue für KI-Zusammenfassungen</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:Inter,system-ui,sans-serif;color:#1C2024;background:#F3F4F2}
+*{box-sizing:border-box}
+a{color:#1F4E79}a:hover{color:#15385A}
+</style>
+</head>
+<body>
+<div style="display: flex; flex-direction: column; min-height: 100%; background: #F3F4F2; font-size: 15px; line-height: 1.45">
+
+  <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 16px; padding: 8px 32px; background: #1C2024; color: #FFFFFF; font-size: 13px">
+    <span style="font-weight: 600">Demo-Modus</span>
+    <span>angemeldet als <strong>redaktion</strong> · Technische Redaktion Tannwald</span>
+    <span style="margin-left: auto; color: #C9CED6">Wechseln:</span>
+    <a href="01-maschinen-detail.html" style="color: #FFFFFF; text-decoration: underline">kunde-a</a>
+    <a href="01-maschinen-detail.html" style="color: #FFFFFF; text-decoration: underline">kunde-b</a>
+    <a href="01-maschinen-detail.html" style="color: #FFFFFF; text-decoration: underline">haendler</a>
+  </div>
+
+  <header style="display: flex; flex-wrap: wrap; align-items: center; gap: 32px; padding: 0 32px; height: 64px; background: #FFFFFF; border-bottom: 1px solid #D6DAE0">
+    <a href="01-maschinen-detail.html" style="font-weight: 700; font-size: 18px; text-decoration: none; color: #1F4E79">myTannwald</a>
+    <span style="padding: 4px 10px; border-radius: 4px; background: #F3F4F2; color: #5B6470; font-size: 13px; font-weight: 600">Redaktion</span>
+    <div style="margin-left: auto; display: flex; align-items: center; gap: 16px; font-size: 14px">
+      <span style="color: #5B6470">Lea Brunner · Technische Redaktion</span>
+      <span style="display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 18px; background: #E8EEF5; color: #1F4E79; font-weight: 600; font-size: 13px" aria-hidden="true">LB</span>
+      <a href="01-maschinen-detail.html" style="font-size: 14px">Abmelden</a>
+    </div>
+  </header>
+
+  <div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start; width: 100%; max-width: 1376px; margin: 0 auto; padding: 24px 32px 48px">
+
+    <nav aria-label="Redaktion" style="display: flex; flex-direction: column; gap: 4px; flex: 1 1 220px; max-width: 260px; padding: 12px; background: #FFFFFF; border: 1px solid #D6DAE0; border-radius: 8px; font-size: 14px">
+      <a href="03-redaktion-freigabe.html" style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 6px; background: #E8EEF5; color: #1C2024; font-weight: 600; text-decoration: none">Freigaben <span style="margin-left: auto; padding: 1px 8px; border-radius: 10px; background: #1F4E79; color: #FFFFFF; font-size: 12px">3</span></a>
+      <a href="03-redaktion-freigabe.html" style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 6px; color: #1C2024; text-decoration: none">Dokumente</a>
+      <a href="03-redaktion-freigabe.html" style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 6px; color: #1C2024; text-decoration: none">Bulletins</a>
+      <a href="03-redaktion-freigabe.html" style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 6px; color: #1C2024; text-decoration: none">Unbeantwortete Fragen <span style="margin-left: auto; padding: 1px 8px; border-radius: 10px; background: #F3F4F2; color: #5B6470; font-size: 12px">12</span></a>
+      <a href="03-redaktion-freigabe.html" style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 6px; color: #1C2024; text-decoration: none">Nutzung und Kosten</a>
+      <a href="03-redaktion-freigabe.html" style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 6px; color: #1C2024; text-decoration: none">Exportregeln</a>
+      <a href="03-redaktion-freigabe.html" style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 6px; color: #1C2024; text-decoration: none">Audit-Log</a>
+      <div style="margin-top: 8px; padding: 12px; border-top: 1px solid #ECEEF1; font-size: 13px; color: #5B6470; display: flex; flex-direction: column; gap: 4px">
+        <span style="font-weight: 600; color: #1C2024">Queue</span>
+        <span>2 Embedding-Jobs wartend</span>
+        <span>Letzter Lauf vor 3 Min.</span>
+      </div>
+    </nav>
+
+    <main style="display: flex; flex-direction: column; gap: 20px; flex: 999 1 560px; min-width: 0">
+
+      <div style="display: flex; flex-wrap: wrap; align-items: flex-end; gap: 16px">
+        <div style="display: flex; flex-direction: column; gap: 4px">
+          <h1 style="margin: 0; font-size: 24px">Freigabe-Queue · KI-Zusammenfassungen</h1>
+          <span style="font-size: 14px; color: #5B6470">Erst nach Freigabe sind Zusammenfassungen am Dokument, in der Suche und im Assistenten sichtbar.</span>
+        </div>
+        <div role="group" aria-label="Status" style="margin-left: auto; display: inline-flex; border: 1px solid #D6DAE0; border-radius: 8px; overflow: hidden; font-size: 14px">
+          <button type="button" aria-pressed="true" style="height: 44px; padding: 0 16px; border: 0; background: #1F4E79; color: #FFFFFF; font: inherit; font-weight: 600; cursor: pointer">Zur Prüfung · 3</button>
+          <button type="button" aria-pressed="false" style="height: 44px; padding: 0 16px; border: 0; border-left: 1px solid #D6DAE0; background: #FFFFFF; color: #1C2024; font: inherit; cursor: pointer">Freigegeben · 41</button>
+          <button type="button" aria-pressed="false" style="height: 44px; padding: 0 16px; border: 0; border-left: 1px solid #D6DAE0; background: #FFFFFF; color: #1C2024; font: inherit; cursor: pointer">Zurückgewiesen · 5</button>
+        </div>
+      </div>
+
+      <article aria-label="Zusammenfassung zur Prüfung: Betriebsanleitung TB-200 v3.2" style="display: flex; flex-direction: column; background: #FFFFFF; border: 1px solid #1F4E79; border-radius: 8px">
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 16px 20px; border-bottom: 1px solid #D6DAE0">
+          <span style="padding: 3px 10px; border-radius: 12px; background: #FBEFE4; color: #7A3508; font-size: 12px; font-weight: 600">Zur Prüfung</span>
+          <div style="display: flex; flex-direction: column; gap: 2px; flex: 1 1 320px">
+            <span style="font-weight: 600">Betriebsanleitung TB-200 · Version 3.2 · Deutsch</span>
+            <span style="font-size: 13px; color: #5B6470">Generiert 12.09.2026 09:14 · Job #4821 · Modell qwen2.5:7b · 1'840 Tokens · neue Revision durch Marco Steiner</span>
+          </div>
+          <a href="01-maschinen-detail.html" style="font-size: 14px">Dokument öffnen</a>
+        </div>
+
+        <div style="display: flex; flex-wrap: wrap; gap: 20px; padding: 20px">
+          <div style="display: flex; flex-direction: column; gap: 12px; flex: 1 1 300px; min-width: 0">
+            <h2 style="margin: 0; font-size: 14px; color: #5B6470; text-transform: uppercase; letter-spacing: 0.04em">Änderungsvermerk der Version 3.2</h2>
+            <p style="margin: 0; padding: 12px 14px; background: #F3F4F2; border-radius: 6px">Kapitel 7.3 Reinigung Siegelstation überarbeitet: neue Intervalle (täglich trocken, wöchentlich nass), Verriegelung der Schutzhaube vor Nassreinigung ergänzt. Kapitel 9.4 um Folienriss nach Rollenwechsel erweitert.</p>
+            <h2 style="margin: 8px 0 0; font-size: 14px; color: #5B6470; text-transform: uppercase; letter-spacing: 0.04em">Prüfpunkte</h2>
+            <label style="display: flex; align-items: center; gap: 10px; font-size: 14px"><input type="checkbox" checked style="width: 18px; height: 18px"> Sicherheitsrelevante Kapitel genannt</label>
+            <label style="display: flex; align-items: center; gap: 10px; font-size: 14px"><input type="checkbox" checked style="width: 18px; height: 18px"> Keine Angaben, die nicht im Dokument stehen</label>
+            <label style="display: flex; align-items: center; gap: 10px; font-size: 14px"><input type="checkbox" style="width: 18px; height: 18px"> Fachbegriffe gemäss Terminologie</label>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 10px; flex: 1 1 380px; min-width: 0">
+            <label for="zusammenfassung" style="font-size: 14px; color: #5B6470; text-transform: uppercase; letter-spacing: 0.04em; font-weight: 600">Zusammenfassung (bearbeitbar)</label>
+            <textarea id="zusammenfassung" rows="8" style="width: 100%; padding: 12px 14px; border: 1px solid #D6DAE0; border-radius: 6px; font: inherit; line-height: 1.5; resize: vertical">Die Betriebsanleitung TB-200 Version 3.2 beschreibt Aufbau, Inbetriebnahme, Betrieb und Wartung der Blisterlinie. Neu in dieser Version: Die Siegelstation wird täglich trocken und wöchentlich nass gereinigt; vor der Nassreinigung ist die Linie stromlos zu schalten und die Schutzhaube zu verriegeln (Kapitel 7.3). Kapitel 9.4 behandelt Störungen an der Siegelstation, darunter Folienriss nach Rollenwechsel. Sicherheitsrelevante Inhalte finden sich in Kapitel 2 und 7.3.</textarea>
+            <span style="font-size: 13px; color: #5B6470">102 Wörter · Zielwert maximal 120</span>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 16px 20px; border-top: 1px solid #D6DAE0; background: #F8F9F8; border-radius: 0 0 8px 8px">
+          <button type="button" style="height: 44px; padding: 0 20px; border: 0; border-radius: 6px; background: #1F4E79; color: #FFFFFF; font: inherit; font-weight: 600; cursor: pointer">Freigeben</button>
+          <button type="button" style="height: 44px; padding: 0 20px; border: 1px solid #D6DAE0; border-radius: 6px; background: #FFFFFF; font: inherit; font-weight: 500; cursor: pointer">Entwurf speichern</button>
+          <button type="button" style="height: 44px; padding: 0 20px; border: 1px solid #B4530A; border-radius: 6px; background: #FFFFFF; color: #7A3508; font: inherit; font-weight: 600; cursor: pointer">Zurückweisen</button>
+          <span style="margin-left: auto; font-size: 13px; color: #5B6470">Nach Freigabe: Indexierung über die Queue, ca. 1 Minute</span>
+        </div>
+      </article>
+
+      <article aria-label="Zur Prüfung: Sicherheits-Bulletin SB-2026-08" style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 16px 20px; background: #FFFFFF; border: 1px solid #D6DAE0; border-radius: 8px">
+        <span style="padding: 3px 10px; border-radius: 12px; background: #FBEFE4; color: #7A3508; font-size: 12px; font-weight: 600">Zur Prüfung</span>
+        <div style="display: flex; flex-direction: column; gap: 2px; flex: 1 1 320px">
+          <span style="font-weight: 600">Sicherheits-Bulletin SB-2026-08 · Heizpatronen Siegelbacken · Deutsch</span>
+          <span style="font-size: 13px; color: #5B6470">Generiert 30.10.2026 16:40 · Job #4903 · Bulletin erstellt von Lea Brunner</span>
+        </div>
+        <span style="padding: 3px 10px; border-radius: 4px; background: #EEE7F7; color: #4A2378; font-size: 12px; font-weight: 600">Vier-Augen-Prinzip: Freigabe nur durch eine andere Person</span>
+        <a href="03-redaktion-freigabe.html" style="display: inline-flex; align-items: center; height: 40px; padding: 0 14px; border: 1px solid #D6DAE0; border-radius: 6px; font-weight: 500; text-decoration: none; color: #1C2024">Öffnen</a>
+      </article>
+
+      <article aria-label="Zur Prüfung: Wartungsplan KT-500 v2.0" style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 16px 20px; background: #FFFFFF; border: 1px solid #D6DAE0; border-radius: 8px">
+        <span style="padding: 3px 10px; border-radius: 12px; background: #FBEFE4; color: #7A3508; font-size: 12px; font-weight: 600">Zur Prüfung</span>
+        <div style="display: flex; flex-direction: column; gap: 2px; flex: 1 1 320px">
+          <span style="font-weight: 600">Wartungsplan KT-500 · Version 2.0 · English</span>
+          <span style="font-size: 13px; color: #5B6470">Generiert 30.10.2026 11:02 · Job #4897 · neue Revision durch Marco Steiner</span>
+        </div>
+        <a href="03-redaktion-freigabe.html" style="display: inline-flex; align-items: center; height: 40px; padding: 0 14px; border: 1px solid #D6DAE0; border-radius: 6px; font-weight: 500; text-decoration: none; color: #1C2024">Öffnen</a>
+      </article>
+
+      <section aria-label="Unbeantwortete Fragen diese Woche" style="display: flex; flex-direction: column; background: #FFFFFF; border: 1px solid #D6DAE0; border-radius: 8px">
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 14px 20px; border-bottom: 1px solid #D6DAE0">
+          <h2 style="margin: 0; font-size: 16px">Unbeantwortete Fragen · diese Woche</h2>
+          <a href="03-redaktion-freigabe.html" style="margin-left: auto; font-size: 14px">Alle 12 anzeigen</a>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0 16px; padding: 10px 20px; font-size: 12px; font-weight: 600; color: #5B6470; text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 1px solid #ECEEF1">
+          <span style="grid-column: span 2">Frage</span><span>Häufigkeit</span><span>Maschinentyp</span>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0 16px; align-items: center; padding: 12px 20px; border-bottom: 1px solid #ECEEF1; font-size: 14px">
+          <span style="grid-column: span 2">Welche Folienstärke ist für Kindersicherungsblister zugelassen?</span><span>7×</span><span style="display: flex; align-items: center; gap: 12px">TB-200 <a href="03-redaktion-freigabe.html" style="margin-left: auto; font-size: 13px">Dokument anlegen</a></span>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0 16px; align-items: center; padding: 12px 20px; border-bottom: 1px solid #ECEEF1; font-size: 14px">
+          <span style="grid-column: span 2">Lieferzeit Ersatzteil 4711</span><span>5×</span><span style="display: flex; align-items: center; gap: 12px">TB-200 <span style="margin-left: auto; font-size: 13px; color: #5B6470">An Support</span></span>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0 16px; align-items: center; padding: 12px 20px; font-size: 14px">
+          <span style="grid-column: span 2">Comment calibrer la cellule de détection d'étui ?</span><span>3×</span><span style="display: flex; align-items: center; gap: 12px">KT-500 <a href="03-redaktion-freigabe.html" style="margin-left: auto; font-size: 13px">Übersetzung prüfen</a></span>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+</body>
+</html>
