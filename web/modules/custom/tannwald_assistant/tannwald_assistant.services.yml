@@ -1,0 +1,66 @@
+services:
+  logger.channel.tannwald_assistant:
+    parent: logger.channel_base
+    arguments: ['tannwald_assistant']
+
+  tannwald_assistant.access_keys:
+    class: Drupal\tannwald_assistant\Access\EntitlementAccessKeys
+    arguments: ['@tannwald_access.entitlement']
+  Drupal\tannwald_assistant\Access\AccessKeysInterface: '@tannwald_assistant.access_keys'
+
+  tannwald_assistant.language_detector:
+    class: Drupal\tannwald_assistant\LanguageDetector
+  Drupal\tannwald_assistant\LanguageDetector: '@tannwald_assistant.language_detector'
+
+  tannwald_assistant.safety_detector:
+    class: Drupal\tannwald_assistant\SafetyTopicDetector
+    arguments: ['@config.factory']
+  Drupal\tannwald_assistant\SafetyTopicDetector: '@tannwald_assistant.safety_detector'
+
+  tannwald_assistant.prompt_builder:
+    class: Drupal\tannwald_assistant\PromptBuilder
+  Drupal\tannwald_assistant\PromptBuilder: '@tannwald_assistant.prompt_builder'
+
+  tannwald_assistant.citation_validator:
+    class: Drupal\tannwald_assistant\CitationValidator
+  Drupal\tannwald_assistant\CitationValidator: '@tannwald_assistant.citation_validator'
+
+  tannwald_assistant.output_filter:
+    class: Drupal\tannwald_assistant\OutputFilter
+  Drupal\tannwald_assistant\OutputFilter: '@tannwald_assistant.output_filter'
+
+  # 4.2 tauscht nur die Klasse (LimitService).
+  tannwald_assistant.limit_check:
+    class: Drupal\tannwald_assistant\Limit\NullLimitCheck
+  Drupal\tannwald_assistant\Limit\LimitCheckInterface: '@tannwald_assistant.limit_check'
+
+  tannwald_assistant.retriever:
+    class: Drupal\tannwald_assistant\Retriever
+    arguments:
+      - '@tannwald_assistant.access_keys'
+      - '@tannwald_ingest.chunk_store'
+      - '@tannwald_ingest.embedding'
+      - '@entity_type.manager'
+      - '@entity_field.manager'
+      - '@config.factory'
+      - '@tannwald_assistant.language_detector'
+      - '@logger.channel.tannwald_assistant'
+  Drupal\tannwald_assistant\Retriever: '@tannwald_assistant.retriever'
+
+  tannwald_assistant.answer:
+    class: Drupal\tannwald_assistant\AnswerService
+    arguments:
+      - '@tannwald_assistant.retriever'
+      - '@tannwald_assistant.safety_detector'
+      - '@tannwald_assistant.prompt_builder'
+      - '@tannwald_assistant.citation_validator'
+      - '@tannwald_assistant.output_filter'
+      - '@tannwald_assistant.language_detector'
+      - '@ai.provider'
+      - '@tannwald_ingest.usage'
+      - '@tannwald_assistant.limit_check'
+      - '@database'
+      - '@config.factory'
+      - '@datetime.time'
+      - '@logger.channel.tannwald_assistant'
+  Drupal\tannwald_assistant\AnswerService: '@tannwald_assistant.answer'
