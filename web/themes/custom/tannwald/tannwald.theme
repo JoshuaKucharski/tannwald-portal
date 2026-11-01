@@ -224,6 +224,12 @@ function tannwald_form_tannwald_ingest_review_form_alter(array &$form, FormState
   }
   $form['body']['#attributes']['data-review-body'] = '';
   $form['body']['#attributes']['class'][] = 'review-textarea';
+  // Die Redaktion sieht Text, nicht HTML: Absätze als Leerzeilen, Listen als
+  // Zeilen mit „– “; reviewActions (src/app.js) baut vor dem Senden wieder
+  // <p>/<ul> auf (D's Route filtert auf p ul ol li strong em).
+  if (isset($form['body']['#default_value'])) {
+    $form['body']['#default_value'] = _tannwald_review_html_to_text((string) $form['body']['#default_value']);
+  }
 }
 
 /**
@@ -275,5 +281,25 @@ function tannwald_form_node_dokument_form_alter(array &$form, FormStateInterface
 function tannwald_form_tannwald_access_export_rules_alter(array &$form, FormStateInterface $form_state): void {
   if (isset($form['actions']['submit'])) {
     $form['actions']['submit']['#attributes']['class'] = ['btn', 'btn-primary'];
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter() for node_bulletin_edit_form.
+ *
+ * Derselbe Vier-Augen-Hinweis über dem Status-Widget des Bearbeiten-Formulars
+ * (dort wählt die Redaktion „Freigegeben“; C's Constraint meldet den Verstoss).
+ */
+function tannwald_form_node_bulletin_edit_form_alter(array &$form, FormStateInterface $form_state): void {
+  $entity = $form_state->getFormObject()->getEntity();
+  if (!$entity instanceof NodeInterface || !isset($form['moderation_state'])) {
+    return;
+  }
+  $isSafety = $entity->hasField('field_bulletin_art') && (string) $entity->get('field_bulletin_art')->value === 'sicherheit';
+  $uid = (int) \Drupal::currentUser()->id();
+  $own = (int) $entity->getOwnerId() === $uid || (int) $entity->getRevisionUserId() === $uid;
+  if ($isSafety && $own && !$entity->isPublished()) {
+    $form['moderation_state']['#prefix'] = '<p class="four-eyes-notice" data-four-eyes>'
+      . t('Four-eyes principle: the person who created the bulletin must not approve it.') . '</p>';
   }
 }

@@ -112,8 +112,7 @@
 }
 @layer components {
   .chat-root--embedded { @apply contents; }
-  .chat-launcher { @apply fixed bottom-4 right-4 z-40 h-11 shadow-card; }
-  .chat-root--sheet .chat-launcher { @apply md:bottom-6 md:right-6; }
+  .chat-launcher { @apply fixed inset-x-0 bottom-0 z-40 h-14 w-full rounded-none border-0 border-t border-line bg-panel md:inset-x-auto md:bottom-6 md:right-6 md:h-11 md:w-auto md:rounded-control md:border md:shadow-card; }
   .chat-panel { @apply hidden flex-col bg-panel; }
   .chat-root--embedded .chat-panel { @apply md:flex md:min-h-0 md:flex-1; }
   .chat-panel.is-open { @apply fixed inset-0 z-50 flex h-dvh; }
@@ -144,7 +143,7 @@
   .chat-input { @apply h-auto min-h-11 resize-none py-2.5; }
   .chat-footer { @apply border-t border-line px-4 py-2.5 text-[12px] text-muted; }
 
-  .redaktion-layout { @apply grid items-start gap-6 md:grid-cols-[240px_minmax(0,1fr)]; }
+  .redaktion-layout { @apply grid grid-cols-[minmax(0,1fr)] items-start gap-6 md:grid-cols-[240px_minmax(0,1fr)]; }
   .redaktion-nav { @apply flex flex-col gap-0.5 rounded-card border border-line bg-panel p-2; }
   .redaktion-nav a { @apply flex items-center gap-2 rounded-control px-3 py-2 text-ink no-underline hover:bg-surface; }
   .redaktion-nav a.is-active { @apply bg-private-bg font-semibold text-accent; }
@@ -152,7 +151,7 @@
   .redaktion-nav a.is-active .count { @apply bg-panel text-accent; }
   .redaktion-queue { @apply mt-2 flex flex-col gap-0.5 border-t border-line-soft px-3 pt-3 text-[13px] text-muted; }
   .redaktion-main { @apply flex min-w-0 flex-col gap-4; }
-  .tannwald-review-tabs { @apply m-0 flex list-none flex-wrap gap-6 border-b border-line p-0; }
+  .tannwald-review-tabs { @apply m-0 flex list-none flex-wrap gap-x-6 gap-y-1 border-b border-line p-0; }
   .tannwald-review-tabs li a { @apply -mb-px inline-flex border-b-2 border-transparent py-2 text-muted no-underline hover:text-ink; }
   .tannwald-review-tabs li.is-active a { @apply border-accent font-semibold text-ink; }
   .review-check { @apply flex items-center gap-2 text-sm; }

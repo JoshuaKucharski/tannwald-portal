@@ -251,6 +251,19 @@ Alpine.data('reviewActions', (config) => ({
     const count = () => { const text = area.value.trim(); this.words = text ? text.split(/\s+/).length : 0; };
     count();
     area.addEventListener('input', count);
+    // Vor dem Senden Text → HTML (Absätze <p>, „– “-Zeilen <ul><li>), passend zu D's Filter p ul li strong em.
+    area.form?.addEventListener('submit', () => { area.value = this.toHtml(area.value); });
+  },
+  toHtml(text) {
+    if (/<(p|ul|ol|li)\b/i.test(text)) return text;
+    const escape = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return text.trim().split(/\n{2,}/).map((block) => {
+      const lines = block.split('\n').map((l) => l.trim()).filter(Boolean);
+      if (lines.length && lines.every((l) => /^[–-]\s+/.test(l))) {
+        return `<ul>${lines.map((l) => `<li>${escape(l.replace(/^[–-]\s+/, ''))}</li>`).join('')}</ul>`;
+      }
+      return `<p>${escape(lines.join(' '))}</p>`;
+    }).join('');
   },
   label() { return `${this.words} ${config.labels.words} · ${config.labels.target}`; },
 }));

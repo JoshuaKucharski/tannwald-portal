@@ -12,13 +12,14 @@
   <div class="redaktion-layout">
     {{ include('tannwald:redaktion-nav', redaktion_nav, with_context = false) }}
     <div class="redaktion-main">
+      {{ page.content }}
       {% if redaktion_csv_url %}
-        <div class="flex justify-end">
+        <div class="flex">
           <a href="{{ redaktion_csv_url }}" class="btn btn-outline">{{ 'Audit log as CSV'|t }}</a>
         </div>
       {% endif %}
-      {{ page.content }}
     </div>
   </div>
 {% endset %}
-{% include '@tannwald/layout/page.html.twig' with {page: page|merge({content: redaktion_content})} %}
+{# Brotkrumen entfallen hier: die linke Navigation zeigt den Ort (Leitplanken: eine Zutat weniger). #}
+{% include '@tannwald/layout/page.html.twig' with {page: page|merge({content: redaktion_content, breadcrumb: null})} %}

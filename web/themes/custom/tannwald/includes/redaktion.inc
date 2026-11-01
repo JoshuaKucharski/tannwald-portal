@@ -306,3 +306,20 @@ function _tannwald_unanswered_rows(array &$variables): void {
   }
   unset($row);
 }
+
+/**
+ * Zusammenfassungs-HTML als Text für die Textarea: Absätze durch Leerzeilen,
+ * Listenpunkte als „– “-Zeilen, übrige Tags entfernt.
+ */
+function _tannwald_review_html_to_text(string $html): string {
+  if (!str_contains($html, '<')) {
+    return trim($html);
+  }
+  $text = preg_replace('/\s*<li[^>]*>\s*/iu', "\n– ", $html) ?? $html;
+  $text = preg_replace('/<\/(p|ul|ol|li)>\s*/iu', "\n\n", $text) ?? $text;
+  $text = preg_replace('/<br\s*\/?>/iu', "\n", $text) ?? $text;
+  $text = html_entity_decode(strip_tags($text), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+  $text = preg_replace("/[ \t]+\n/u", "\n", $text) ?? $text;
+  $text = preg_replace("/\n{3,}/u", "\n\n", $text) ?? $text;
+  return trim($text);
+}

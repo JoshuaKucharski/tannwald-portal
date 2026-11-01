@@ -6,8 +6,9 @@
  * aus tannwald_preprocess_views_view_table__redaktion_unbeantwortet() (includes/redaktion.inc).
  */
 #}
-<div class="overflow-x-auto rounded-card border border-line bg-panel">
-<table{{ attributes.addClass('redaktion-table', 'views-table') }}>
+{# relative: der visually-hidden-Kopf der Aktionsspalte ist absolut positioniert und darf nicht aus dem Scroll-Container ragen (gemessen: scrollWidth 551 bei 390). #}
+<div class="relative overflow-x-auto rounded-card border border-line bg-panel">
+<table{{ attributes.addClass('redaktion-table', 'views-table', 'min-w-[720px]') }}>
   <thead>
     <tr>
       {% for key, column in header %}

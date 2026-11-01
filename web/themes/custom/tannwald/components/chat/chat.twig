@@ -39,8 +39,9 @@
 } %}
 <div{{ attributes.addClass('chat-root', mode == 'sheet' ? 'chat-root--sheet' : 'chat-root--embedded') }} data-tannwald-chat data-mode="{{ mode }}" x-data="chat({{ config|json_encode }})" @tannwald:ask.window="onAsk($event.detail)" @keydown.escape.window="if (open) close()">
 
-  {# Button unten fix: Phone (eingebettet) und immer im Sheet-Modus. #}
-  <button type="button" class="chat-launcher btn btn-primary shadow-lg" :class="{ 'md:hidden': mode === 'embedded' }" x-show="!open" x-cloak @click="toggle()">
+  {# Launcher: sekundär (ein Primärbutton je Ansicht, Leitplanken §5); Phone als fixe Leiste unten, Sheet-Modus auf md+ als Button unten rechts. #}
+  <div class="h-14 md:hidden" x-show="!open" aria-hidden="true"></div>
+  <button type="button" class="chat-launcher btn btn-outline" :class="{ 'md:hidden': mode === 'embedded' }" x-show="!open" x-cloak @click="toggle()">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
     {{ 'Ask the assistant'|t }}
   </button>
@@ -140,7 +141,7 @@
     <form class="chat-form" @submit.prevent="send()">
       <label for="{{ 'chat-input-' ~ mode }}" class="text-sm font-medium">{{ 'Your question'|t }}</label>
       <div class="flex items-end gap-2">
-        <textarea id="{{ 'chat-input-' ~ mode }}" class="form-input chat-input" rows="1" maxlength="1000" x-model="input" x-ref="input" :disabled="disabled()" @keydown.enter="onEnter($event)" placeholder="{{ 'e.g. Which film thickness is approved?'|t }}"></textarea>
+        <textarea id="{{ 'chat-input-' ~ mode }}" class="form-input chat-input" rows="2" maxlength="1000" x-model="input" x-ref="input" :disabled="disabled()" @keydown.enter="onEnter($event)" placeholder="{{ 'e.g. Which film thickness is approved?'|t }}"></textarea>
         <button type="submit" class="btn btn-primary h-11 w-11 shrink-0 px-0" :disabled="disabled() || !input.trim()" aria-label="{{ 'Send question'|t }}">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7z"/></svg>
         </button>
