@@ -11,6 +11,7 @@
 
 declare(strict_types=1);
 
+use Drupal\Component\Serialization\Json;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
@@ -52,6 +53,16 @@ function tannwald_preprocess_node(array &$variables): void {
 }
 
 /**
+ * Implements hook_preprocess_HOOK() for status messages.
+ *
+ * Auf Nutzerseiten (Anmelden, Passwort) stehen Meldungen inline über dem
+ * Formular statt als Toast.
+ */
+function tannwald_preprocess_status_messages(array &$variables): void {
+  $variables['inline'] = in_array(\Drupal::routeMatch()->getRouteName(), _tannwald_user_routes(), TRUE);
+}
+
+/**
  * Implements hook_preprocess_HOOK() for breadcrumb templates.
  */
 function tannwald_preprocess_breadcrumb(array &$variables): void {
@@ -75,9 +86,39 @@ function tannwald_preprocess_views_view_table(array &$variables): void {
 function tannwald_form_user_login_form_alter(array &$form, FormStateInterface $form_state): void {
   $form['name']['#description'] = '';
   $form['name']['#attributes']['autocomplete'] = 'username';
+  $form['name']['#attributes']['autofocus'] = 'autofocus';
   $form['pass']['#description'] = '';
   $form['pass']['#attributes']['autocomplete'] = 'current-password';
+  // Passwort anzeigen: Textbutton im Feld, Zustand showPassword (Alpine).
+  $form['pass']['#attributes'][':type'] = "showPassword ? 'text' : 'password'";
+  $form['pass']['#field_suffix'] = [
+    '#type' => 'html_tag',
+    '#tag' => 'button',
+    '#value' => t('show', [], ['context' => 'tannwald password']),
+    '#attributes' => [
+      'type' => 'button',
+      'class' => ['btn-text', 'text-sm'],
+      '@click' => 'showPassword = !showPassword',
+      'x-text' => 'showPassword ? ' . Json::encode((string) t('hide', [], ['context' => 'tannwald password']))
+      . ' : ' . Json::encode((string) t('show', [], ['context' => 'tannwald password'])),
+      'aria-controls' => 'edit-pass',
+    ],
+  ];
   $form['actions']['submit']['#attributes']['class'] = ['btn', 'btn-primary', 'w-full'];
+  // Fehlertext, der sagt, was zu tun ist (Leitplanken §5).
+  $form['#validate'][] = '_tannwald_login_error_message';
+}
+
+/**
+ * Ersetzt die Core-Fehlermeldung der Anmeldung durch einen klaren Satz.
+ */
+function _tannwald_login_error_message(array &$form, FormStateInterface $form_state): void {
+  $errors = $form_state->getErrors();
+  if ($errors === [] || !isset($errors['name'])) {
+    return;
+  }
+  $form_state->clearErrors();
+  $form_state->setErrorByName('name', t('Username or password do not match. Please check your entry.'));
 }
 
 /**

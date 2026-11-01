@@ -423,3 +423,172 @@ msgstr "Zurück"
 msgctxt "tannwald pager"
 msgid "Next"
 msgstr "Weiter"
+
+# Anmeldeseite (Leitplanken §6)
+msgid "About the portal"
+msgstr "Über das Portal"
+
+msgid "Documents for your machines"
+msgstr "Dokumente zu Ihren Maschinen"
+
+msgid "Safety bulletins with read confirmation"
+msgstr "Sicherheits-Bulletins mit Lesebestätigung"
+
+msgid "An assistant that answers only from approved documents"
+msgstr "Assistent, der nur aus freigegebenen Dokumenten antwortet"
+
+msgid "Log in"
+msgstr "Anmelden"
+
+msgid "Forgot your password?"
+msgstr "Passwort vergessen?"
+
+msgid "Demo accounts, password demo"
+msgstr "Demo-Zugänge, Passwort demo"
+
+msgctxt "tannwald password"
+msgid "show"
+msgstr "anzeigen"
+
+msgctxt "tannwald password"
+msgid "hide"
+msgstr "verbergen"
+
+msgid "Username or password do not match. Please check your entry."
+msgstr "Benutzername oder Passwort stimmen nicht. Bitte prüfen Sie die Eingabe."
+
+# Assistent (5.3)
+
+msgid "Answer is being generated …"
+msgstr "Antwort wird erstellt …"
+
+msgid "Sources"
+msgstr "Quellen"
+
+msgid "Chap."
+msgstr "Kap."
+
+msgid "Was this helpful?"
+msgstr "War das hilfreich?"
+
+msgid "Answer helpful"
+msgstr "Antwort hilfreich"
+
+msgid "Answer not helpful"
+msgstr "Antwort nicht hilfreich"
+
+msgid "Thank you for your feedback."
+msgstr "Danke für Ihre Rückmeldung."
+
+msgid "Create support request"
+msgstr "Support-Anfrage erstellen"
+
+msgid "Question, history and serial number are sent along."
+msgstr "Frage, Verlauf und Seriennummer werden mitgeschickt."
+
+msgid "Support request #@id created."
+msgstr "Support-Anfrage #@id erstellt."
+
+msgid "Too many questions, please wait a minute."
+msgstr "Zu viele Fragen, bitte warten Sie eine Minute."
+
+msgid "The assistant is currently not reachable."
+msgstr "Der Assistent ist gerade nicht erreichbar."
+
+msgid "Safety notice"
+msgstr "Sicherheitshinweis"
+
+msgid "Please enter a question."
+msgstr "Bitte geben Sie eine Frage ein."
+
+msgid "Close"
+msgstr "Schliessen"
+
+msgid "Ask a question about this machine, for example about cleaning intervals or fault codes."
+msgstr "Stellen Sie eine Frage zu dieser Maschine, zum Beispiel zu Reinigungsintervallen oder Störungscodes."
+
+msgid "Your question"
+msgstr "Ihre Frage"
+
+msgid "e.g. Which film thickness is approved?"
+msgstr "z. B. Welche Folienstärke ist zugelassen?"
+
+msgid "Send question"
+msgstr "Frage senden"
+
+msgid "Answers only from approved documents"
+msgstr "Antworten nur aus freigegebenen Dokumenten"
+
+msgid "Model: @model"
+msgstr "Modell: @model"
+
+msgid "History pseudonymised, 12 months"
+msgstr "Verlauf pseudonymisiert, 12 Monate"
+
+msgid "Answers only from approved documents you are allowed to see"
+msgstr "Antwortet nur aus freigegebenen Dokumenten, die Sie sehen dürfen"
+
+msgid "The assistant is currently unavailable. You can still use the search."
+msgstr "Der Assistent steht zurzeit nicht zur Verfügung. Die Suche können Sie weiterhin nutzen."
+
+# Redaktion (5.3, Wireframe 03)
+
+msgid "Editorial"
+msgstr "Redaktion"
+
+msgid "Approvals"
+msgstr "Freigaben"
+
+msgid "Unanswered questions"
+msgstr "Unbeantwortete Fragen"
+
+msgid "Usage and costs"
+msgstr "Nutzung und Kosten"
+
+msgid "Export rules"
+msgstr "Exportregeln"
+
+msgid "Audit log"
+msgstr "Audit-Log"
+
+msgid "Audit log as CSV"
+msgstr "Audit-Log als CSV"
+
+msgid "Queue: @count open"
+msgstr "Queue: @count offen"
+
+msgid "Summaries become visible on the document, in search and in the assistant only after approval."
+msgstr "Erst nach Freigabe sind Zusammenfassungen am Dokument, in der Suche und im Assistenten sichtbar."
+
+msgid "Checks"
+msgstr "Prüfpunkte"
+
+msgid "At most @count words"
+msgstr "Höchstens @count Wörter"
+
+msgid "Language of the document (@language)"
+msgstr "Sprache des Dokuments (@language)"
+
+msgid "@count words · target at most @target"
+msgstr "@count Wörter · Zielwert maximal @target"
+
+msgid "words"
+msgstr "Wörter"
+
+msgid "target at most @target"
+msgstr "Zielwert maximal @target"
+
+msgid "After approval: indexing via the queue, about one minute"
+msgstr "Nach Freigabe: Indexierung über die Queue, ca. 1 Minute"
+
+msgid "Four-eyes principle: the person who created the bulletin must not approve it."
+msgstr "Vier-Augen-Prinzip: die erstellende Person darf nicht freigeben."
+
+msgid "Create document"
+msgstr "Dokument anlegen"
+
+msgid "To support"
+msgstr "An Support"
+
+msgid "Actions"
+msgstr "Aktionen"

@@ -52,6 +52,7 @@ function _tannwald_layout_prepare(array &$variables): void {
   $variables['account'] = NULL;
   $variables['demo'] = NULL;
   $variables['demo_hint'] = $hasMasquerade;
+  $variables['demo_accounts'] = $hasMasquerade ? _tannwald_demo_account_chips() : [];
   // Kopfzeile und Demo-Leiste hängen am Konto und an der Sitzung (masquerade).
   $variables['cache_bubble'] = _tannwald_cache_bubble(['user', 'session', 'url.path', 'languages:language_interface'], ['config:system.site']);
 
@@ -79,9 +80,18 @@ function _tannwald_layout_prepare(array &$variables): void {
     }
   }
 
+  // Nutzerseiten (Anmelden, Passwort): kein Seitentitel-Block (das Template
+  // zeigt den einen Titel) und keine lokalen Reiter (Leitplanken §5 und §6).
+  $routeMatch = \Drupal::routeMatch();
+  if (in_array($routeMatch->getRouteName(), _tannwald_user_routes(), TRUE)) {
+    foreach (['tannwald_page_title', 'tannwald_local_tasks'] as $block) {
+      if (isset($variables['page']['content'][$block])) {
+        $variables['page']['content'][$block]['#access'] = FALSE;
+      }
+    }
+  }
   // Seitentitel-Block auf Maschinen-, Dokument- und Bulletinseiten ausblenden:
   // die Node-Templates zeigen den eigenen Titel in der Kopfkarte.
-  $routeMatch = \Drupal::routeMatch();
   $node = $routeMatch->getParameter('node');
   if ($routeMatch->getRouteName() === 'entity.node.canonical' && $node instanceof NodeInterface
     && in_array($node->bundle(), ['maschine', 'dokument', 'bulletin'], TRUE)
@@ -267,4 +277,54 @@ function _tannwald_breadcrumb_prepare(array &$variables): void {
   if (!empty($variables['breadcrumb'][0]) && \Drupal::currentUser()->isAuthenticated()) {
     $variables['breadcrumb'][0] = $machines;
   }
+}
+
+/**
+ * Routen der Nutzerseiten ohne Seitentitel-Block und ohne lokale Reiter.
+ *
+ * @return string[]
+ *   Routennamen.
+ */
+function _tannwald_user_routes(): array {
+  return [
+    'user.login',
+    'user.pass',
+    'user.register',
+    'user.reset',
+    'user.reset.form',
+    'user.reset.login',
+  ];
+}
+
+/**
+ * Demo-Konten als Chips für die Anmeldeseite (nur dev): Name, Firma oder Rolle.
+ *
+ * @return array<int, array{name: string, label: string}>
+ *   Chips in der Reihenfolge der Demo-Konten.
+ */
+function _tannwald_demo_account_chips(): array {
+  $storage = \Drupal::entityTypeManager()->getStorage('user');
+  $labels = _tannwald_role_labels();
+  $chips = [];
+  foreach (_tannwald_demo_accounts() as $name) {
+    $account = current($storage->loadByProperties(['name' => $name]));
+    if (!$account instanceof UserInterface) {
+      continue;
+    }
+    $label = NULL;
+    if ($account->hasField('field_firma') && !$account->get('field_firma')->isEmpty()) {
+      $term = $account->get('field_firma')->entity;
+      $label = $term ? (string) $term->label() : NULL;
+    }
+    if ($label === NULL) {
+      foreach ($labels as $role => $roleLabel) {
+        if (in_array($role, $account->getRoles(TRUE), TRUE)) {
+          $label = (string) $roleLabel;
+          break;
+        }
+      }
+    }
+    $chips[] = ['name' => $name, 'label' => $label ?? $name];
+  }
+  return $chips;
 }

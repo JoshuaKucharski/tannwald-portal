@@ -1,22 +1,54 @@
 {#
 /**
  * @file
- * Anmeldeseite im Theme: Wortmarke, Formular (Benutzername, Passwort, Anmelden), Hinweis auf Demo-Konten
- * nur, wenn masquerade aktiv ist (Split dev). Variablen: site_name, demo_hint, cache_bubble.
+ * Anmeldeseite (Design-Leitplanken §6): Desktop zweispaltig mit Markenpanel in Akzentfarbe, rechts das Formular
+ * (ein Titel, 44-px-Felder, Passwort anzeigen, Primärbutton, Textlink „Passwort vergessen?“); Phone einspaltig mit
+ * schmalem Kopf. Demo-Konten als Chips (nur Split dev), Klick füllt Benutzername und Passwort „demo“ aus.
+ *
+ * Variablen: site_name, demo_accounts[] {name, label} (leer ausserhalb von dev), cache_bubble; page.content enthält
+ * Meldungen (inline) und das Formular; Reiter und Seitentitel-Block sind auf Nutzerseiten ausgeblendet (layout.inc).
  */
 #}
 {{ cache_bubble }}
-<div class="flex min-h-screen flex-col items-center justify-center px-4 py-10">
-  <div class="w-full max-w-md">
-    <div class="mb-6 text-center">
-      <span class="text-2xl font-bold text-accent">{{ site_name }}</span>
-      <p class="meta mt-1">{{ 'Customer portal of Tannwald Verpackungstechnik AG'|t }}</p>
+<div class="flex min-h-screen flex-col lg:flex-row" x-data="{ showPassword: false, fill(name) { const form = document.getElementById('user-login-form'); if (!form) { return; } form.elements.name.value = name; form.elements.pass.value = 'demo'; form.elements.name.focus(); } }">
+  <aside class="flex flex-col gap-8 bg-accent px-4 py-6 text-white lg:w-[46%] lg:justify-between lg:px-16 lg:py-14" aria-label="{{ 'About the portal'|t }}">
+    <div class="flex items-center gap-3">
+      <svg width="36" height="36" viewBox="0 0 36 36" fill="none" aria-hidden="true" class="shrink-0">
+        <rect x="4" y="20" width="28" height="10" rx="2.5" stroke="currentColor" stroke-width="1.5"/>
+        <rect x="7" y="13" width="22" height="10" rx="2.5" stroke="currentColor" stroke-width="1.5" fill="#1F4E79"/>
+        <rect x="10" y="6" width="16" height="10" rx="2.5" stroke="currentColor" stroke-width="1.5" fill="#1F4E79"/>
+      </svg>
+      <span class="text-xl font-semibold tracking-tight">{{ site_name }}</span>
     </div>
-    <div class="card px-6 py-6">
+    <div class="flex flex-col gap-6">
+      <p class="m-0 max-w-[26ch] text-lg font-semibold leading-snug lg:text-[28px] lg:leading-tight">{{ 'Customer portal of Tannwald Verpackungstechnik AG'|t }}</p>
+      <ul class="m-0 hidden list-none flex-col gap-3 p-0 text-white/85 lg:flex">
+        {% for line in ['Documents for your machines'|t, 'Safety bulletins with read confirmation'|t, 'An assistant that answers only from approved documents'|t] %}
+          <li class="flex items-start gap-3">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="mt-0.5 shrink-0"><path d="m5 12 4.5 4.5L19 7"/></svg>
+            <span>{{ line }}</span>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+    <span class="hidden lg:block" aria-hidden="true"></span>
+  </aside>
+
+  <main id="main-content" class="flex flex-1 items-start justify-center px-4 py-10 lg:items-center lg:px-16">
+    <div class="w-full max-w-[400px]">
+      <h1 class="m-0 mb-6 text-[28px] font-semibold leading-tight">{{ 'Log in'|t }}</h1>
       {{ page.content }}
+      <p class="m-0 mt-4 text-sm"><a href="{{ path('user.pass') }}" class="btn-text">{{ 'Forgot your password?'|t }}</a></p>
+      {% if demo_accounts %}
+        <div class="mt-10 border-t border-line pt-6" data-demo-accounts>
+          <p class="m-0 mb-3 text-sm text-muted">{{ 'Demo accounts, password demo'|t }}</p>
+          <div class="flex flex-wrap gap-2">
+            {% for account in demo_accounts %}
+              <button type="button" class="chip" @click="fill('{{ account.name|e('js') }}')">{{ account.name }} · {{ account.label }}</button>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
     </div>
-    {% if demo_hint %}
-      <p class="meta mt-4 text-center">{{ 'Demo accounts: @accounts · password @password'|t({'@accounts': 'kunde-a, kunde-b, haendler, techniker, redaktion, compliance', '@password': 'demo'}) }}</p>
-    {% endif %}
-  </div>
+  </main>
 </div>

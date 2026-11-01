@@ -45,7 +45,7 @@
 }
 
 @layer base {
-  html { font-size: 15px; line-height: 1.45; }
+  html { font-size: 16px; line-height: 1.5; }
   body { @apply bg-surface text-ink font-sans antialiased; }
   a { @apply text-accent hover:text-accent-hover; }
   :focus-visible { @apply outline-2 outline-offset-2 outline-accent; }
@@ -58,11 +58,14 @@
   .btn-primary { @apply bg-accent text-white hover:bg-accent-hover hover:text-white; }
   .btn-outline { @apply border border-accent text-accent hover:text-accent-hover hover:border-accent-hover; }
   .btn-warn { @apply bg-warn-strong text-white hover:bg-warn hover:text-white; }
-  .card { @apply rounded-card border border-line bg-panel; }
+  .btn-secondary { @apply border border-line bg-panel text-ink hover:border-accent hover:text-accent; }
+  .btn-text { @apply inline-flex items-center font-medium text-accent no-underline hover:text-accent-hover hover:underline; }
+  .chip { @apply inline-flex h-9 items-center rounded-pill border border-line bg-panel px-3 text-sm text-ink hover:border-accent hover:text-accent; }
+  .card { @apply rounded-card border border-line bg-panel shadow-card; }
   .card-head { @apply flex flex-wrap items-center gap-4 border-b border-line px-5 py-4; }
-  .card-title { @apply m-0 text-lg font-semibold; }
-  .meta { @apply text-[13px] text-muted; }
-  .pill { @apply rounded-pill border px-2 py-[3px] text-xs; }
+  .card-title { @apply m-0 text-xl font-semibold leading-snug; }
+  .meta { @apply text-sm leading-[1.45] text-muted; }
+  .pill { @apply rounded-pill border px-2 py-[3px] text-xs font-medium; }
   .prose-doc h2 { @apply mt-8 mb-3 scroll-mt-24 text-xl font-semibold; }
   .prose-doc h3 { @apply mt-6 mb-2 scroll-mt-24 text-base font-semibold; }
   .prose-doc p { @apply my-3; }
@@ -76,14 +79,18 @@
   .prose-doc td { @apply border-b border-line-soft px-3 py-2 align-top; }
   .form-input { @apply h-11 w-full rounded-control border border-line bg-panel px-3; }
   /* Core-Formulare (Login, Bestätigung): size="60" darf bei 390 px keinen Querlauf erzeugen. */
-  .form-item { @apply mb-4 flex flex-col gap-1.5; }
+  .form-item { @apply relative mb-4 flex flex-col gap-1.5; }
   .form-item label { @apply text-sm font-medium; }
+  .form-type-password input { @apply pr-24; }
+  .form-type-password .field-suffix { @apply absolute right-3 top-[33px] inline-flex h-8 items-center; }
+  .form-item input.error { @apply border-danger; }
   .form-item input[type="text"], .form-item input[type="password"], .form-item input[type="email"],
   .form-item textarea, .form-item select { @apply h-11 w-full max-w-full min-w-0 rounded-control border border-line bg-panel px-3; }
   .form-item textarea { @apply h-auto py-2; }
   .form-actions { @apply mt-2 flex flex-wrap gap-3; }
-  .tabs a { @apply inline-flex rounded-control border border-line bg-panel px-3 py-1.5 text-sm no-underline; }
-  .tabs .is-active a { @apply border-accent bg-private-bg; }
+  .tabs { @apply mb-6 border-b border-line gap-0; }
+  .tabs a { @apply inline-flex border-b-2 border-transparent px-3 py-2 text-sm text-muted no-underline hover:text-ink; }
+  .tabs .is-active a { @apply border-accent text-ink; }
   .messages { @apply max-w-full; }
 }
 
@@ -160,4 +167,8 @@
   .redaktion-main details { @apply mb-4 rounded-card border border-line bg-panel p-4; }
   .redaktion-main details > summary { @apply cursor-pointer font-semibold; }
   .redaktion-main .form-item .description { @apply text-[13px] text-muted; }
+  .four-eyes-notice { @apply rounded-control border border-warn-line bg-warn-bg px-4 py-3 text-sm text-warn; }
+  .review-textarea { @apply min-h-40 w-full rounded-control border border-line bg-panel px-3 py-2 leading-relaxed; }
+  .review-actions .form-actions { @apply mt-3; }
+  .redaktion-main a[href$="/compliance/audit.csv"]:not(.btn) { @apply hidden; }
 }
