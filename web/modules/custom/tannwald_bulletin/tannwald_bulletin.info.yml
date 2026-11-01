@@ -1,0 +1,14 @@
+name: 'Tannwald Bulletin'
+type: module
+description: 'Read confirmations and notifications for safety bulletins of myTannwald.'
+package: Tannwald
+core_version_requirement: ^11
+dependencies:
+  - drupal:node
+  - drupal:user
+  - drupal:views
+  - drupal:content_moderation
+  - symfony_mailer:symfony_mailer
+  - tannwald_access:tannwald_access
+'interface translation project': tannwald_bulletin
+'interface translation server pattern': modules/custom/tannwald_bulletin/translations/%language.po

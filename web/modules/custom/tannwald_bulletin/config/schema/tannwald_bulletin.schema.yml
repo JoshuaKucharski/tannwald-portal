@@ -1,0 +1,12 @@
+tannwald_bulletin.settings:
+  type: config_object
+  label: 'Tannwald Bulletin settings'
+  mapping:
+    base_url:
+      type: uri
+      label: 'Absolute base URL for links in emails (cron runs without a request host)'
+      nullable: true
+
+views.area.tannwald_bulletin_open_confirmations:
+  type: views_area
+  label: 'Open read confirmations'
