@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Drupal\tannwald_ingest\Plugin\QueueWorker;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Queue\Attribute\QueueWorker;
 use Drupal\Core\Queue\QueueFactory;
-use Drupal\Core\Queue\QueueWorkerBase;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\node\NodeInterface;
 use Drupal\tannwald_ingest\Chunker;
@@ -21,15 +20,16 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Chunkt, embeddet und speichert eine Node-Revision (Queue tannwald_embed).
  *
  * Payload {nid, vid, langcode, action: index|delete, attempts?}; idempotent,
- * weil replaceForRevision() vorher löscht. Fehler: bis 3 Versuche (Zähler
- * attempts im neu eingestellten Job), dann Watchdog error und verwerfen.
+ * weil replaceForRevision() vorher löscht. Nach erfolgreichem index eines
+ * Dokuments folgt ein Job tannwald_summarize (nie für Bulletins oder
+ * Zusammenfassungen — keine Schleife). Wiederholungen: Basisklasse.
  */
 #[QueueWorker(
   id: self::QUEUE,
   title: new TranslatableMarkup('Tannwald chunk embedding'),
   cron: ['time' => 60],
 )]
-final class EmbedQueueWorker extends QueueWorkerBase implements ContainerFactoryPluginInterface {
+final class EmbedQueueWorker extends RetryingQueueWorkerBase {
 
   /**
    * Name der Queue.
@@ -42,16 +42,6 @@ final class EmbedQueueWorker extends QueueWorkerBase implements ContainerFactory
   public const BUNDLES = ['dokument', 'bulletin', 'zusammenfassung'];
 
   /**
-   * Versuche insgesamt, bevor ein Job verworfen wird.
-   */
-  public const MAX_ATTEMPTS = 3;
-
-  /**
-   * Ergebnis des letzten processItem(): ok|skipped|retry|failed.
-   */
-  protected string $lastOutcome = 'ok';
-
-  /**
    * Konstruktor.
    *
    * @param array $configuration
@@ -60,6 +50,10 @@ final class EmbedQueueWorker extends QueueWorkerBase implements ContainerFactory
    *   Plugin-ID.
    * @param mixed $plugin_definition
    *   Plugin-Definition.
+   * @param \Drupal\Core\Queue\QueueFactory $queueFactory
+   *   Queue-Factory (Wiederholungen, Folgejob tannwald_summarize).
+   * @param \Psr\Log\LoggerInterface $logger
+   *   Logger tannwald_ingest.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   Entity-Typ-Manager.
    * @param \Drupal\tannwald_ingest\Chunker $chunker
@@ -68,10 +62,8 @@ final class EmbedQueueWorker extends QueueWorkerBase implements ContainerFactory
    *   Embeddings.
    * @param \Drupal\tannwald_ingest\Store\ChunkStoreInterface $store
    *   Chunk-Store.
-   * @param \Drupal\Core\Queue\QueueFactory $queueFactory
-   *   Queue-Factory (Wiederholungen).
-   * @param \Psr\Log\LoggerInterface $logger
-   *   Logger tannwald_ingest.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
+   *   Konfiguration (tannwald_ingest.settings:summaries_enabled).
    * @param object|null $entitlement
    *   tannwald_access.entitlement (getRealmsForNode()); optional, weil die
    *   Klasse final ist und Tests ein Double einsetzen.
@@ -80,15 +72,16 @@ final class EmbedQueueWorker extends QueueWorkerBase implements ContainerFactory
     array $configuration,
     $plugin_id,
     $plugin_definition,
+    QueueFactory $queueFactory,
+    LoggerInterface $logger,
     protected EntityTypeManagerInterface $entityTypeManager,
     protected Chunker $chunker,
     protected EmbeddingService $embedding,
     protected ChunkStoreInterface $store,
-    protected QueueFactory $queueFactory,
-    protected LoggerInterface $logger,
+    protected ConfigFactoryInterface $configFactory,
     protected ?object $entitlement = NULL,
   ) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition);
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $queueFactory, $logger);
   }
 
   /**
@@ -99,12 +92,13 @@ final class EmbedQueueWorker extends QueueWorkerBase implements ContainerFactory
       $configuration,
       $plugin_id,
       $plugin_definition,
+      $container->get('queue'),
+      $container->get('logger.channel.tannwald_ingest'),
       $container->get('entity_type.manager'),
       $container->get('tannwald_ingest.chunker'),
       $container->get('tannwald_ingest.embedding'),
       $container->get('tannwald_ingest.chunk_store'),
-      $container->get('queue'),
-      $container->get('logger.channel.tannwald_ingest'),
+      $container->get('config.factory'),
       $container->has('tannwald_access.entitlement') ? $container->get('tannwald_access.entitlement') : NULL,
     );
   }
@@ -112,45 +106,15 @@ final class EmbedQueueWorker extends QueueWorkerBase implements ContainerFactory
   /**
    * {@inheritdoc}
    */
-  public function processItem($data): void {
-    $item = (array) $data;
-    $nid = (int) ($item['nid'] ?? 0);
-    $action = (string) ($item['action'] ?? '');
-    if ($nid < 1 || !in_array($action, ['index', 'delete'], TRUE)) {
-      $this->logger->error('Invalid tannwald_embed payload dropped: @payload', ['@payload' => json_encode($item)]);
-      $this->lastOutcome = 'failed';
-      return;
-    }
-    try {
-      $this->lastOutcome = $action === 'delete' ? $this->delete($item) : $this->index($item);
-    }
-    catch (\Throwable $e) {
-      $attempts = (int) ($item['attempts'] ?? 0) + 1;
-      $context = [
-        '@nid' => $nid,
-        '@vid' => $item['vid'] ?? '-',
-        '@lang' => $item['langcode'] ?? '-',
-        '@attempt' => $attempts,
-        '@max' => self::MAX_ATTEMPTS,
-        '@message' => mb_substr($e->getMessage(), 0, 300),
-      ];
-      if ($attempts < self::MAX_ATTEMPTS) {
-        $item['attempts'] = $attempts;
-        $this->queueFactory->get(self::QUEUE)->createItem($item);
-        $this->logger->warning('Indexing node @nid revision @vid (@lang) failed, attempt @attempt of @max, requeued: @message', $context);
-        $this->lastOutcome = 'retry';
-        return;
-      }
-      $this->logger->error('Indexing node @nid revision @vid (@lang) failed after @attempt attempts, job dropped: @message', $context);
-      $this->lastOutcome = 'failed';
-    }
+  protected function isValid(array $item): bool {
+    return (int) ($item['nid'] ?? 0) > 0 && in_array($item['action'] ?? '', ['index', 'delete'], TRUE);
   }
 
   /**
-   * Ergebnis des letzten processItem() (für tannwald:queue-run).
+   * {@inheritdoc}
    */
-  public function lastOutcome(): string {
-    return $this->lastOutcome;
+  protected function run(array $item): string {
+    return $item['action'] === 'delete' ? $this->delete($item) : $this->index($item);
   }
 
   /**
@@ -222,6 +186,13 @@ final class EmbedQueueWorker extends QueueWorkerBase implements ContainerFactory
       ] + $meta;
     }
     $this->store->replaceForRevision($nid, $vid, $langcode, $rows);
+    if ($node->bundle() === 'dokument' && $this->configFactory->get('tannwald_ingest.settings')->get('summaries_enabled')) {
+      $this->queueFactory->get(SummarizeQueueWorker::QUEUE)->createItem([
+        'nid' => $nid,
+        'vid' => $vid,
+        'langcode' => $langcode,
+      ]);
+    }
     return 'ok';
   }
 

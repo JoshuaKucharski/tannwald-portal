@@ -1,0 +1,13 @@
+tannwald_ingest.review_transition:
+  path: '/redaktion/zusammenfassung/{node}/{transition}'
+  defaults:
+    _controller: '\Drupal\tannwald_ingest\Controller\ReviewController::transition'
+  methods: [POST]
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    node: '\d+'
+    transition: 'freigeben|zurueckweisen|entwurf_speichern'
+  options:
+    parameters:
+      node:
+        type: 'entity:node'

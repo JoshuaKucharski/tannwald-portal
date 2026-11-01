@@ -22,3 +22,18 @@ services:
     class: Drupal\tannwald_ingest\Embedding\EmbeddingService
     arguments: ['@ai.provider', '@config.factory', '@tannwald_ingest.usage']
   Drupal\tannwald_ingest\Embedding\EmbeddingService: '@tannwald_ingest.embedding'
+
+  tannwald_ingest.summary_generator:
+    class: Drupal\tannwald_ingest\Summary\SummaryGenerator
+    arguments: ['@entity_type.manager', '@tannwald_ingest.chunker', '@ai.provider', '@config.factory', '@tannwald_ingest.usage', '@datetime.time', '@keyvalue']
+  Drupal\tannwald_ingest\Summary\SummaryGenerator: '@tannwald_ingest.summary_generator'
+
+  tannwald_ingest.review_transition:
+    class: Drupal\tannwald_ingest\Review\ReviewTransition
+    arguments: ['@entity_type.manager', '@content_moderation.moderation_information', '@datetime.time']
+  Drupal\tannwald_ingest\Review\ReviewTransition: '@tannwald_ingest.review_transition'
+
+  tannwald_ingest.summary_presenter:
+    class: Drupal\tannwald_ingest\Summary\SummaryPresenter
+    arguments: ['@entity_type.manager', '@date.formatter', '@renderer', '@keyvalue', '@tannwald_ingest.chunker', '@tannwald_ingest.review_transition', '@form_builder']
+  Drupal\tannwald_ingest\Summary\SummaryPresenter: '@tannwald_ingest.summary_presenter'

@@ -17,7 +17,9 @@ class ChunkStoreTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['system', 'user', 'file', 'key', 'ai', 'tannwald_ingest'];
+  protected static $modules = [
+    'system', 'user', 'file', 'key', 'ai', 'workflows', 'content_moderation', 'tannwald_ingest',
+  ];
 
   /**
    * Keys eines TB-200-Kunden ohne Exportfreigaben.

@@ -28,7 +28,8 @@ class EmbedQueueWorkerTest extends KernelTestBase {
    * {@inheritdoc}
    */
   protected static $modules = [
-    'system', 'user', 'field', 'text', 'filter', 'options', 'node', 'taxonomy', 'file', 'key', 'ai', 'tannwald_ingest',
+    'system', 'user', 'field', 'text', 'filter', 'options', 'node', 'taxonomy', 'file', 'key', 'ai',
+    'workflows', 'content_moderation', 'datetime', 'tannwald_ingest',
   ];
 
   /**
