@@ -1,0 +1,57 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: 'Review card'
+status: stable
+description: 'Hülle der Review-Karte (Wireframe 03) für Zusammenfassungen. 5.1 baut Kopf, Vermerke und Slots; 5.3 füllt body und actions aus tannwald_ingest_review_card(): generiert_am→generated_at, modell→model, tokens→tokens, erstellt_durch→created_by, sicherheitskapitel_genannt→safety_mentioned, dokument→document.'
+props:
+  type: object
+  required:
+    - document
+    - generated_at
+  properties:
+    document:
+      type: object
+      title: Document
+      properties:
+        title:
+          type: string
+        version:
+          type: string
+        url:
+          type: string
+    status:
+      type: string
+      title: Status
+      enum: [zur_pruefung, published, zurueckgewiesen, draft]
+      default: zur_pruefung
+    generated_at:
+      type: string
+      title: 'Generated at'
+      description: 'Formatiert TT.MM.JJJJ HH:MM.'
+    model:
+      type: [string, 'null']
+      title: Model
+    tokens:
+      type: [integer, 'null']
+      title: Tokens
+    created_by:
+      type: [string, 'null']
+      title: 'Revision by'
+      description: 'Name der Person, die die neue Dokument-Revision angelegt hat.'
+    change_note:
+      type: [string, 'null']
+      title: 'Change note'
+      description: 'field_aenderungsvermerk der zusammengefassten Revision.'
+    safety_mentioned:
+      type: boolean
+      title: 'Safety chapters mentioned'
+      default: false
+    attributes:
+      type: Drupal\Core\Template\Attribute
+      title: Attributes
+slots:
+  body:
+    title: Body
+    description: 'Zusammenfassungstext (gefiltertes HTML) oder Textarea (5.3).'
+  actions:
+    title: Actions
+    description: 'Buttons Freigeben / Entwurf speichern / Zurückweisen (5.3 review-actions).'

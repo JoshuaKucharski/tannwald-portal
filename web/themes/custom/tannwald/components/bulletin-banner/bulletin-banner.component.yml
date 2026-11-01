@@ -1,0 +1,49 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: 'Bulletin banner'
+status: stable
+description: 'Offenes Bulletin auf der Maschinenseite (Wireframe 01). Props 1:1 aus tannwald_bulletin_banner_data(); der Name der bestätigenden Person kommt als confirmed_by (das Theme löst bestaetigt_durch_uid auf). Slot actions = Formular „Gelesen bestätigen“ (5.1) oder Aktionen (5.3).'
+props:
+  type: object
+  required:
+    - id
+    - titel
+    - art
+    - veroeffentlicht_am
+    - url_bulletin
+  properties:
+    id:
+      type: string
+      title: 'Bulletin id'
+      description: 'Kennung, z. B. SB-2026-07.'
+    titel:
+      type: string
+      title: Title
+    art:
+      type: string
+      title: Kind
+      enum: [sicherheit, service]
+    veroeffentlicht_am:
+      type: integer
+      title: 'Published (Unix)'
+    bestaetigung_pflicht:
+      type: boolean
+      title: 'Confirmation required'
+      default: false
+    bestaetigt_am:
+      type: [integer, 'null']
+      title: 'Confirmed (Unix)'
+      description: 'Letzte Bestätigung dieser Maschine durch irgendein Konto, sonst null.'
+    confirmed_by:
+      type: [string, 'null']
+      title: 'Confirmed by'
+      description: 'Anzeigename zu bestaetigt_durch_uid.'
+    url_bulletin:
+      type: string
+      title: 'Bulletin URL'
+    attributes:
+      type: Drupal\Core\Template\Attribute
+      title: Attributes
+slots:
+  actions:
+    title: Actions
+    description: 'Formular „Gelesen bestätigen“ (Render-Array von ConfirmForm) oder leer.'

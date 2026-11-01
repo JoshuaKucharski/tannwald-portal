@@ -1,0 +1,27 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Badge
+status: stable
+description: 'Kleine Kennzeichnung: Dual-Use, Nur <Firma>, Neue Version, Offen, Bestätigt, Dokumenttyp (Wireframe 01).'
+props:
+  type: object
+  required:
+    - label
+  properties:
+    label:
+      type: string
+      title: Label
+      description: 'Sichtbarer Text, bereits übersetzt.'
+    variant:
+      type: string
+      title: Variant
+      enum: [neutral, accent, ok, warn, danger, dualuse, private]
+      default: neutral
+      description: 'Farbwelt: neutral (Typ), accent, ok (Neue Version, Bestätigt), warn (Offen), danger, dualuse (Exportklasse), private (Nur <Firma>).'
+    pill:
+      type: boolean
+      title: Pill
+      default: false
+      description: 'Runde Pille (Statusbadges) statt eckiger Marke.'
+    attributes:
+      type: Drupal\Core\Template\Attribute
+      title: Attributes
