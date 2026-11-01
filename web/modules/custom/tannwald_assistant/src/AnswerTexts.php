@@ -84,6 +84,15 @@ final class AnswerTexts {
   ];
 
   /**
+   * Monatslimit erreicht (status limit, LimitService::isSearchOnly()).
+   */
+  public const LIMIT_REACHED = [
+    'en' => 'The monthly limit of the assistant has been reached. Search remains available.',
+    'de' => 'Das Monatslimit des Assistenten ist erreicht. Die Suche bleibt verfügbar.',
+    'fr' => 'La limite mensuelle de l’assistant est atteinte. La recherche reste disponible.',
+  ];
+
+  /**
    * Text einer Konstante in der gewünschten Sprache (Rückfall de).
    *
    * @param array<string, string> $texts
@@ -124,6 +133,7 @@ final class AnswerTexts {
       'TOO_LONG' => self::TOO_LONG,
       'EMPTY' => self::EMPTY,
       'UNAVAILABLE' => self::UNAVAILABLE,
+      'LIMIT_REACHED' => self::LIMIT_REACHED,
     ];
   }
 

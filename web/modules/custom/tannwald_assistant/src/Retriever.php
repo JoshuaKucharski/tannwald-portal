@@ -30,6 +30,11 @@ final class Retriever {
    */
   public const CANDIDATES = 20;
 
+  /**
+   * Kandidaten je Liste für search() (Suche-Seite, Live-Suche).
+   */
+  public const SEARCH_CANDIDATES = 100;
+
   public function __construct(
     private readonly AccessKeysInterface $accessKeys,
     private readonly ChunkStoreInterface $store,
@@ -55,37 +60,14 @@ final class Retriever {
    */
   public function retrieve(string $frage, AccountInterface $account, ?int $maschineNid, string $modus = RetrievalResult::MODE_HYBRID): RetrievalResult {
     $start = hrtime(TRUE);
-    if (!in_array($modus, [RetrievalResult::MODE_HYBRID, RetrievalResult::MODE_FULLTEXT], TRUE)) {
-      throw new \InvalidArgumentException(sprintf('Unknown retrieval mode "%s".', $modus));
-    }
-    $langcode = $this->languageDetector->detect($frage, $account->getPreferredLangcode());
-    $keys = $this->accessKeys->forAccount($account);
-    if ($keys === [] || trim($frage) === '') {
+    [$langcode, $fused] = $this->candidates($frage, $account, $maschineNid, $modus, self::CANDIDATES);
+    if ($fused === NULL) {
       return RetrievalResult::empty($frage, $langcode, $modus, self::elapsedMs($start));
     }
 
     $settings = $this->configFactory->get('tannwald_assistant.settings');
     $topK = max(1, (int) ($settings->get('top_k') ?? 6));
     $minScore = (float) ($settings->get('min_score') ?? 0.015);
-
-    $lists = ['keyword' => $this->store->keyword($frage, $keys, self::CANDIDATES)];
-    if ($modus === RetrievalResult::MODE_HYBRID) {
-      try {
-        $vector = $this->embedding->embed([$frage], 'assistent')[0] ?? [];
-        if ($vector !== []) {
-          $lists['vector'] = $this->store->similar($vector, $keys, self::CANDIDATES);
-        }
-      }
-      catch (\Throwable $e) {
-        // Ohne Embedding bleibt der Keyword-Zweig; die Antwort geht weiter.
-        $this->logger->warning('Query embedding failed, keyword branch only: @message', ['@message' => $e->getMessage()]);
-      }
-    }
-
-    $fused = Rrf::fuse($lists, Rrf::DEFAULT_K);
-    if ($maschineNid !== NULL) {
-      $fused = $this->filterByMachine($fused, $maschineNid);
-    }
     $fused = array_values(array_filter($fused, static fn (array $row): bool => $row['score'] >= $minScore));
 
     $facets = RetrievalResult::EMPTY_FACETS;
@@ -104,6 +86,81 @@ final class Retriever {
       }
     }
     return new RetrievalResult($frage, $langcode, $modus, $hits, $facets, self::elapsedMs($start));
+  }
+
+  /**
+   * Alle sichtbaren Treffer für die Suche-Seite und die Live-Suche (4.2).
+   *
+   * Wie retrieve(), aber Keyword Top $candidates (+ Vektor Top $candidates),
+   * ohne min_score und ohne Top-k-Schnitt; $node->access('view') für jeden
+   * Treffer; Facetten nur über die sichtbaren Treffer (FA-SE-04).
+   *
+   * @param string $frage
+   *   Suchtext.
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   Konto, dessen Keys und Zugriff gelten.
+   * @param int|null $maschineNid
+   *   Maschine (nid) wie bei retrieve().
+   * @param string $modus
+   *   Modus: hybrid oder volltext.
+   * @param int $candidates
+   *   Kandidaten je Liste (Standard 100).
+   */
+  public function search(string $frage, AccountInterface $account, ?int $maschineNid, string $modus = RetrievalResult::MODE_HYBRID, int $candidates = self::SEARCH_CANDIDATES): RetrievalResult {
+    $start = hrtime(TRUE);
+    [$langcode, $fused] = $this->candidates($frage, $account, $maschineNid, $modus, max(1, $candidates));
+    if ($fused === NULL) {
+      return RetrievalResult::empty($frage, $langcode, $modus, self::elapsedMs($start));
+    }
+    // Nodes einmal laden; buildHit() liest danach aus dem Entity-Cache.
+    $this->entityTypeManager->getStorage('node')->loadMultiple(array_values(array_unique(array_map(static fn (array $row): int => (int) $row['nid'], $fused))));
+    $hits = [];
+    foreach ($fused as $row) {
+      $hit = $this->buildHit($row, $account);
+      if ($hit !== NULL) {
+        $hits[] = $hit;
+      }
+    }
+    $facets = RetrievalResult::EMPTY_FACETS;
+    if ($hits !== []) {
+      $facets = $this->store->facetCounts(array_column($hits, 'chunk_id')) + $facets;
+    }
+    return new RetrievalResult($frage, $langcode, $modus, $hits, $facets, self::elapsedMs($start));
+  }
+
+  /**
+   * Kandidaten: Keys → Keyword (+ Vektor) → RRF → Maschinenfilter.
+   *
+   * @return array{0: string, 1: array<int, array>|null}
+   *   Erkannte Sprache und fusionierte Zeilen; NULL ohne Keys oder Frage.
+   */
+  private function candidates(string $frage, AccountInterface $account, ?int $maschineNid, string $modus, int $limit): array {
+    if (!in_array($modus, [RetrievalResult::MODE_HYBRID, RetrievalResult::MODE_FULLTEXT], TRUE)) {
+      throw new \InvalidArgumentException(sprintf('Unknown retrieval mode "%s".', $modus));
+    }
+    $langcode = $this->languageDetector->detect($frage, $account->getPreferredLangcode());
+    $keys = $this->accessKeys->forAccount($account);
+    if ($keys === [] || trim($frage) === '') {
+      return [$langcode, NULL];
+    }
+    $lists = ['keyword' => $this->store->keyword($frage, $keys, $limit)];
+    if ($modus === RetrievalResult::MODE_HYBRID) {
+      try {
+        $vector = $this->embedding->embed([$frage], 'assistent')[0] ?? [];
+        if ($vector !== []) {
+          $lists['vector'] = $this->store->similar($vector, $keys, $limit);
+        }
+      }
+      catch (\Throwable $e) {
+        // Ohne Embedding bleibt der Keyword-Zweig; die Antwort geht weiter.
+        $this->logger->warning('Query embedding failed, keyword branch only: @message', ['@message' => $e->getMessage()]);
+      }
+    }
+    $fused = Rrf::fuse($lists, Rrf::DEFAULT_K);
+    if ($maschineNid !== NULL) {
+      $fused = $this->filterByMachine($fused, $maschineNid);
+    }
+    return [$langcode, $fused];
   }
 
   /**

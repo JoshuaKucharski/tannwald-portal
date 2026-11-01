@@ -36,3 +36,7 @@ msgstr "Bitte geben Sie eine Frage ein."
 # AnswerTexts::UNAVAILABLE
 msgid "The assistant is currently unavailable. You can still use the search."
 msgstr "Der Assistent steht zurzeit nicht zur Verfügung. Die Suche können Sie weiterhin nutzen."
+
+# AnswerTexts::LIMIT_REACHED
+msgid "The monthly limit of the assistant has been reached. Search remains available."
+msgstr "Das Monatslimit des Assistenten ist erreicht. Die Suche bleibt verfügbar."

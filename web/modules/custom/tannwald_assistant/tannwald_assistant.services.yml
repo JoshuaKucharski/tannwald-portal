@@ -29,10 +29,40 @@ services:
     class: Drupal\tannwald_assistant\OutputFilter
   Drupal\tannwald_assistant\OutputFilter: '@tannwald_assistant.output_filter'
 
-  # 4.2 tauscht nur die Klasse (LimitService).
+  tannwald_assistant.injection_heuristic:
+    class: Drupal\tannwald_assistant\InjectionHeuristic
+  Drupal\tannwald_assistant\InjectionHeuristic: '@tannwald_assistant.injection_heuristic'
+
+  # Seit 4.2 der LimitService (4.1: NullLimitCheck); Alias tannwald_assistant.limit.
   tannwald_assistant.limit_check:
-    class: Drupal\tannwald_assistant\Limit\NullLimitCheck
+    class: Drupal\tannwald_assistant\Limit\LimitService
+    arguments:
+      - '@database'
+      - '@config.factory'
+      - '@state'
+      - '@cache.default'
+      - '@datetime.time'
+      - '@entity_type.manager'
+      - '@Drupal\tannwald_assistant\Limit\LimitMailerInterface'
+      - '@logger.channel.tannwald_assistant'
+  tannwald_assistant.limit: '@tannwald_assistant.limit_check'
   Drupal\tannwald_assistant\Limit\LimitCheckInterface: '@tannwald_assistant.limit_check'
+  Drupal\tannwald_assistant\Limit\LimitService: '@tannwald_assistant.limit_check'
+
+  # symfony_mailer setzt $baseTag aus #[MailerInfo] (MailerPass).
+  Drupal\tannwald_assistant\Limit\LimitMailerInterface:
+    class: Drupal\tannwald_assistant\Limit\LimitMailer
+    autowire: true
+
+  tannwald_assistant.ticket_sink:
+    class: Drupal\tannwald_assistant\Ticket\LocalTicketSink
+  Drupal\tannwald_assistant\Ticket\TicketSinkInterface: '@tannwald_assistant.ticket_sink'
+
+  tannwald_assistant.usage_tracker:
+    class: Drupal\tannwald_assistant\Usage\UsageTracker
+    arguments: ['@tannwald_ingest.usage', '@config.factory', '@request_stack', '@cache_tags.invalidator']
+    tags:
+      - { name: event_subscriber }
 
   tannwald_assistant.retriever:
     class: Drupal\tannwald_assistant\Retriever
@@ -56,8 +86,8 @@ services:
       - '@tannwald_assistant.citation_validator'
       - '@tannwald_assistant.output_filter'
       - '@tannwald_assistant.language_detector'
+      - '@tannwald_assistant.injection_heuristic'
       - '@ai.provider'
-      - '@tannwald_ingest.usage'
       - '@tannwald_assistant.limit_check'
       - '@database'
       - '@config.factory'

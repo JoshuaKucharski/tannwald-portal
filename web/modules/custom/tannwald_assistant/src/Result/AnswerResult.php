@@ -9,8 +9,9 @@ namespace Drupal\tannwald_assistant\Result;
  *
  * ToArray() ist genau die Antwort von POST /api/assistant (RunBook §1.1):
  * {status, antwort_html, quellen: [{n, nid, titel, version, heading_path,
- * url}], log_id}. toFullArray() ergänzt dauer_ms, tokens, langcode und
- * modus_safety für Evals und Hand-Läufe.
+ * url, langcode}], log_id} — langcode seit 4.2 (Vertragsänderung 20).
+ * toFullArray() ergänzt dauer_ms, tokens, langcode und modus_safety für
+ * Evals und Hand-Läufe.
  */
 final class AnswerResult {
 
@@ -29,7 +30,7 @@ final class AnswerResult {
   /**
    * Schlüssel einer Quelle in der Reihenfolge des HTTP-Vertrags.
    */
-  public const SOURCE_KEYS = ['n', 'nid', 'titel', 'version', 'heading_path', 'url'];
+  public const SOURCE_KEYS = ['n', 'nid', 'titel', 'version', 'heading_path', 'url', 'langcode'];
 
   /**
    * Zitierte Quellen in Zitierreihenfolge; n = Nummer aus dem Prompt.

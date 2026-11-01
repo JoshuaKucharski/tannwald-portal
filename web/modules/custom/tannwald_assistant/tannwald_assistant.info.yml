@@ -7,6 +7,7 @@ dependencies:
   - drupal:node
   - drupal:user
   - ai:ai
+  - symfony_mailer:symfony_mailer
   - tannwald_ingest:tannwald_ingest
   - tannwald_access:tannwald_access
 'interface translation project': tannwald_assistant

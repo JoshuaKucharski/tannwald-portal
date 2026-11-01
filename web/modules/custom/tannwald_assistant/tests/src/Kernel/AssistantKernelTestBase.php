@@ -14,6 +14,7 @@ use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
 use Drupal\node\NodeInterface;
 use Drupal\tannwald_assistant\Access\AccessKeysInterface;
+use Drupal\tannwald_assistant\Limit\NullLimitCheck;
 use Drupal\tannwald_ingest\Embedding\EmbeddingService;
 use Drupal\tannwald_ingest\Store\ChunkStoreInterface;
 use Drupal\tannwald_ingest\Usage\UsageRecorder;
@@ -50,6 +51,8 @@ abstract class AssistantKernelTestBase extends KernelTestBase {
     'text',
     'node',
     'taxonomy',
+    'mailer_transport',
+    'symfony_mailer',
     'tannwald_assistant',
   ];
 
@@ -139,6 +142,8 @@ abstract class AssistantKernelTestBase extends KernelTestBase {
     $this->container->set('tannwald_ingest.usage', $this->usage);
     $this->container->set('ai.provider', $this->aiProvider);
     $this->container->set('logger.channel.tannwald_assistant', $this->logger);
+    // Ohne tannwald_usage kein Limit; LimitServiceTest prüft den echten Dienst.
+    $this->container->set('tannwald_assistant.limit_check', new NullLimitCheck());
   }
 
   /**
