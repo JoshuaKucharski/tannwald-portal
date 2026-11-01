@@ -11,7 +11,8 @@
   {% elseif language.available %}
     <span class="pill {{ language.current ? 'border-accent font-semibold text-accent' : 'border-line text-muted' }}" lang="{{ language.code }}" title="{{ language.label }}">{{ language.code|upper }}</span>
   {% else %}
-    <span class="pill cursor-help border-line-soft text-bar-muted" title="{{ 'Not available'|t }}" aria-label="{{ '@language: not available'|t({'@language': language.label}) }}">{{ language.code|upper }}</span>
+    {# 6.1 (E): gestrichelt auf Fläche statt hellgrau — Kontrast ≥ 4.5 (Leitplanken §7.4). #}
+    <span class="pill cursor-help border-dashed border-line bg-surface text-muted" title="{{ 'Not available'|t }}" aria-label="{{ '@language: not available'|t({'@language': language.label}) }}">{{ language.code|upper }}</span>
   {% endif %}
 {% endfor %}
 </span>

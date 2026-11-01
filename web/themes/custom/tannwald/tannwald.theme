@@ -14,6 +14,7 @@ declare(strict_types=1);
 use Drupal\Component\Serialization\Json;
 use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Markup;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 
@@ -98,7 +99,8 @@ function tannwald_form_user_login_form_alter(array &$form, FormStateInterface $f
     '#value' => t('show', [], ['context' => 'tannwald password']),
     '#attributes' => [
       'type' => 'button',
-      'class' => ['btn-text', 'text-sm'],
+      // 6.1 (E): 44-px-Trefffläche (Leitplanken §7.2).
+      'class' => ['btn-text', 'text-sm', 'h-11', 'px-2'],
       '@click' => 'showPassword = !showPassword',
       'x-text' => 'showPassword ? ' . Json::encode((string) t('hide', [], ['context' => 'tannwald password']))
       . ' : ' . Json::encode((string) t('show', [], ['context' => 'tannwald password'])),
@@ -313,4 +315,40 @@ function tannwald_form_node_bulletin_edit_form_alter(array &$form, FormStateInte
     $form['moderation_state']['#prefix'] = '<p class="four-eyes-notice" data-four-eyes>'
       . t('Four-eyes principle: the person who created the bulletin must not approve it.') . '</p>';
   }
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for views_view_field.
+ *
+ * 6.1 (E): /bulletins zeigt der Redaktion und Compliance unveröffentlichte
+ * Bulletins (Node-Grants); der Titel bekommt dort den Workflow-Zustand als
+ * Badge, z. B. „Zur Prüfung“.
+ */
+function tannwald_preprocess_views_view_field(array &$variables): void {
+  if ($variables['view']->id() !== 'portal_bulletins' || $variables['field']->field !== 'title') {
+    return;
+  }
+  $node = $variables['row']->_entity ?? NULL;
+  if (!$node instanceof NodeInterface || $node->isPublished() || !$node->hasField('moderation_state')) {
+    return;
+  }
+  $state = (string) $node->get('moderation_state')->value;
+  $workflow = \Drupal::service('content_moderation.moderation_information')->getWorkflowForEntity($node);
+  if ($state === '' || $workflow === NULL || !$workflow->getTypePlugin()->hasState($state)) {
+    return;
+  }
+  $variants = ['zur_pruefung' => 'warn', 'zurueckgewiesen' => 'danger'];
+  $variables['output'] = [
+    'title' => ['#markup' => Markup::create((string) $variables['output'])],
+    'badge' => [
+      '#type' => 'component',
+      '#component' => 'tannwald:badge',
+      '#props' => [
+        'label' => $workflow->getTypePlugin()->getState($state)->label(),
+        'variant' => $variants[$state] ?? 'neutral',
+        'pill' => TRUE,
+      ],
+      '#attributes' => ['class' => ['ml-2']],
+    ],
+  ];
 }
