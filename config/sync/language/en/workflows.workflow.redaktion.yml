@@ -1,0 +1,21 @@
+# Erzeugt von docs/i18n/config-translate.php (Aufgabe 6.5) — nicht von Hand ändern.
+label: 'Editorial'
+type_settings:
+  states:
+    draft:
+      label: 'Draft'
+    published:
+      label: 'Approved'
+    zur_pruefung:
+      label: 'Under review'
+    zurueckgewiesen:
+      label: 'Rejected'
+  transitions:
+    entwurf_speichern:
+      label: 'Save draft'
+    freigeben:
+      label: 'Approve'
+    zur_pruefung_senden:
+      label: 'Submit for review'
+    zurueckweisen:
+      label: 'Reject'

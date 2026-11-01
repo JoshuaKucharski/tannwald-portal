@@ -1,0 +1,17 @@
+# Erzeugt von docs/i18n/config-translate.php (Aufgabe 6.5) — nicht von Hand ändern.
+display:
+  default:
+    display_options:
+      title: 'Unanswered questions'
+      fields:
+        frage_normalisiert:
+          label: 'Question'
+        id:
+          label: 'Count'
+        name:
+          label: 'Machine type'
+        last_created:
+          label: 'Last asked'
+      empty:
+        area_text_custom:
+          content: 'No unanswered questions this month.'

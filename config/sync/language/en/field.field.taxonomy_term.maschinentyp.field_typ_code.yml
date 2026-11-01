@@ -1,0 +1,3 @@
+# Erzeugt von docs/i18n/config-translate.php (Aufgabe 6.5) — nicht von Hand ändern.
+label: 'Type code'
+description: 'Unique machine type code without hyphen, e.g. TB200; forms the realm type:&lt;code&gt;.'

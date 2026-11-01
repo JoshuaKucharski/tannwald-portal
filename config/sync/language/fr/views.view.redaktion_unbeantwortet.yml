@@ -1,0 +1,17 @@
+# Erzeugt von docs/i18n/config-translate.php (Aufgabe 6.5) — nicht von Hand ändern.
+display:
+  default:
+    display_options:
+      title: 'Questions sans réponse'
+      fields:
+        frage_normalisiert:
+          label: 'Question'
+        id:
+          label: 'Nombre'
+        name:
+          label: 'Type de machine'
+        last_created:
+          label: 'Dernière fois'
+      empty:
+        area_text_custom:
+          content: 'Aucune question sans réponse ce mois-ci.'

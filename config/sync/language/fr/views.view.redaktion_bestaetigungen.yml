@@ -1,0 +1,25 @@
+# Erzeugt von docs/i18n/config-translate.php (Aufgabe 6.5) — nicht von Hand ändern.
+display:
+  default:
+    display_options:
+      title: 'Accusés de lecture'
+      fields:
+        name:
+          label: 'Utilisateur'
+        field_firma:
+          label: 'Entreprise'
+        title:
+          label: 'Machine'
+        bestaetigt_am:
+          label: 'Confirmé le'
+      empty:
+        area_text_custom:
+          content: 'Aucune confirmation pour l’instant.'
+      exposed_form:
+        options:
+          submit_button: 'Appliquer'
+          exposed_sorts_label: 'Trier par'
+      arguments:
+        bulletin_nid:
+          exception:
+            title: 'Tous'

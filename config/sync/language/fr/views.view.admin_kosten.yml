@@ -1,0 +1,17 @@
+# Erzeugt von docs/i18n/config-translate.php (Aufgabe 6.5) — nicht von Hand ändern.
+display:
+  default:
+    display_options:
+      title: 'Utilisation et coûts : coûts par mois'
+      fields:
+        period_month:
+          label: 'Mois'
+        tokens_total:
+          label: 'Tokens'
+        kosten_chf:
+          label: 'Coûts (CHF)'
+        limit_share:
+          label: 'Part de la limite mensuelle'
+      empty:
+        area_text_custom:
+          content: 'Pas encore de coûts.'

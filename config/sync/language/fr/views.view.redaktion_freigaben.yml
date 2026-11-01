@@ -1,0 +1,21 @@
+# Erzeugt von docs/i18n/config-translate.php (Aufgabe 6.5) — nicht von Hand ändern.
+display:
+  default:
+    display_options:
+      title: 'File d’approbation · résumés IA'
+      fields:
+        title:
+          label: 'Titre'
+        field_dokument:
+          label: 'Document'
+        field_version:
+          label: 'Version'
+        field_generiert_am:
+          label: 'Généré le'
+        field_modell:
+          label: 'Modèle'
+        moderation_state:
+          label: 'Statut'
+      empty:
+        area_text_custom:
+          content: 'Aucun résumé dans ce statut.'

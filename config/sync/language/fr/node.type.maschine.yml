@@ -1,0 +1,3 @@
+# Erzeugt von docs/i18n/config-translate.php (Aufgabe 6.5) — nicht von Hand ändern.
+name: 'Machine'
+description: 'Machine d’un client (source SAP via Migrate) ; le titre est le numéro de série.'

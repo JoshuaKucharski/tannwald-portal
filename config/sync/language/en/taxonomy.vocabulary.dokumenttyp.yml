@@ -1,0 +1,3 @@
+# Erzeugt von docs/i18n/config-translate.php (Aufgabe 6.5) — nicht von Hand ändern.
+name: 'Document type'
+description: 'Document types (operating instructions, spare parts catalogue …). The terms are created by the seeder.'

@@ -1,0 +1,21 @@
+# Erzeugt von docs/i18n/config-translate.php (Aufgabe 6.5) — nicht von Hand ändern.
+display:
+  default:
+    display_options:
+      title: 'Utilisation et coûts : utilisation par jour'
+      fields:
+        period_day:
+          label: 'Jour'
+        kontext:
+          label: 'Contexte'
+        operation:
+          label: 'Opération'
+        id:
+          label: 'Appels'
+        prompt_tokens:
+          label: 'Tokens (prompt)'
+        completion_tokens:
+          label: 'Tokens (réponse)'
+      empty:
+        area_text_custom:
+          content: 'Aucune utilisation au cours des 30 derniers jours.'

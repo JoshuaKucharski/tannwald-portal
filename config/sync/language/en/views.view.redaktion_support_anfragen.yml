@@ -1,0 +1,19 @@
+# Erzeugt von docs/i18n/config-translate.php (Aufgabe 6.5) — nicht von Hand ändern.
+display:
+  default:
+    display_options:
+      title: 'Support requests'
+      fields:
+        created:
+          label: 'Time'
+        uid:
+          label: 'User'
+        maschine_nid:
+          label: 'Machine'
+        frage:
+          label: 'Question'
+        status:
+          label: 'Status'
+      empty:
+        area_text_custom:
+          content: 'No support requests.'

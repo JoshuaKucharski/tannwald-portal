@@ -1,0 +1,3 @@
+# Erzeugt von docs/i18n/config-translate.php (Aufgabe 6.5) — nicht von Hand ändern.
+label: 'Territoire du revendeur'
+description: 'Code pays (ISO 3166 alpha-2), uniquement pour les revendeurs.'
