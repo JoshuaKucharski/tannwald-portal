@@ -11,14 +11,8 @@ msgstr ""
 msgid "Tannwald chunk embedding"
 msgstr "Tannwald: Chunks einbetten"
 
-msgid "Invalid tannwald_embed payload dropped: @payload"
-msgstr "Ungültiger tannwald_embed-Job verworfen: @payload"
 
-msgid "Indexing node @nid revision @vid (@lang) failed, attempt @attempt of @max, requeued: @message"
-msgstr "Indexierung von Node @nid, Revision @vid (@lang) fehlgeschlagen, Versuch @attempt von @max, erneut eingestellt: @message"
 
-msgid "Indexing node @nid revision @vid (@lang) failed after @attempt attempts, job dropped: @message"
-msgstr "Indexierung von Node @nid, Revision @vid (@lang) nach @attempt Versuchen fehlgeschlagen, Job verworfen: @message"
 
 msgid "tannwald_access.entitlement missing: chunks of node @nid are stored without access keys (invisible)."
 msgstr "tannwald_access.entitlement fehlt: Chunks von Node @nid werden ohne Access-Keys gespeichert (unsichtbar)."
@@ -32,5 +26,70 @@ msgstr "similar() hat @rows Chunk-Zeilen in PHP verglichen (mehr als @max); Open
 msgid "Queued @jobs index jobs for @nodes nodes (tannwald_embed now holds @total items)."
 msgstr "@jobs Index-Jobs für @nodes Nodes eingestellt (tannwald_embed enthält jetzt @total Einträge)."
 
-msgid "tannwald_embed empty: @ok ok, @skipped skipped, @retry retried, @failed failed in @seconds s."
-msgstr "tannwald_embed leer: @ok ok, @skipped übersprungen, @retry wiederholt, @failed fehlgeschlagen in @seconds s."
+msgid "Invalid @queue payload dropped: @payload"
+msgstr "Ungültiger Job in @queue verworfen: @payload"
+
+msgid "@queue job for node @nid revision @vid (@lang) failed, attempt @attempt of @max, requeued: @message"
+msgstr "Job in @queue für Node @nid, Revision @vid (@lang) fehlgeschlagen, Versuch @attempt von @max, erneut eingestellt: @message"
+
+msgid "@queue job for node @nid revision @vid (@lang) failed after @attempt attempts, dropped: @message"
+msgstr "Job in @queue für Node @nid, Revision @vid (@lang) nach @attempt Versuchen fehlgeschlagen, verworfen: @message"
+
+msgid "@queue empty: @ok ok, @skipped skipped, @retry retried, @failed failed in @seconds s."
+msgstr "@queue leer: @ok ok, @skipped übersprungen, @retry wiederholt, @failed fehlgeschlagen in @seconds s."
+
+msgid "Option --only accepts embed or summarize."
+msgstr "Die Option --only erlaubt embed oder summarize."
+
+msgid "Queued @jobs summary jobs (tannwald_summarize now holds @total items)."
+msgstr "@jobs Zusammenfassungs-Jobs eingestellt (tannwald_summarize enthält jetzt @total Einträge)."
+
+msgid "Tannwald document summaries"
+msgstr "Tannwald: Dokument-Zusammenfassungen"
+
+msgid "Summary: @title @version"
+msgstr "Zusammenfassung: @title @version"
+
+msgctxt "tannwald review"
+msgid "Summary (editable)"
+msgstr "Zusammenfassung (bearbeitbar)"
+
+msgctxt "tannwald review"
+msgid "Approve"
+msgstr "Freigeben"
+
+msgctxt "tannwald review"
+msgid "Save draft"
+msgstr "Entwurf speichern"
+
+msgctxt "tannwald review"
+msgid "Reject"
+msgstr "Zurückweisen"
+
+msgctxt "tannwald review"
+msgid "Summary"
+msgstr "Zusammenfassung"
+
+msgid "The summary has been approved."
+msgstr "Die Zusammenfassung wurde freigegeben."
+
+msgid "The summary has been rejected."
+msgstr "Die Zusammenfassung wurde zurückgewiesen."
+
+msgid "The summary has been saved as draft."
+msgstr "Die Zusammenfassung wurde als Entwurf gespeichert."
+
+msgid "Approved summary"
+msgstr "Freigegebene Zusammenfassung"
+
+msgid "Approved AI summary of the current revision."
+msgstr "Freigegebene KI-Zusammenfassung der aktuellen Revision."
+
+msgid "Generated @date with @model, approved by the editorial team."
+msgstr "Generiert am @date mit @model, von der Redaktion freigegeben."
+
+msgid "Tannwald review tabs with counts"
+msgstr "Tannwald: Freigabe-Reiter mit Zählern"
+
+msgid "Links to the review displays with the number of summaries per moderation state."
+msgstr "Links zu den Freigabe-Anzeigen mit der Zahl der Zusammenfassungen je Status."

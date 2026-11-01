@@ -64,15 +64,15 @@ final class ReviewForm extends FormBase {
     $latest = $this->reviewTransition->latest($node, $langcode);
     $form['body'] = [
       '#type' => 'textarea',
-      '#title' => $this->t('Summary (editable)'),
+      '#title' => $this->t('Summary (editable)', [], ['context' => 'tannwald review']),
       '#default_value' => (string) $latest->get('body')->value,
       '#rows' => 8,
     ];
     $form['langcode'] = ['#type' => 'hidden', '#value' => $langcode];
     $labels = [
-      'freigeben' => $this->t('Approve'),
-      'entwurf_speichern' => $this->t('Save draft'),
-      'zurueckweisen' => $this->t('Reject'),
+      'freigeben' => $this->t('Approve', [], ['context' => 'tannwald review']),
+      'entwurf_speichern' => $this->t('Save draft', [], ['context' => 'tannwald review']),
+      'zurueckweisen' => $this->t('Reject', [], ['context' => 'tannwald review']),
     ];
     $allowed = $this->reviewTransition->allowed($node, $this->currentUser(), $langcode);
     $form['actions'] = ['#type' => 'actions'];
