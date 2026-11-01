@@ -1,0 +1,117 @@
+# German translation of tannwald_demo (de-CH: "ss" statt "ß", Anrede Sie).
+msgid ""
+msgstr ""
+"Project-Id-Version: tannwald_demo\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: de\n"
+
+msgid "Tannwald document manifest, one row per version"
+msgstr "Tannwald-Dokumentmanifest, eine Zeile je Version"
+
+msgid "Terms: @created created, @existing existing."
+msgstr "Terme: @created angelegt, @existing vorhanden."
+
+msgid "Export rules: set (direct config write, no audit entry exportregel_geaendert)."
+msgstr "Exportregeln: gesetzt (direkt in die Konfiguration, kein Audit-Eintrag exportregel_geaendert)."
+
+msgid "Export rules: unchanged."
+msgstr "Exportregeln: unverändert."
+
+msgid "Node access rebuilt in @seconds s."
+msgstr "Zugriffsrechte in @seconds s neu berechnet."
+
+msgid "Read confirmation: created (kunde-a, SRV-2026-19, TB200-2021-0417, 03.10.2026; no audit entry)."
+msgstr "Lesebestätigung: angelegt (kunde-a, SRV-2026-19, TB200-2021-0417, 03.10.2026; kein Audit-Eintrag)."
+
+msgid "Read confirmation: unchanged."
+msgstr "Lesebestätigung: unverändert."
+
+msgid "Read confirmation: skipped (tannwald_bulletin missing)."
+msgstr "Lesebestätigung: übersprungen (tannwald_bulletin fehlt)."
+
+msgid "Read confirmation: skipped (bulletin, machine or account missing)."
+msgstr "Lesebestätigung: übersprungen (Bulletin, Maschine oder Konto fehlt)."
+
+msgid "Queues: skipped (--skip-queues)."
+msgstr "Queues: übersprungen (--skip-queues)."
+
+msgid "@queue: @failed jobs failed (Ollama reachable?); the seed counts anyway, run drush tannwald:reindex and tannwald:queue-run later."
+msgstr "@queue: @failed Jobs gescheitert (Ollama erreichbar?); der Seed gilt trotzdem, später drush tannwald:reindex und tannwald:queue-run ausführen."
+
+msgid "tannwald_notify: @count jobs deleted (the demo mails come from the live approval of SB-2026-07)."
+msgstr "tannwald_notify: @count Jobs gelöscht (die Demo-Mails entstehen bei der Live-Freigabe von SB-2026-07)."
+
+msgid "Changes: @changes. Done in @seconds s."
+msgstr "Änderungen: @changes. Fertig in @seconds s."
+
+msgid "@failed migration rows failed; see the messages above."
+msgstr "@failed Migrationszeilen gescheitert; siehe Meldungen oben."
+
+msgid "Demo data only in DDEV (IS_DDEV_PROJECT) or CI (CI); nothing changed."
+msgstr "Demo-Daten nur in DDEV (IS_DDEV_PROJECT) oder CI (CI); nichts geändert."
+
+msgid "Migration"
+msgstr "Migration"
+
+msgid "Source"
+msgstr "Quelle"
+
+msgid "Created"
+msgstr "Angelegt"
+
+msgid "Updated"
+msgstr "Aktualisiert"
+
+msgid "Unchanged"
+msgstr "Unverändert"
+
+msgid "Failed"
+msgstr "Gescheitert"
+
+msgid "Repaired"
+msgstr "Repariert"
+
+msgid "Queue"
+msgstr "Queue"
+
+msgid "Processed"
+msgstr "Verarbeitet"
+
+msgid "OK"
+msgstr "OK"
+
+msgid "Skipped"
+msgstr "Übersprungen"
+
+msgid "Left"
+msgstr "Offen"
+
+msgid "Seconds"
+msgstr "Sekunden"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "Count"
+msgstr "Zählung"
+
+msgid "Value"
+msgstr "Wert"
+
+msgid "Deleted"
+msgstr "Gelöscht"
+
+msgid "Rolled back"
+msgstr "Zurückgerollt"
+
+msgid "Rows"
+msgstr "Zeilen"
+
+msgid "Account admin: role portal_admin and mail admin@tannwald.example set."
+msgstr "Konto admin: Rolle portal_admin und Mail admin@tannwald.example gesetzt."
+
+msgid "Account admin: unchanged."
+msgstr "Konto admin: unverändert."
