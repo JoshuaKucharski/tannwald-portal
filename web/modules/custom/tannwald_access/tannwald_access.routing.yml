@@ -1,0 +1,40 @@
+tannwald_access.download:
+  path: '/dokument/{node}/download'
+  defaults:
+    _controller: '\Drupal\tannwald_access\Controller\DownloadController::download'
+  methods: [GET]
+  requirements:
+    node: \d+
+    _entity_access: 'node.view'
+    _custom_access: '\Drupal\tannwald_access\Controller\DownloadController::access'
+  options:
+    no_cache: TRUE
+    parameters:
+      node:
+        type: 'entity:node'
+
+tannwald_access.export_rules:
+  path: '/compliance/exportregeln'
+  defaults:
+    _form: '\Drupal\tannwald_access\Form\ExportRulesForm'
+    _title: 'Export rules'
+  requirements:
+    _permission: 'tannwald manage export rules'
+
+tannwald_access.audit:
+  path: '/compliance/audit'
+  defaults:
+    _controller: '\Drupal\tannwald_access\Controller\AuditController::page'
+    _title: 'Audit log'
+  requirements:
+    _permission: 'tannwald view audit log'
+
+tannwald_access.audit_csv:
+  path: '/compliance/audit.csv'
+  defaults:
+    _controller: '\Drupal\tannwald_access\Controller\AuditController::csv'
+  methods: [GET]
+  requirements:
+    _permission: 'tannwald view audit log'
+  options:
+    no_cache: TRUE

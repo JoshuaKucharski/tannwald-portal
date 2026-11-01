@@ -1,0 +1,88 @@
+# German translation of tannwald_access (de-CH: "ss" statt "ß", Anrede Sie).
+msgid ""
+msgstr ""
+"Project-Id-Version: tannwald_access\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: de\n"
+
+msgid "View own company documents"
+msgstr "Dokumente der eigenen Firma ansehen"
+
+msgid "Shows the document lists of the own company. Visibility itself is computed from company, machine types and export rules."
+msgstr "Zeigt die Dokumentlisten der eigenen Firma. Die Sichtbarkeit selbst wird aus Firma, Maschinentypen und Exportregeln berechnet."
+
+msgid "View all documents"
+msgstr "Alle Dokumente ansehen"
+
+msgid "Internal roles: shows lists across all companies. Export rules still apply."
+msgstr "Interne Rollen: zeigt Listen über alle Firmen. Die Exportregeln gelten trotzdem."
+
+msgid "Manage export rules"
+msgstr "Exportregeln verwalten"
+
+msgid "Edit allowed countries and blocked companies per export class."
+msgstr "Erlaubte Länder und gesperrte Firmen je Exportklasse bearbeiten."
+
+msgid "View audit log"
+msgstr "Audit-Log ansehen"
+
+msgid "View and export the audit log."
+msgstr "Audit-Log ansehen und exportieren."
+
+msgid "Export rules"
+msgstr "Exportregeln"
+
+msgid "Audit log"
+msgstr "Audit-Log"
+
+msgid "Export class 1"
+msgstr "Exportklasse 1"
+
+msgid "Export class 2 (dual use)"
+msgstr "Exportklasse 2 (Dual-Use)"
+
+msgid "Allowed countries"
+msgstr "Erlaubte Länder"
+
+msgid "ISO 3166-1 alpha-2 codes in capital letters, separated by commas, e.g. CH, DE, AT."
+msgstr "ISO-3166-1-Alpha-2-Codes in Grossbuchstaben, durch Kommas getrennt, z. B. CH, DE, AT."
+
+msgid "Blocked companies"
+msgstr "Gesperrte Firmen"
+
+msgid "SAP numbers, separated by commas."
+msgstr "SAP-Nummern, durch Kommas getrennt."
+
+msgid "%code is not an ISO 3166-1 alpha-2 code in capital letters."
+msgstr "%code ist kein ISO-3166-1-Alpha-2-Code in Grossbuchstaben."
+
+msgid "%value is not a valid SAP number."
+msgstr "%value ist keine gültige SAP-Nummer."
+
+msgid "Access permissions are being recalculated."
+msgstr "Zugriffsrechte werden neu berechnet."
+
+msgid "Safety bulletins must not be approved by the person who created them (four-eyes principle)."
+msgstr "Sicherheits-Bulletins dürfen nicht von der Erstellerin oder dem Ersteller freigegeben werden (Vier-Augen-Prinzip)."
+
+msgctxt "Validation"
+msgid "Safety bulletin not approved by its creator"
+msgstr "Sicherheits-Bulletin nicht durch die erstellende Person freigegeben"
+
+msgid "Download CSV"
+msgstr "CSV-Download"
+
+msgid "Event"
+msgstr "Ereignis"
+
+msgid "Entity type"
+msgstr "Entitätstyp"
+
+msgid "Entity ID"
+msgstr "Entitäts-ID"
+
+msgid "No audit entries."
+msgstr "Keine Audit-Einträge."
