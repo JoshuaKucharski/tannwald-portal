@@ -214,13 +214,14 @@ keine Geheimnisse und nennt am Ende das Ergebnis. Voraussetzungen: macOS mit Hom
 braucht keinen API-Schlüssel (Ollama lokal, Modelle `bge-m3` und `qwen2.5:7b`, etwa 6 GB Download).
 
 ```
-bash scripts/tannwald-run.sh --vorbereitung   # prüft brew, Docker, DDEV, mkcert, Ollama; installiert nur Fehlendes
-bash scripts/tannwald-run.sh --lokal          # DDEV, Drupal, Konfiguration, Seeder, Login-Link; endet mit FERTIG
-bash scripts/tannwald-run.sh --probe          # liest nur; endet mit „Bereit: ja“ oder „Bereit: NEIN — fehlt: …“
-bash scripts/tannwald-run.sh --reset          # Demo-Daten zurücksetzen (tannwald:demo-reset)
-bash scripts/tannwald-run.sh --eval           # voller Eval-Lauf, schreibt docs/evals/ergebnisse-<datum>.md
-bash scripts/tannwald-run.sh --frisch         # Klon-Probe in einem eigenen DDEV-Projekt
+bash scripts/tannwald-run.sh --vorbereitung   # einmal: ddev, mkcert, Ollama, Modelle
+bash scripts/tannwald-run.sh --lokal          # Start, Install, Seeder, Kurzprobe, Login-Link (~1 min, erster Lauf ~4 min)
+bash scripts/tannwald-run.sh --probe          # liest; „Bereit: ja“
+bash scripts/tannwald-run.sh --eval           # voller Eval-Lauf, 15–25 min
 ```
+
+Aufruf aus dem Repo-Ordner. Weitere Modi: `--reset` (Demo-Daten zurücksetzen) und `--frisch` (Klon-Probe in einem eigenen
+DDEV-Projekt); Prüfstand des Skripts: `bash scripts/pruefstand/pruefstand.sh`.
 
 Das Skript führt diese Befehlsfolge aus: `ddev start`, `ddev composer install`,
 `ddev drush site:install --existing-config -y` (nur auf leerer Datenbank), `ddev drush updatedb -y`,
