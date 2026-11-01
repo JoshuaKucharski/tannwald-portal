@@ -63,6 +63,19 @@ class SummaryHooks {
   }
 
   /**
+   * Implements hook_views_data().
+   */
+  #[Hook('views_data')]
+  public function viewsData(): array {
+    $data['views']['tannwald_review_counts'] = [
+      'title' => $this->t('Tannwald review tabs with counts'),
+      'help' => $this->t('Links to the review displays with the number of summaries per moderation state.'),
+      'area' => ['id' => 'tannwald_review_counts'],
+    ];
+    return $data;
+  }
+
+  /**
    * Implements hook_theme().
    */
   #[Hook('theme')]

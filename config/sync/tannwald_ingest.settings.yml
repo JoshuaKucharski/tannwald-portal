@@ -1,0 +1,5 @@
+_core:
+  default_config_hash: nOZryRx-BG34jwOP7-xwDRKqR8MCFL6HLV-ksAbLFts
+summaries_enabled: true
+summary_max_words: 120
+summary_input_chars: 6000
