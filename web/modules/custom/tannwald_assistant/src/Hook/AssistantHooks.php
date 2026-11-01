@@ -74,6 +74,11 @@ final class AssistantHooks {
       'label' => $this->t('Machine'),
     ];
     $log['created'] = self::date($this->t('Created'));
+    $log['last_created'] = [
+      'title' => $this->t('Last asked'),
+      'real field' => 'created',
+      'field' => ['id' => 'tannwald_last_date'],
+    ];
 
     $usage = &$data['tannwald_usage'];
     $usage['table'] = [

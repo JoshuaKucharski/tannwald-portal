@@ -48,3 +48,23 @@ tannwald_assistant.settings:
     assistant_enabled:
       type: boolean
       label: 'Assistant enabled'
+
+views.field.tannwald_period:
+  type: views_field
+  label: 'Day or month of a timestamp'
+
+views.field.tannwald_last_date:
+  type: views_field
+  label: 'Latest timestamp of a group'
+
+views.field.tannwald_tokens_total:
+  type: views_field
+  label: 'Sum of prompt and completion tokens'
+
+views.field.tannwald_limit_share:
+  type: views_field
+  label: 'Share of the monthly token limit'
+
+views.area.tannwald_answer_stats:
+  type: views_area
+  label: 'Assistant answers per day'

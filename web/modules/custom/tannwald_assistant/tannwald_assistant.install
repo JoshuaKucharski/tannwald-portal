@@ -7,6 +7,8 @@
 
 declare(strict_types=1);
 
+use Drupal\Core\Config\FileStorage;
+
 /**
  * Implements hook_schema().
  */
@@ -150,4 +152,13 @@ function tannwald_assistant_update_10002(): string {
     $manager->installEntityType(\Drupal::entityTypeManager()->getDefinition('support_anfrage'));
   }
   return 'Entity type support_anfrage installed.';
+}
+
+/**
+ * Views (config/optional): Unbeantwortete Fragen, Nutzung, Kosten, Support.
+ */
+function tannwald_assistant_update_10003(): string {
+  $path = \Drupal::service('extension.list.module')->getPath('tannwald_assistant') . '/config/optional';
+  \Drupal::service('config.installer')->installOptionalConfig(new FileStorage($path));
+  return 'Optional views of tannwald_assistant installed (if roles and views exist).';
 }

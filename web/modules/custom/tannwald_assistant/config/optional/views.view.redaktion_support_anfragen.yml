@@ -1,0 +1,140 @@
+langcode: de
+status: true
+dependencies:
+  config:
+    - user.role.compliance
+    - user.role.portal_admin
+    - user.role.redaktion
+  module:
+    - tannwald_assistant
+    - user
+id: redaktion_support_anfragen
+label: Support-Anfragen
+module: views
+description: 'Support-Anfragen aus dem Assistenten (FA-AI-03); Status-Wechsel folgt in 6.1.'
+tag: tannwald
+base_table: support_anfrage
+base_field: id
+display:
+  default:
+    id: default
+    display_title: Standard
+    display_plugin: default
+    position: 0
+    display_options:
+      title: Support-Anfragen
+      fields:
+        created:
+          id: created
+          table: support_anfrage
+          field: created
+          relationship: none
+          group_type: group
+          plugin_id: field
+          label: Zeit
+          entity_type: support_anfrage
+          entity_field: created
+          type: timestamp
+          settings:
+            date_format: custom
+            custom_date_format: 'd.m.Y H:i'
+            timezone: ''
+        uid:
+          id: uid
+          table: support_anfrage
+          field: uid
+          relationship: none
+          group_type: group
+          plugin_id: field
+          label: Nutzer
+          entity_type: support_anfrage
+          entity_field: uid
+          type: entity_reference_label
+          settings:
+            link: false
+        maschine_nid:
+          id: maschine_nid
+          table: support_anfrage
+          field: maschine_nid
+          relationship: none
+          group_type: group
+          plugin_id: field
+          label: Maschine
+          entity_type: support_anfrage
+          entity_field: maschine_nid
+          type: entity_reference_label
+          settings:
+            link: false
+        frage:
+          id: frage
+          table: support_anfrage
+          field: frage
+          relationship: none
+          group_type: group
+          plugin_id: field
+          label: Frage
+          entity_type: support_anfrage
+          entity_field: frage
+          type: basic_string
+        status:
+          id: status
+          table: support_anfrage
+          field: status
+          relationship: none
+          group_type: group
+          plugin_id: field
+          label: Status
+          entity_type: support_anfrage
+          entity_field: status
+          type: string
+          settings:
+            link_to_entity: false
+      sorts:
+        created:
+          id: created
+          table: support_anfrage
+          field: created
+          relationship: none
+          group_type: group
+          plugin_id: date
+          order: DESC
+          entity_type: support_anfrage
+          entity_field: created
+      pager:
+        type: full
+        options:
+          items_per_page: 50
+          offset: 0
+      empty:
+        area_text_custom:
+          id: area_text_custom
+          table: views
+          field: area_text_custom
+          relationship: none
+          group_type: group
+          plugin_id: text_custom
+          empty: true
+          content: 'Keine Support-Anfragen.'
+      style:
+        type: table
+      row:
+        type: fields
+      query:
+        type: views_query
+        options: {  }
+      access:
+        type: role
+        options:
+          role:
+            redaktion: redaktion
+            compliance: compliance
+            portal_admin: portal_admin
+      cache:
+        type: none
+  page_1:
+    id: page_1
+    display_title: Seite
+    display_plugin: page
+    position: 1
+    display_options:
+      path: redaktion/support-anfragen
