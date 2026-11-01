@@ -62,7 +62,7 @@
   .btn-text { @apply inline-flex items-center font-medium text-accent no-underline hover:text-accent-hover hover:underline; }
   .chip { @apply inline-flex h-9 items-center rounded-pill border border-line bg-panel px-3 text-sm text-ink hover:border-accent hover:text-accent; }
   .card { @apply rounded-card border border-line bg-panel shadow-card; }
-  .card-head { @apply flex flex-wrap items-center gap-4 border-b border-line px-5 py-4; }
+  .card-head { @apply flex flex-wrap items-center gap-4 border-b border-line px-6 py-4; }
   .card-title { @apply m-0 text-xl font-semibold leading-snug; }
   .meta { @apply text-sm leading-[1.45] text-muted; }
   .pill { @apply rounded-pill border px-2 py-[3px] text-xs font-medium; }
@@ -158,12 +158,12 @@
   .review-check { @apply flex items-center gap-2 text-sm; }
   .review-check[data-ok="1"] .mark { @apply text-ok; }
   .review-check[data-ok="0"] .mark { @apply text-warn; }
-  .redaktion-table { @apply w-full border-collapse text-sm; }
-  .redaktion-table th { @apply border-b border-line bg-surface px-3 py-2 text-left text-[13px] font-semibold text-muted; }
-  .redaktion-table td { @apply border-b border-line-soft px-3 py-2.5 align-top; }
-  .redaktion-main .view-content table, .redaktion-main table.sticky-enabled, .redaktion-main form table { @apply w-full border-collapse text-sm; }
-  .redaktion-main .view-content th, .redaktion-main form th { @apply border-b border-line bg-surface px-3 py-2 text-left text-[13px] font-semibold text-muted; }
-  .redaktion-main .view-content td, .redaktion-main form td { @apply border-b border-line-soft px-3 py-2.5 align-top; }
+  .redaktion-main table { @apply w-full border-collapse text-sm; }
+  .redaktion-main th { @apply border-b border-line bg-surface px-3 py-2 text-left text-[13px] font-semibold text-muted; }
+  .redaktion-main td { @apply border-b border-line-soft px-3 py-2.5 align-top; }
+  .redaktion-main tr:last-child td { @apply border-b-0; }
+  .redaktion-main .view-content > table, .redaktion-main form > table, .redaktion-main > table { @apply overflow-hidden rounded-card border border-line bg-panel; }
+  .redaktion-main .item-list + table { @apply mt-2; }
   .redaktion-main details { @apply mb-4 rounded-card border border-line bg-panel p-4; }
   .redaktion-main details > summary { @apply cursor-pointer font-semibold; }
   .redaktion-main .form-item .description { @apply text-[13px] text-muted; }

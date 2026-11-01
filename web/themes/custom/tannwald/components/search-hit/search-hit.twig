@@ -10,7 +10,7 @@
 {% if version %}{% set meta = meta|merge(['v' ~ version]) %}{% endif %}
 {% if langcode %}{% set meta = meta|merge([langcode|upper]) %}{% endif %}
 {% if freigegeben_am %}{% set meta = meta|merge([freigegeben_am]) %}{% endif %}
-<li{{ attributes.addClass('tannwald-search__hit flex flex-col gap-2 border-b border-line-soft px-5 py-4 last:border-b-0').setAttribute('data-nid', nid).setAttribute('data-matched-by', matched_by|default('keyword')) }}>
+<li{{ attributes.addClass('tannwald-search__hit flex flex-col gap-2 border-b border-line-soft px-6 py-4 last:border-b-0').setAttribute('data-nid', nid).setAttribute('data-matched-by', matched_by|default('keyword')) }}>
   <div class="flex flex-wrap items-center gap-2.5">
     {% if dokumenttyp %}
       {{ include('tannwald:badge', {label: dokumenttyp, variant: is_bulletin ? 'warn' : 'neutral'}, with_context = false) }}

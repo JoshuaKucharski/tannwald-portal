@@ -5,7 +5,7 @@
  */
 #}
 {% set is_safety = art == 'sicherheit' %}
-<section{{ attributes.addClass('flex flex-wrap items-center gap-4 rounded-card border border-l-[6px] px-5 py-4', is_safety ? 'border-warn-line border-l-warn-strong bg-warn-bg' : 'border-line border-l-accent bg-panel') }} aria-label="{{ is_safety ? 'Open safety bulletin'|t : 'Open service bulletin'|t }}" data-bulletin-id="{{ id }}">
+<section{{ attributes.addClass('flex flex-wrap items-center gap-4 rounded-card border border-l-[6px] px-6 py-4 shadow-card', is_safety ? 'border-warn-line border-l-warn-strong bg-warn-bg' : 'border-line border-l-accent bg-panel') }} aria-label="{{ is_safety ? 'Open safety bulletin'|t : 'Open service bulletin'|t }}" data-bulletin-id="{{ id }}">
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="{{ is_safety ? 'text-warn-strong' : 'text-accent' }}"><path d="M12 3 2 20h20L12 3z"></path><path d="M12 10v5"></path><path d="M12 18h.01"></path></svg>
   <div class="flex min-w-0 flex-1 basis-96 flex-col gap-0.5">
     <strong class="{{ is_safety ? 'text-warn' : 'text-ink' }}">{{ is_safety ? 'Safety bulletin'|t : 'Service bulletin'|t }} {{ id }} · {{ titel }}</strong>

@@ -5,7 +5,7 @@
  */
 #}
 {% if breadcrumb %}
-  <nav aria-label="{{ 'Breadcrumb'|t }}" class="flex flex-wrap items-center gap-2 text-[13px] text-muted">
+  <nav aria-label="{{ 'Breadcrumb'|t }}" class="flex flex-wrap items-center gap-2 text-sm text-muted">
     {% for item in breadcrumb %}
       {% if not loop.first %}<span aria-hidden="true">›</span>{% endif %}
       {% if item.url %}

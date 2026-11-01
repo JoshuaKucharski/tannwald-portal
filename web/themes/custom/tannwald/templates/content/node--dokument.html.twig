@@ -13,7 +13,7 @@
 {{ cache_bubble }}
 <article{{ attributes.addClass('flex flex-col gap-6') }}>
   {{ title_prefix }}{{ title_suffix }}
-  <header class="card flex flex-wrap items-start gap-6 p-6">
+  <header class="card flex flex-wrap items-start gap-6 p-4 md:p-6">
     <div class="flex min-w-0 flex-1 basis-[420px] flex-col gap-2">
       {% if badges %}
         <span class="flex flex-wrap items-center gap-2">
@@ -48,8 +48,8 @@
 
   <div class="flex flex-wrap items-start gap-6">
     {% if toc %}
-      <nav aria-label="{{ 'Table of contents'|t }}" class="card w-full p-4 lg:sticky lg:top-6 lg:w-72 lg:shrink-0">
-        <h2 class="m-0 mb-2 text-xs font-semibold uppercase tracking-[0.04em] text-muted">{{ 'Contents'|t }}</h2>
+      <nav aria-label="{{ 'Table of contents'|t }}" class="card w-full p-4 md:p-6 lg:sticky lg:top-6 lg:w-72 lg:shrink-0">
+        <h2 class="m-0 mb-3 text-sm font-semibold text-muted">{{ 'Contents'|t }}</h2>
         <ol class="m-0 flex list-none flex-col gap-1 p-0 text-sm">
           {% for entry in toc %}
             <li class="{{ entry.level == 3 ? 'pl-4' : 'font-medium' }}"><a href="#{{ entry.anchor }}" class="no-underline hover:underline">{{ entry.text }}</a></li>
@@ -57,7 +57,7 @@
         </ol>
       </nav>
     {% endif %}
-    <div class="card min-w-0 flex-1 basis-[560px] p-6">
+    <div class="card min-w-0 flex-1 basis-[560px] p-4 md:p-6">
       <section class="mb-6" aria-label="{{ 'Summary'|t({}, {'context': 'tannwald review'}) }}">
         {% if has_summary %}
           {{ content.tannwald_summary }}

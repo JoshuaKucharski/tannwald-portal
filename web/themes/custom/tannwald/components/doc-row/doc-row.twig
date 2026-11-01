@@ -4,7 +4,7 @@
  * SDC tannwald:doc-row — eine Dokumentzeile. Props siehe doc-row.component.yml.
  */
 #}
-<div{{ attributes.addClass('flex flex-wrap items-center gap-4 border-b border-line-soft px-5 py-4 last:border-b-0', is_current ? '' : 'bg-surface/70').setAttribute('data-revision', is_current ? 'current' : 'older') }}>
+<div{{ attributes.addClass('flex flex-wrap items-center gap-4 border-b border-line-soft px-6 py-4 last:border-b-0', is_current ? '' : 'bg-surface/70').setAttribute('data-revision', is_current ? 'current' : 'older') }}>
   <div class="flex min-w-0 flex-1 basis-80 flex-col gap-1">
     <span class="flex flex-wrap items-center gap-2.5">
       {% if url_dokument %}

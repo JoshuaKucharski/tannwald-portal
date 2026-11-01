@@ -592,3 +592,16 @@ msgstr "An Support"
 
 msgid "Actions"
 msgstr "Aktionen"
+
+# Leer-Zustände (Design-Pass)
+msgid "No documents are available for this machine. As soon as the editorial team approves one, it appears here."
+msgstr "Für diese Maschine sind noch keine Dokumente verfügbar. Sobald die Redaktion eines freigibt, erscheint es hier."
+
+msgid "No bulletins for this machine. New bulletins appear here as soon as they are released."
+msgstr "Keine Bulletins für diese Maschine. Neue Bulletins erscheinen hier, sobald sie freigegeben sind."
+
+msgid "No machines are assigned to your company yet. Your Tannwald contact links them to your account."
+msgstr "Ihrer Firma sind noch keine Maschinen zugeordnet. Ihre Tannwald-Ansprechperson verknüpft sie mit Ihrem Konto."
+
+msgid "No hits for “@query”. Try another spelling, switch to Hybrid, or ask the assistant."
+msgstr "Keine Treffer für „@query“. Versuchen Sie eine andere Schreibweise, wechseln Sie zu Hybrid oder fragen Sie den Assistenten."

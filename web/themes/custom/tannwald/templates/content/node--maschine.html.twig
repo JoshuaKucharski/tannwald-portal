@@ -15,9 +15,9 @@
 <article{{ attributes.addClass('flex flex-col gap-6') }} data-maschine-nid="{{ maschine_nid }}">
   {{ title_prefix }}{{ title_suffix }}
 
-  <section class="card flex flex-wrap items-start gap-6 p-6" aria-label="{{ 'Machine'|t }}">
+  <section class="card flex flex-wrap items-start gap-6 p-4 md:p-6" aria-label="{{ 'Machine'|t }}">
     <div class="flex min-w-0 flex-1 basis-[420px] flex-col gap-1.5">
-      <span class="text-[13px] uppercase tracking-[0.04em] text-muted">{{ machine.type_note ?: machine.company }}</span>
+      <span class="meta">{{ machine.type_note ?: machine.company }}</span>
       <h1 class="m-0 text-[28px] font-semibold leading-tight">{{ machine.type_name }} · {{ 'Serial number @serial'|t({'@serial': machine.serial}) }}</h1>
       <p class="m-0 text-muted">
         {%- if machine.location %}{{ 'Location @location'|t({'@location': machine.location}) }}{% endif %}
@@ -78,7 +78,7 @@
             {{ include('tannwald:doc-row', row|merge({attributes: create_attribute({'x-show': '!currentOnly', 'x-cloak': ''})}), with_context = false) }}
           {% endif %}
         {% else %}
-          <p class="m-0 px-5 py-4 text-muted">{{ 'No documents are available for this machine.'|t }}</p>
+          <p class="m-0 px-6 py-4 text-muted">{{ 'No documents are available for this machine. As soon as the editorial team approves one, it appears here.'|t }}</p>
         {% endfor %}
       </section>
 
@@ -87,7 +87,7 @@
           <h2 id="bulletins-heading" class="card-title">{{ 'Bulletins for this machine'|t }}</h2>
         </div>
         {% for item in bulletins %}
-          <div class="flex flex-wrap items-center gap-4 border-b border-line-soft px-5 py-3.5 last:border-b-0" data-bulletin-status="{{ item.status }}">
+          <div class="flex flex-wrap items-center gap-4 border-b border-line-soft px-6 py-4 last:border-b-0" data-bulletin-status="{{ item.status }}">
             {{ include('tannwald:badge', {label: item.status_label, variant: item.status == 'open' ? 'warn' : (item.status == 'confirmed' ? 'ok' : 'neutral'), pill: true}, with_context = false) }}
             <div class="flex min-w-0 flex-1 basis-80 flex-col gap-0.5">
               <a href="{{ item.url }}" class="font-semibold text-ink no-underline hover:text-accent">{{ item.id }} {{ item.kind_label }} · {{ item.title }}</a>
@@ -95,13 +95,13 @@
             </div>
           </div>
         {% else %}
-          <p class="m-0 px-5 py-4 text-muted">{{ 'No bulletins for this machine.'|t }}</p>
+          <p class="m-0 px-6 py-4 text-muted">{{ 'No bulletins for this machine. New bulletins appear here as soon as they are released.'|t }}</p>
         {% endfor %}
       </section>
     </div>
 
     <aside aria-label="{{ 'Assistant'|t }}" class="card flex min-w-0 flex-[1_1_400px] flex-col lg:max-w-[440px]" data-maschine-nid="{{ maschine_nid }}">
-      <div class="flex flex-col gap-1 border-b border-line px-5 py-4">
+      <div class="flex flex-col gap-1 border-b border-line px-6 py-4">
         <h2 class="card-title">{{ 'Assistant'|t }}</h2>
         <span class="meta">{{ 'Answers only from approved documents of this machine'|t }}</span>
       </div>

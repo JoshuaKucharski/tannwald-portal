@@ -12,7 +12,7 @@
 } %}
 {% set status_variants = {zur_pruefung: 'warn', published: 'ok', zurueckgewiesen: 'danger', draft: 'neutral'} %}
 <article{{ attributes.addClass('card flex flex-col') }} data-status="{{ status|default('zur_pruefung') }}">
-  <header class="flex flex-col gap-1.5 border-b border-line px-5 py-4">
+  <header class="flex flex-col gap-1.5 border-b border-line px-6 py-4">
     <div class="flex flex-wrap items-center gap-3">
       <h3 class="card-title">
         <a href="{{ document.url }}" class="text-ink no-underline hover:text-accent">{{ document.title }}</a>
@@ -35,10 +35,10 @@
       <span class="inline-flex items-center gap-1.5 text-sm text-warn"><span aria-hidden="true">!</span> {{ 'Safety-relevant chapters not mentioned'|t }}</span>
     {% endif %}
   </header>
-  <div class="prose-doc px-5 py-4">
+  <div class="prose-doc px-6 py-4">
     {% block body %}{% endblock %}
   </div>
-  <footer class="flex flex-wrap items-center gap-3 border-t border-line px-5 py-4 empty:hidden">
+  <footer class="flex flex-wrap items-center gap-3 border-t border-line px-6 py-4 empty:hidden">
     {% block actions %}{% endblock %}
   </footer>
 </article>

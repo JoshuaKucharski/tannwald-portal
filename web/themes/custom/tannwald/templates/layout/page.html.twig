@@ -12,7 +12,7 @@
 {{ cache_bubble }}
 <div class="flex min-h-screen flex-col">
   {% if demo %}
-    <div class="flex flex-wrap items-center gap-x-4 gap-y-1 bg-bar px-4 py-2 text-[13px] text-white md:px-8" data-demo-bar>
+    <div class="flex flex-wrap items-center gap-x-4 gap-y-1 bg-bar px-4 py-2 text-sm text-white md:px-8" data-demo-bar>
       <span class="font-semibold">{{ 'Demo mode'|t }}</span>
       <span>{{ 'logged in as'|t }} <strong>{{ demo.account_name }}</strong>{% if demo.company %} · {{ demo.company }}{% endif %} · {{ 'Role @role'|t({'@role': demo.role_label}) }}</span>
       {% if demo.switch_links %}
@@ -60,7 +60,7 @@
 
   {% if page.footer %}
     <footer class="border-t border-line bg-panel">
-      <div class="mx-auto max-w-page px-4 py-4 text-[13px] text-muted md:px-8">{{ page.footer }}</div>
+      <div class="mx-auto max-w-page px-4 py-4 text-sm text-muted md:px-8">{{ page.footer }}</div>
     </footer>
   {% endif %}
   {# 5.3: hier anhängen #}

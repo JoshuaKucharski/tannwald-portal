@@ -9,9 +9,9 @@
 {{ cache_bubble }}
 <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3" data-machine-cards>
   {% for card in cards %}
-    <article class="card flex flex-col gap-3 p-5">
+    <article class="card flex flex-col gap-4 p-4 md:p-6">
       <div class="flex flex-col gap-1">
-        <span class="text-[13px] uppercase tracking-[0.04em] text-muted">{{ card.type_name }}</span>
+        <span class="meta">{{ card.type_name }}</span>
         <h2 class="m-0 text-lg font-semibold"><a href="{{ card.url }}" class="text-ink no-underline hover:text-accent">{{ card.serial }}</a></h2>
         <p class="m-0 meta">
           {%- if card.location %}{{ card.location }}{% endif %}
@@ -38,6 +38,6 @@
       <a href="{{ card.url }}" class="btn btn-outline h-10 self-start">{{ 'Open machine'|t }}</a>
     </article>
   {% else %}
-    <p class="m-0 text-muted">{{ 'No machines are assigned to your company.'|t }}</p>
+    <p class="card m-0 px-6 py-4 text-muted">{{ 'No machines are assigned to your company yet. Your Tannwald contact links them to your account.'|t }}</p>
   {% endfor %}
 </div>
