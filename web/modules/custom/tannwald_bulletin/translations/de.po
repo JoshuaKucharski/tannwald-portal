@@ -1,0 +1,85 @@
+# German translation of tannwald_bulletin (de-CH: "ss" statt "ß", Anrede Sie).
+msgid ""
+msgstr ""
+"Project-Id-Version: tannwald_bulletin\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: de\n"
+
+msgid "Read confirmation"
+msgstr "Lesebestätigung"
+
+msgid "Read confirmations"
+msgstr "Lesebestätigungen"
+
+msgid "read confirmation"
+msgstr "Lesebestätigung"
+
+msgid "read confirmations"
+msgstr "Lesebestätigungen"
+
+msgid "Bulletin"
+msgstr "Bulletin"
+
+msgid "Machine"
+msgstr "Maschine"
+
+msgid "Confirmed on"
+msgstr "Bestätigt am"
+
+msgid "PoC: field_land of the user, no GeoIP."
+msgstr "PoC: field_land des Nutzers, kein GeoIP."
+
+msgctxt "Validation"
+msgid "Unique read confirmation"
+msgstr "Eindeutige Lesebestätigung"
+
+msgid "This bulletin has already been confirmed for this machine."
+msgstr "Dieses Bulletin wurde für diese Maschine bereits bestätigt."
+
+msgid "Bulletin notification"
+msgstr "Bulletin-Benachrichtigung"
+
+msgid "Safety bulletin @id: @title — read confirmation required"
+msgstr "Sicherheits-Bulletin @id: @title — Lesebestätigung erforderlich"
+
+msgid "Hello @name,"
+msgstr "Guten Tag @name"
+
+msgid "Tannwald has released a safety bulletin for the following machines:"
+msgstr "Tannwald hat für folgende Maschinen ein Sicherheits-Bulletin freigegeben:"
+
+msgid "Read bulletin"
+msgstr "Bulletin lesen"
+
+msgid "Please confirm in the portal that you have read it (\"Confirm as read\")."
+msgstr "Bitte bestätigen Sie im Portal, dass Sie es gelesen haben („Gelesen bestätigen“)."
+
+msgid "Tannwald bulletin notifications"
+msgstr "Tannwald: Bulletin-Benachrichtigungen"
+
+msgid "Open read confirmations"
+msgstr "Offene Lesebestätigungen"
+
+msgid "Affected users of the bulletin in the first argument who have not confirmed yet."
+msgstr "Betroffene Nutzer des Bulletins aus dem ersten Argument, die noch nicht bestätigt haben."
+
+msgid "Open: @count"
+msgstr "Offen: @count"
+
+msgid "Confirm as read"
+msgstr "Gelesen bestätigen"
+
+msgid "Read confirmation saved."
+msgstr "Lesebestätigung gespeichert."
+
+msgid "@count mails for bulletin @nid (attempt @attempt)."
+msgstr "@count Mails für Bulletin @nid (Versuch @attempt)."
+
+msgid "Bulletin @nid not published, no mails."
+msgstr "Bulletin @nid nicht veröffentlicht, keine Mails."
+
+msgid "Bulletin @nid: no mail delivered to users @uids after @max attempts."
+msgstr "Bulletin @nid: nach @max Versuchen keine Mail an die Nutzer @uids zugestellt."
