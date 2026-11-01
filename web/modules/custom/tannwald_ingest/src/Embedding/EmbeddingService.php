@@ -22,6 +22,13 @@ class EmbeddingService {
   public const BATCH_SIZE = 16;
 
   /**
+   * Aufgelöste Modellnamen je Service-Instanz.
+   *
+   * @var array<string, string>
+   */
+  protected array $rawModels = [];
+
+  /**
    * Konstruktor.
    *
    * @param \Drupal\Component\Plugin\PluginManagerInterface $providerManager
@@ -56,6 +63,7 @@ class EmbeddingService {
     [$providerId, $model] = $this->providerAndModel();
     // ProviderProxy reicht embeddingsCollection() per __call an das Plugin.
     $provider = $this->providerManager->createInstance($providerId);
+    $model = $this->rawModelName($provider, $model);
     $keys = array_keys($texts);
     $vectors = [];
     foreach (array_chunk(array_values($texts), self::BATCH_SIZE) as $batch) {
@@ -85,6 +93,22 @@ class EmbeddingService {
       $this->usage->record($modell, 'embedding', (int) $tokens, 0, $kontext);
     }
     return array_combine($keys, $vectors);
+  }
+
+  /**
+   * Übersetzt eine Drupal-Modell-ID (bge_m3_latest) in den Rohnamen.
+   *
+   * Gemessen 2026-11-01: embeddingsCollection() des OpenAI-basierten
+   * Providers reicht die ID unverändert an Ollama („model 'bge_m3_latest' not
+   * found“); nur embeddings() übersetzt. getConfiguredModels() liefert
+   * [Maschinenname => Rohname]; Rohnamen bleiben unverändert.
+   */
+  protected function rawModelName(object $provider, string $model): string {
+    if (!isset($this->rawModels[$model])) {
+      $models = call_user_func([$provider, 'getConfiguredModels'], 'embeddings');
+      $this->rawModels[$model] = is_array($models) && isset($models[$model]) ? (string) $models[$model] : $model;
+    }
+    return $this->rawModels[$model];
   }
 
   /**

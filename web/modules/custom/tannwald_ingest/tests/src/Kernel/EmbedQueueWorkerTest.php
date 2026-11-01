@@ -144,8 +144,11 @@ class EmbedQueueWorkerTest extends KernelTestBase {
       ->onlyMethods(['__call'])
       ->getMock();
     $proxy->method('__call')->willReturnCallback(function (string $name, array $arguments) {
+      if ($name === 'getConfiguredModels') {
+        return ['bge_m3_latest' => 'bge-m3:latest'];
+      }
       $this->assertSame('embeddingsCollection', $name);
-      $this->assertSame('bge_m3_latest', $arguments[1], 'Model from ai.settings default is passed through.');
+      $this->assertSame('bge-m3:latest', $arguments[1], 'Model ID from ai.settings is translated to the raw name.');
       /** @var \Drupal\ai\OperationType\Embeddings\EmbeddingsCollectionInput $input */
       $input = $arguments[0];
       $this->calls[] = $input->getPromptCount();
