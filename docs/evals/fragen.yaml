@@ -158,10 +158,10 @@
       kapitel: "4 Kundenspezifische Formate"
   erwartet: antwort
 - id: q-019
-  frage: "Welche Reinigungsintervalle gelten in Version 3.1 der Betriebsanleitung TB-200 für die Siegelstation?"
+  frage: "Welche Reinigungsintervalle gelten in Version 3.2 der Betriebsanleitung TB-200 für die Siegelstation?"
   als: redaktion
   sprache: de
-  # 6.1 (Entscheid Master): der Assistent antwortet nur aus der aktuellen Version → Erwartung 3.2.
+  # 6.1 (Entscheid Master): der Assistent antwortet nur aus der aktuellen Version → Erwartung und Wortlaut 3.2.
   erwartete_quellen:
     - dokument: ba-tb200
       version: "3.2"
