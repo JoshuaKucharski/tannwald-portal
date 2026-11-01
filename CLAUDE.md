@@ -59,6 +59,10 @@ nginx auf dem Mac 80/443 hält) · Mailpit `https://tannwald-portal.ddev.site:80
   `ddev restart` nur auf Ansage des Masters.
 - **Jeder Zwischenstand muss laden** — `php -l <datei>` vor dem Ablegen jeder PHP-Datei; eine neue Testdatei sofort
   einmal gezielt laufen lassen (ein Fatal in einer Testdatei bricht die `--filter`-Läufe aller Terminals).
+- **Wächter `IdentifierLanguageTest`** (Regel 4, D5): prüft Bezeichner in `web/modules/custom` und `web/themes/custom`
+  auf deutsche Wortstämme; Erlaubnisliste als Konstante `ALLOWED` in
+  `web/modules/custom/tannwald_access/tests/src/Unit/IdentifierLanguageTest.php` — wer einen neuen Pflichtenheft-Namen
+  einführt, trägt ihn dort im selben Commit nach (`ddev exec vendor/bin/phpunit --filter=IdentifierLanguageTest`).
 
 ## Geheimnisse
 
