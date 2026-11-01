@@ -605,3 +605,6 @@ msgstr "Ihrer Firma sind noch keine Maschinen zugeordnet. Ihre Tannwald-Ansprech
 
 msgid "No hits for “@query”. Try another spelling, switch to Hybrid, or ask the assistant."
 msgstr "Keine Treffer für „@query“. Versuchen Sie eine andere Schreibweise, wechseln Sie zu Hybrid oder fragen Sie den Assistenten."
+
+msgid "Ask a question about your documents, for example about cleaning intervals or fault codes."
+msgstr "Stellen Sie eine Frage zu Ihren Dokumenten, zum Beispiel zu Reinigungsintervallen oder Störungscodes."

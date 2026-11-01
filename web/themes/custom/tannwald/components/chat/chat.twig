@@ -57,7 +57,13 @@
     </div>
 
     <div class="chat-history" x-ref="history" data-chat-history>
-      <p class="m-0 text-sm text-muted" x-show="!$store.chat.history.length && !$store.chat.limitNotice">{{ 'Ask a question about this machine, for example about cleaning intervals or fault codes.'|t }}</p>
+      <p class="m-0 text-sm text-muted" x-show="!$store.chat.history.length && !$store.chat.limitNotice">
+        {%- if maschine_nid -%}
+          {{ 'Ask a question about this machine, for example about cleaning intervals or fault codes.'|t }}
+        {%- else -%}
+          {{ 'Ask a question about your documents, for example about cleaning intervals or fault codes.'|t }}
+        {%- endif -%}
+      </p>
 
       <template x-for="entry in $store.chat.history" :key="entry.id">
         <div class="chat-entry" :data-status="entry.status">
