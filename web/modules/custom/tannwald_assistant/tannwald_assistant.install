@@ -8,6 +8,7 @@
 declare(strict_types=1);
 
 use Drupal\Core\Config\FileStorage;
+use Drupal\tannwald_assistant\AnswerService;
 use Drupal\views\Entity\View;
 
 /**
@@ -176,4 +177,23 @@ function tannwald_assistant_update_10004(): string {
   }
   $view->set('display', $data['display'])->save();
   return 'View redaktion_unbeantwortet: filter current month.';
+}
+
+/**
+ * Log: frage_normalisiert für Zeilen aus der Zeit vor 4.2 nachtragen.
+ */
+function tannwald_assistant_update_10005(): string {
+  $database = \Drupal::database();
+  $rows = $database->select('tannwald_assistant_log', 'l')
+    ->fields('l', ['id', 'frage'])
+    ->condition('frage_normalisiert', '')
+    ->execute()
+    ->fetchAllKeyed();
+  foreach ($rows as $id => $frage) {
+    $database->update('tannwald_assistant_log')
+      ->fields(['frage_normalisiert' => AnswerService::normalizeQuestion((string) $frage)])
+      ->condition('id', $id)
+      ->execute();
+  }
+  return sprintf('frage_normalisiert filled for %d log rows.', count($rows));
 }
