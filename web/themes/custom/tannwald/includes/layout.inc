@@ -90,12 +90,13 @@ function _tannwald_layout_prepare(array &$variables): void {
       }
     }
   }
-  // Seitentitel-Block auf Maschinen-, Dokument- und Bulletinseiten ausblenden:
-  // die Node-Templates zeigen den eigenen Titel in der Kopfkarte.
+  // Seitentitel-Block ausblenden, wo das Template den einen Titel zeigt:
+  // Maschinen-, Dokument- und Bulletinseiten (Kopfkarte) und die Suche.
   $node = $routeMatch->getParameter('node');
-  if ($routeMatch->getRouteName() === 'entity.node.canonical' && $node instanceof NodeInterface
-    && in_array($node->bundle(), ['maschine', 'dokument', 'bulletin'], TRUE)
-    && isset($variables['page']['content']['tannwald_page_title'])) {
+  $ownTitle = $routeMatch->getRouteName() === 'tannwald_assistant.search'
+    || ($routeMatch->getRouteName() === 'entity.node.canonical' && $node instanceof NodeInterface
+      && in_array($node->bundle(), ['maschine', 'dokument', 'bulletin'], TRUE));
+  if ($ownTitle && isset($variables['page']['content']['tannwald_page_title'])) {
     $variables['page']['content']['tannwald_page_title']['#access'] = FALSE;
   }
 }
