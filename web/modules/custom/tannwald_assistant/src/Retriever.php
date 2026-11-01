@@ -60,7 +60,7 @@ final class Retriever {
    */
   public function retrieve(string $frage, AccountInterface $account, ?int $maschineNid, string $modus = RetrievalResult::MODE_HYBRID): RetrievalResult {
     $start = hrtime(TRUE);
-    [$langcode, $fused] = $this->candidates($frage, $account, $maschineNid, $modus, self::CANDIDATES);
+    [$langcode, $fused] = $this->candidates($frage, $account, $maschineNid, $modus, self::CANDIDATES, TRUE);
     if ($fused === NULL) {
       return RetrievalResult::empty($frage, $langcode, $modus, self::elapsedMs($start));
     }
@@ -129,12 +129,17 @@ final class Retriever {
   }
 
   /**
-   * Kandidaten: Keys → Keyword (+ Vektor) → RRF → Maschinenfilter.
+   * Kandidaten: Keys → Keyword (+ Vektor) → [aktuelle Revision] → RRF → Maschine.
+   *
+   * @param bool $currentOnly
+   *   TRUE (retrieve): nur Chunks der Standard-Revision je Node, gefiltert je
+   *   Liste vor der Fusion (Entscheid des Masters 4.2/4.3); search() lässt
+   *   ältere veröffentlichte Revisionen zu (Schalter „Nur aktuelle Versionen“).
    *
    * @return array{0: string, 1: array<int, array>|null}
    *   Erkannte Sprache und fusionierte Zeilen; NULL ohne Keys oder Frage.
    */
-  private function candidates(string $frage, AccountInterface $account, ?int $maschineNid, string $modus, int $limit): array {
+  private function candidates(string $frage, AccountInterface $account, ?int $maschineNid, string $modus, int $limit, bool $currentOnly = FALSE): array {
     if (!in_array($modus, [RetrievalResult::MODE_HYBRID, RetrievalResult::MODE_FULLTEXT], TRUE)) {
       throw new \InvalidArgumentException(sprintf('Unknown retrieval mode "%s".', $modus));
     }
@@ -156,11 +161,43 @@ final class Retriever {
         $this->logger->warning('Query embedding failed, keyword branch only: @message', ['@message' => $e->getMessage()]);
       }
     }
+    if ($currentOnly) {
+      $lists = $this->currentRevisionsOnly($lists);
+    }
     $fused = Rrf::fuse($lists, Rrf::DEFAULT_K);
     if ($maschineNid !== NULL) {
       $fused = $this->filterByMachine($fused, $maschineNid);
     }
     return [$langcode, $fused];
+  }
+
+  /**
+   * Entfernt Zeilen, deren vid nicht die Standard-Revision des Nodes ist.
+   *
+   * @param array<string, array<int, array>> $lists
+   *   Trefferlisten je Zweig.
+   *
+   * @return array<string, array<int, array>>
+   *   Gefilterte Listen (Rangfolge bleibt).
+   */
+  private function currentRevisionsOnly(array $lists): array {
+    $nids = [];
+    foreach ($lists as $rows) {
+      foreach ($rows as $row) {
+        $nids[(int) $row['nid']] = TRUE;
+      }
+    }
+    if ($nids === []) {
+      return $lists;
+    }
+    $current = [];
+    foreach ($this->entityTypeManager->getStorage('node')->loadMultiple(array_keys($nids)) as $nid => $node) {
+      $current[(int) $nid] = (int) $node->getRevisionId();
+    }
+    foreach ($lists as $name => $rows) {
+      $lists[$name] = array_values(array_filter($rows, static fn (array $row): bool => ($current[(int) $row['nid']] ?? NULL) === (int) $row['vid']));
+    }
+    return $lists;
   }
 
   /**

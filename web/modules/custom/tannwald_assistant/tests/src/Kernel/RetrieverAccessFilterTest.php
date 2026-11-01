@@ -155,6 +155,31 @@ final class RetrieverAccessFilterTest extends AssistantKernelTestBase {
   }
 
   /**
+   * Retrieve nur aus der Standard-Revision; search() lässt alte Revisionen zu.
+   */
+  public function testRetrieveUsesCurrentRevisionOnly(): void {
+    $doc = $this->createDocument('Betriebsanleitung TB-200');
+    $oldRow = $this->row(1, $doc, 0, '7 Reinigung › 7.3 Reinigung Siegelstation');
+    $doc->setNewRevision(TRUE);
+    $doc->set('field_version', '3.3');
+    $doc->save();
+    $newRow = $this->row(2, $doc, 0, '7 Reinigung › 7.3 Reinigung Siegelstation');
+    $this->assertNotSame($oldRow['vid'], $newRow['vid']);
+    $this->accessKeys->method('forAccount')->willReturn(self::KEYS);
+    $this->store->method('keyword')->willReturn([$oldRow, $newRow]);
+    $this->store->method('similar')->willReturn([$oldRow]);
+    $this->store->method('facetCounts')->willReturn(RetrievalResult::EMPTY_FACETS);
+
+    $result = $this->retriever()->retrieve('Siegelstation reinigen', $this->viewer, NULL);
+    $this->assertSame([2], array_column($result->hits, 'chunk_id'), 'Chunk der älteren Revision erscheint nicht.');
+    $this->assertSame('3.3', $result->hits[0]['version']);
+    $this->assertSame('keyword', $result->hits[0]['matched_by'], 'Der Vektor-Treffer der alten Revision zählt nicht.');
+
+    $all = $this->retriever()->search('Siegelstation reinigen', $this->viewer, NULL);
+    $this->assertSame([1, 2], array_column($all->hits, 'chunk_id'), 'search() behält alte Revisionen.');
+  }
+
+  /**
    * Maschine_nid: Typ der Maschine oder deren Seriennummer, sonst raus.
    */
   public function testMachineFilter(): void {
