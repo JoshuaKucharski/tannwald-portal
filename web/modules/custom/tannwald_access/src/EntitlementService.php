@@ -63,6 +63,20 @@ final class EntitlementService {
    */
   public const PROTECTED_BUNDLES = ['dokument', 'bulletin', 'maschine', 'zusammenfassung'];
 
+  /**
+   * Realm für unveröffentlichte Workflow-Inhalte (6.1, Nachtrag 1 zu 2.4).
+   *
+   * Core schreibt für unveröffentlichte Nodes keinen Grant; ohne Record sind
+   * Entwürfe und „Zur Prüfung“ in Views und Entity-Queries mit Access-Check
+   * auch für Konten mit "view any unpublished content" unsichtbar.
+   */
+  public const REALM_UNPUBLISHED = 'tannwald_unpublished';
+
+  /**
+   * Bundles mit Workflow „redaktion“.
+   */
+  public const WORKFLOW_BUNDLES = ['dokument', 'bulletin', 'zusammenfassung'];
+
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly EntityFieldManagerInterface $entityFieldManager,
@@ -151,6 +165,9 @@ final class EntitlementService {
     foreach ($grants as $realm => $gids) {
       $grants[$realm] = array_values(array_unique($gids));
     }
+    if ($account->hasPermission('view any unpublished content')) {
+      $grants[self::REALM_UNPUBLISHED] = [1];
+    }
     return $grants;
   }
 
@@ -173,6 +190,16 @@ final class EntitlementService {
     foreach (array_keys($node->getTranslationLanguages()) as $langcode) {
       $translation = $node->getTranslation($langcode);
       if (!$translation->isPublished()) {
+        if (in_array($node->bundle(), self::WORKFLOW_BUNDLES, TRUE)) {
+          $records[] = [
+            'realm' => self::REALM_UNPUBLISHED,
+            'gid' => 1,
+            'grant_view' => 1,
+            'grant_update' => 0,
+            'grant_delete' => 0,
+            'langcode' => $langcode,
+          ];
+        }
         continue;
       }
       foreach ($this->getRealmsForNode($translation) as $key) {

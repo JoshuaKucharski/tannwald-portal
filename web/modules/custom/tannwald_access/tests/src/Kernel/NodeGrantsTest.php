@@ -118,7 +118,7 @@ final class NodeGrantsTest extends AccessKernelTestBase {
   }
 
   /**
-   * Records in node_access: kombinierte Realms, nichts für Entwürfe.
+   * Records in node_access: kombinierte Realms; Entwürfe tannwald_unpublished.
    */
   public function testAccessRecords(): void {
     $rows = $this->container->get('database')->select('node_access', 'na')
@@ -132,10 +132,13 @@ final class NodeGrantsTest extends AccessKernelTestBase {
       ['realm' => 'tannwald_intern_klasse_2', 'gid' => '1'] + $grant,
       ['realm' => 'tannwald_type_klasse_2', 'gid' => self::idOf($this->w['tb200'])] + $grant,
     ], $rows);
-    $draftRows = (int) $this->container->get('database')->select('node_access', 'na')
+    $draftRows = $this->container->get('database')->select('node_access', 'na')
+      ->fields('na', ['realm', 'gid', 'grant_view', 'grant_update', 'grant_delete'])
       ->condition('nid', $this->w['d_entwurf']->id())
-      ->countQuery()->execute()->fetchField();
-    $this->assertSame(0, $draftRows);
+      ->execute()
+      ->fetchAll(FetchAs::Associative);
+    // 6.1 (Nachtrag 1): ein Sicht-Record für "view any unpublished content".
+    $this->assertSame([['realm' => 'tannwald_unpublished', 'gid' => '1'] + $grant], $draftRows);
     $defaultRow = (int) $this->container->get('database')->select('node_access', 'na')
       ->condition('realm', 'all')
       ->countQuery()->execute()->fetchField();
@@ -161,6 +164,25 @@ final class NodeGrantsTest extends AccessKernelTestBase {
     ], array_values(array_map('strval', $documents)));
     $machines = $storage->getQuery()->accessCheck(TRUE)->condition('type', 'maschine')->execute();
     $this->assertSame([self::idOf($this->w['m1'])], array_values(array_map('strval', $machines)));
+  }
+
+  /**
+   * Entwürfe: in Listen sichtbar für Redaktion, unsichtbar für Kundschaft.
+   *
+   * 6.1 (Nachtrag 1): Realm tannwald_unpublished für Konten mit "view any
+   * unpublished content".
+   */
+  public function testUnpublishedVisibleToEditorsOnly(): void {
+    $storage = $this->container->get('entity_type.manager')->getStorage('node');
+    $draft = self::idOf($this->w['d_entwurf']);
+    $this->setCurrentUser($this->accounts['redaktion']);
+    $this->assertTrue($this->accounts['redaktion']->hasPermission('view any unpublished content'));
+    $editor = $storage->getQuery()->accessCheck(TRUE)->condition('type', 'dokument')->execute();
+    $this->assertContains($draft, array_map('strval', $editor), 'Redaktion sieht den Entwurf in der Liste.');
+    $this->setCurrentUser($this->accounts['kunde-a']);
+    $customer = $storage->getQuery()->accessCheck(TRUE)->condition('type', 'dokument')->execute();
+    $this->assertNotContains($draft, array_map('strval', $customer), 'Kundschaft sieht keinen Entwurf.');
+    $this->assertFalse($this->w['d_entwurf']->access('view', $this->accounts['kunde-a']));
   }
 
 }
