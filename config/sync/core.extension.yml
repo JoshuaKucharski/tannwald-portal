@@ -48,6 +48,7 @@ module:
   system: 0
   tannwald_access: 0
   tannwald_assistant: 0
+  tannwald_bulletin: 0
   tannwald_ingest: 0
   taxonomy: 0
   text: 0
