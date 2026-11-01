@@ -24,3 +24,9 @@ services:
     class: Drupal\tannwald_access\EventSubscriber\AccessDeniedSubscriber
     tags:
       - { name: event_subscriber }
+
+  # 5.1 (F): „/“ anonym → Anmeldung, angemeldet → /meine-maschinen (Anpassung 16).
+  tannwald_access.anonymous_front_redirect_subscriber:
+    class: Drupal\tannwald_access\EventSubscriber\AnonymousFrontRedirectSubscriber
+    tags:
+      - { name: event_subscriber }
