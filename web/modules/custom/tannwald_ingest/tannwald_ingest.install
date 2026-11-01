@@ -1,0 +1,123 @@
+<?php
+
+/**
+ * @file
+ * Schema und Installation für tannwald_ingest (tannwald_chunk, tannwald_usage).
+ */
+
+declare(strict_types=1);
+
+use Drupal\Core\Database\Connection;
+
+/**
+ * Implements hook_schema().
+ */
+function tannwald_ingest_schema(): array {
+  $schema['tannwald_chunk'] = [
+    'description' => 'Chunks of published document, bulletin and summary revisions with embeddings and access keys.',
+    'fields' => [
+      'id' => ['type' => 'serial', 'unsigned' => TRUE, 'not null' => TRUE],
+      'nid' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+      'vid' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+      'langcode' => ['type' => 'varchar_ascii', 'length' => 12, 'not null' => TRUE, 'default' => ''],
+      'chunk_index' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+      'heading_path' => ['type' => 'varchar', 'length' => 512, 'not null' => TRUE, 'default' => ''],
+      'title' => ['type' => 'varchar', 'length' => 255, 'not null' => TRUE, 'default' => ''],
+      'text' => ['type' => 'text', 'size' => 'medium', 'not null' => TRUE],
+      'token_count' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+      'embedding' => [
+        'description' => 'float32 little endian, 1024 values (4096 bytes).',
+        'type' => 'blob',
+        'size' => 'big',
+        'mysql_type' => 'longblob',
+        'not null' => FALSE,
+      ],
+      'access_keys' => [
+        'description' => 'Space separated keys from EntitlementService::getRealmsForNode().',
+        'type' => 'text',
+        'not null' => TRUE,
+      ],
+      'exportklasse' => ['type' => 'varchar_ascii', 'length' => 16, 'not null' => TRUE, 'default' => 'keine'],
+      'dokumenttyp_tid' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+      'maschinentyp_tids' => [
+        'description' => 'Space separated taxonomy term IDs of vocabulary maschinentyp.',
+        'type' => 'varchar_ascii',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+      'created' => ['type' => 'int', 'not null' => TRUE, 'default' => 0],
+    ],
+    'primary key' => ['id'],
+    'indexes' => [
+      'nid_vid_lang' => ['nid', 'vid', 'langcode'],
+      'nid' => ['nid'],
+    ],
+    'mysql_character_set' => 'utf8mb4',
+  ];
+
+  $schema['tannwald_usage'] = [
+    'description' => 'Token usage of chat and embedding calls.',
+    'fields' => [
+      'id' => ['type' => 'serial', 'unsigned' => TRUE, 'not null' => TRUE],
+      'modell' => ['type' => 'varchar', 'length' => 64, 'not null' => TRUE, 'default' => ''],
+      'operation' => [
+        'description' => 'chat|embedding',
+        'type' => 'varchar_ascii',
+        'length' => 16,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+      'prompt_tokens' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+      'completion_tokens' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+      'kosten_chf' => [
+        'type' => 'numeric',
+        'precision' => 10,
+        'scale' => 4,
+        'not null' => TRUE,
+        'default' => 0,
+      ],
+      'kontext' => [
+        'description' => 'assistent|ingest|eval',
+        'type' => 'varchar_ascii',
+        'length' => 16,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+      'created' => ['type' => 'int', 'not null' => TRUE, 'default' => 0],
+    ],
+    'primary key' => ['id'],
+    'indexes' => [
+      'created' => ['created'],
+      'kontext_created' => ['kontext', 'created'],
+    ],
+  ];
+
+  return $schema;
+}
+
+/**
+ * Implements hook_install().
+ */
+function tannwald_ingest_install(): void {
+  tannwald_ingest_ensure_fulltext(\Drupal::database());
+}
+
+/**
+ * Legt die FULLTEXT-Indizes an (Core-Schema kennt FULLTEXT nicht).
+ *
+ * Wird von hook_install() und von Kernel-Tests (installSchema() ruft
+ * hook_install() nicht) aufgerufen; idempotent.
+ */
+function tannwald_ingest_ensure_fulltext(Connection $database): void {
+  if ($database->driver() !== 'mysql') {
+    return;
+  }
+  $indexes = ['ft_title' => 'title', 'ft_heading' => 'heading_path', 'ft_text' => 'text'];
+  foreach ($indexes as $name => $column) {
+    if ($database->schema()->indexExists('tannwald_chunk', $name)) {
+      continue;
+    }
+    $database->query("ALTER TABLE {tannwald_chunk} ADD FULLTEXT $name ($column)");
+  }
+}

@@ -1,0 +1,24 @@
+services:
+  logger.channel.tannwald_ingest:
+    parent: logger.channel_base
+    arguments: ['tannwald_ingest']
+
+  tannwald_ingest.chunk_store:
+    class: Drupal\tannwald_ingest\Store\DatabaseChunkStore
+    arguments: ['@database', '@datetime.time', '@logger.channel.tannwald_ingest']
+  Drupal\tannwald_ingest\Store\ChunkStoreInterface: '@tannwald_ingest.chunk_store'
+
+  tannwald_ingest.chunker:
+    class: Drupal\tannwald_ingest\Chunker
+    arguments: ['@logger.channel.tannwald_ingest']
+  Drupal\tannwald_ingest\Chunker: '@tannwald_ingest.chunker'
+
+  tannwald_ingest.usage:
+    class: Drupal\tannwald_ingest\Usage\UsageRecorder
+    arguments: ['@database', '@datetime.time']
+  Drupal\tannwald_ingest\Usage\UsageRecorder: '@tannwald_ingest.usage'
+
+  tannwald_ingest.embedding:
+    class: Drupal\tannwald_ingest\Embedding\EmbeddingService
+    arguments: ['@ai.provider', '@config.factory', '@tannwald_ingest.usage']
+  Drupal\tannwald_ingest\Embedding\EmbeddingService: '@tannwald_ingest.embedding'
