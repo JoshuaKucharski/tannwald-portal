@@ -179,7 +179,58 @@ final class RetrieverAccessFilterTest extends AssistantKernelTestBase {
     $this->assertSame('keyword', $result->hits[0]['matched_by'], 'Der Vektor-Treffer der alten Revision zählt nicht.');
 
     $all = $this->retriever()->search('Siegelstation reinigen', $this->viewer, NULL);
-    $this->assertSame([1, 2], array_column($all->hits, 'chunk_id'), 'search() behält alte Revisionen.');
+    // 6.1: dasselbe Kapitel der aktuellen Revision steht vor dem älteren.
+    $this->assertSame([2, 1], array_column($all->hits, 'chunk_id'), 'search() behält alte Revisionen.');
+  }
+
+  /**
+   * Suche (6.1): aktuelle Revision vor dem älteren Zwilling desselben Kapitels.
+   */
+  public function testSearchPutsCurrentRevisionBeforeOlderTwin(): void {
+    $doc = $this->createDocument('Betriebsanleitung TB-200');
+    $oldRow = ['text' => 'E-4711 Folie nicht gesiegelt'] + $this->row(1, $doc, 0, '9 Störungen › 9.1 Störungstabelle');
+    $oldOther = ['text' => 'Alter Wortlaut'] + $this->row(3, $doc, 1, '9 Störungen › 9.2 Meldungen');
+    $doc->setNewRevision(TRUE);
+    $doc->set('field_version', '3.2');
+    $doc->save();
+    $newRow = ['text' => 'E-4711 Folie nicht gesiegelt, neue Zeile'] + $this->row(2, $doc, 0, '9 Störungen › 9.1 Störungstabelle');
+    $newOther = ['text' => 'Neuer Wortlaut'] + $this->row(4, $doc, 1, '9 Störungen › 9.3 Neue Meldungen');
+    $this->accessKeys->method('forAccount')->willReturn(self::KEYS);
+    $this->store->method('facetCounts')->willReturn(RetrievalResult::EMPTY_FACETS);
+    // Fast gleicher Text: die ältere Revision stand zuerst.
+    $this->store->method('keyword')->willReturn([$oldRow, $oldOther, $newRow, $newOther]);
+    $this->store->method('similar')->willReturn([$oldRow, $oldOther, $newRow, $newOther]);
+
+    $result = $this->retriever()->search('E-4711', $this->viewer, NULL);
+    $this->assertSame([2, 3, 1, 4], array_column($result->hits, 'chunk_id'), 'Kapitel 9.1 getauscht, 9.2 ohne aktuellen Zwilling bleibt.');
+    $this->assertSame('3.2', $result->hits[0]['version']);
+  }
+
+  /**
+   * Suche (6.1): ein Keyword-Rang jenseits von Seite 1 zählt nicht.
+   *
+   * TC-06: 9.4 steht in der Keyword-Liste auf Rang 15 (Allerweltswort) und
+   * im Vektor-Zweig auf Rang 1 → matched_by „vector“, Pille sichtbar
+   * (Retriever::SEARCH_BRANCH_RANK = SearchPageController::PER_PAGE).
+   */
+  public function testSearchBranchCountsOnlyOnPageOne(): void {
+    $doc = $this->createDocument('Betriebsanleitung TB-200');
+    $keyword = [];
+    for ($i = 1; $i <= 14; $i++) {
+      $keyword[] = $this->row($i, $doc, $i, '8 Kapitel › 8.' . $i);
+    }
+    $target = $this->row(99, $doc, 99, '9 Störungen › 9.4 Störungen an der Siegelstation');
+    $keyword[] = $target;
+    $this->accessKeys->method('forAccount')->willReturn(self::KEYS);
+    $this->store->method('facetCounts')->willReturn(RetrievalResult::EMPTY_FACETS);
+    $this->store->method('keyword')->willReturn($keyword);
+    $this->store->method('similar')->willReturn([$target]);
+
+    $result = $this->retriever()->search('Warum reisst die Folie beim Siegeln?', $this->viewer, NULL);
+    $hit = array_values(array_filter($result->hits, static fn (array $hit): bool => $hit['chunk_id'] === 99))[0];
+    $this->assertSame('vector', $hit['matched_by']);
+    $filler = array_values(array_filter($result->hits, static fn (array $hit): bool => $hit['chunk_id'] === 1))[0];
+    $this->assertSame('keyword', $filler['matched_by']);
   }
 
   /**

@@ -36,6 +36,15 @@ final class Retriever {
   public const SEARCH_CANDIDATES = 100;
 
   /**
+   * Suche: ein Zweig zählt für matched_by nur bis zu diesem Rang (6.1).
+   *
+   * Gleich der Seitengrösse von /suche: die Pille „Treffer über Bedeutung“
+   * heisst dann „unter Nur Volltext nicht auf Seite 1“. Mit Rang 20 kippte
+   * TC-06 je nach Reihenfolge gleich bewerteter Keyword-Treffer (Reseed).
+   */
+  public const SEARCH_BRANCH_RANK = 10;
+
+  /**
    * Kandidaten der Sicherheitsliste je Quelle (6.1, Hebel 1).
    */
   public const SAFETY_POOL = 50;
@@ -140,18 +149,19 @@ final class Retriever {
     if ($fused === NULL) {
       return RetrievalResult::empty($frage, $langcode, $modus, self::elapsedMs($start));
     }
-    // matched_by wie in retrieve(): ein Zweig zählt nur mit Rang ≤ 20 (6.1 —
+    // matched_by: ein Zweig zählt nur mit Rang ≤ SEARCH_BRANCH_RANK (6.1 —
     // sonst trägt jeder Treffer mit einem Allerweltswort aus der Keyword-Liste
     // „both“, und die Pille „Treffer über Bedeutung“ fehlt bei TC-06).
     foreach ($fused as &$row) {
-      $near = array_keys(array_filter($row['ranks'] ?? [], static fn (int $rank): bool => $rank <= self::CANDIDATES));
+      $near = array_keys(array_filter($row['ranks'] ?? [], static fn (int $rank): bool => $rank <= self::SEARCH_BRANCH_RANK));
       if ($near !== []) {
         $row['matched_by'] = count($near) > 1 ? 'both' : (string) $near[0];
       }
     }
     unset($row);
     // Nodes einmal laden; buildHit() liest danach aus dem Entity-Cache.
-    $this->entityTypeManager->getStorage('node')->loadMultiple(array_values(array_unique(array_map(static fn (array $row): int => (int) $row['nid'], $fused))));
+    $nodes = $this->entityTypeManager->getStorage('node')->loadMultiple(array_values(array_unique(array_map(static fn (array $row): int => (int) $row['nid'], $fused))));
+    $fused = self::currentBeforeOlderTwin($fused, $nodes);
     $hits = [];
     foreach ($fused as $row) {
       $hit = $this->buildHit($row, $account);
@@ -360,6 +370,45 @@ final class Retriever {
       $lists[$name] = array_values(array_filter($rows, static fn (array $row): bool => ($current[(int) $row['nid']] ?? NULL) === (int) $row['vid']));
     }
     return $lists;
+  }
+
+  /**
+   * Aktuelle Revision vor dem älteren Zwilling desselben Kapitels (6.1).
+   *
+   * /suche zeigt ältere Revisionen. Dasselbe Kapitel (Node, Sprache,
+   * heading_path) aus v3.1 stand bei fast gleichem Text vor v3.2 (E-4711:
+   * kürzerer Text, leicht höherer Score). Steht ein älterer Zwilling vor dem
+   * ersten Treffer der aktuellen Revision, tauschen beide den Platz;
+   * Zweig-Ränge und matched_by bleiben unverändert.
+   *
+   * @param array<int, array> $fused
+   *   Fusionierte Zeilen in Rangfolge.
+   * @param array<int, \Drupal\Core\Entity\EntityInterface> $nodes
+   *   Geladene Nodes nach nid.
+   *
+   * @return array<int, array>
+   *   Zeilen, aktuelle Revision vor älterem Zwilling.
+   */
+  private static function currentBeforeOlderTwin(array $fused, array $nodes): array {
+    $fused = array_values($fused);
+    $olderAt = [];
+    foreach ($fused as $position => $row) {
+      $node = $nodes[(int) $row['nid']] ?? NULL;
+      if (!$node instanceof NodeInterface) {
+        continue;
+      }
+      $twin = $row['nid'] . '|' . $row['langcode'] . '|' . $row['heading_path'];
+      if ((int) $node->getRevisionId() !== (int) $row['vid']) {
+        $olderAt[$twin] ??= $position;
+        continue;
+      }
+      if (isset($olderAt[$twin])) {
+        $first = $olderAt[$twin];
+        [$fused[$first], $fused[$position]] = [$row, $fused[$first]];
+        unset($olderAt[$twin]);
+      }
+    }
+    return $fused;
   }
 
   /**
