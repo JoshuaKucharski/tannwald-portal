@@ -1,0 +1,11 @@
+uuid: 6a372bf7-3b2c-489e-ae76-ab537767005c
+langcode: de
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: PWTsHiwkIfp5TW-iTBc9AhBtvbYY6wrp3MopazQ-95o
+name: Tags
+vid: tags
+description: 'Verwenden Sie Tags, um Inhalte zu ähnlichen Themen in Kategorien zu gruppieren.'
+weight: 0
+new_revision: false

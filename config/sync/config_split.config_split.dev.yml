@@ -1,0 +1,18 @@
+uuid: b035663c-303c-4867-bb4c-2d3dcd661c42
+langcode: de
+status: false
+dependencies: {  }
+id: dev
+label: 'Dev (DDEV)'
+description: 'Nur in DDEV aktiv (settings.php: IS_DDEV_PROJECT). Demo-Hilfen masquerade und queue_ui.'
+weight: 0
+stackable: false
+no_patching: false
+storage: folder
+folder: ../config/split/dev
+module:
+  masquerade: 0
+  queue_ui: 0
+theme: {  }
+complete_list: {  }
+partial_list: {  }
