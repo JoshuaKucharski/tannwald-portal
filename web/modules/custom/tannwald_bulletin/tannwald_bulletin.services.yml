@@ -1,0 +1,18 @@
+services:
+  _defaults:
+    autowire: true
+
+  logger.channel.tannwald_bulletin:
+    parent: logger.channel_base
+    arguments: ['tannwald_bulletin']
+
+  tannwald_bulletin.recipients:
+    class: Drupal\tannwald_bulletin\RecipientResolver
+  Drupal\tannwald_bulletin\RecipientResolver: '@tannwald_bulletin.recipients'
+
+  tannwald_bulletin.confirmations:
+    class: Drupal\tannwald_bulletin\ConfirmationService
+  Drupal\tannwald_bulletin\ConfirmationService: '@tannwald_bulletin.confirmations'
+
+  Drupal\tannwald_bulletin\Mailer\BulletinMailerInterface:
+    class: Drupal\tannwald_bulletin\Mailer\BulletinMailer
