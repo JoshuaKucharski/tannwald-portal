@@ -1,0 +1,208 @@
+- | 1 hit | web/themes/custom/tannwald/templates/tannwald-search-page.html.twig:68
+- | 1 new version | web/themes/custom/tannwald/templates/content/node--maschine.html.twig:36, web/themes/custom/tannwald/templates/views/views-view-table--portal-maschinen.html.twig:30
+- | @count confirmed | web/themes/custom/tannwald/templates/content/node--maschine.html.twig:41, web/themes/custom/tannwald/templates/views/views-view-table--portal-maschinen.html.twig:35
+- | @count current | web/themes/custom/tannwald/templates/content/node--maschine.html.twig:35
+- | @count new versions | web/themes/custom/tannwald/templates/content/node--maschine.html.twig:36, web/themes/custom/tannwald/templates/views/views-view-table--portal-maschinen.html.twig:30
+- | @count open | web/themes/custom/tannwald/templates/content/node--maschine.html.twig:40, web/themes/custom/tannwald/templates/views/views-view-table--portal-maschinen.html.twig:34
+- | @count tokens | web/themes/custom/tannwald/components/review-card/review-card.twig:26
+- | @count words · target at most @target | web/themes/custom/tannwald/components/review-actions/review-actions.twig:14
+- | @language: not available | web/themes/custom/tannwald/components/lang-pills/lang-pills.twig:14
+- | @total hits | web/themes/custom/tannwald/templates/tannwald-search-page.html.twig:68
+- | About the portal | web/themes/custom/tannwald/templates/layout/page--user--login.html.twig:14
+- | Access is logged | web/themes/custom/tannwald/components/doc-row/doc-row.twig:23, web/themes/custom/tannwald/templates/content/node--dokument.html.twig:29
+- | Actions | web/themes/custom/tannwald/templates/views/views-view-table--redaktion-unbeantwortet.html.twig:19
+- | Add new comment | web/themes/custom/tannwald/templates/field/field--comment.html.twig:53
+- | Administrator | web/themes/custom/tannwald/includes/layout.inc:40, web/themes/custom/tannwald/includes/layout.inc:175
+- | After approval: indexing via the queue, about one minute | web/themes/custom/tannwald/templates/views/views-view-table--redaktion-freigaben.html.twig:37
+- | An assistant that answers only from approved documents | web/themes/custom/tannwald/templates/layout/page--user--login.html.twig:26
+- | Answer helpful | web/themes/custom/tannwald/components/chat/chat.twig:16, web/themes/custom/tannwald/components/chat/chat.twig:105
+- | Answer is being generated … | web/themes/custom/tannwald/components/chat/chat.twig:12
+- | Answer not helpful | web/themes/custom/tannwald/components/chat/chat.twig:17, web/themes/custom/tannwald/components/chat/chat.twig:108
+- | Answers only from approved documents | web/themes/custom/tannwald/components/chat/chat.twig:159
+- | Answers only from approved documents of this machine | web/themes/custom/tannwald/includes/chat.inc:53, web/themes/custom/tannwald/templates/content/node--maschine.html.twig:106
+- | Answers only from approved documents you are allowed to see | web/themes/custom/tannwald/includes/chat.inc:54
+- | Approvals | web/themes/custom/tannwald/includes/redaktion.inc:64
+- | Approved | web/themes/custom/tannwald/components/review-card/review-card.twig:9
+- | Ask a question about this machine, for example about cleaning intervals or fault codes. | web/themes/custom/tannwald/components/chat/chat.twig:62
+- | Ask a question about your documents, for example about cleaning intervals or fault codes. | web/themes/custom/tannwald/components/chat/chat.twig:64
+- | Ask the assistant | web/themes/custom/tannwald/components/chat/chat.twig:46, web/themes/custom/tannwald/templates/tannwald-search-page.html.twig:100
+- | Assistant | web/themes/custom/tannwald/components/chat/chat.twig:49, web/themes/custom/tannwald/components/chat/chat.twig:53, web/themes/custom/tannwald/templates/content/node--maschine.html.twig:103
+- | At most @count words | web/themes/custom/tannwald/includes/redaktion.inc:279
+- | Audit log | web/themes/custom/tannwald/includes/redaktion.inc:100
+- | Audit log as CSV | web/themes/custom/tannwald/templates/page--redaktion.html.twig:18
+- | Authenticated | web/themes/custom/tannwald/includes/layout.inc:167
+- | Available languages | web/themes/custom/tannwald/components/lang-pills/lang-pills.twig:7
+- | Back to @name | web/themes/custom/tannwald/templates/layout/page.html.twig:25
+- | Breadcrumb | web/themes/custom/tannwald/templates/navigation/breadcrumb.html.twig:8
+- | Bulletins | web/themes/custom/tannwald/includes/layout.inc:140, web/themes/custom/tannwald/includes/layout.inc:243, web/themes/custom/tannwald/includes/layout.inc:250
+- | Bulletins for this machine | web/themes/custom/tannwald/templates/content/node--maschine.html.twig:87
+- | Change history | web/themes/custom/tannwald/components/doc-row/doc-row.twig:24, web/themes/custom/tannwald/templates/content/node--dokument.html.twig:41
+- | Change note: @note | web/themes/custom/tannwald/components/review-card/review-card.twig:30, web/themes/custom/tannwald/templates/content/node--dokument.html.twig:35
+- | Chap. | web/themes/custom/tannwald/components/chat/chat.twig:14
+- | Checks | web/themes/custom/tannwald/templates/views/views-view-table--redaktion-freigaben.html.twig:23
+- | Clear input | web/themes/custom/tannwald/components/search-live/search-live.twig:18
+- | Close | web/themes/custom/tannwald/components/chat/chat.twig:56
+- | Close message | web/themes/custom/tannwald/templates/misc/status-messages.html.twig:40
+- | Compliance | web/themes/custom/tannwald/includes/layout.inc:38
+- | Confirmed | web/themes/custom/tannwald/includes/machine.inc:341
+- | Confirmed on @date | web/themes/custom/tannwald/components/search-hit/search-hit.twig:31
+- | Contents | web/themes/custom/tannwald/templates/content/node--bulletin.html.twig:25, web/themes/custom/tannwald/templates/content/node--dokument.html.twig:52
+- | Contract | web/themes/custom/tannwald/templates/content/node--maschine.html.twig:29, web/themes/custom/tannwald/templates/views/views-view-table--portal-maschinen.html.twig:23
+- | Create document | web/themes/custom/tannwald/templates/views/views-view-table--redaktion-unbeantwortet.html.twig:35
+- | Create support request | web/themes/custom/tannwald/components/chat/chat.twig:19, web/themes/custom/tannwald/components/chat/chat.twig:123
+- | Current page | web/themes/custom/tannwald/templates/navigation/pager.html.twig:21
+- | Current versions only | web/themes/custom/tannwald/templates/content/node--maschine.html.twig:71, web/themes/custom/tannwald/templates/tannwald-search-page.html.twig:53
+- | Customer portal of Tannwald Verpackungstechnik AG | web/themes/custom/tannwald/templates/layout/page--user--login.html.twig:24
+- | Customer reader | web/themes/custom/tannwald/includes/layout.inc:34
+- | Dealer | web/themes/custom/tannwald/includes/layout.inc:35
+- | Demo accounts, password demo | web/themes/custom/tannwald/templates/layout/page--user--login.html.twig:44
+- | Demo mode | web/themes/custom/tannwald/templates/layout/page.html.twig:16
+- | Document type | web/themes/custom/tannwald/includes/search.inc:39
+- | Documents | web/themes/custom/tannwald/includes/redaktion.inc:70, web/themes/custom/tannwald/templates/content/node--maschine.html.twig:34, web/themes/custom/tannwald/templates/views/views-view-table--portal-maschinen.html.twig:28
+- | Documents for this machine | web/themes/custom/tannwald/templates/content/node--maschine.html.twig:67
+- | Documents for your machines | web/themes/custom/tannwald/templates/layout/page--user--login.html.twig:26
+- | Draft | web/themes/custom/tannwald/components/review-card/review-card.twig:11
+- | Dual-use · export class @n | web/themes/custom/tannwald/includes/document.inc:29, web/themes/custom/tannwald/includes/machine.inc:239
+- | Editorial | web/themes/custom/tannwald/components/redaktion-nav/redaktion-nav.twig:7, web/themes/custom/tannwald/tannwald.theme:170
+- | English | web/themes/custom/tannwald/includes/common.inc:58
+- | Enter a search term. | web/themes/custom/tannwald/templates/tannwald-search-page.html.twig:90
+- | Enter for all hits | web/themes/custom/tannwald/components/search-live/search-live.twig:25
+- | Examples: | web/themes/custom/tannwald/templates/tannwald-search-page.html.twig:91
+- | Export rules | web/themes/custom/tannwald/includes/redaktion.inc:94
+- | Fallback @language | web/themes/custom/tannwald/templates/content/node--maschine.html.twig:68
+- | Fallback @language: this document is not available in your language. | web/themes/custom/tannwald/templates/content/node--dokument.html.twig:32
+- | Filter | web/themes/custom/tannwald/templates/tannwald-search-page.html.twig:44, web/themes/custom/tannwald/templates/tannwald-search-page.html.twig:47
+- | Filter (@count active) | web/themes/custom/tannwald/templates/tannwald-search-page.html.twig:47
+- | Forgot your password? | web/themes/custom/tannwald/templates/layout/page--user--login.html.twig:41
+- | Four-eyes principle: the person who created the bulletin must not approve it. | web/themes/custom/tannwald/tannwald.theme:261, web/themes/custom/tannwald/tannwald.theme:308
+- | French | web/themes/custom/tannwald/includes/common.inc:58
+- | Full text only | web/themes/custom/tannwald/includes/search.inc:66, web/themes/custom/tannwald/templates/tannwald-search-page.html.twig:34
+- | Generated @date | web/themes/custom/tannwald/components/review-card/review-card.twig:24
+- | Generated @date with @model, approved by the editorial team. | web/themes/custom/tannwald/templates/content/tannwald-summary.html.twig:11
+- | German | web/themes/custom/tannwald/includes/common.inc:58
+- | Go to next page | web/themes/custom/tannwald/templates/navigation/pager.html.twig:31, web/themes/custom/tannwald/templates/views/views-mini-pager.html.twig:35
+- | Go to page @key | web/themes/custom/tannwald/templates/navigation/pager.html.twig:21
+- | Go to previous page | web/themes/custom/tannwald/templates/navigation/pager.html.twig:13, web/themes/custom/tannwald/templates/views/views-mini-pager.html.twig:20
+- | History pseudonymised, 12 months | web/themes/custom/tannwald/components/chat/chat.twig:159
+- | Hit by meaning | web/themes/custom/tannwald/components/search-hit/search-hit.twig:20
+- | Home | web/themes/custom/tannwald/templates/block/block--system-branding-block.html.twig:19, web/themes/custom/tannwald/templates/layout/maintenance-page.html.twig:16, web/themes/custom/tannwald/templates/layout/maintenance-page.html.twig:17
+- | Hybrid | web/themes/custom/tannwald/includes/search.inc:66, web/themes/custom/tannwald/templates/tannwald-search-page.html.twig:30
+- | Information | web/themes/custom/tannwald/includes/machine.inc:342
+- | Language of the document (@language) | web/themes/custom/tannwald/includes/redaktion.inc:281
+- | Language: @language | web/themes/custom/tannwald/templates/content/node--dokument.html.twig:27, web/themes/custom/tannwald/templates/content/node--maschine.html.twig:68
+- | Live results while typing | web/themes/custom/tannwald/components/search-live/search-live.twig:22
+- | Location @location | web/themes/custom/tannwald/templates/content/node--maschine.html.twig:23
+- | Log in | web/themes/custom/tannwald/templates/layout/page--user--login.html.twig:39
+- | Log out | web/themes/custom/tannwald/includes/layout.inc:73
+- | Machine | web/themes/custom/tannwald/templates/content/node--maschine.html.twig:18
+- | Machine type | web/themes/custom/tannwald/includes/search.inc:38
+- | Main navigation | web/themes/custom/tannwald/templates/layout/page.html.twig:34
+- | Masquerade as @name | web/themes/custom/tannwald/includes/layout.inc:214
+- | Mode @modus | web/themes/custom/tannwald/templates/tannwald-search-page.html.twig:69
+- | Model @model | web/themes/custom/tannwald/components/review-card/review-card.twig:25
+- | Model: @model | web/themes/custom/tannwald/components/chat/chat.twig:159
+- | My machines | web/themes/custom/tannwald/includes/layout.inc:130, web/themes/custom/tannwald/includes/layout.inc:242, web/themes/custom/tannwald/includes/layout.inc:246
+- | New | web/themes/custom/tannwald/templates/content/mark.html.twig:16
+- | New version | web/themes/custom/tannwald/components/doc-row/doc-row.twig:31
+- | Next page | web/themes/custom/tannwald/templates/views/views-mini-pager.html.twig:36
+- | No approved summary yet. | web/themes/custom/tannwald/templates/content/node--dokument.html.twig:65
+- | No bulletins for this machine. New bulletins appear here as soon as they are released. | web/themes/custom/tannwald/templates/content/node--maschine.html.twig:98
+- | No confirmation required | web/themes/custom/tannwald/components/bulletin-banner/bulletin-banner.twig:19, web/themes/custom/tannwald/includes/machine.inc:350
+- | No documents are available for this machine. As soon as the editorial team approves one, it appears here. | web/themes/custom/tannwald/templates/content/node--maschine.html.twig:81
+- | No hits for “@query”. Try another spelling, switch to Hybrid, or ask the assistant. | web/themes/custom/tannwald/templates/tannwald-search-page.html.twig:86
+- | No machines are assigned to your company yet. Your Tannwald contact links them to your account. | web/themes/custom/tannwald/templates/views/views-view-table--portal-maschinen.html.twig:41
+- | Not available | web/themes/custom/tannwald/components/lang-pills/lang-pills.twig:14
+- | Older version | web/themes/custom/tannwald/components/doc-row/doc-row.twig:22
+- | Only @company | web/themes/custom/tannwald/includes/document.inc:37, web/themes/custom/tannwald/includes/machine.inc:248
+- | Open bulletin | web/themes/custom/tannwald/components/search-hit/search-hit.twig:28
+- | Open chapter | web/themes/custom/tannwald/components/search-hit/search-hit.twig:28
+- | Open machine | web/themes/custom/tannwald/templates/views/views-view-table--portal-maschinen.html.twig:38
+- | Open safety bulletin | web/themes/custom/tannwald/components/bulletin-banner/bulletin-banner.twig:8
+- | Open service bulletin | web/themes/custom/tannwald/components/bulletin-banner/bulletin-banner.twig:8
+- | Page | web/themes/custom/tannwald/templates/navigation/pager.html.twig:22
+- | Page {{ items.current }} | web/themes/custom/tannwald/templates/views/views-mini-pager.html.twig:28
+- | Pagination | web/themes/custom/tannwald/templates/navigation/pager.html.twig:9, web/themes/custom/tannwald/templates/views/views-mini-pager.html.twig:16
+- | Please enter a question. | web/themes/custom/tannwald/components/chat/chat.twig:25
+- | Portal admin | web/themes/custom/tannwald/includes/layout.inc:39
+- | Prefer an answer instead of a list of hits? The assistant summarises the matching chapters and cites them. | web/themes/custom/tannwald/templates/tannwald-search-page.html.twig:99
+- | Previous page | web/themes/custom/tannwald/templates/views/views-mini-pager.html.twig:21
+- | Primary tabs | web/themes/custom/tannwald/templates/navigation/menu-local-tasks.html.twig:8
+- | Published @date | web/themes/custom/tannwald/components/bulletin-banner/bulletin-banner.twig:13, web/themes/custom/tannwald/templates/content/node--bulletin.html.twig:18
+- | Question, history and serial number are sent along. | web/themes/custom/tannwald/components/chat/chat.twig:20, web/themes/custom/tannwald/components/chat/chat.twig:124
+- | Queue: @count open | web/themes/custom/tannwald/includes/redaktion.inc:179
+- | Read bulletin | web/themes/custom/tannwald/components/bulletin-banner/bulletin-banner.twig:23
+- | Read confirmation pending | web/themes/custom/tannwald/components/bulletin-banner/bulletin-banner.twig:17
+- | Read confirmation required | web/themes/custom/tannwald/includes/machine.inc:345, web/themes/custom/tannwald/templates/content/node--bulletin.html.twig:19
+- | Rejected | web/themes/custom/tannwald/components/review-card/review-card.twig:10
+- | Reset filters | web/themes/custom/tannwald/templates/tannwald-search-page.html.twig:59
+- | Role @role | web/themes/custom/tannwald/templates/layout/page.html.twig:17
+- | Safety bulletin | web/themes/custom/tannwald/components/bulletin-banner/bulletin-banner.twig:11, web/themes/custom/tannwald/includes/document.inc:69, web/themes/custom/tannwald/includes/machine.inc:335
+- | Safety bulletins with read confirmation | web/themes/custom/tannwald/templates/layout/page--user--login.html.twig:26
+- | Safety notice | web/themes/custom/tannwald/components/chat/chat.twig:24, web/themes/custom/tannwald/components/chat/chat.twig:75
+- | Safety-relevant chapters mentioned | web/themes/custom/tannwald/components/review-card/review-card.twig:33, web/themes/custom/tannwald/includes/redaktion.inc:278
+- | Safety-relevant chapters not mentioned | web/themes/custom/tannwald/components/review-card/review-card.twig:35
+- | Search | web/themes/custom/tannwald/includes/layout.inc:135
+- | Search mode | web/themes/custom/tannwald/templates/tannwald-search-page.html.twig:27
+- | Search results | web/themes/custom/tannwald/templates/tannwald-search-page.html.twig:65
+- | Search term | web/themes/custom/tannwald/templates/tannwald-search-page.html.twig:17
+- | Search your documents | web/themes/custom/tannwald/templates/tannwald-search-page.html.twig:15
+- | Secondary tabs | web/themes/custom/tannwald/templates/navigation/menu-local-tasks.html.twig:12
+- | Send question | web/themes/custom/tannwald/components/chat/chat.twig:151
+- | Serial number @serial | web/themes/custom/tannwald/templates/content/node--maschine.html.twig:21
+- | Service bulletin | web/themes/custom/tannwald/components/bulletin-banner/bulletin-banner.twig:11, web/themes/custom/tannwald/includes/document.inc:69, web/themes/custom/tannwald/includes/machine.inc:335
+- | Skip to main content | web/themes/custom/tannwald/templates/layout/html.html.twig:26
+- | Sources | web/themes/custom/tannwald/components/chat/chat.twig:13, web/themes/custom/tannwald/components/chat/chat.twig:86
+- | Summaries become visible on the document, in search and in the assistant only after approval. | web/themes/custom/tannwald/templates/views/views-view--redaktion-freigaben.html.twig:9
+- | Support request #@id created. | web/themes/custom/tannwald/components/chat/chat.twig:21
+- | Switch: | web/themes/custom/tannwald/templates/layout/page.html.twig:19
+- | Switches back to @name first; choose the account there. | web/themes/custom/tannwald/includes/layout.inc:210
+- | Table of contents | web/themes/custom/tannwald/templates/content/node--bulletin.html.twig:24, web/themes/custom/tannwald/templates/content/node--dokument.html.twig:51
+- | Tabs | web/themes/custom/tannwald/templates/block/block--local-tasks-block.html.twig:10
+- | Technical editing | web/themes/custom/tannwald/includes/layout.inc:37
+- | Technician | web/themes/custom/tannwald/includes/layout.inc:36
+- | Text Formats | web/themes/custom/tannwald/templates/content-edit/filter-tips.html.twig:20
+- | Thank you for your feedback. | web/themes/custom/tannwald/components/chat/chat.twig:18, web/themes/custom/tannwald/components/chat/chat.twig:114
+- | The assistant is currently not reachable. | web/themes/custom/tannwald/components/chat/chat.twig:23
+- | The assistant is currently unavailable. You can still use the search. | web/themes/custom/tannwald/includes/chat.inc:32
+- | To machine @serial | web/themes/custom/tannwald/components/search-hit/search-hit.twig:30
+- | To support | web/themes/custom/tannwald/templates/views/views-view-table--redaktion-unbeantwortet.html.twig:36
+- | Too many questions, please wait a minute. | web/themes/custom/tannwald/components/chat/chat.twig:22
+- | Too many requests, please wait a moment. | web/themes/custom/tannwald/components/search-live/search-live.twig:8
+- | Unanswered questions | web/themes/custom/tannwald/includes/redaktion.inc:82
+- | Under review | web/themes/custom/tannwald/components/review-card/review-card.twig:8
+- | Updated | web/themes/custom/tannwald/templates/content/mark.html.twig:18
+- | Usage and costs | web/themes/custom/tannwald/includes/redaktion.inc:88
+- | Username or password do not match. Please check your entry. | web/themes/custom/tannwald/tannwald.theme:122
+- | Version @version | web/themes/custom/tannwald/components/doc-row/doc-row.twig:20, web/themes/custom/tannwald/components/review-card/review-card.twig:19, web/themes/custom/tannwald/templates/content/node--dokument.html.twig:25
+- | Was this helpful? | web/themes/custom/tannwald/components/chat/chat.twig:15, web/themes/custom/tannwald/components/chat/chat.twig:104
+- | While typing: top @n | web/themes/custom/tannwald/components/search-live/search-live.twig:24
+- | Year built @year | web/themes/custom/tannwald/templates/content/node--maschine.html.twig:24, web/themes/custom/tannwald/templates/views/views-view-table--portal-maschinen.html.twig:18
+- | You have not created any content types yet. Go to the <a href="{{ create_content }}">content type creation page</a> to add a new content type. | web/themes/custom/tannwald/templates/content-edit/node-add-list.html.twig:26
+- | Your question | web/themes/custom/tannwald/components/chat/chat.twig:148
+- | approved @date | web/themes/custom/tannwald/components/doc-row/doc-row.twig:21, web/themes/custom/tannwald/templates/content/node--dokument.html.twig:26
+- | clean the sealing station | web/themes/custom/tannwald/includes/search.inc:73
+- | concerns this serial number | web/themes/custom/tannwald/components/bulletin-banner/bulletin-banner.twig:13
+- | confirmed on @date by @name | web/themes/custom/tannwald/components/bulletin-banner/bulletin-banner.twig:15, web/themes/custom/tannwald/includes/machine.inc:346
+- | e.g. E-4711 or cleaning the sealing station | web/themes/custom/tannwald/templates/tannwald-search-page.html.twig:25
+- | e.g. Which film thickness is approved? | web/themes/custom/tannwald/components/chat/chat.twig:150
+- | in @seconds s | web/themes/custom/tannwald/templates/tannwald-search-page.html.twig:69
+- | logged in as | web/themes/custom/tannwald/templates/layout/page.html.twig:17
+- | new revision by @name | web/themes/custom/tannwald/components/review-card/review-card.twig:27
+- | only documents you are allowed to see | web/themes/custom/tannwald/templates/tannwald-search-page.html.twig:69
+- | target at most @target | web/themes/custom/tannwald/components/review-actions/review-actions.twig:8
+- | until @date | web/themes/custom/tannwald/templates/content/node--maschine.html.twig:31, web/themes/custom/tannwald/templates/views/views-view-table--portal-maschinen.html.twig:25
+- | valid until @date | web/themes/custom/tannwald/templates/content/node--dokument.html.twig:28
+- | words | web/themes/custom/tannwald/components/review-actions/review-actions.twig:8
+- | ‹‹ | web/themes/custom/tannwald/templates/views/views-mini-pager.html.twig:22
+- | ›› | web/themes/custom/tannwald/templates/views/views-mini-pager.html.twig:37
+tannwald | Download | web/themes/custom/tannwald/components/doc-row/doc-row.twig:34, web/themes/custom/tannwald/templates/content/node--dokument.html.twig:44
+tannwald button | Search | web/themes/custom/tannwald/templates/tannwald-search-page.html.twig:37
+tannwald facet | Language | web/themes/custom/tannwald/includes/search.inc:40
+tannwald facet | Reset | web/themes/custom/tannwald/components/facet-group/facet-group.twig:14
+tannwald pager | Back | web/themes/custom/tannwald/templates/navigation/pager.html.twig:13
+tannwald pager | Next | web/themes/custom/tannwald/templates/navigation/pager.html.twig:31
+tannwald password | hide | web/themes/custom/tannwald/tannwald.theme:103
+tannwald password | show | web/themes/custom/tannwald/tannwald.theme:98, web/themes/custom/tannwald/tannwald.theme:104
+tannwald review | Summary | web/themes/custom/tannwald/templates/content/node--dokument.html.twig:61, web/themes/custom/tannwald/templates/content/tannwald-summary.html.twig:9
+tannwald search | Document | web/themes/custom/tannwald/components/search-hit/search-hit.twig:29
+tannwald status | Open | web/themes/custom/tannwald/includes/machine.inc:340

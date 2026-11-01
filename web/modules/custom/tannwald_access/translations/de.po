@@ -86,3 +86,18 @@ msgstr "Entitäts-ID"
 
 msgid "No audit entries."
 msgstr "Keine Audit-Einträge."
+
+msgid "Country"
+msgstr "Land"
+
+msgid "Date"
+msgstr "Datum"
+
+msgid "Details"
+msgstr "Details"
+
+msgid "ID"
+msgstr "ID"
+
+msgid "User"
+msgstr "Nutzer"

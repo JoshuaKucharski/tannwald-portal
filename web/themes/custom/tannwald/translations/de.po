@@ -608,3 +608,116 @@ msgstr "Keine Treffer für „@query“. Versuchen Sie eine andere Schreibweise,
 
 msgid "Ask a question about your documents, for example about cleaning intervals or fault codes."
 msgstr "Stellen Sie eine Frage zu Ihren Dokumenten, zum Beispiel zu Reinigungsintervallen oder Störungscodes."
+
+msgid "Add new comment"
+msgstr "Neuen Kommentar hinzufügen"
+
+msgid "Current page"
+msgstr "Aktuelle Seite"
+
+msgid "English"
+msgstr "Englisch"
+
+msgid "French"
+msgstr "Französisch"
+
+msgid "Generated @date with @model, approved by the editorial team."
+msgstr "Generiert am @date mit @model, von der Redaktion freigegeben."
+
+msgid "German"
+msgstr "Deutsch"
+
+msgid "Go to next page"
+msgstr "Zur nächsten Seite"
+
+msgid "Go to page @key"
+msgstr "Zu Seite @key"
+
+msgid "Go to previous page"
+msgstr "Zur vorherigen Seite"
+
+msgid "Home"
+msgstr "Startseite"
+
+msgid "New"
+msgstr "Neu"
+
+msgid "Next page"
+msgstr "Nächste Seite"
+
+msgid "Page"
+msgstr "Seite"
+
+msgid "Page {{ items.current }}"
+msgstr "Seite {{ items.current }}"
+
+msgid "Pagination"
+msgstr "Seitennavigation"
+
+msgid "Previous page"
+msgstr "Vorherige Seite"
+
+msgid "Primary tabs"
+msgstr "Primäre Reiter"
+
+msgid "Secondary tabs"
+msgstr "Sekundäre Reiter"
+
+msgid "Skip to main content"
+msgstr "Zum Hauptinhalt springen"
+
+msgid "Tabs"
+msgstr "Reiter"
+
+msgid "Text Formats"
+msgstr "Textformate"
+
+msgid "Updated"
+msgstr "Aktualisiert"
+
+msgid "You have not created any content types yet. Go to the <a href=\"{{ create_content }}\">content type creation page</a> to add a new content type."
+msgstr "Sie haben noch keine Inhaltstypen angelegt. Öffnen Sie die <a href=\"{{ create_content }}\">Seite zum Anlegen von Inhaltstypen</a>, um einen neuen Inhaltstyp hinzuzufügen."
+
+msgid "‹‹"
+msgstr "‹‹"
+
+msgid "››"
+msgstr "››"
+
+msgctxt "tannwald review"
+msgid "Summary"
+msgstr "Zusammenfassung"
+
+# ---------------------------------------------------------------------------------------------
+# Core-Overrides (6.5): Die Core-Übersetzung de ist bis auf wenige Stellen "Sie"; hier die Meldungen,
+# die Nutzer des Portals sehen, in Projektwortlaut ("Sie", Satzpunkt, de-CH). Import als customized
+# mit --override=all, sonst gewinnt Core beim nächsten locale:update.
+# ---------------------------------------------------------------------------------------------
+
+# core override
+msgid "Unrecognized username or password. <a href=\":password\">Forgot your password?</a>"
+msgstr "Benutzername oder Passwort stimmen nicht. <a href=\":password\">Passwort vergessen?</a>"
+
+# core override
+msgid "@type %title has been created."
+msgstr "@type %title wurde angelegt."
+
+# core override
+msgid "@type %title has been updated."
+msgstr "@type %title wurde gespeichert."
+
+# core override
+msgid "Page not found"
+msgstr "Seite nicht gefunden"
+
+# core override
+msgid "The requested page could not be found."
+msgstr "Die gewünschte Seite wurde nicht gefunden."
+
+# core override
+msgid "Access denied"
+msgstr "Zugriff verweigert"
+
+# core override
+msgid "You are not authorized to access this page."
+msgstr "Sie haben keine Berechtigung für diese Seite."

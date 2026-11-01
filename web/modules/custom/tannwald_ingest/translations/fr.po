@@ -1,0 +1,59 @@
+# French translation of tannwald_ingest (vous; terminologie: voir rapport tannwald-18).
+msgid ""
+msgstr ""
+"Project-Id-Version: tannwald_ingest\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Language: fr\n"
+
+msgid "Approved AI summary of the current revision."
+msgstr "Résumé IA approuvé de la révision actuelle."
+
+msgid "Approved summary"
+msgstr "Résumé approuvé"
+
+msgid "Generated @date with @model, approved by the editorial team."
+msgstr "Généré le @date avec @model, approuvé par la rédaction."
+
+msgid "Links to the review displays with the number of summaries per moderation state."
+msgstr "Liens vers les vues de validation avec le nombre de résumés par statut de modération."
+
+msgid "Tannwald chunk embedding"
+msgstr "Tannwald : vectorisation des segments"
+
+msgid "Tannwald document summaries"
+msgstr "Tannwald : résumés de documents"
+
+msgid "Tannwald review tabs with counts"
+msgstr "Tannwald : onglets de validation avec compteurs"
+
+msgid "The summary has been approved."
+msgstr "Le résumé a été approuvé."
+
+msgid "The summary has been rejected."
+msgstr "Le résumé a été rejeté."
+
+msgid "The summary has been saved as draft."
+msgstr "Le résumé a été enregistré comme brouillon."
+
+msgctxt "tannwald review"
+msgid "Approve"
+msgstr "Approuver"
+
+msgctxt "tannwald review"
+msgid "Reject"
+msgstr "Rejeter"
+
+msgctxt "tannwald review"
+msgid "Save draft"
+msgstr "Enregistrer le brouillon"
+
+msgctxt "tannwald review"
+msgid "Summary"
+msgstr "Résumé"
+
+msgctxt "tannwald review"
+msgid "Summary (editable)"
+msgstr "Résumé (modifiable)"

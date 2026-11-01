@@ -199,7 +199,7 @@ msgid "Assistant: 80 % of the monthly limit reached"
 msgstr "Assistent: 80 % des Monatslimits erreicht"
 
 msgid "Hello @name,"
-msgstr "Guten Tag @name"
+msgstr "Guten Tag @name,"
 
 msgid "The assistant has used @usage of @limit tokens this month (@share %)."
 msgstr "Der Assistent hat diesen Monat @usage von @limit Tokens verbraucht (@share %)."
@@ -211,3 +211,114 @@ msgstr "Ab 100 % antwortet der Assistent bis Monatsende nicht mehr; die Suche bl
 msgctxt "tannwald button"
 msgid "Search"
 msgstr "Suchen"
+
+msgid "Answers"
+msgstr "Antworten"
+
+msgid "Answers and average duration per day from the assistant log."
+msgstr "Antworten und mittlere Dauer je Tag aus dem Log des Assistenten."
+
+msgid "Assistant answers per day"
+msgstr "Antworten des Assistenten je Tag"
+
+msgid "Assistant answers per day (last @days days)"
+msgstr "Antworten des Assistenten je Tag (letzte @days Tage)"
+
+msgid "Assistant log"
+msgstr "Log des Assistenten"
+
+msgid "Assistant usage"
+msgstr "Nutzung des Assistenten"
+
+msgid "Average duration (ms)"
+msgstr "Mittlere Dauer (ms)"
+
+msgid "Completion tokens"
+msgstr "Tokens (Antwort)"
+
+msgid "Context"
+msgstr "Kontext"
+
+msgid "Cost (CHF)"
+msgstr "Kosten (CHF)"
+
+msgid "Created"
+msgstr "Erstellt"
+
+msgid "Current month"
+msgstr "Aktueller Monat"
+
+msgid "Day"
+msgstr "Tag"
+
+msgid "Duration (ms)"
+msgstr "Dauer (ms)"
+
+msgid "Injection suspicion"
+msgstr "Verdacht auf Prompt-Injection"
+
+msgid "Language"
+msgstr "Sprache"
+
+msgid "Last asked"
+msgstr "Zuletzt gefragt"
+
+msgid "Log ID"
+msgstr "Log-ID"
+
+msgid "Machine ID"
+msgstr "Maschinen-ID"
+
+msgid "Model"
+msgstr "Modell"
+
+msgid "Month"
+msgstr "Monat"
+
+msgid "No answers yet."
+msgstr "Noch keine Antworten."
+
+msgid "One row per assistant answer (pseudonymised)."
+msgstr "Eine Zeile je Antwort des Assistenten (pseudonymisiert)."
+
+msgid "Operation"
+msgstr "Vorgang"
+
+msgid "Prompt tokens"
+msgstr "Tokens (Prompt)"
+
+msgid "Provider"
+msgstr "Provider"
+
+msgid "Question (normalised)"
+msgstr "Frage (normalisiert)"
+
+msgid "Rating"
+msgstr "Bewertung"
+
+msgid "Refused"
+msgstr "Abgelehnt"
+
+msgid "Rows created since the start of the current month (site time zone)."
+msgstr "Zeilen seit Beginn des aktuellen Monats (Zeitzone der Website)."
+
+msgid "Share of monthly limit"
+msgstr "Anteil am Monatslimit"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "Token usage per AI call (table of tannwald_ingest)."
+msgstr "Token-Verbrauch je KI-Aufruf (Tabelle von tannwald_ingest)."
+
+msgid "Tokens (total)"
+msgstr "Tokens (gesamt)"
+
+msgid "Usage ID"
+msgstr "Nutzungs-ID"
+
+msgid "User"
+msgstr "Nutzer"
+
+msgid "current month"
+msgstr "aktueller Monat"

@@ -46,7 +46,7 @@ msgid "Safety bulletin @id: @title — read confirmation required"
 msgstr "Sicherheits-Bulletin @id: @title — Lesebestätigung erforderlich"
 
 msgid "Hello @name,"
-msgstr "Guten Tag @name"
+msgstr "Guten Tag @name,"
 
 msgid "Tannwald has released a safety bulletin for the following machines:"
 msgstr "Tannwald hat für folgende Maschinen ein Sicherheits-Bulletin freigegeben:"
@@ -83,3 +83,9 @@ msgstr "Bulletin @nid nicht veröffentlicht, keine Mails."
 
 msgid "Bulletin @nid: no mail delivered to users @uids after @max attempts."
 msgstr "Bulletin @nid: nach @max Versuchen keine Mail an die Nutzer @uids zugestellt."
+
+msgid "Country"
+msgstr "Land"
+
+msgid "User"
+msgstr "Nutzer"

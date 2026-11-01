@@ -1,0 +1,289 @@
+# French translation of tannwald_assistant (vous).
+msgid ""
+msgstr ""
+"Project-Id-Version: tannwald_assistant\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Language: fr\n"
+
+msgid "0 = unlimited. Warning mail at 80 %, search only at 100 %."
+msgstr "0 = illimité. E-mail d’avertissement à 80 %, recherche seule à 100 %."
+
+msgid "@total hits in @seconds s · Mode @modus · only documents you are allowed to see"
+msgstr "@total résultats en @seconds s · Mode @modus · uniquement les documents que vous pouvez consulter"
+
+msgid "Administer the Tannwald assistant"
+msgstr "Administrer l’assistant Tannwald"
+
+msgid "Answer not found."
+msgstr "Réponse introuvable."
+
+msgid "Answers"
+msgstr "Réponses"
+
+msgid "Answers and average duration per day from the assistant log."
+msgstr "Réponses et durée moyenne par jour d’après le journal de l’assistant."
+
+msgid "Assistant"
+msgstr "Assistant"
+
+msgid "Assistant answers per day"
+msgstr "Réponses de l’assistant par jour"
+
+msgid "Assistant answers per day (last @days days)"
+msgstr "Réponses de l’assistant par jour (@days derniers jours)"
+
+msgid "Assistant enabled"
+msgstr "Assistant activé"
+
+msgid "Assistant limit warning"
+msgstr "Avertissement de limite de l’assistant"
+
+msgid "Assistant log"
+msgstr "Journal de l’assistant"
+
+msgid "Assistant usage"
+msgstr "Utilisation de l’assistant"
+
+msgid "Assistant: 80 % of the monthly limit reached"
+msgstr "Assistant : 80 % de la limite mensuelle atteints"
+
+msgid "At 100 % the assistant switches to search-only mode until the end of the month; search remains available."
+msgstr "À 100 %, l’assistant ne répond plus jusqu’à la fin du mois ; la recherche reste disponible."
+
+msgid "At least one safety term per language is required."
+msgstr "Au moins un terme de sécurité par langue est requis."
+
+msgid "Average duration (ms)"
+msgstr "Durée moyenne (ms)"
+
+msgid "Change provider, models, limit, costs and safety terms; manage support requests."
+msgstr "Modifier le fournisseur, les modèles, la limite, les coûts et les termes de sécurité ; gérer les demandes d’assistance."
+
+msgid "Chat model"
+msgstr "Modèle de conversation"
+
+msgid "Chunks in the prompt (top_k)"
+msgstr "Segments dans le prompt (top_k)"
+
+msgid "Completion tokens"
+msgstr "Tokens (réponse)"
+
+msgid "Confirmed on @date"
+msgstr "Confirmé le @date"
+
+msgid "Context"
+msgstr "Contexte"
+
+msgid "Cost (CHF)"
+msgstr "Coûts (CHF)"
+
+msgid "Cost per 1,000 tokens (CHF)"
+msgstr "Coût pour 1 000 tokens (CHF)"
+
+msgid "Created"
+msgstr "Créé le"
+
+msgid "Current month"
+msgstr "Mois en cours"
+
+msgid "Current versions only"
+msgstr "Versions actuelles uniquement"
+
+msgid "Day"
+msgstr "Jour"
+
+msgid "Document"
+msgstr "Document"
+
+msgid "Document type"
+msgstr "Type de document"
+
+msgid "Duration (ms)"
+msgstr "Durée (ms)"
+
+msgid "Embedding model"
+msgstr "Modèle d’embedding"
+
+msgid "Expected log_id and bewertung 1 or -1."
+msgstr "Attendu : log_id et bewertung valant 1 ou -1."
+
+msgid "Expected log_id."
+msgstr "Attendu : log_id."
+
+msgid "Full text only"
+msgstr "Texte intégral"
+
+msgid "Hello @name,"
+msgstr "Bonjour @name,"
+
+msgid "History (JSON)"
+msgstr "Historique (JSON)"
+
+msgid "Hit by meaning"
+msgstr "Résultat par signification"
+
+msgid "Hybrid"
+msgstr "Hybride"
+
+msgid "Injection suspicion"
+msgstr "Soupçon d’injection de prompt"
+
+msgid "Language"
+msgstr "Langue"
+
+msgid "Last asked"
+msgstr "Dernière question"
+
+msgid "Log ID"
+msgstr "ID du journal"
+
+msgid "Machine"
+msgstr "Machine"
+
+msgid "Machine ID"
+msgstr "ID de la machine"
+
+msgid "Machine not found."
+msgstr "Machine introuvable."
+
+msgid "Machine type"
+msgstr "Type de machine"
+
+msgid "Minimum RRF score (min_score)"
+msgstr "Score RRF minimal (min_score)"
+
+msgid "Model"
+msgstr "Modèle"
+
+msgid "Month"
+msgstr "Mois"
+
+msgid "Monthly token limit"
+msgstr "Limite mensuelle (tokens)"
+
+msgid "No answers yet."
+msgstr "Aucune réponse pour l’instant."
+
+msgid "No hits."
+msgstr "Aucun résultat."
+
+msgid "One row per assistant answer (pseudonymised)."
+msgstr "Une ligne par réponse de l’assistant (pseudonymisée)."
+
+msgid "One term per line; a trailing * also matches longer words."
+msgstr "Un terme par ligne ; un * à la fin correspond aussi aux mots plus longs."
+
+msgid "Only letters, digits and . _ : / - are allowed."
+msgstr "Seuls les lettres, les chiffres et . _ : / - sont autorisés."
+
+msgid "Open chapter"
+msgstr "Ouvrir le chapitre"
+
+msgid "Operation"
+msgstr "Opération"
+
+msgid "Please enter a question."
+msgstr "Veuillez saisir une question."
+
+msgid "Plugin ID of the AI module, e.g. ollama."
+msgstr "ID du plugin du module IA, p. ex. ollama."
+
+msgid "Prompt tokens"
+msgstr "Tokens (prompt)"
+
+msgid "Provider"
+msgstr "Fournisseur"
+
+msgid "Question"
+msgstr "Question"
+
+msgid "Question (normalised)"
+msgstr "Question (normalisée)"
+
+msgid "Rating"
+msgstr "Évaluation"
+
+msgid "Raw model name of the provider, e.g. qwen2.5:7b."
+msgstr "Nom brut du modèle chez le fournisseur, p. ex. qwen2.5:7b."
+
+msgid "Refused"
+msgstr "Refusée"
+
+msgid "Reset filters"
+msgstr "Réinitialiser les filtres"
+
+msgid "Rows created since the start of the current month (site time zone)."
+msgstr "Lignes créées depuis le début du mois en cours (fuseau horaire du site)."
+
+msgid "Safety terms"
+msgstr "Termes de sécurité"
+
+msgid "Safety terms (@langcode)"
+msgstr "Termes de sécurité (@langcode)"
+
+msgid "Search"
+msgstr "Recherche"
+
+msgid "Search term"
+msgstr "Terme de recherche"
+
+msgid "Share of monthly limit"
+msgstr "Part de la limite mensuelle"
+
+msgid "Status"
+msgstr "Statut"
+
+msgid "Support request"
+msgstr "Demande d’assistance"
+
+msgid "Support requests"
+msgstr "Demandes d’assistance"
+
+msgid "The assistant has used @usage of @limit tokens this month (@share %)."
+msgstr "L’assistant a utilisé ce mois-ci @usage tokens sur @limit (@share %)."
+
+msgid "The monthly limit of the assistant has been reached. Search remains available."
+msgstr "La limite mensuelle de l’assistant est atteinte. La recherche reste disponible."
+
+msgid "The question is longer than 1,000 characters."
+msgstr "La question dépasse 1 000 caractères."
+
+msgid "To machine @serial"
+msgstr "Vers la machine @serial"
+
+msgid "Token usage per AI call (table of tannwald_ingest)."
+msgstr "Consommation de tokens par appel IA (table de tannwald_ingest)."
+
+msgid "Tokens (total)"
+msgstr "Tokens (total)"
+
+msgid "Too many questions. Please wait a minute."
+msgstr "Trop de questions. Veuillez patienter une minute."
+
+msgid "Too many searches. Please wait a minute."
+msgstr "Trop de recherches. Veuillez patienter une minute."
+
+msgid "Up to five assistant log entries of the same session: question, status, answer, time."
+msgstr "Jusqu’à cinq entrées du journal de l’assistant pour la même session : question, statut, réponse, heure."
+
+msgid "Usage ID"
+msgstr "ID d’utilisation"
+
+msgid "User"
+msgstr "Utilisateur"
+
+msgid "current month"
+msgstr "mois en cours"
+
+msgid "support request"
+msgstr "demande d’assistance"
+
+msgid "support requests"
+msgstr "demandes d’assistance"
+
+msgctxt "tannwald button"
+msgid "Search"
+msgstr "Rechercher"
