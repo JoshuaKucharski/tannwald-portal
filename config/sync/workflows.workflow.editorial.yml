@@ -7,7 +7,7 @@ dependencies:
 _core:
   default_config_hash: T7gMMyFbTYLalxpIOnzJebvek2OW0b1RgLVE9I2y228
 id: editorial
-label: Editorial
+label: Redaktion
 type: content_moderation
 type_settings:
   states:
