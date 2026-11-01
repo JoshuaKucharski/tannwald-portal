@@ -1,1 +1,38 @@
-[]
+[
+  {
+    "id": "ba-tb200",
+    "titel": "Betriebsanleitung TB-200",
+    "dokumenttyp": "betriebsanleitung",
+    "maschinentypen": ["TB-200"],
+    "exportklasse": "keine",
+    "versionen": [
+      {"version": "3.1", "langcode": "de", "datei": "ba-tb200_3.1_de.html", "aenderungsvermerk": "Kapitel 9 Störungen um die Codes E-5502 und E-6001 ergänzt; Kapitel 5.2 Rollenwechsel präzisiert.", "freigegeben_am": "2025-11-20"},
+      {"version": "3.2", "langcode": "de", "datei": "ba-tb200_3.2_de.html", "aenderungsvermerk": "Kapitel 7.3 Reinigung Siegelstation überarbeitet: neue Intervalle (täglich trocken, wöchentlich nass), Verriegelung der Schutzhaube vor Nassreinigung ergänzt. Kapitel 9.4 um Folienriss nach Rollenwechsel erweitert.", "freigegeben_am": "2026-09-12"},
+      {"version": "3.2", "langcode": "en", "datei": "ba-tb200_3.2_en.html", "aenderungsvermerk": "Chapter 7.3 Cleaning the sealing station revised: new intervals (daily dry, weekly wet), locking of the protective hood before wet cleaning added. Chapter 9.4 extended by film tear after roll change.", "freigegeben_am": "2026-09-12"},
+      {"version": "3.2", "langcode": "fr", "datei": "ba-tb200_3.2_fr.html", "aenderungsvermerk": "Chapitre 7.3 Nettoyage de la station de scellage révisé : nouveaux intervalles (quotidien à sec, hebdomadaire humide), verrouillage du capot de protection avant le nettoyage humide ajouté. Chapitre 9.4 complété par la déchirure du film après changement de bobine.", "freigegeben_am": "2026-09-12"}
+    ]
+  },
+  {
+    "id": "ek-tb200",
+    "titel": "Ersatzteilkatalog TB-200",
+    "dokumenttyp": "ersatzteilkatalog",
+    "maschinentypen": ["TB-200"],
+    "exportklasse": "keine",
+    "versionen": [
+      {"version": "2.0", "langcode": "de", "datei": "ek-tb200_2.0_de.html", "aenderungsvermerk": "Kapitel 9 Verschleissteile und Bevorratung und Kapitel 10 Formatabhängige Teile neu; Teilenummern der Schutzhaube Siegelstation ergänzt.", "freigegeben_am": "2026-06-03"},
+      {"version": "2.0", "langcode": "en", "datei": "ek-tb200_2.0_en.html", "aenderungsvermerk": "Chapter 9 Wear parts and stocking and chapter 10 Format-dependent parts new; part numbers of the protective hood sealing station added.", "freigegeben_am": "2026-06-03"}
+    ]
+  },
+  {
+    "id": "wp-tb200",
+    "titel": "Wartungsplan TB-200",
+    "dokumenttyp": "wartungsplan",
+    "maschinentypen": ["TB-200"],
+    "exportklasse": "keine",
+    "versionen": [
+      {"version": "1.1", "langcode": "de", "datei": "wp-tb200_1.1_de.html", "aenderungsvermerk": "Abschnitt 2 Freigegebene Reinigungsmittel um RM-31 ergänzt; Abschnitt 3.2 wöchentliche Kontrolle der Siegelbacken mit Teil 4711 präzisiert.", "freigegeben_am": "2026-04-30"},
+      {"version": "1.1", "langcode": "en", "datei": "wp-tb200_1.1_en.html", "aenderungsvermerk": "Section 2 Approved cleaning agents extended by RM-31; section 3.2 weekly inspection of the sealing jaws with part 4711 specified.", "freigegeben_am": "2026-04-30"},
+      {"version": "1.1", "langcode": "fr", "datei": "wp-tb200_1.1_fr.html", "aenderungsvermerk": "Section 2 Produits de nettoyage homologués complétée par RM-31 ; section 3.2 contrôle hebdomadaire des mâchoires de scellage avec la pièce 4711 précisé.", "freigegeben_am": "2026-04-30"}
+    ]
+  }
+]
