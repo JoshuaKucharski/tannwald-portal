@@ -12,6 +12,7 @@
 declare(strict_types=1);
 
 use Drupal\Component\Serialization\Json;
+use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
@@ -291,8 +292,12 @@ function tannwald_form_tannwald_access_export_rules_alter(array &$form, FormStat
  * (dort wählt die Redaktion „Freigegeben“; C's Constraint meldet den Verstoss).
  */
 function tannwald_form_node_bulletin_edit_form_alter(array &$form, FormStateInterface $form_state): void {
-  $entity = $form_state->getFormObject()->getEntity();
-  if (!$entity instanceof NodeInterface || !isset($form['moderation_state'])) {
+  $formObject = $form_state->getFormObject();
+  if (!$formObject instanceof EntityFormInterface || !isset($form['moderation_state'])) {
+    return;
+  }
+  $entity = $formObject->getEntity();
+  if (!$entity instanceof NodeInterface) {
     return;
   }
   $isSafety = $entity->hasField('field_bulletin_art') && (string) $entity->get('field_bulletin_art')->value === 'sicherheit';

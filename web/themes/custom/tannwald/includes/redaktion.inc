@@ -308,8 +308,9 @@ function _tannwald_unanswered_rows(array &$variables): void {
 }
 
 /**
- * Zusammenfassungs-HTML als Text für die Textarea: Absätze durch Leerzeilen,
- * Listenpunkte als „– “-Zeilen, übrige Tags entfernt.
+ * Zusammenfassungs-HTML als Text für die Textarea.
+ *
+ * Absätze durch Leerzeilen, Listenpunkte als „– “-Zeilen, übrige Tags entfernt.
  */
 function _tannwald_review_html_to_text(string $html): string {
   if (!str_contains($html, '<')) {
