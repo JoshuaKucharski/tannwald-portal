@@ -1,0 +1,20 @@
+uuid: 929c8bbd-457b-4147-b0b6-3ae66c58dbce
+langcode: de
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - tannwald
+id: tannwald_messages
+theme: tannwald
+region: content
+weight: -10
+provider: null
+plugin: system_messages_block
+settings:
+  id: system_messages_block
+  label: Benachrichtigungen
+  label_display: '0'
+  provider: system
+visibility: {  }

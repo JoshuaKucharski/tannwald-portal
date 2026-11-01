@@ -1,0 +1,16 @@
+{#
+/**
+ * @file
+ * Allgemeines Node-Template (Fallback, z. B. Zusammenfassung): Karte mit Inhalt.
+ */
+#}
+<article{{ attributes.addClass('card p-6') }}>
+  {{ title_prefix }}
+  {% if label and not page %}
+    <h2{{ title_attributes.addClass('m-0 mb-3 text-xl font-semibold') }}><a href="{{ url }}" rel="bookmark" class="text-ink no-underline">{{ label }}</a></h2>
+  {% endif %}
+  {{ title_suffix }}
+  <div{{ content_attributes.addClass('prose-doc') }}>
+    {{ content }}
+  </div>
+</article>

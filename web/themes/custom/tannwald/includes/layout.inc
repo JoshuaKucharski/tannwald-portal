@@ -1,0 +1,270 @@
+<?php
+
+/**
+ * @file
+ * Seitenlayout: Demo-Leiste, Kopfzeile, Hauptnavigation, Brotkrumen.
+ */
+
+declare(strict_types=1);
+
+use Drupal\Core\Url;
+use Drupal\node\NodeInterface;
+use Drupal\user\Entity\User;
+use Drupal\masquerade\Session\MetadataBag;
+use Drupal\user\UserInterface;
+
+/**
+ * Demo-Konten (Seeder 2.3) für die Wechsel-Links der Demo-Leiste.
+ *
+ * @return string[]
+ *   Kontonamen.
+ */
+function _tannwald_demo_accounts(): array {
+  return ['kunde-a', 'kunde-b', 'haendler', 'techniker', 'redaktion', 'compliance'];
+}
+
+/**
+ * Rollen-Labels der Demo-Leiste (Vertrag (e) an 5.3), in Prüfreihenfolge.
+ *
+ * @return array<string, \Drupal\Core\StringTranslation\TranslatableMarkup>
+ *   Rollen-ID → Label.
+ */
+function _tannwald_role_labels(): array {
+  return [
+    'kunde' => t('Customer reader'),
+    'haendler' => t('Dealer'),
+    'techniker' => t('Technician'),
+    'redaktion' => t('Technical editing'),
+    'compliance' => t('Compliance'),
+    'portal_admin' => t('Portal admin'),
+    'administrator' => t('Administrator'),
+  ];
+}
+
+/**
+ * Variablen für page.html.twig (site_name, nav, account, demo, cache_bubble).
+ */
+function _tannwald_layout_prepare(array &$variables): void {
+  $current = \Drupal::currentUser();
+  $hasMasquerade = \Drupal::moduleHandler()->moduleExists('masquerade');
+  $variables['site_name'] = (string) (\Drupal::config('system.site')->get('name') ?: 'myTannwald');
+  $variables['nav'] = _tannwald_navigation();
+  $variables['account'] = NULL;
+  $variables['demo'] = NULL;
+  $variables['demo_hint'] = $hasMasquerade;
+  // Kopfzeile und Demo-Leiste hängen am Konto und an der Sitzung (masquerade).
+  $variables['cache_bubble'] = _tannwald_cache_bubble(['user', 'session', 'url.path', 'languages:language_interface'], ['config:system.site']);
+
+  if ($current->isAuthenticated()) {
+    $user = User::load($current->id());
+    $company = NULL;
+    if ($user instanceof UserInterface && $user->hasField('field_firma') && !$user->get('field_firma')->isEmpty()) {
+      $term = $user->get('field_firma')->entity;
+      $company = $term ? (string) $term->label() : NULL;
+    }
+    $display = $user instanceof UserInterface ? (string) $user->getDisplayName() : (string) $current->getDisplayName();
+    $variables['account'] = [
+      'display_name' => $display,
+      'company' => $company,
+      'initials' => _tannwald_initials($display),
+      'logout' => [
+        '#type' => 'link',
+        '#title' => t('Log out'),
+        '#url' => Url::fromRoute('user.logout'),
+        '#attributes' => ['class' => ['text-sm']],
+      ],
+    ];
+    if ($hasMasquerade && $user instanceof UserInterface) {
+      $variables['demo'] = _tannwald_demo_bar($user, $company);
+    }
+  }
+
+  // Seitentitel-Block auf Maschinen-, Dokument- und Bulletinseiten ausblenden:
+  // die Node-Templates zeigen den eigenen Titel in der Kopfkarte.
+  $routeMatch = \Drupal::routeMatch();
+  $node = $routeMatch->getParameter('node');
+  if ($routeMatch->getRouteName() === 'entity.node.canonical' && $node instanceof NodeInterface
+    && in_array($node->bundle(), ['maschine', 'dokument', 'bulletin'], TRUE)
+    && isset($variables['page']['content']['tannwald_page_title'])) {
+    $variables['page']['content']['tannwald_page_title']['#access'] = FALSE;
+  }
+}
+
+/**
+ * Initialen eines Anzeigenamens („Anna Keller“ → „AK“).
+ */
+function _tannwald_initials(string $name): string {
+  $parts = preg_split('/\s+/u', trim($name)) ?: [];
+  $letters = '';
+  foreach (array_slice($parts, 0, 2) as $part) {
+    $letters .= mb_substr($part, 0, 1);
+  }
+  return mb_strtoupper($letters !== '' ? $letters : mb_substr($name, 0, 2));
+}
+
+/**
+ * Hauptnavigation: Meine Maschinen, Suche, Bulletins (5.3 hängt Redaktion an).
+ *
+ * @return array{home_url: string, items: array<int, array{label: mixed, url: string, active: bool}>}
+ *   Navigation.
+ */
+function _tannwald_navigation(): array {
+  $path = \Drupal::service('path.current')->getPath();
+  $alias = \Drupal::service('path_alias.manager')->getAliasByPath($path);
+  $node = \Drupal::routeMatch()->getParameter('node');
+  $bundle = $node instanceof NodeInterface ? $node->bundle() : NULL;
+
+  $items = [
+    [
+      'label' => t('My machines'),
+      'url' => '/meine-maschinen',
+      'active' => str_starts_with($alias, '/meine-maschinen') || in_array($bundle, ['maschine', 'dokument'], TRUE),
+    ],
+    [
+      'label' => t('Search'),
+      'url' => '/suche',
+      'active' => str_starts_with($alias, '/suche'),
+    ],
+    [
+      'label' => t('Bulletins'),
+      'url' => '/bulletins',
+      'active' => str_starts_with($alias, '/bulletins') || $bundle === 'bulletin',
+    ],
+  ];
+  foreach ($items as &$item) {
+    $item['url'] = Url::fromUserInput($item['url'])->toString();
+  }
+  unset($item);
+  return [
+    'home_url' => Url::fromUserInput('/meine-maschinen')->toString(),
+    'items' => $items,
+  ];
+}
+
+/**
+ * Demo-Leiste: Konto, Firma, Rolle, Wechsel-Links über masquerade, Zurück.
+ *
+ * @return array{account_name: string, company: ?string, role_label: mixed, switch_links: array, back_url: ?string, back_name: ?string}
+ *   Daten für page.html.twig.
+ */
+function _tannwald_demo_bar(UserInterface $user, ?string $company): array {
+  // Nur aufgerufen, wenn das Modul masquerade aktiv ist (Split dev).
+  /** @var \Drupal\masquerade\Masquerade $masquerade */
+  $masquerade = \Drupal::service('masquerade');
+  $isMasquerading = $masquerade->isMasquerading();
+
+  $roleLabel = t('Authenticated');
+  foreach (_tannwald_role_labels() as $role => $label) {
+    if (in_array($role, $user->getRoles(TRUE), TRUE)) {
+      $roleLabel = $label;
+      break;
+    }
+  }
+  if ((int) $user->id() === 1) {
+    $roleLabel = t('Administrator');
+  }
+
+  $country = $user->hasField('field_land') && !$user->get('field_land')->isEmpty() ? (string) $user->get('field_land')->value : NULL;
+  $companyLine = $company;
+  if ($companyLine !== NULL && $country !== NULL) {
+    $companyLine .= ', ' . $country;
+  }
+
+  $currentPath = \Drupal::service('path.current')->getPath();
+  $backUrl = NULL;
+  $backName = NULL;
+  if ($isMasquerading) {
+    $backUrl = Url::fromRoute('masquerade.unmasquerade', [], ['query' => ['destination' => $currentPath]])->toString();
+    $bag = \Drupal::request()->getSession()->getMetadataBag();
+    $previous = $bag instanceof MetadataBag ? $bag->getMasquerade() : NULL;
+    $previousUser = $previous ? User::load($previous) : NULL;
+    $backName = $previousUser instanceof UserInterface ? (string) $previousUser->getAccountName() : 'admin';
+  }
+
+  $links = [];
+  foreach (_tannwald_demo_accounts() as $name) {
+    if ($name === $user->getAccountName()) {
+      continue;
+    }
+    $target = current(\Drupal::entityTypeManager()->getStorage('user')->loadByProperties(['name' => $name]));
+    if (!$target instanceof UserInterface) {
+      continue;
+    }
+    try {
+      if ($isMasquerading) {
+        // Das Modul erlaubt kein Wechseln aus einer laufenden Maskerade, und
+        // der CSRF-Seed wird beim Zurückwechseln erneuert: darum erst zurück
+        // (auf dieselbe Seite), dort dann das Zielkonto wählen (zwei Klicks).
+        $url = Url::fromRoute('masquerade.unmasquerade', [], ['query' => ['destination' => $currentPath]]);
+        $title = t('Switches back to @name first; choose the account there.', ['@name' => $backName]);
+      }
+      elseif (function_exists('masquerade_target_user_access') && masquerade_target_user_access($target)) {
+        $url = Url::fromRoute('entity.user.masquerade', ['user' => $target->id()]);
+        $title = t('Masquerade as @name', ['@name' => $name]);
+      }
+      else {
+        continue;
+      }
+      $links[] = ['label' => $name, 'url' => $url->toString(), 'title' => $title];
+    }
+    catch (\Exception) {
+      continue;
+    }
+  }
+
+  return [
+    'account_name' => (string) $user->getAccountName(),
+    'company' => $companyLine,
+    'role_label' => $roleLabel,
+    'switch_links' => $links,
+    'back_url' => $backUrl,
+    'back_name' => $backName,
+  ];
+}
+
+/**
+ * Brotkrumen nach Wireframe 01: „Meine Maschinen › TB200-2021-0417“.
+ */
+function _tannwald_breadcrumb_prepare(array &$variables): void {
+  $routeMatch = \Drupal::routeMatch();
+  $route = (string) $routeMatch->getRouteName();
+  $machines = ['text' => t('My machines'), 'url' => Url::fromUserInput('/meine-maschinen')->toString()];
+  $bulletins = ['text' => t('Bulletins'), 'url' => Url::fromUserInput('/bulletins')->toString()];
+
+  if ($route === 'view.portal_maschinen.page_1') {
+    $variables['breadcrumb'] = [['text' => t('My machines'), 'url' => '']];
+    return;
+  }
+  if ($route === 'view.portal_bulletins.page_1') {
+    $variables['breadcrumb'] = [['text' => t('Bulletins'), 'url' => '']];
+    return;
+  }
+  $node = $routeMatch->getParameter('node');
+  if ($route === 'entity.node.canonical' && $node instanceof NodeInterface) {
+    switch ($node->bundle()) {
+      case 'maschine':
+        $variables['breadcrumb'] = [$machines, ['text' => $node->label(), 'url' => '']];
+        return;
+
+      case 'dokument':
+        $trail = [$machines];
+        if ($node->hasField('field_seriennummer') && !$node->get('field_seriennummer')->isEmpty()) {
+          $machine = $node->get('field_seriennummer')->entity;
+          if ($machine instanceof NodeInterface && $machine->access('view')) {
+            $trail[] = ['text' => $machine->label(), 'url' => $machine->toUrl()->toString()];
+          }
+        }
+        $trail[] = ['text' => $node->label(), 'url' => ''];
+        $variables['breadcrumb'] = $trail;
+        return;
+
+      case 'bulletin':
+        $variables['breadcrumb'] = [$bulletins, ['text' => $node->label(), 'url' => '']];
+        return;
+    }
+  }
+  // Sonst: Core-Brotkrumen, aber „Startseite“ führt auf „Meine Maschinen“.
+  if (!empty($variables['breadcrumb'][0]) && \Drupal::currentUser()->isAuthenticated()) {
+    $variables['breadcrumb'][0] = $machines;
+  }
+}
