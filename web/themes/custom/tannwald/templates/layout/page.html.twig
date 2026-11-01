@@ -12,7 +12,7 @@
 {{ cache_bubble }}
 <div class="flex min-h-screen flex-col">
   {% if demo %}
-    <div class="flex flex-wrap items-center gap-x-4 gap-y-1 bg-bar px-4 py-2 text-[13px] text-white md:px-page" data-demo-bar>
+    <div class="flex flex-wrap items-center gap-x-4 gap-y-1 bg-bar px-4 py-2 text-[13px] text-white md:px-8" data-demo-bar>
       <span class="font-semibold">{{ 'Demo mode'|t }}</span>
       <span>{{ 'logged in as'|t }} <strong>{{ demo.account_name }}</strong>{% if demo.company %} · {{ demo.company }}{% endif %} · {{ 'Role @role'|t({'@role': demo.role_label}) }}</span>
       {% if demo.switch_links %}
@@ -29,7 +29,7 @@
   {{ page.demo_bar }}
 
   <header class="border-b border-line bg-panel">
-    <div class="mx-auto flex max-w-page flex-wrap items-center gap-x-8 gap-y-1 px-4 py-2 md:min-h-16 md:px-page md:py-0">
+    <div class="mx-auto flex max-w-page flex-wrap items-center gap-x-8 gap-y-1 px-4 py-2 md:min-h-16 md:px-8 md:py-0">
       <a href="{{ nav.home_url }}" class="text-lg font-bold text-accent no-underline hover:text-accent-hover">{{ site_name }}</a>
       <nav aria-label="{{ 'Main navigation'|t }}" class="flex flex-wrap gap-x-6 font-medium">
         {% for item in nav.items %}
@@ -49,7 +49,7 @@
     </div>
   </header>
 
-  <main id="main-content" class="mx-auto flex w-full max-w-page flex-1 flex-col gap-6 px-4 pb-12 pt-6 md:px-page">
+  <main id="main-content" class="mx-auto flex w-full max-w-page flex-1 flex-col gap-6 px-4 pb-12 pt-6 md:px-8">
     {{ page.breadcrumb }}
     {{ page.content }}
     {{ page.sidebar }}
@@ -57,7 +57,7 @@
 
   {% if page.footer %}
     <footer class="border-t border-line bg-panel">
-      <div class="mx-auto max-w-page px-4 py-4 text-[13px] text-muted md:px-page">{{ page.footer }}</div>
+      <div class="mx-auto max-w-page px-4 py-4 text-[13px] text-muted md:px-8">{{ page.footer }}</div>
     </footer>
   {% endif %}
   {# 5.3: hier anhängen #}

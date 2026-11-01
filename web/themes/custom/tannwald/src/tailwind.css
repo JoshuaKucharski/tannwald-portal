@@ -36,11 +36,11 @@
   --color-private: #1F4E79;
   --color-private-bg: #E8EEF5;
 
-  /* Abstände und Radien der Wireframes. */
+  /* Radien und Seitenbreite der Wireframes (Seitenrand 32 px = px-8; kein --spacing-page, weil
+     max-w-page sonst den Abstand statt --container-page nimmt — gemessen 5.1). */
   --radius-card: 8px;
   --radius-control: 6px;
   --radius-pill: 12px;
-  --spacing-page: 32px;
   --container-page: 1376px;
 }
 
