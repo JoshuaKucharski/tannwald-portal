@@ -129,8 +129,18 @@ final class Retriever {
   }
 
   /**
-   * Kandidaten: Keys → Keyword (+ Vektor) → [aktuelle Revision] → RRF → Maschine.
+   * Kandidaten: Keys, Keyword (+ Vektor), aktuelle Revision, RRF, Maschine.
    *
+   * @param string $frage
+   *   Frage oder Suchtext.
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   Konto, dessen Keys gelten.
+   * @param int|null $maschineNid
+   *   Maschine (nid) oder NULL.
+   * @param string $modus
+   *   Modus: hybrid oder volltext.
+   * @param int $limit
+   *   Kandidaten je Liste.
    * @param bool $currentOnly
    *   TRUE (retrieve): nur Chunks der Standard-Revision je Node, gefiltert je
    *   Liste vor der Fusion (Entscheid des Masters 4.2/4.3); search() lässt
