@@ -1,0 +1,38 @@
+# German translation of tannwald_assistant (de-CH, Anrede Sie).
+# Quelle der Texte: src/AnswerTexts.php (en = msgid, de = msgstr); PromptBuilderTest prüft den Abgleich.
+msgid ""
+msgstr ""
+"Project-Id-Version: tannwald_assistant\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: de\n"
+
+# AnswerTexts::REFUSAL
+msgid "The released documents do not contain an answer to this question."
+msgstr "Die freigegebenen Dokumente enthalten keine Antwort auf diese Frage."
+
+# AnswerTexts::SUPPORT_HINT
+msgid "Use the \"Create support request\" button to pass the question on to our service team."
+msgstr "Über den Button „Support-Anfrage erstellen“ geben Sie die Frage an unseren Service weiter."
+
+# AnswerTexts::SAFETY
+msgid "Your question concerns a safety topic. The safety chapter of the operating instructions and these sections are authoritative: @references."
+msgstr "Ihre Frage betrifft ein Sicherheitsthema. Massgebend sind das Sicherheitskapitel der Betriebsanleitung und diese Stellen: @references."
+
+# AnswerTexts::SAFETY_FULL_INSTRUCTIONS
+msgid "The complete instructions apply; no summary is given."
+msgstr "Die vollständige Anleitung gilt; eine Kurzfassung wird nicht gegeben."
+
+# AnswerTexts::TOO_LONG
+msgid "Your question is too long. Please keep it to at most 1,000 characters."
+msgstr "Ihre Frage ist zu lang. Bitte fassen Sie sie in höchstens 1'000 Zeichen."
+
+# AnswerTexts::EMPTY
+msgid "Please enter a question."
+msgstr "Bitte geben Sie eine Frage ein."
+
+# AnswerTexts::UNAVAILABLE
+msgid "The assistant is currently unavailable. You can still use the search."
+msgstr "Der Assistent steht zurzeit nicht zur Verfügung. Die Suche können Sie weiterhin nutzen."
