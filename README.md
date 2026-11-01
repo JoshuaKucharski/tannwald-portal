@@ -170,15 +170,23 @@ Demo-Konten.
 
 | Kennzahl | Bedeutung | Vorher (Baseline 21:20) | Nachher (nach Tuning 6.1) | Ziel |
 |---|---|---|---|---|
-| `hit@5` | erwartete Quelle unter den ersten 5 Treffern (52 Fragen mit Quellen) | 0.73 (38/52) | folgt | ≥ 0.80 |
-| `zitat_korrekt` | Antwort gegeben **und** jedes Zitat zeigt auf eine erwartete Quelle (22 Fragen) | 0.41 (9/22) | folgt | ≥ 0.90 |
-| `ablehnung_korrekt` | Ablehnung wo erwartet, Antwort wo erwartet (30 Fragen) | 0.97 (29/30) | folgt | ≥ 0.90 |
-| `safety_korrekt` | Sicherheitsvorlage **und** Verweis auf das erwartete Kapitel (30 Fragen) | 0.60 (18/30) | folgt | = 1.00 |
-| Median-Dauer je Frage | Retrieval plus Antwort (Sicherheitsfragen ohne LLM) | 218 ms | folgt | — |
-| Tokens | Prompt / Antwort über alle LLM-Antworten | 62'435 / 1'758 | folgt | — |
+| `hit@5` | erwartete Quelle unter den ersten 5 Treffern (52 Fragen mit Quellen) | 0.73 (38/52) | **0.87 (45/52)** | ≥ 0.80 |
+| `zitat_korrekt` | Antwort gegeben **und** jedes Zitat zeigt auf eine erwartete Quelle (22 Fragen) | 0.41 (9/22) | 0.50 (11/22) | ≥ 0.90 |
+| `ablehnung_korrekt` | Ablehnung wo erwartet, Antwort wo erwartet (30 Fragen) | 0.97 (29/30) | **1.00 (30/30)** | ≥ 0.90 |
+| `safety_korrekt` | Sicherheitsvorlage **und** Verweis auf das erwartete Kapitel (30 Fragen) | 0.60 (18/30) | 0.63 (19/30) | = 1.00 |
+| Median-Dauer je Frage | Retrieval plus Antwort (Sicherheitsfragen ohne LLM) | 218 ms | 7'029 ms | — |
+| Tokens | Prompt / Antwort über alle LLM-Antworten | 62'435 / 1'758 | 64'758 / 2'445 | — |
 
-Quelle Vorher: `docs/evals/ergebnisse-2026-11-01_2120.md`, Abschnitt „Kennzahlen“. Die Spalte „Nachher“ füllt der zweite
-Lauf nach dem Tuning (Sicherheits-Retrieval, Maschinentyp aus der Frage, Prompt, Fixture-Text); beide Läufe bleiben im Repo.
+Quellen: Vorher `docs/evals/ergebnisse-2026-11-01_2120.md`, Nachher `docs/evals/ergebnisse-2026-11-01_2244.md` (je Abschnitt
+„Kennzahlen“; beide volle LLM-Läufe über 60 Fragen, Betreiber). Dazwischen lag das Tuning aus Aufgabe 6.1: eine dritte
+RRF-Liste mit den Sicherheitskapiteln bei erkannten Sicherheitsfragen, Sicherheitserkennung nur bei Bauteil plus riskanter
+Handlung (30/30 erkannt, 0 Falsch-Positive statt 24/30 mit 8), Maschinentyp aus der Frage als Filter, drei Set-Korrekturen
+und ein Fixture-Text ohne „reisst“ in Kapitel 9.4 (TC-06). **Ehrlich gelesen:** Retrieval und Ablehnung erreichen das Ziel;
+`zitat_korrekt` bleibt mit `qwen2.5:7b` bei 0.50, weil das Modell verwandte Kapitel mitzitiert (zwei umformulierte
+Zitierregeln senkten den Wert auf 0.14 und 0.29, gemessen in 6.1); `safety_korrekt` 0.63 heisst: die Vorlage greift bei
+allen 30 Sicherheitsfragen, aber in 11 Fällen verweist sie nicht auf das erwartete Kapitel. Beide Restbefunde sind im
+Ausbau mit einem stärkeren Modell und einem Reranker zu messen (ADR-004). Median-Dauer Nachher ist höher, weil mehr
+Fragen eine LLM-Antwort statt einer Vorlage erhielten und der Lauf parallel zur GIF-Aufnahme lief.
 
 **Dauern (gemessen):**
 
@@ -196,21 +204,20 @@ Lauf nach dem Tuning (Sicherheits-Retrieval, Maschinentyp aus der Frage, Prompt,
 
 ## Installation
 
-Es gibt genau einen Weg: das Skript `tannwald-run.sh`. Es läuft ohne Rückfragen, hält beim ersten Fehler an, zeigt
+Es gibt genau einen Weg: das Skript `scripts/tannwald-run.sh`. Es läuft ohne Rückfragen, hält beim ersten Fehler an, zeigt
 keine Geheimnisse und nennt am Ende das Ergebnis. Voraussetzungen: macOS mit Homebrew und Docker Desktop; der PoC
 braucht keinen API-Schlüssel (Ollama lokal, Modelle `bge-m3` und `qwen2.5:7b`, etwa 6 GB Download).
 
 ```
-bash tannwald-run.sh --vorbereitung   # prüft brew, Docker, DDEV, mkcert, Ollama; installiert nur Fehlendes
-bash tannwald-run.sh --lokal          # DDEV, Drupal, Konfiguration, Seeder, Login-Link; endet mit FERTIG
-bash tannwald-run.sh --probe          # liest nur; endet mit „Bereit: ja“ oder „Bereit: NEIN — fehlt: …“
-bash tannwald-run.sh --reset          # Demo-Daten zurücksetzen (tannwald:demo-reset)
-bash tannwald-run.sh --eval           # voller Eval-Lauf, schreibt docs/evals/ergebnisse-<datum>.md
-bash tannwald-run.sh --frisch         # Klon-Probe in einem eigenen DDEV-Projekt
+bash scripts/tannwald-run.sh --vorbereitung   # prüft brew, Docker, DDEV, mkcert, Ollama; installiert nur Fehlendes
+bash scripts/tannwald-run.sh --lokal          # DDEV, Drupal, Konfiguration, Seeder, Login-Link; endet mit FERTIG
+bash scripts/tannwald-run.sh --probe          # liest nur; endet mit „Bereit: ja“ oder „Bereit: NEIN — fehlt: …“
+bash scripts/tannwald-run.sh --reset          # Demo-Daten zurücksetzen (tannwald:demo-reset)
+bash scripts/tannwald-run.sh --eval           # voller Eval-Lauf, schreibt docs/evals/ergebnisse-<datum>.md
+bash scripts/tannwald-run.sh --frisch         # Klon-Probe in einem eigenen DDEV-Projekt
 ```
 
-Das Skript entstand als Betreiber-Werkzeug neben dem Repo (Aufnahme unter `scripts/` vor der Veröffentlichung:
-Entscheid des Betreibers). Es führt diese Befehlsfolge aus: `ddev start`, `ddev composer install`,
+Das Skript führt diese Befehlsfolge aus: `ddev start`, `ddev composer install`,
 `ddev drush site:install --existing-config -y` (nur auf leerer Datenbank), `ddev drush updatedb -y`,
 `ddev drush config:import -y`, `ddev drush locale:check`, `ddev drush locale:update`, `ddev drush cr`,
 `ddev drush tannwald:demo-install`.
