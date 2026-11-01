@@ -45,7 +45,7 @@ abstract class SummaryKernelTestBase extends KernelTestBase {
     tannwald_ingest_ensure_fulltext($this->container->get('database'));
     $this->createSummaryModel();
     $this->mockAiProvider();
-    // uid 1 ist Superuser: belegen, damit Testkonten echte Rechte prüfen.
+    // Konto uid 1 ist Superuser: belegen, damit Testkonten echte Rechte prüfen.
     User::create(['uid' => 1, 'name' => 'root', 'status' => 1])->save();
   }
 

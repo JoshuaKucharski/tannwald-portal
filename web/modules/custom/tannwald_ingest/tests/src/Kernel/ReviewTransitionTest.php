@@ -87,12 +87,19 @@ class ReviewTransitionTest extends SummaryKernelTestBase {
     $summary = $this->summary();
     $nid = (int) $summary->id();
     // Reste wie von einer früheren Indexierung.
-    $this->container->get('tannwald_ingest.chunk_store')->replaceForRevision($nid, (int) $summary->getRevisionId(), 'de', [[
-      'chunk_index' => 0, 'heading_path' => 'x', 'title' => 'x', 'text' => 'Rest', 'token_count' => 1,
-      'embedding' => self::hashVector('Rest'), 'access_keys' => ['type:TB200+export:keine'],
-      'exportklasse' => 'keine', 'dokumenttyp_tid' => 0, 'maschinentyp_tids' => [],
-    ],
-    ]);
+    $rest = [
+      'chunk_index' => 0,
+      'heading_path' => 'x',
+      'title' => 'x',
+      'text' => 'Rest',
+      'token_count' => 1,
+      'embedding' => self::hashVector('Rest'),
+      'access_keys' => ['type:TB200+export:keine'],
+      'exportklasse' => 'keine',
+      'dokumenttyp_tid' => 0,
+      'maschinentyp_tids' => [],
+    ];
+    $this->container->get('tannwald_ingest.chunk_store')->replaceForRevision($nid, (int) $summary->getRevisionId(), 'de', [$rest]);
     $this->assertSame(1, $this->chunks($nid));
 
     $result = $this->container->get('tannwald_ingest.review_transition')->apply($summary, 'zurueckweisen', NULL, $this->account('lea', 'redaktion'));
@@ -112,6 +119,7 @@ class ReviewTransitionTest extends SummaryKernelTestBase {
     $this->assertSame('draft', $result['moderation_state']);
     $this->assertTrue($result['bearbeitet']);
     $node = $this->container->get('entity_type.manager')->getStorage('node')->loadRevision($result['vid']);
+    $this->assertInstanceOf(NodeInterface::class, $node);
     $this->assertSame('<p>Neu <em>bearbeitet</em>.</p>xweg', $node->get('body')->value);
     $this->assertSame('dokument_html', $node->get('body')->format);
     $this->assertFalse($node->isPublished());

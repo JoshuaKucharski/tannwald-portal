@@ -1,0 +1,8 @@
+name: 'Tannwald Ingest test'
+type: module
+description: 'Test double for chat and embeddings in tannwald_ingest services; renders the review form for tests.'
+package: Testing
+hidden: true
+core_version_requirement: ^11
+dependencies:
+  - tannwald_ingest:tannwald_ingest

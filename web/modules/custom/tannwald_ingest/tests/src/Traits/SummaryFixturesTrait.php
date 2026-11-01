@@ -10,10 +10,12 @@ use Drupal\ai\OperationType\Chat\ChatOutput;
 use Drupal\ai\OperationType\Embeddings\EmbeddingsCollectionInput;
 use Drupal\ai\OperationType\Embeddings\EmbeddingsCollectionOutput;
 use Drupal\ai\Dto\TokenUsageDto;
+use Drupal\content_moderation\Plugin\WorkflowType\ContentModerationInterface;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\filter\Entity\FilterFormat;
 use Drupal\language\Entity\ConfigurableLanguage;
 use Drupal\node\NodeInterface;
+use Drupal\tannwald_ingest\Plugin\QueueWorker\RetryingQueueWorkerBase;
 use Drupal\Tests\tannwald_access\Traits\AccessFixturesTrait;
 use Drupal\user\Entity\Role;
 use Drupal\workflows\Entity\Workflow;
@@ -78,7 +80,7 @@ trait SummaryFixturesTrait {
     $this->addField('node', 'zusammenfassung', 'field_modell', 'string');
     $this->addField('node', 'zusammenfassung', 'field_generiert_am', 'datetime', 1, ['datetime_type' => 'datetime']);
     foreach (['field_dokument', 'field_dokument_revision', 'field_modell', 'field_generiert_am'] as $name) {
-      FieldConfig::loadByName('node', 'zusammenfassung', $name)->setTranslatable(FALSE)->save();
+      FieldConfig::loadByName('node', 'zusammenfassung', $name)->set('translatable', FALSE)->save();
     }
     FilterFormat::create([
       'format' => 'dokument_html',
@@ -93,11 +95,13 @@ trait SummaryFixturesTrait {
 
     $workflow = Workflow::create(['id' => 'redaktion', 'label' => 'Redaktion', 'type' => 'content_moderation']);
     $plugin = $workflow->getTypePlugin();
+    $this->assertInstanceOf(ContentModerationInterface::class, $plugin);
     $plugin->addState('zur_pruefung', 'Zur Prüfung');
     $plugin->addState('zurueckgewiesen', 'Zurückgewiesen');
     $plugin->deleteTransition('create_new_draft');
     $plugin->deleteTransition('publish');
-    $plugin->addTransition('entwurf_speichern', 'Entwurf speichern', ['draft', 'zur_pruefung', 'zurueckgewiesen', 'published'], 'draft');
+    $allStates = ['draft', 'zur_pruefung', 'zurueckgewiesen', 'published'];
+    $plugin->addTransition('entwurf_speichern', 'Entwurf speichern', $allStates, 'draft');
     $plugin->addTransition('freigeben', 'Freigeben', ['zur_pruefung'], 'published');
     $plugin->addTransition('zur_pruefung_senden', 'Zur Prüfung senden', ['draft', 'zurueckgewiesen'], 'zur_pruefung');
     $plugin->addTransition('zurueckweisen', 'Zurückweisen', ['zur_pruefung'], 'zurueckgewiesen');
@@ -185,22 +189,27 @@ trait SummaryFixturesTrait {
           return NULL;
 
         case 'chat':
-          /** @var \Drupal\ai\OperationType\Chat\ChatInput $input */
           $input = $arguments[0];
           $user = $input instanceof ChatInput ? $input->getMessages()[0]->getText() : '';
           $system = $input instanceof ChatInput ? (string) $input->getSystemPrompt() : '';
-          $this->chatCalls[] = ['system' => $system, 'user' => $user, 'model' => $arguments[1], 'configuration' => $this->chatConfiguration];
+          $this->chatCalls[] = [
+            'system' => $system,
+            'user' => $user,
+            'model' => $arguments[1],
+            'configuration' => $this->chatConfiguration,
+          ];
           if ($this->chatFailing) {
             throw new \RuntimeException('Chat provider down (test double).');
           }
           $reply = $this->chatReply ?? (str_contains($system, 'Write in English') ? self::SUMMARY_EN : self::SUMMARY_DE);
-          return new ChatOutput(new ChatMessage('assistant', $reply), ['model' => $arguments[1]], [], new TokenUsageDto(input: 1500, output: 90));
+          $usage = new TokenUsageDto(input: 1500, output: 90);
+          return new ChatOutput(new ChatMessage('assistant', $reply), ['model' => $arguments[1]], [], $usage);
 
         case 'embeddingsCollection':
-          /** @var \Drupal\ai\OperationType\Embeddings\EmbeddingsCollectionInput $input */
           $input = $arguments[0];
           $prompts = $input instanceof EmbeddingsCollectionInput ? $input->getPrompts() : [];
-          return new EmbeddingsCollectionOutput(array_map([self::class, 'hashVector'], $prompts), ['model' => 'bge-m3:latest', 'usage' => ['prompt_tokens' => 10]], []);
+          $raw = ['model' => 'bge-m3:latest', 'usage' => ['prompt_tokens' => 10]];
+          return new EmbeddingsCollectionOutput(array_map([self::class, 'hashVector'], $prompts), $raw, []);
       }
       throw new \LogicException("Unexpected provider call $name.");
     });
@@ -233,6 +242,7 @@ trait SummaryFixturesTrait {
   protected function runQueue(string $name): array {
     $queue = $this->container->get('queue')->get($name);
     $worker = $this->container->get('plugin.manager.queue_worker')->createInstance($name);
+    $this->assertInstanceOf(RetryingQueueWorkerBase::class, $worker);
     $outcomes = [];
     while (is_object($item = $queue->claimItem())) {
       $worker->processItem($item->data);

@@ -25,7 +25,7 @@ class SummaryGeneratorTest extends SummaryKernelTestBase {
   }
 
   /**
-   * Node entsteht mit allen Feldern im Status zur_pruefung; zweiter Lauf nichts.
+   * Node mit allen Feldern im Status zur_pruefung; zweiter Lauf nichts.
    */
   public function testCreatesSummaryForReview(): void {
     $dokument = $this->createPublishedDocument();
@@ -64,7 +64,10 @@ class SummaryGeneratorTest extends SummaryKernelTestBase {
     // Usage und Herkunftsdaten.
     $usage = $this->container->get('database')->query('SELECT * FROM {tannwald_usage}')->fetchAll();
     $this->assertCount(1, $usage);
-    $this->assertSame(['qwen2.5:7b', 'chat', 'ingest', 1500, 90], [$usage[0]->modell, $usage[0]->operation, $usage[0]->kontext, (int) $usage[0]->prompt_tokens, (int) $usage[0]->completion_tokens]);
+    $this->assertSame('qwen2.5:7b', $usage[0]->modell);
+    $this->assertSame('chat', $usage[0]->operation);
+    $this->assertSame('ingest', $usage[0]->kontext);
+    $this->assertSame([1500, 90], [(int) $usage[0]->prompt_tokens, (int) $usage[0]->completion_tokens]);
     $meta = $this->container->get('keyvalue')->get(SummaryGenerator::META_COLLECTION)->get($summary->id() . ':de');
     $this->assertSame(1590, $meta['tokens']);
     $this->assertSame(SummaryText::wordCount(self::SUMMARY_DE), $meta['words']);
@@ -114,6 +117,7 @@ class SummaryGeneratorTest extends SummaryKernelTestBase {
     $summary = $this->container->get('entity_type.manager')->getStorage('node')->loadRevision(
       $this->container->get('entity_type.manager')->getStorage('node')->getLatestRevisionId($de->id())
     );
+    $this->assertInstanceOf(NodeInterface::class, $summary);
     $this->assertTrue($summary->hasTranslation('en'));
     $translation = $summary->getTranslation('en');
     $this->assertSame('<p>' . self::SUMMARY_EN . '</p>', $translation->get('body')->value);

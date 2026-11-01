@@ -89,7 +89,7 @@ final class ReviewController extends ControllerBase {
       return FALSE;
     }
     $formToken = (string) $request->request->get('form_token', '');
-    return $formToken !== '' && $this->csrfToken->validate($formToken, ReviewForm::FORM_ID);
+    return $formToken !== '' && $this->csrfToken->validate($formToken, ReviewForm::tokenKey());
   }
 
   /**

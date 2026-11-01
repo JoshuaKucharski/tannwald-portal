@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\tannwald_ingest\Form;
 
+use Drupal\Component\Utility\Crypt;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
@@ -34,6 +35,15 @@ final class ReviewForm extends FormBase {
    */
   public static function create(ContainerInterface $container): self {
     return new self($container->get('tannwald_ingest.review_transition'));
+  }
+
+  /**
+   * Schlüssel, mit dem FormBuilder den Form-Token dieses Formulars erzeugt.
+   *
+   * Wie FormBuilder::prepareForm(): Platzhalter aus der Formular-ID.
+   */
+  public static function tokenKey(): string {
+    return 'form_token_placeholder_' . Crypt::hashBase64(self::FORM_ID);
   }
 
   /**

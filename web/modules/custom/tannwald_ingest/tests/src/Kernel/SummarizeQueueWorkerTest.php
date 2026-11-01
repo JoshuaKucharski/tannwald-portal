@@ -25,11 +25,15 @@ class SummarizeQueueWorkerTest extends SummaryKernelTestBase {
    * Stellt einen Job für die aktuelle Revision ein.
    */
   protected function queueJob(int $nid, int $vid, string $langcode = 'de'): void {
-    $this->container->get('queue')->get(SummarizeQueueWorker::QUEUE)->createItem(['nid' => $nid, 'vid' => $vid, 'langcode' => $langcode]);
+    $this->container->get('queue')->get(SummarizeQueueWorker::QUEUE)->createItem([
+      'nid' => $nid,
+      'vid' => $vid,
+      'langcode' => $langcode,
+    ]);
   }
 
   /**
-   * Job erzeugt die Zusammenfassung; ein zweiter Job für dieselbe Revision nichts.
+   * Job erzeugt die Zusammenfassung; zweiter Job derselben Revision nichts.
    */
   public function testJobCreatesSummary(): void {
     $dokument = $this->createPublishedDocument();
