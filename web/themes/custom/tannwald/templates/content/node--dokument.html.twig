@@ -1,0 +1,74 @@
+{#
+/**
+ * @file
+ * Dokumentseite: Kopf mit Badges, Version, Freigabe, Sprache; Buttons Download und Änderungshistorie;
+ * Sprach-Pillen; Inhaltsverzeichnis (sticky) und Body mit Kapitel-Ankern id="kapitel-<slug>".
+ *
+ * Variablen aus tannwald_preprocess_node() (includes/document.inc), Vertrag (d):
+ * badges[] (Props tannwald:badge), version, approved, language_label, valid_until, change_note, audit_hint,
+ * fallback_label, languages[] (Props tannwald:lang-pills), url_download, url_history,
+ * toc[] {level, text, anchor}, body (Markup mit Ankern), has_summary, cache_bubble; content.tannwald_summary (D, 3.2).
+ */
+#}
+{{ cache_bubble }}
+<article{{ attributes.addClass('flex flex-col gap-6') }}>
+  {{ title_prefix }}{{ title_suffix }}
+  <header class="card flex flex-wrap items-start gap-6 p-6">
+    <div class="flex min-w-0 flex-1 basis-[420px] flex-col gap-2">
+      {% if badges %}
+        <span class="flex flex-wrap items-center gap-2">
+          {% for badge in badges %}{{ include('tannwald:badge', badge, with_context = false) }}{% endfor %}
+        </span>
+      {% endif %}
+      <h1 class="m-0 text-[28px] font-semibold leading-tight">{{ label }}</h1>
+      <p class="m-0 meta">
+        {{ 'Version @version'|t({'@version': version}) }}
+        {%- if approved %} · {{ 'approved @date'|t({'@date': approved}) }}{% endif %}
+        {%- if language_label %} · {{ 'Language: @language'|t({'@language': language_label}) }}{% endif %}
+        {%- if valid_until %} · {{ 'valid until @date'|t({'@date': valid_until}) }}{% endif %}
+        {%- if audit_hint %} · {{ 'Access is logged'|t }}{% endif -%}
+      </p>
+      {% if fallback_label %}
+        <p class="m-0 inline-flex w-fit items-center gap-2 rounded-control bg-private-bg px-3 py-1.5 text-sm text-accent">{{ 'Fallback @language: this document is not available in your language.'|t({'@language': fallback_label}) }}</p>
+      {% endif %}
+      {% if change_note %}
+        <p class="m-0 meta">{{ 'Change note: @note'|t({'@note': change_note}) }}</p>
+      {% endif %}
+    </div>
+    <div class="flex flex-wrap items-center gap-3">
+      {{ include('tannwald:lang-pills', {languages: languages}, with_context = false) }}
+      {% if url_history %}
+        <a href="{{ url_history }}" class="btn btn-outline h-10">{{ 'Change history'|t }}</a>
+      {% endif %}
+      {% if url_download %}
+        <a href="{{ url_download }}" class="btn btn-primary h-10">{{ 'Download'|t({}, {'context': 'tannwald'}) }}</a>
+      {% endif %}
+    </div>
+  </header>
+
+  <div class="flex flex-wrap items-start gap-6">
+    {% if toc %}
+      <nav aria-label="{{ 'Table of contents'|t }}" class="card w-full p-4 lg:sticky lg:top-6 lg:w-72 lg:shrink-0">
+        <h2 class="m-0 mb-2 text-xs font-semibold uppercase tracking-[0.04em] text-muted">{{ 'Contents'|t }}</h2>
+        <ol class="m-0 flex list-none flex-col gap-1 p-0 text-sm">
+          {% for entry in toc %}
+            <li class="{{ entry.level == 3 ? 'pl-4' : 'font-medium' }}"><a href="#{{ entry.anchor }}" class="no-underline hover:underline">{{ entry.text }}</a></li>
+          {% endfor %}
+        </ol>
+      </nav>
+    {% endif %}
+    <div class="card min-w-0 flex-1 basis-[560px] p-6">
+      <section class="mb-6" aria-label="{{ 'Summary'|t({}, {'context': 'tannwald review'}) }}">
+        {% if has_summary %}
+          {{ content.tannwald_summary }}
+        {% else %}
+          <p class="m-0 rounded-card border border-dashed border-line px-4 py-3 text-sm text-muted">{{ 'No approved summary yet.'|t }}</p>
+          {{ content.tannwald_summary }}
+        {% endif %}
+      </section>
+      <div class="prose-doc">
+        {{ body }}
+      </div>
+    </div>
+  </div>
+</article>

@@ -1,0 +1,43 @@
+{#
+/**
+ * @file
+ * „Meine Maschinen“ als Karten statt Tabelle (View portal_maschinen, Tabellenstil bleibt Konfiguration von 2.1).
+ * Variablen aus tannwald_preprocess_views_view_table(): cards[] {serial, url, type_name, location, year,
+ * contract_label, contract_until, documents_current, documents_new, bulletins_open, bulletins_confirmed}, cache_bubble.
+ */
+#}
+{{ cache_bubble }}
+<div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3" data-machine-cards>
+  {% for card in cards %}
+    <article class="card flex flex-col gap-3 p-5">
+      <div class="flex flex-col gap-1">
+        <span class="text-[13px] uppercase tracking-[0.04em] text-muted">{{ card.type_name }}</span>
+        <h2 class="m-0 text-lg font-semibold"><a href="{{ card.url }}" class="text-ink no-underline hover:text-accent">{{ card.serial }}</a></h2>
+        <p class="m-0 meta">
+          {%- if card.location %}{{ card.location }}{% endif %}
+          {%- if card.year %} · {{ 'Year built @year'|t({'@year': card.year}) }}{% endif -%}
+        </p>
+      </div>
+      <dl class="m-0 grid grid-cols-3 gap-2 text-sm">
+        <div class="rounded-control bg-surface px-3 py-2">
+          <dt class="text-xs text-muted">{{ 'Contract'|t }}</dt>
+          <dd class="m-0 font-semibold">{{ card.contract_label ?: '—' }}</dd>
+          {% if card.contract_until %}<dd class="m-0 text-xs text-muted">{{ 'until @date'|t({'@date': card.contract_until}) }}</dd>{% endif %}
+        </div>
+        <div class="rounded-control bg-surface px-3 py-2">
+          <dt class="text-xs text-muted">{{ 'Documents'|t }}</dt>
+          <dd class="m-0 font-semibold">{{ card.documents_current }}</dd>
+          {% if card.documents_new %}<dd class="m-0 text-xs text-ok">{{ card.documents_new == 1 ? '1 new version'|t : '@count new versions'|t({'@count': card.documents_new}) }}</dd>{% endif %}
+        </div>
+        <div class="rounded-control bg-surface px-3 py-2">
+          <dt class="text-xs text-muted">{{ 'Bulletins'|t }}</dt>
+          <dd class="m-0 font-semibold {{ card.bulletins_open ? 'text-warn' : '' }}">{{ '@count open'|t({'@count': card.bulletins_open}) }}</dd>
+          <dd class="m-0 text-xs text-muted">{{ '@count confirmed'|t({'@count': card.bulletins_confirmed}) }}</dd>
+        </div>
+      </dl>
+      <a href="{{ card.url }}" class="btn btn-outline h-10 self-start">{{ 'Open machine'|t }}</a>
+    </article>
+  {% else %}
+    <p class="m-0 text-muted">{{ 'No machines are assigned to your company.'|t }}</p>
+  {% endfor %}
+</div>
