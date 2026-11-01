@@ -8,5 +8,6 @@ dependencies:
   - drupal:taxonomy
   - drupal:content_moderation
   - ai:ai
+  - tannwald_access:tannwald_access
 'interface translation project': tannwald_ingest
 'interface translation server pattern': modules/custom/tannwald_ingest/translations/%language.po

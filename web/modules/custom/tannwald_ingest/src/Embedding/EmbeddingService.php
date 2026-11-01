@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\tannwald_ingest\Embedding;
 
-use Drupal\ai\AiProviderPluginManager;
 use Drupal\ai\OperationType\Embeddings\EmbeddingsCollectionInput;
+use Drupal\Component\Plugin\PluginManagerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\tannwald_ingest\Store\VectorPack;
 use Drupal\tannwald_ingest\Usage\UsageRecorder;
@@ -20,8 +20,17 @@ class EmbeddingService {
    */
   public const BATCH_SIZE = 16;
 
+  /**
+   * @param \Drupal\Component\Plugin\PluginManagerInterface $providerManager
+   *   ai.provider (AiProviderPluginManager ist final; das Interface erlaubt
+   *   Test-Doubles).
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
+   *   Konfiguration (ai.settings, tannwald_assistant.settings).
+   * @param \Drupal\tannwald_ingest\Usage\UsageRecorder $usage
+   *   Schreibt tannwald_usage.
+   */
   public function __construct(
-    protected AiProviderPluginManager $providerManager,
+    protected PluginManagerInterface $providerManager,
     protected ConfigFactoryInterface $configFactory,
     protected UsageRecorder $usage,
   ) {}
@@ -42,6 +51,7 @@ class EmbeddingService {
       return [];
     }
     [$providerId, $model] = $this->providerAndModel();
+    /** @var \Drupal\ai\Plugin\ProviderProxy $provider */
     $provider = $this->providerManager->createInstance($providerId);
     $keys = array_keys($texts);
     $vectors = [];
@@ -78,7 +88,8 @@ class EmbeddingService {
    *   [provider_id, model].
    */
   protected function providerAndModel(): array {
-    $default = $this->providerManager->getDefaultProviderForOperationType('embeddings');
+    // Wie AiProviderPluginManager::getDefaultProviderForOperationType().
+    $default = $this->configFactory->get('ai.settings')->get('default_providers.embeddings');
     if (empty($default['provider_id'])) {
       throw new \RuntimeException('No default embeddings provider configured in ai.settings.');
     }
