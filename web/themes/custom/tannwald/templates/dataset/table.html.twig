@@ -41,6 +41,8 @@
  * @see \Drupal\Core\Theme\ThemePreprocess::preprocessTable()
  */
 #}
+{# 6.1 (E): breite Tabellen (Audit-Log) scrollen in sich, die Seite bleibt bei 390 px. #}
+<div class="overflow-x-auto">
 <table{{ attributes }}>
   {% if caption %}
     <caption>{{ caption }}</caption>
@@ -113,3 +115,4 @@
     </tfoot>
   {% endif %}
 </table>
+</div>

@@ -120,6 +120,14 @@ display:
             type: offset
       style:
         type: table
+        options:
+          info:
+            kontext:
+              responsive: priority-low
+            operation:
+              responsive: priority-medium
+            completion_tokens:
+              responsive: priority-medium
       row:
         type: fields
       query:
