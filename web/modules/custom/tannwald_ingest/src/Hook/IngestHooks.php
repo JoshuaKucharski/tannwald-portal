@@ -40,10 +40,25 @@ class IngestHooks {
       return;
     }
     $this->enqueueRevision($node);
-    // Wechsel von published auf unveröffentlicht als neue Standard-Revision:
-    // Chunks der bisher veröffentlichten Revision dieser Sprache löschen.
+    if (!$node->isDefaultRevision()) {
+      return;
+    }
+    // Standard-Revision ohne veröffentlichte Übersetzung (archiviert, zurück
+    // auf Entwurf): alle Chunks des Nodes löschen, auch die älterer
+    // veröffentlichter Revisionen — sonst blieben sie mit gültigen Keys
+    // auffindbar.
+    $anyPublished = FALSE;
+    foreach (array_keys($node->getTranslationLanguages()) as $langcode) {
+      $anyPublished = $anyPublished || $node->getTranslation($langcode)->isPublished();
+    }
+    if (!$anyPublished) {
+      $this->queueFactory->get(EmbedQueueWorker::QUEUE)->createItem(['nid' => (int) $node->id(), 'action' => 'delete']);
+      return;
+    }
+    // Einzelne Übersetzung unveröffentlicht: Chunks der bisher
+    // veröffentlichten Revision dieser Sprache löschen.
     $original = $node->getOriginal();
-    if (!$original instanceof NodeInterface || !$node->isDefaultRevision()) {
+    if (!$original instanceof NodeInterface) {
       return;
     }
     $originalVid = (int) $original->getRevisionId();

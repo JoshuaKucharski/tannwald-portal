@@ -308,7 +308,14 @@ class EmbedQueueWorkerTest extends KernelTestBase {
     $this->runQueue();
     $this->assertSame(3, $this->rows('tannwald_chunk', ['vid' => $publishedVid]));
 
-    // Neue Standard-Revision unveröffentlicht: Chunks der alten Revision weg.
+    // Zweite veröffentlichte Revision (Version 3.2): beide indexiert.
+    $node->setNewRevision();
+    $node->save();
+    $this->runQueue();
+    $this->assertSame(6, $this->rows('tannwald_chunk'));
+
+    // Neue Standard-Revision unveröffentlicht (archiviert): alle Chunks des
+    // Nodes weg, auch die der älteren veröffentlichten Revision.
     $node->setUnpublished()->setNewRevision();
     $node->save();
     $this->runQueue();
