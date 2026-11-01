@@ -262,7 +262,10 @@ function _tannwald_breadcrumb_prepare(array &$variables): void {
         if ($node->hasField('field_seriennummer') && !$node->get('field_seriennummer')->isEmpty()) {
           $machine = $node->get('field_seriennummer')->entity;
           if ($machine instanceof NodeInterface && $machine->access('view')) {
-            $trail[] = ['text' => $machine->label(), 'url' => $machine->toUrl()->toString()];
+            $trail[] = [
+              'text' => $machine->label(),
+              'url' => $machine->toUrl('canonical', ['language' => \Drupal::languageManager()->getCurrentLanguage()])->toString(),
+            ];
           }
         }
         $trail[] = ['text' => $node->label(), 'url' => ''];

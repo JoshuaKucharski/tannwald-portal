@@ -8,6 +8,7 @@ use Drupal\Component\Utility\Html;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Language\LanguageManager;
+use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Pager\PagerManagerInterface;
 use Drupal\Component\Render\MarkupInterface;
 use Drupal\Core\Render\Markup;
@@ -43,6 +44,7 @@ final class SearchPageController implements ContainerInjectionInterface {
     private readonly PagerManagerInterface $pagerManager,
     private readonly AccountInterface $currentUser,
     private readonly ?object $confirmations = NULL,
+    private readonly ?LanguageManagerInterface $languageManager = NULL,
   ) {}
 
   /**
@@ -56,6 +58,7 @@ final class SearchPageController implements ContainerInjectionInterface {
       $container->get('current_user'),
       // C's Bestätigungen (2.5), optional.
       $container->has('tannwald_bulletin.confirmations') ? $container->get('tannwald_bulletin.confirmations') : NULL,
+      $container->get('language_manager'),
     );
   }
 
@@ -146,7 +149,7 @@ final class SearchPageController implements ContainerInjectionInterface {
         'freigegeben_am' => $node instanceof NodeInterface ? self::date($node, 'field_freigegeben_am') : NULL,
         'url_kapitel' => (string) $hit['url'],
         'url_dokument' => strtok((string) $hit['url'], '#') ?: (string) $hit['url'],
-        'url_maschine' => $machine instanceof NodeInterface && $machine->access('view', $this->currentUser) ? $machine->toUrl()->toString() : NULL,
+        'url_maschine' => $machine instanceof NodeInterface && $machine->access('view', $this->currentUser) ? $machine->toUrl('canonical', $this->uiLanguage())->toString() : NULL,
         'maschine_titel' => $machine instanceof NodeInterface && $machine->access('view', $this->currentUser) ? (string) $machine->label() : NULL,
         'matched_by' => (string) $hit['matched_by'],
         'bulletin_bestaetigt_am' => $node instanceof NodeInterface ? $this->confirmedAt($node) : NULL,
@@ -250,6 +253,18 @@ final class SearchPageController implements ContainerInjectionInterface {
       $urls[$sort] = Url::fromRoute('tannwald_assistant.search', [], ['query' => ['sort' => $sort] + $query])->toString();
     }
     return $urls;
+  }
+
+  /**
+   * URL-Option: Präfix der Oberflächensprache (6.1).
+   *
+   * Ein Klick auf den Link wechselt die Sprache dann nicht.
+   *
+   * @return array<string, mixed>
+   *   Optionen für toUrl().
+   */
+  private function uiLanguage(): array {
+    return $this->languageManager === NULL ? [] : ['language' => $this->languageManager->getCurrentLanguage()];
   }
 
   /**

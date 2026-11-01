@@ -252,7 +252,8 @@ function _tannwald_document_row(NodeInterface $document, string $langcode, bool 
   }
 
   if ($isCurrent) {
-    $url = $document->toUrl()->toString();
+    // 6.1 (E): Präfix der Oberflächensprache; ein Klick wechselt sie nicht.
+    $url = $document->toUrl('canonical', ['language' => \Drupal::languageManager()->getCurrentLanguage()])->toString();
     $download = _tannwald_download_url($document);
   }
   else {
@@ -370,7 +371,7 @@ function _tannwald_machine_cards(array &$variables): void {
     $tags = array_merge($tags, $data['cache_bubble']['#cache']['tags']);
     $cards[] = [
       'serial' => $data['machine']['serial'],
-      'url' => $machine->toUrl()->toString(),
+      'url' => $machine->toUrl('canonical', ['language' => \Drupal::languageManager()->getCurrentLanguage()])->toString(),
       'type_name' => $data['machine']['type_name'],
       'location' => $data['machine']['location'],
       'year' => $data['machine']['year'],

@@ -6,7 +6,9 @@ namespace Drupal\tannwald_assistant;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
+use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
 use Drupal\tannwald_assistant\Access\AccessKeysInterface;
@@ -81,6 +83,8 @@ final class Retriever {
     private readonly LanguageDetector $languageDetector,
     private readonly LoggerInterface $logger,
     private readonly ?SafetyTopicDetector $safetyDetector = NULL,
+    private readonly ?LanguageManagerInterface $languageManager = NULL,
+    private readonly ?EntityRepositoryInterface $entityRepository = NULL,
   ) {}
 
   /**
@@ -412,6 +416,31 @@ final class Retriever {
   }
 
   /**
+   * Anker der Überschrift mit derselben Kapitelnummer in einer Übersetzung.
+   *
+   * @param \Drupal\node\NodeInterface $translation
+   *   Angezeigte Übersetzung.
+   * @param string $heading
+   *   Letzte Überschrift des Treffers, z. B. „9.1 Fault table“.
+   *
+   * @return string|null
+   *   „kapitel-<slug>“ oder NULL ohne Nummer bzw. ohne passende Überschrift.
+   */
+  private static function chapterFragment(NodeInterface $translation, string $heading): ?string {
+    if (preg_match('/^(\d+(?:\.\d+)*)\s/u', $heading, $number) !== 1 || !$translation->hasField('body')) {
+      return NULL;
+    }
+    preg_match_all('/<h[23][^>]*>(.*?)<\/h[23]>/isu', (string) $translation->get('body')->value, $matches);
+    foreach ($matches[1] as $raw) {
+      $text = trim((string) preg_replace('/\s+/u', ' ', html_entity_decode(strip_tags($raw), ENT_QUOTES | ENT_HTML5, 'UTF-8')));
+      if (preg_match('/^' . preg_quote($number[1], '/') . '\s/u', $text) === 1) {
+        return 'kapitel-' . HeadingSlug::of($text);
+      }
+    }
+    return NULL;
+  }
+
+  /**
    * Prüft Zugriff auf die Trefferübersetzung und ergänzt Version und URL.
    */
   private function buildHit(array $row, AccountInterface $account): ?array {
@@ -443,6 +472,23 @@ final class Retriever {
     $lastHeading = PromptBuilder::lastHeading($headingPath);
     if ($lastHeading !== '') {
       $options['fragment'] = 'kapitel-' . HeadingSlug::of($lastHeading);
+    }
+    // 6.1: Präfix der Oberflächensprache, damit ein Klick sie nicht wechselt.
+    // Zeigt die Seite dann eine andere Übersetzung als die des Treffers, kommt
+    // der Anker aus der Überschrift mit derselben Kapitelnummer dort.
+    if ($this->languageManager !== NULL) {
+      $ui = $this->languageManager->getCurrentLanguage();
+      $options['language'] = $ui;
+      $shown = $this->entityRepository?->getTranslationFromContext($node, $ui->getId());
+      if ($shown instanceof NodeInterface && $shown->language()->getId() !== $langcode && isset($options['fragment'])) {
+        $fragment = self::chapterFragment($shown, $lastHeading);
+        if ($fragment === NULL) {
+          unset($options['fragment']);
+        }
+        else {
+          $options['fragment'] = $fragment;
+        }
+      }
     }
     return [
       'chunk_id' => (int) $row['id'],
