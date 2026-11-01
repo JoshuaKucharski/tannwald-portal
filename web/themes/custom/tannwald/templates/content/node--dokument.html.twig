@@ -38,10 +38,10 @@
     <div class="flex flex-wrap items-center gap-3">
       {{ include('tannwald:lang-pills', {languages: languages}, with_context = false) }}
       {% if url_history %}
-        <a href="{{ url_history }}" class="btn btn-outline h-10">{{ 'Change history'|t }}</a>
+        <a href="{{ url_history }}" class="btn btn-outline">{{ 'Change history'|t }}</a>
       {% endif %}
       {% if url_download %}
-        <a href="{{ url_download }}" class="btn btn-primary h-10">{{ 'Download'|t({}, {'context': 'tannwald'}) }}</a>
+        <a href="{{ url_download }}" class="btn btn-primary">{{ 'Download'|t({}, {'context': 'tannwald'}) }}</a>
       {% endif %}
     </div>
   </header>

@@ -35,7 +35,7 @@
           <dd class="m-0 text-xs text-muted">{{ '@count confirmed'|t({'@count': card.bulletins_confirmed}) }}</dd>
         </div>
       </dl>
-      <a href="{{ card.url }}" class="btn btn-outline h-10 self-start">{{ 'Open machine'|t }}</a>
+      <a href="{{ card.url }}" class="btn btn-outline self-start">{{ 'Open machine'|t }}</a>
     </article>
   {% else %}
     <p class="card m-0 px-6 py-4 text-muted">{{ 'No machines are assigned to your company yet. Your Tannwald contact links them to your account.'|t }}</p>

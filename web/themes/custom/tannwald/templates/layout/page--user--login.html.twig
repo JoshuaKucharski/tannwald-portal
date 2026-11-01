@@ -44,7 +44,7 @@
           <p class="m-0 mb-3 text-sm text-muted">{{ 'Demo accounts, password demo'|t }}</p>
           <div class="flex flex-wrap gap-2">
             {% for account in demo_accounts %}
-              <button type="button" class="chip" @click="fill('{{ account.name|e('js') }}')">{{ account.name }} · {{ account.label }}</button>
+              <button type="button" class="chip h-11" @click="fill('{{ account.name|e('js') }}')">{{ account.name }} · {{ account.label }}</button>
             {% endfor %}
           </div>
         </div>

@@ -40,6 +40,8 @@
     sticky ? 'sticky-header',
   ]
 %}
+{# 6.1 (E): breite Views-Tabellen scrollen in sich (390 px, Support-Anfragen). #}
+<div class="overflow-x-auto">
 <table{{ attributes.addClass(classes) }}>
   {% if caption_needed %}
     <caption>
@@ -118,3 +120,4 @@
     {% endfor %}
   </tbody>
 </table>
+</div>

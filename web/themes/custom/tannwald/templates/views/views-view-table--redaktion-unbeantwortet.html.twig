@@ -32,8 +32,8 @@
         {% endfor %}
         <td class="whitespace-nowrap">
           <span class="flex flex-wrap gap-2">
-            {% if row.url_create %}<a href="{{ row.url_create }}" class="btn btn-outline h-9 px-3 text-sm">{{ 'Create document'|t }}</a>{% endif %}
-            <a href="{{ row.url_support }}" class="btn btn-outline h-9 px-3 text-sm">{{ 'To support'|t }}</a>
+            {% if row.url_create %}<a href="{{ row.url_create }}" class="btn btn-outline px-3 text-sm">{{ 'Create document'|t }}</a>{% endif %}
+            <a href="{{ row.url_support }}" class="btn btn-outline px-3 text-sm">{{ 'To support'|t }}</a>
           </span>
         </td>
       </tr>
