@@ -1,0 +1,65 @@
+# Demo-Konten (fixtures/sap/nutzer.json) → Nutzer mit Passwort "demo".
+# Der Anzeigename kommt aus DisplayNames (hook_user_format_name_alter).
+id: tannwald_users
+label: 'Tannwald: demo accounts'
+migration_tags:
+  - tannwald_demo
+source:
+  plugin: url
+  data_fetcher_plugin: file
+  data_parser_plugin: json
+  urls:
+    - sap/nutzer.json
+  item_selector: 0
+  track_changes: true
+  constants:
+    mail_domain: '@tannwald.example'
+    password: demo
+    active: 1
+  fields:
+    - name: name
+      label: Account
+      selector: name
+    - name: rolle
+      label: Role
+      selector: rolle
+    - name: firma_sap_nr
+      label: 'Company SAP number'
+      selector: firma_sap_nr
+    - name: land
+      label: Country
+      selector: land
+    - name: sprache
+      label: Language
+      selector: sprache
+  ids:
+    name:
+      type: string
+process:
+  name: name
+  mail:
+    plugin: concat
+    source:
+      - name
+      - constants/mail_domain
+  init: '@mail'
+  pass:
+    plugin: tannwald_password_hash
+    source: constants/password
+  status: constants/active
+  roles: rolle
+  field_firma:
+    - plugin: skip_on_empty
+      method: process
+      source: firma_sap_nr
+    - plugin: migration_lookup
+      migration: tannwald_firmen
+      no_stub: true
+  field_land: land
+  langcode: sprache
+  preferred_langcode: sprache
+destination:
+  plugin: 'entity:user'
+migration_dependencies:
+  required:
+    - tannwald_firmen

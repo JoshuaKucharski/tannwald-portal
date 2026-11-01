@@ -1,0 +1,67 @@
+# Maschinen aus dem SAP-Mock (fixtures/sap/maschinen.json) → Nodes "maschine".
+# ID = Seriennummer = Node-Titel.
+id: tannwald_maschinen
+label: 'Tannwald: machines (SAP mock)'
+migration_tags:
+  - tannwald_demo
+source:
+  plugin: url
+  data_fetcher_plugin: file
+  data_parser_plugin: json
+  urls:
+    - sap/maschinen.json
+  item_selector: 0
+  track_changes: true
+  constants:
+    langcode: de
+    published: 1
+    owner: 1
+  fields:
+    - name: seriennummer
+      label: 'Serial number'
+      selector: seriennummer
+    - name: maschinentyp
+      label: 'Machine type'
+      selector: maschinentyp
+    - name: firma_sap_nr
+      label: 'Company SAP number'
+      selector: firma_sap_nr
+    - name: standort
+      label: Location
+      selector: standort
+    - name: baujahr
+      label: 'Year built'
+      selector: baujahr
+    - name: vertrag
+      label: Contract
+      selector: vertrag
+    - name: vertrag_bis
+      label: 'Contract until'
+      selector: vertrag_bis
+  ids:
+    seriennummer:
+      type: string
+process:
+  langcode: constants/langcode
+  title: seriennummer
+  field_maschinentyp:
+    plugin: tannwald_term
+    source: maschinentyp
+    vocabulary: maschinentyp
+  field_firma:
+    plugin: migration_lookup
+    migration: tannwald_firmen
+    source: firma_sap_nr
+    no_stub: true
+  field_standort: standort
+  field_baujahr: baujahr
+  field_vertrag: vertrag
+  field_vertrag_bis: vertrag_bis
+  status: constants/published
+  uid: constants/owner
+destination:
+  plugin: 'entity:node'
+  default_bundle: maschine
+migration_dependencies:
+  required:
+    - tannwald_firmen

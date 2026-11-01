@@ -1,0 +1,44 @@
+# Firmen aus dem SAP-Mock (fixtures/sap/firmen.json) → Terme "firma".
+# Produktiv: dieselbe Migration mit OData-URL und high_water_property.
+# haendler_zuordnung wird nicht eingelesen (kein Feld; Händler-Typen über das
+# Gebiet, Entscheid 12).
+id: tannwald_firmen
+label: 'Tannwald: companies (SAP mock)'
+migration_tags:
+  - tannwald_demo
+source:
+  plugin: url
+  data_fetcher_plugin: file
+  data_parser_plugin: json
+  urls:
+    - sap/firmen.json
+  item_selector: 0
+  track_changes: true
+  fields:
+    - name: sap_nr
+      label: 'SAP number'
+      selector: sap_nr
+    - name: name
+      label: Name
+      selector: name
+    - name: land
+      label: Country
+      selector: land
+    - name: art
+      label: Kind
+      selector: art
+    - name: haendler_gebiet
+      label: 'Dealer territory'
+      selector: haendler_gebiet
+  ids:
+    sap_nr:
+      type: string
+process:
+  name: name
+  field_sap_nr: sap_nr
+  field_land: land
+  field_firma_art: art
+  field_haendler_gebiet: haendler_gebiet
+destination:
+  plugin: 'entity:taxonomy_term'
+  default_bundle: firma

@@ -1,0 +1,92 @@
+# Dokumente (fixtures/dokumente/manifest.json) → Nodes "dokument".
+# Eine Quellzeile je (id, version) = eine Revision in Manifest-Reihenfolge;
+# die Sprachen einer Version sind Übersetzungen dieser Revision, Dateien
+# liegen unter private://dokumente/<datei>, jede Übersetzung "published".
+id: tannwald_dokumente
+label: 'Tannwald: documents with revisions and translations'
+migration_tags:
+  - tannwald_demo
+source:
+  plugin: url
+  data_fetcher_plugin: file
+  data_parser_plugin: tannwald_document_versions
+  urls:
+    - dokumente/manifest.json
+  item_selector: 0
+  track_changes: true
+  fields:
+    - name: id
+      label: 'Manifest ID'
+      selector: id
+    - name: version
+      label: Version
+      selector: version
+    - name: titel
+      label: Title
+      selector: titel
+    - name: dokumenttyp
+      label: 'Document type slug'
+      selector: dokumenttyp
+    - name: maschinentypen
+      label: 'Machine types'
+      selector: maschinentypen
+    - name: seriennummer
+      label: 'Serial number (optional)'
+      selector: seriennummer
+    - name: exportklasse
+      label: 'Export class'
+      selector: exportklasse
+    - name: freigegeben_am
+      label: 'Release date'
+      selector: freigegeben_am
+    - name: gueltig_bis
+      label: 'Valid until'
+      selector: gueltig_bis
+    - name: files
+      label: 'Files per language'
+      selector: files
+    - name: checksum
+      label: 'Checksum of the HTML files'
+      selector: checksum
+  ids:
+    id:
+      type: string
+    version:
+      type: string
+process:
+  id: id
+  version: version
+  titel: titel
+  dokumenttyp:
+    plugin: tannwald_term
+    source: dokumenttyp
+    vocabulary: dokumenttyp
+  maschinentypen:
+    plugin: tannwald_term
+    source: maschinentypen
+    vocabulary: maschinentyp
+  seriennummer:
+    - plugin: skip_on_empty
+      method: process
+      source: seriennummer
+    - plugin: migration_lookup
+      migration: tannwald_maschinen
+      no_stub: true
+  exportklasse: exportklasse
+  freigegeben_am: freigegeben_am
+  gueltig_bis: gueltig_bis
+  files: files
+destination:
+  plugin: tannwald_document_revision
+  default_author: redaktion
+  revision_authors:
+    - id: ba-tb200
+      version: '3.2'
+      user: techniker
+  fixture_directory: dokumente
+  file_directory: 'private://dokumente'
+  text_format: dokument_html
+migration_dependencies:
+  required:
+    - tannwald_maschinen
+    - tannwald_users

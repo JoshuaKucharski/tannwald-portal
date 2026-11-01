@@ -1,0 +1,106 @@
+# Bulletins (fixtures/bulletins/manifest.json) → Nodes "bulletin".
+# Titel "<Kennung> <Titel>" (Vertrag BulletinLabel aus 2.5), Autor =
+# erstellt_von, created = veroeffentlicht_am 08:00 Zürich, "published".
+id: tannwald_bulletins
+label: 'Tannwald: bulletins'
+migration_tags:
+  - tannwald_demo
+source:
+  plugin: url
+  data_fetcher_plugin: file
+  data_parser_plugin: json
+  urls:
+    - bulletins/manifest.json
+  item_selector: 0
+  track_changes: true
+  constants:
+    langcode: de
+    text_format: dokument_html
+    state: published
+    published: 1
+    morning: '08:00'
+  fields:
+    - name: id
+      label: 'Bulletin ID'
+      selector: id
+    - name: titel
+      label: Title
+      selector: titel
+    - name: art
+      label: Kind
+      selector: art
+    - name: maschinentypen
+      label: 'Machine types'
+      selector: maschinentypen
+    - name: seriennummern
+      label: 'Serial numbers'
+      selector: seriennummern
+    - name: bestaetigung_pflicht
+      label: 'Confirmation required'
+      selector: bestaetigung_pflicht
+    - name: veroeffentlicht_am
+      label: 'Published on'
+      selector: veroeffentlicht_am
+    - name: datei
+      label: File
+      selector: datei
+    - name: erstellt_von
+      label: Author
+      selector: erstellt_von
+  ids:
+    id:
+      type: string
+process:
+  langcode: constants/langcode
+  title:
+    plugin: concat
+    source:
+      - id
+      - titel
+    delimiter: ' '
+  body/value:
+    plugin: tannwald_fixture_file
+    source: datei
+    directory: bulletins
+  body/format: constants/text_format
+  field_bulletin_art: art
+  field_maschinentyp:
+    plugin: tannwald_term
+    source: maschinentypen
+    vocabulary: maschinentyp
+  field_seriennummern:
+    - plugin: skip_on_empty
+      method: process
+      source: seriennummern
+    - plugin: migration_lookup
+      migration: tannwald_maschinen
+      no_stub: true
+  field_bestaetigung_pflicht: bestaetigung_pflicht
+  created:
+    - plugin: concat
+      source:
+        - veroeffentlicht_am
+        - constants/morning
+      delimiter: ' '
+    - plugin: format_date
+      from_format: 'Y-m-d H:i'
+      to_format: U
+      from_timezone: Europe/Zurich
+      to_timezone: UTC
+  changed: '@created'
+  revision_timestamp: '@created'
+  uid:
+    plugin: migration_lookup
+    migration: tannwald_users
+    source: erstellt_von
+    no_stub: true
+  revision_uid: '@uid'
+  moderation_state: constants/state
+  status: constants/published
+destination:
+  plugin: 'entity:node'
+  default_bundle: bulletin
+migration_dependencies:
+  required:
+    - tannwald_maschinen
+    - tannwald_users

@@ -1,0 +1,28 @@
+services:
+  logger.channel.tannwald_demo:
+    parent: logger.channel_base
+    arguments: ['tannwald_demo']
+
+  tannwald_demo.lookup:
+    class: Drupal\tannwald_demo\DemoLookup
+    arguments: ['@entity_type.manager', '@plugin.manager.migration']
+  Drupal\tannwald_demo\DemoLookup: '@tannwald_demo.lookup'
+
+  tannwald_demo.installer:
+    class: Drupal\tannwald_demo\DemoInstaller
+    arguments:
+      - '@entity_type.manager'
+      - '@plugin.manager.migration'
+      - '@config.factory'
+      - '@module_handler'
+      - '@queue'
+      - '@plugin.manager.queue_worker'
+      - '@database'
+      - '@account_switcher'
+      - '@keyvalue'
+      - '@datetime.time'
+      - '@string_translation'
+      - '@Drupal\node\NodeAccessRebuild'
+      - '@tannwald_demo.lookup'
+      - '@logger.channel.tannwald_demo'
+  Drupal\tannwald_demo\DemoInstaller: '@tannwald_demo.installer'
