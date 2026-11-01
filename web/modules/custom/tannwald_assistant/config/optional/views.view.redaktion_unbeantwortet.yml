@@ -100,17 +100,13 @@ display:
             alter_text: true
             text: '<a href="/node/add/dokument">Dokument anlegen</a> · <a href="/redaktion/support-anfragen">An Support</a>'
       filters:
-        created:
-          id: created
+        current_month:
+          id: current_month
           table: tannwald_assistant_log
-          field: created
+          field: current_month
           relationship: none
           group_type: group
-          plugin_id: date
-          operator: '>='
-          value:
-            type: offset
-            value: 'first day of this month 00:00:00'
+          plugin_id: tannwald_current_month
           group: 1
         status:
           id: status

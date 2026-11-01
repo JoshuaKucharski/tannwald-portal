@@ -65,6 +65,10 @@ views.field.tannwald_limit_share:
   type: views_field
   label: 'Share of the monthly token limit'
 
+views.filter.tannwald_current_month:
+  type: views_filter
+  label: 'Current month'
+
 views.area.tannwald_answer_stats:
   type: views_area
   label: 'Assistant answers per day'

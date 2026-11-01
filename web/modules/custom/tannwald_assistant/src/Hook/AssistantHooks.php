@@ -74,6 +74,12 @@ final class AssistantHooks {
       'label' => $this->t('Machine'),
     ];
     $log['created'] = self::date($this->t('Created'));
+    $log['current_month'] = [
+      'title' => $this->t('Current month'),
+      'help' => $this->t('Rows created since the start of the current month (site time zone).'),
+      'real field' => 'created',
+      'filter' => ['id' => 'tannwald_current_month'],
+    ];
     $log['last_created'] = [
       'title' => $this->t('Last asked'),
       'real field' => 'created',

@@ -8,6 +8,7 @@
 declare(strict_types=1);
 
 use Drupal\Core\Config\FileStorage;
+use Drupal\views\Entity\View;
 
 /**
  * Implements hook_schema().
@@ -161,4 +162,18 @@ function tannwald_assistant_update_10003(): string {
   $path = \Drupal::service('extension.list.module')->getPath('tannwald_assistant') . '/config/optional';
   \Drupal::service('config.installer')->installOptionalConfig(new FileStorage($path));
   return 'Optional views of tannwald_assistant installed (if roles and views exist).';
+}
+
+/**
+ * Unbeantwortete Fragen: Filter „laufender Monat“ statt Views-Offset.
+ */
+function tannwald_assistant_update_10004(): string {
+  $path = \Drupal::service('extension.list.module')->getPath('tannwald_assistant') . '/config/optional';
+  $data = (new FileStorage($path))->read('views.view.redaktion_unbeantwortet');
+  $view = View::load('redaktion_unbeantwortet');
+  if ($view === NULL || !is_array($data)) {
+    return 'View redaktion_unbeantwortet not present; nothing to do.';
+  }
+  $view->set('display', $data['display'])->save();
+  return 'View redaktion_unbeantwortet: filter current month.';
 }
