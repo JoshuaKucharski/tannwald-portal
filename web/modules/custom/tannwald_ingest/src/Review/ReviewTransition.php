@@ -118,6 +118,10 @@ class ReviewTransition {
     $latest->setRevisionUserId((int) $account->id());
     $latest->setRevisionCreationTime($this->time->getCurrentTime());
     $latest->setRevisionLogMessage(sprintf('%s durch %s', $transition, $account->getDisplayName()));
+    // Der Moderationsstatus ist berechnet: ohne Textänderung setzt Drupal
+    // revision_translation_affected nicht, und latest() fände die Vorrevision.
+    $latest->setRevisionTranslationAffected(TRUE);
+    $latest->setRevisionTranslationAffectedEnforced(TRUE);
     $latest->save();
     return [
       'nid' => (int) $latest->id(),
