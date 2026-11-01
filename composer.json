@@ -35,6 +35,11 @@
     },
     "minimum-stability": "stable",
     "prefer-stable": true,
+    "autoload-dev": {
+        "psr-4": {
+            "Drupal\\Tests\\tannwald\\": "tests/src/"
+        }
+    },
     "config": {
         "allow-plugins": {
             "composer/installers": true,

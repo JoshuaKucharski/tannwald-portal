@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- PHPUnit für tannwald-portal, nach web/core/phpunit.xml.dist (Drupal 11.4, PHPUnit 11).
+     Aufruf immer im Container: ddev exec vendor/bin/phpunit filter=<Name>  (Doppelstrich vor filter).
+     SIMPLETEST_BASE_URL, SIMPLETEST_DB und BROWSERTEST_OUTPUT_DIRECTORY kommen aus der Container-Umgebung
+     (.ddev/config.yaml web_environment, in CI aus dem Workflow) — hier bewusst keine festen Werte. -->
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         bootstrap="web/core/tests/bootstrap.php"
+         colors="true"
+         beStrictAboutTestsThatDoNotTestAnything="true"
+         beStrictAboutOutputDuringTests="true"
+         beStrictAboutChangesToGlobalState="true"
+         failOnRisky="true"
+         failOnWarning="true"
+         failOnPhpunitWarning="true"
+         displayDetailsOnTestsThatTriggerErrors="true"
+         displayDetailsOnTestsThatTriggerWarnings="true"
+         displayDetailsOnTestsThatTriggerDeprecations="true"
+         cacheResult="false"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd"
+         cacheDirectory=".phpunit.cache">
+  <php>
+    <ini name="error_reporting" value="32767"/>
+    <ini name="memory_limit" value="-1"/>
+  </php>
+  <extensions>
+    <bootstrap class="Drupal\TestTools\Extension\HtmlLogging\HtmlOutputLogger">
+      <!-- BROWSERTEST_OUTPUT_DIRECTORY aus der Umgebung hat Vorrang. -->
+      <parameter name="outputDirectory" value="web/sites/simpletest/browser_output"/>
+      <parameter name="verbose" value="false"/>
+    </bootstrap>
+    <bootstrap class="Drupal\TestTools\Extension\Dump\DebugDump">
+      <parameter name="colors" value="true"/>
+      <parameter name="printCaller" value="true"/>
+    </bootstrap>
+  </extensions>
+  <testsuites>
+    <testsuite name="unit">
+      <directory>tests/src/Unit</directory>
+      <directory>web/modules/custom/*/tests/src/Unit</directory>
+    </testsuite>
+    <testsuite name="kernel">
+      <directory>web/modules/custom/*/tests/src/Kernel</directory>
+    </testsuite>
+    <testsuite name="functional">
+      <directory>web/modules/custom/*/tests/src/Functional</directory>
+    </testsuite>
+  </testsuites>
+</phpunit>
