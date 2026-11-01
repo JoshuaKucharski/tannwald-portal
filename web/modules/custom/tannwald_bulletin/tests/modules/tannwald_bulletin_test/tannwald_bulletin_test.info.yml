@@ -1,0 +1,7 @@
+name: 'Tannwald Bulletin Test'
+type: module
+description: 'Renders the bulletin banner data and confirm form for functional tests (stand-in for theme 5.1).'
+package: Testing
+hidden: true
+dependencies:
+  - tannwald_bulletin:tannwald_bulletin
