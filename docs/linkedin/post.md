@@ -13,7 +13,7 @@ Was der PoC beweist:
 – Hybride Suche (Volltext + Vektoren) findet „Folie reisst beim Siegeln“, obwohl kein Wort übereinstimmt.
 – Der Assistent zitiert jede Aussage oder lehnt ab; Sicherheitsfragen bekommen nie eine Kurzanleitung.
 – KI-Zusammenfassungen werden erst nach redaktioneller Freigabe zu Wissen.
-– 259 automatisierte Tests, 60 Eval-Fragen mit Vorher/Nachher: hit@5 0.73 → 0.87, Ablehnungen 0.97 → 1.00, Zitate 0.41 → 0.50 (Restbefund, ehrlich).
+– 259 automatisierte Tests, 60 Eval-Fragen mit Vorher/Nachher: hit@5 0.73 → 0.87, Ablehnungen 0.97 → 1.00, Sicherheitsverweise 0.60 → 0.87, Zitate 0.41 → 0.50 (Restbefund, ehrlich).
 
 Drei Lehren: Rechte sind ODER-verknüpft, bis man die Schlüssel kombiniert. Ein geteilter Arbeitsbaum braucht Besitzer je
 Welle. Erst messen, dann tunen.
@@ -35,7 +35,7 @@ What the PoC proves:
 – Hybrid search (full text + vectors) finds "film tears during sealing" although not a single word matches.
 – The assistant cites every statement or refuses; safety questions never get a shortened answer.
 – AI summaries only become knowledge after editorial release.
-– 259 automated tests, a 60-question eval set with before/after: hit@5 0.73 → 0.87, refusals 0.97 → 1.00, citations 0.41 → 0.50 (honest leftover).
+– 259 automated tests, a 60-question eval set with before/after: hit@5 0.73 → 0.87, refusals 0.97 → 1.00, safety references 0.60 → 0.87, citations 0.41 → 0.50 (honest leftover).
 
 Three lessons: access grants are OR-combined until you combine the keys. A shared working tree needs one owner per wave.
 Measure first, then tune.

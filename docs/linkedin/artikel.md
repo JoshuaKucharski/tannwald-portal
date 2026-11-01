@@ -74,9 +74,11 @@ Zitieren des 7B-Modells. Ohne Baseline hätten wir an der Chunk-Grösse gedreht 
 | Treffer unter den ersten 5 (`hit@5`) | 0.73 | 0.87 | ≥ 0.80 |
 | Zitate korrekt | 0.41 | 0.50 | ≥ 0.90 |
 | Ablehnungen korrekt | 0.97 | 1.00 | ≥ 0.90 |
-| Sicherheitsantworten korrekt | 0.60 | 0.63 | = 1.00 |
+| Sicherheitsantworten korrekt | 0.60 | 0.87¹ | = 1.00 |
 
-Zitate und Sicherheitsverweise bleiben unter dem Ziel: Das 7B-Modell zitiert verwandte Kapitel mit, und die Sicherheitsvorlage trifft in elf von dreissig Fällen nicht das erwartete Kapitel — gemessen, nicht geschönt; der Hebel dafür ist ein stärkeres Modell oder ein Reranker, nicht mehr Prompt.
+Zitate und Sicherheitsverweise bleiben unter dem Ziel: Das 7B-Modell zitiert verwandte Kapitel mit, und die Sicherheitsvorlage trifft in vier von dreissig Fällen nicht das erwartete Kapitel — gemessen, nicht geschönt; die Hebel sind ein stärkeres Modell und ein Reranker, nicht mehr Prompt.
+
+¹ Nachmessung über die 30 Sicherheitsfragen nach einem Vorlagen-Fix; der volle Lauf zeigte davor 0.63.
 
 Dazu: 259 automatisierte Tests (Unit, Kernel, Functional), Chat-Antwort mit lokalem 7B-Modell auf einem M1 in 15 bis 30
 Sekunden, Sicherheitsantwort in Millisekunden, Seeder 65 Sekunden. Alle Zahlen stammen aus den Ergebnisdateien im Repo.

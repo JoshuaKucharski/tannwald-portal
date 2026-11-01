@@ -173,7 +173,7 @@ Demo-Konten.
 | `hit@5` | erwartete Quelle unter den ersten 5 Treffern (52 Fragen mit Quellen) | 0.73 (38/52) | **0.87 (45/52)** | ≥ 0.80 |
 | `zitat_korrekt` | Antwort gegeben **und** jedes Zitat zeigt auf eine erwartete Quelle (22 Fragen) | 0.41 (9/22) | 0.50 (11/22) | ≥ 0.90 |
 | `ablehnung_korrekt` | Ablehnung wo erwartet, Antwort wo erwartet (30 Fragen) | 0.97 (29/30) | **1.00 (30/30)** | ≥ 0.90 |
-| `safety_korrekt` | Sicherheitsvorlage **und** Verweis auf das erwartete Kapitel (30 Fragen) | 0.60 (18/30) | 0.63 (19/30) | = 1.00 |
+| `safety_korrekt` | Sicherheitsvorlage **und** Verweis auf das erwartete Kapitel (30 Fragen) | 0.60 (18/30) | 0.87 (26/30)¹ | = 1.00 |
 | Median-Dauer je Frage | Retrieval plus Antwort (Sicherheitsfragen ohne LLM) | 218 ms | 7'029 ms | — |
 | Tokens | Prompt / Antwort über alle LLM-Antworten | 62'435 / 1'758 | 64'758 / 2'445 | — |
 
@@ -183,10 +183,15 @@ RRF-Liste mit den Sicherheitskapiteln bei erkannten Sicherheitsfragen, Sicherhei
 Handlung (30/30 erkannt, 0 Falsch-Positive statt 24/30 mit 8), Maschinentyp aus der Frage als Filter, drei Set-Korrekturen
 und ein Fixture-Text ohne „reisst“ in Kapitel 9.4 (TC-06). **Ehrlich gelesen:** Retrieval und Ablehnung erreichen das Ziel;
 `zitat_korrekt` bleibt mit `qwen2.5:7b` bei 0.50, weil das Modell verwandte Kapitel mitzitiert (zwei umformulierte
-Zitierregeln senkten den Wert auf 0.14 und 0.29, gemessen in 6.1); `safety_korrekt` 0.63 heisst: die Vorlage greift bei
-allen 30 Sicherheitsfragen, aber in 11 Fällen verweist sie nicht auf das erwartete Kapitel. Beide Restbefunde sind im
-Ausbau mit einem stärkeren Modell und einem Reranker zu messen (ADR-004). Median-Dauer Nachher ist höher, weil mehr
+Zitierregeln senkten den Wert auf 0.14 und 0.29, gemessen in 6.1); `safety_korrekt` lag im vollen Lauf bei 0.63 (19/30), weil die
+Vorlage nur das erste Sicherheitskapitel nannte; nach dem Vorlagen-Fix (bis zu drei verschiedene Kapitel, Unterkapitel vor
+dem allgemeinen Kapitel) ergab die Nachmessung über die 30 Sicherheitsfragen 0.87 (26/30)¹. Die vier verbleibenden Fälle
+sind Retrieval-Grenzen (allgemeine Grundregel-Kapitel ohne Wortbezug zur Frage), die Zitate eine Modellgrenze — beide sind
+im Ausbau mit einem stärkeren Modell und einem Reranker zu messen (ADR-004). Median-Dauer Nachher ist höher, weil mehr
 Fragen eine LLM-Antwort statt einer Vorlage erhielten und der Lauf parallel zur GIF-Aufnahme lief.
+
+¹ Nachmessung über die 30 Sicherheitsfragen nach dem Vorlagen-Fix: `docs/evals/ergebnisse-2026-11-01_2309_teil.md`; der volle
+Lauf `…_2244.md` zeigte 0.63 (19/30) vor dem Fix.
 
 **Dauern (gemessen):**
 
