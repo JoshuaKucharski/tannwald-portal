@@ -642,3 +642,13 @@ msgstr "Document"
 msgctxt "tannwald status"
 msgid "Open"
 msgstr "En attente"
+
+# Tri de /suche (6.1)
+msgid "Sort by"
+msgstr "Trier par"
+
+msgid "Relevance"
+msgstr "Pertinence"
+
+msgid "Date"
+msgstr "Date"

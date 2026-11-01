@@ -721,3 +721,13 @@ msgstr "Zugriff verweigert"
 # core override
 msgid "You are not authorized to access this page."
 msgstr "Sie haben keine Berechtigung für diese Seite."
+
+# Sortierung /suche (6.1)
+msgid "Sort by"
+msgstr "Sortierung"
+
+msgid "Relevance"
+msgstr "Relevanz"
+
+msgid "Date"
+msgstr "Datum"
