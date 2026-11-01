@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\tannwald_bulletin\Plugin\views\area;
 
+use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\node\NodeInterface;
@@ -16,7 +17,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Zahl und Liste der offenen Lesebestätigungen des Bulletins (Argument 1).
  */
 #[ViewsArea('tannwald_bulletin_open_confirmations')]
-final class OpenConfirmations extends AreaPluginBase {
+final class OpenConfirmations extends AreaPluginBase implements CacheableDependencyInterface {
 
   /**
    * Dienst der Lesebestätigungen.
@@ -36,6 +37,36 @@ final class OpenConfirmations extends AreaPluginBase {
     $instance->confirmations = $container->get('tannwald_bulletin.confirmations');
     $instance->entityTypeManager = $container->get('entity_type.manager');
     return $instance;
+  }
+
+  /**
+   * {@inheritdoc}
+   *
+   * Die offenen Bestätigungen ändern sich mit jeder Bestätigung und jedem
+   * Maschinen- oder Nutzerwechsel; nie zwischenspeichern.
+   */
+  public function getCacheMaxAge(): int {
+    return 0;
+  }
+
+  /**
+   * {@inheritdoc}
+   *
+   * @return string[]
+   *   Keine Kontexte.
+   */
+  public function getCacheContexts(): array {
+    return [];
+  }
+
+  /**
+   * {@inheritdoc}
+   *
+   * @return string[]
+   *   Keine Tags.
+   */
+  public function getCacheTags(): array {
+    return [];
   }
 
   /**

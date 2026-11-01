@@ -2,8 +2,8 @@ langcode: de
 status: true
 dependencies:
   config:
-    - core.date_format.tannwald_datum
     - field.storage.user.field_firma
+    - node.type.bulletin
     - user.role.compliance
     - user.role.portal_admin
     - user.role.redaktion
@@ -273,7 +273,8 @@ display:
         - url
         - url.query_args
         - user.roles
-      tags: {  }
+      tags:
+        - 'config:field.storage.user.field_firma'
   page_1:
     id: page_1
     display_title: Seite
@@ -290,4 +291,5 @@ display:
         - url
         - url.query_args
         - user.roles
-      tags: {  }
+      tags:
+        - 'config:field.storage.user.field_firma'
