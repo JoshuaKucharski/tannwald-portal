@@ -1,0 +1,108 @@
+{#
+/**
+ * @file
+ * Suche (Wireframe 02): Formular mit Live-Resultaten, Schalter Hybrid / Nur Volltext, Facetten links,
+ * Treffer rechts, Brücke zum Assistenten, Pager. Überschreibt das Fallback-Template von tannwald_assistant.
+ *
+ * Variablen aus 4.2 (query, modus, aktuell, filters, hits, facets, total, dauer_ms, pager, live_url) und aus
+ * tannwald_preprocess_tannwald_search_page() (includes/search.inc): form_id, modus_label, duration_text,
+ * active_filters, facet_groups[] {name, label, param, items, reset_url}, reset_all_url, maschine_nid, examples[],
+ * has_query, search_url.
+ */
+#}
+<div class="tannwald-search flex flex-col gap-6" data-search-page>
+  <section class="card flex flex-col gap-4 p-6">
+    <h1 class="m-0 text-[28px] font-semibold leading-tight">{{ 'Search your documents'|t }}</h1>
+    <form id="{{ form_id }}" action="{{ search_url }}" method="get" role="search" class="flex flex-col gap-3">
+      <label for="tannwald-search-q" class="text-sm font-medium">{{ 'Search term'|t }}</label>
+      <div class="flex flex-wrap items-start gap-3">
+        {{ include('tannwald:search-live', {
+          input_id: 'tannwald-search-q',
+          live_url: live_url,
+          modus_input: 'modus',
+          query: query,
+          maschine_nid: maschine_nid,
+          placeholder: 'e.g. E-4711 or cleaning the sealing station'|t,
+        }, with_context = false) }}
+        <div role="group" aria-label="{{ 'Search mode'|t }}" class="inline-flex h-11 overflow-hidden rounded-control border border-accent">
+          <label class="cursor-pointer">
+            <input type="radio" name="modus" value="hybrid" class="peer sr-only"{{ modus != 'volltext' ? ' checked' }}>
+            <span class="inline-flex h-full items-center px-4 text-sm font-semibold text-accent peer-checked:bg-accent peer-checked:text-white peer-focus-visible:outline-2">{{ 'Hybrid'|t }}</span>
+          </label>
+          <label class="cursor-pointer border-l border-accent">
+            <input type="radio" name="modus" value="volltext" class="peer sr-only"{{ modus == 'volltext' ? ' checked' }}>
+            <span class="inline-flex h-full items-center px-4 text-sm font-semibold text-accent peer-checked:bg-accent peer-checked:text-white peer-focus-visible:outline-2">{{ 'Full text only'|t }}</span>
+          </label>
+        </div>
+        <button type="submit" class="btn btn-primary">{{ 'Search'|t({}, {'context': 'tannwald button'}) }}</button>
+      </div>
+      {% if maschine_nid %}<input type="hidden" name="maschine_nid" value="{{ maschine_nid }}">{% endif %}
+    </form>
+  </section>
+
+  <div class="flex flex-wrap items-start gap-6">
+    <aside aria-label="{{ 'Filter'|t }}" class="w-full lg:w-64 lg:shrink-0">
+      <details class="card" open x-data x-init="if (!window.matchMedia('(min-width: 1024px)').matches && {{ active_filters }} === 0) { $el.open = false }">
+        <summary class="flex cursor-pointer list-none items-center justify-between px-5 py-3 font-semibold lg:cursor-default lg:border-b lg:border-line">
+          <span>{{ active_filters ? 'Filter (@count active)'|t({'@count': active_filters}) : 'Filter'|t }}</span>
+          <span class="text-muted lg:hidden" aria-hidden="true">▾</span>
+        </summary>
+        <div class="flex flex-col gap-5 px-5 pb-5 pt-2">
+          <label class="flex items-center gap-2 text-sm">
+            <input type="checkbox" name="aktuell" value="1" form="{{ form_id }}" class="h-4 w-4 accent-accent"{{ aktuell ? ' checked' }} @change="$el.form.requestSubmit()">
+            {{ 'Current versions only'|t }}
+          </label>
+          {% for group in facet_groups %}
+            {{ include('tannwald:facet-group', group|merge({form_id: form_id}), with_context = false) }}
+          {% endfor %}
+          {% if active_filters %}
+            <a href="{{ reset_all_url }}" class="btn btn-outline h-10 self-start text-sm">{{ 'Reset filters'|t }}</a>
+          {% endif %}
+        </div>
+      </details>
+    </aside>
+
+    <section aria-label="{{ 'Search results'|t }}" class="flex min-w-0 flex-1 basis-[560px] flex-col gap-4">
+      {% if has_query %}
+        <p class="m-0 text-sm text-muted" data-search-summary>
+          <strong class="text-ink">{{ total == 1 ? '1 hit'|t : '@total hits'|t({'@total': total}) }}</strong>
+          {{ 'in @seconds s'|t({'@seconds': duration_text}) }} · {{ 'Mode @modus'|t({'@modus': modus_label}) }} · {{ 'only documents you are allowed to see'|t }}
+        </p>
+        {% if hits %}
+          <ol class="tannwald-search__hits card m-0 list-none p-0">
+            {% for hit in hits %}
+              {% embed 'tannwald:search-hit' with {
+                nid: hit.nid, titel: hit.titel, heading_path: hit.heading_path, langcode: hit.langcode,
+                dokumenttyp: hit.dokumenttyp, maschinentypen: hit.maschinentypen, version: hit.version,
+                freigegeben_am: hit.freigegeben_am, url_kapitel: hit.url_kapitel, url_dokument: hit.url_dokument,
+                url_maschine: hit.url_maschine, maschine_titel: hit.maschine_titel, matched_by: hit.matched_by,
+                bulletin_bestaetigt_am: hit.bulletin_bestaetigt_am, attributes: create_attribute(),
+              } %}
+                {% block snippet %}{{ hit.snippet_html }}{% endblock %}
+              {% endembed %}
+            {% endfor %}
+          </ol>
+        {% else %}
+          <p class="card m-0 px-5 py-4" data-search-empty>{{ 'No hits for “@query”.'|t({'@query': query}) }}</p>
+        {% endif %}
+      {% else %}
+        <div class="card flex flex-col gap-2 px-5 py-4" data-search-hint>
+          <p class="m-0 font-medium">{{ 'Enter a search term.'|t }}</p>
+          <p class="m-0 text-sm text-muted">{{ 'Examples:'|t }}
+            {% for example in examples %}<a href="{{ example.url }}" class="ml-2">{{ example.label }}</a>{% endfor %}
+          </p>
+        </div>
+      {% endif %}
+
+      {# 5.3: chat-bridge #}
+      <div class="card flex flex-wrap items-center gap-4 border-accent/30 bg-private-bg px-5 py-4" data-chat-bridge data-question="{{ query }}">
+        <span class="flex-1 basis-80 text-sm">{{ 'Prefer an answer instead of a list of hits? The assistant summarises the matching chapters and cites them.'|t }}</span>
+        <button type="button" class="btn btn-primary" @click="$dispatch('tannwald:ask', { frage: $el.closest('[data-chat-bridge]').dataset.question })">{{ 'Ask the assistant'|t }}</button>
+      </div>
+
+      {% if has_query and hits %}
+        {{ pager }}
+      {% endif %}
+    </section>
+  </div>
+</div>

@@ -6,7 +6,7 @@
  *
  * Logik in includes/: layout.inc (Demo-Leiste, Kopfzeile, Brotkrumen),
  * machine.inc (Maschinenseite, Karten der Liste), document.inc (Dokument- und
- * Bulletinseite mit Kapitel-Ankern), common.inc (Datum, Sprachen, Hilfen).
+ * Bulletinseite mit Kapitel-Ankern), search.inc (Suche 5.2), common.inc.
  */
 
 declare(strict_types=1);
@@ -18,6 +18,7 @@ require_once __DIR__ . '/includes/common.inc';
 require_once __DIR__ . '/includes/layout.inc';
 require_once __DIR__ . '/includes/machine.inc';
 require_once __DIR__ . '/includes/document.inc';
+require_once __DIR__ . '/includes/search.inc';
 
 /**
  * Implements hook_preprocess_HOOK() for page templates.

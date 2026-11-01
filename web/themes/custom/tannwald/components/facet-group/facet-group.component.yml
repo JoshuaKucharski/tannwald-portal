@@ -1,0 +1,40 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: 'Facet group'
+status: stable
+description: 'Eine Facettengruppe der Suche (Maschinentyp, Dokumenttyp, Sprache): Checkboxen mit Zählern, an das Suchformular gebunden (form=), Änderung sendet ab; „Zurücksetzen“ je Gruppe. Ohne Items leer.'
+props:
+  type: object
+  required:
+    - name
+    - label
+    - items
+    - form_id
+  properties:
+    name:
+      type: string
+      title: Name
+      enum: [maschinentyp, dokumenttyp, sprache]
+    label:
+      type: string
+      title: Label
+    param:
+      type: string
+      title: 'Query parameter'
+      description: 'Name der Checkboxen, z. B. dokumenttyp[] (Standard: name[]).'
+    items:
+      type: array
+      title: Items
+      description: 'Liste {id, label, count, active} aus facets[name].'
+      items:
+        type: object
+    form_id:
+      type: string
+      title: 'Form id'
+      description: 'id des Suchformulars für form=.'
+    reset_url:
+      type: [string, 'null']
+      title: 'Reset URL'
+      description: 'URL ohne die Werte dieser Gruppe; nur gezeigt, wenn eine Option aktiv ist.'
+    attributes:
+      type: Drupal\Core\Template\Attribute
+      title: Attributes

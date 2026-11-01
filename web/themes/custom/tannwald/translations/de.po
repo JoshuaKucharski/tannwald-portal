@@ -299,3 +299,127 @@ msgstr "Maschine öffnen"
 
 msgid "No machines are assigned to your company."
 msgstr "Ihrer Firma sind keine Maschinen zugeordnet."
+
+# Suche (5.2)
+msgid "Search your documents"
+msgstr "Suche in Ihren Dokumenten"
+
+msgid "Search term"
+msgstr "Suchbegriff"
+
+msgid "e.g. E-4711 or cleaning the sealing station"
+msgstr "z. B. E-4711 oder Siegelstation reinigen"
+
+msgid "Search mode"
+msgstr "Suchmodus"
+
+msgid "Hybrid"
+msgstr "Hybrid"
+
+msgid "Full text only"
+msgstr "Nur Volltext"
+
+msgctxt "tannwald button"
+msgid "Search"
+msgstr "Suchen"
+
+msgid "Filter"
+msgstr "Filter"
+
+msgid "Filter (@count active)"
+msgstr "Filter (@count aktiv)"
+
+msgid "Reset filters"
+msgstr "Filter zurücksetzen"
+
+msgctxt "tannwald facet"
+msgid "Reset"
+msgstr "Zurücksetzen"
+
+msgid "Machine type"
+msgstr "Maschinentyp"
+
+msgid "Document type"
+msgstr "Dokumenttyp"
+
+msgctxt "tannwald facet"
+msgid "Language"
+msgstr "Sprache"
+
+msgid "Search results"
+msgstr "Suchresultate"
+
+msgid "1 hit"
+msgstr "1 Treffer"
+
+msgid "@total hits"
+msgstr "@total Treffer"
+
+msgid "in @seconds s"
+msgstr "in @seconds s"
+
+msgid "Mode @modus"
+msgstr "Modus @modus"
+
+msgid "only documents you are allowed to see"
+msgstr "nur Dokumente, die Sie sehen dürfen"
+
+msgid "No hits for “@query”."
+msgstr "Keine Treffer für „@query“."
+
+msgid "Enter a search term."
+msgstr "Geben Sie einen Suchbegriff ein."
+
+msgid "Examples:"
+msgstr "Beispiele:"
+
+msgid "clean the sealing station"
+msgstr "Siegelstation reinigen"
+
+msgid "Prefer an answer instead of a list of hits? The assistant summarises the matching chapters and cites them."
+msgstr "Lieber eine Antwort statt einer Trefferliste? Der Assistent fasst die passenden Kapitel zusammen und zitiert sie."
+
+msgid "Ask the assistant"
+msgstr "Frage an den Assistenten"
+
+msgid "Too many requests, please wait a moment."
+msgstr "Zu viele Anfragen, bitte kurz warten."
+
+msgid "Clear input"
+msgstr "Eingabe löschen"
+
+msgid "Live results while typing"
+msgstr "Live-Resultate beim Tippen"
+
+msgid "While typing: top @n"
+msgstr "Beim Tippen: Top @n"
+
+msgid "Enter for all hits"
+msgstr "Enter für alle Treffer"
+
+msgid "Hit by meaning"
+msgstr "Treffer über Bedeutung"
+
+msgid "Open bulletin"
+msgstr "Bulletin öffnen"
+
+msgid "Open chapter"
+msgstr "Kapitel öffnen"
+
+msgctxt "tannwald search"
+msgid "Document"
+msgstr "Dokument"
+
+msgid "To machine @serial"
+msgstr "Zur Maschine @serial"
+
+msgid "Confirmed on @date"
+msgstr "Bestätigt am @date"
+
+msgctxt "tannwald pager"
+msgid "Back"
+msgstr "Zurück"
+
+msgctxt "tannwald pager"
+msgid "Next"
+msgstr "Weiter"
