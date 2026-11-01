@@ -1,0 +1,47 @@
+[
+  {
+    "name": "kunde-a",
+    "anzeigename": "Anna Keller",
+    "rolle": "kunde",
+    "firma_sap_nr": "100417",
+    "land": "CH",
+    "sprache": "de"
+  },
+  {
+    "name": "kunde-b",
+    "anzeigename": "Elena Vargas",
+    "rolle": "kunde",
+    "firma_sap_nr": "100588",
+    "land": "MX",
+    "sprache": "en"
+  },
+  {
+    "name": "haendler",
+    "anzeigename": "Rafael Monteiro",
+    "rolle": "haendler",
+    "firma_sap_nr": "200031",
+    "land": "BR",
+    "sprache": "en"
+  },
+  {
+    "name": "techniker",
+    "anzeigename": "Marco Steiner",
+    "rolle": "techniker",
+    "land": "CH",
+    "sprache": "de"
+  },
+  {
+    "name": "redaktion",
+    "anzeigename": "Lea Brunner",
+    "rolle": "redaktion",
+    "land": "CH",
+    "sprache": "de"
+  },
+  {
+    "name": "compliance",
+    "anzeigename": "Nadine Frei",
+    "rolle": "compliance",
+    "land": "CH",
+    "sprache": "de"
+  }
+]

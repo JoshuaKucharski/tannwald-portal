@@ -1,0 +1,92 @@
+[
+  {
+    "seriennummer": "TB200-2021-0417",
+    "maschinentyp": "TB-200",
+    "firma_sap_nr": "100417",
+    "standort": "Basel, Linie 3",
+    "baujahr": 2021,
+    "vertrag": "service_plus",
+    "vertrag_bis": "2027-12-31"
+  },
+  {
+    "seriennummer": "TB400-2023-0088",
+    "maschinentyp": "TB-400",
+    "firma_sap_nr": "100417",
+    "standort": "Basel, Linie 5",
+    "baujahr": 2023,
+    "vertrag": "service_plus",
+    "vertrag_bis": "2027-12-31"
+  },
+  {
+    "seriennummer": "KT500-2022-0152",
+    "maschinentyp": "KT-500",
+    "firma_sap_nr": "100417",
+    "standort": "Basel, Linie 3",
+    "baujahr": 2022,
+    "vertrag": "basis",
+    "vertrag_bis": "2026-12-31"
+  },
+  {
+    "seriennummer": "TB400-2020-0051",
+    "maschinentyp": "TB-400",
+    "firma_sap_nr": "100588",
+    "standort": "Guadalajara, Linie 1",
+    "baujahr": 2020,
+    "vertrag": "basis",
+    "vertrag_bis": "2026-06-30"
+  },
+  {
+    "seriennummer": "KT500-2021-0097",
+    "maschinentyp": "KT-500",
+    "firma_sap_nr": "100588",
+    "standort": "Guadalajara, Linie 1",
+    "baujahr": 2021,
+    "vertrag": "basis",
+    "vertrag_bis": "2026-06-30"
+  },
+  {
+    "seriennummer": "TB200-2019-0233",
+    "maschinentyp": "TB-200",
+    "firma_sap_nr": "100645",
+    "standort": "Konstanz, Halle B",
+    "baujahr": 2019,
+    "vertrag": "basis",
+    "vertrag_bis": "2027-03-31"
+  },
+  {
+    "seriennummer": "KT500-2024-0210",
+    "maschinentyp": "KT-500",
+    "firma_sap_nr": "100645",
+    "standort": "Konstanz, Halle B",
+    "baujahr": 2024,
+    "vertrag": "service_plus",
+    "vertrag_bis": "2029-12-31"
+  },
+  {
+    "seriennummer": "TB200-2022-0305",
+    "maschinentyp": "TB-200",
+    "firma_sap_nr": "100701",
+    "standort": "Córdoba, Linie 2",
+    "baujahr": 2022,
+    "vertrag": "service_plus",
+    "vertrag_bis": "2028-06-30"
+  },
+  {
+    "seriennummer": "KT500-2023-0188",
+    "maschinentyp": "KT-500",
+    "firma_sap_nr": "100733",
+    "standort": "Lyon, Ligne 4",
+    "baujahr": 2023,
+    "vertrag": "basis",
+    "vertrag_bis": "2027-09-30"
+  },
+  {
+    "seriennummer": "TB400-2024-0121",
+    "maschinentyp": "TB-400",
+    "firma_sap_nr": "100802",
+    "standort": "Osaka, Linie 2",
+    "baujahr": 2024,
+    "vertrag": "service_plus",
+    "vertrag_bis": "2029-03-31"
+  }
+]
