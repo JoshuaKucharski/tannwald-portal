@@ -1,0 +1,87 @@
+_core:
+  default_config_hash: Dw66xNMWEra5Cg5nPUv7UlVMjKxibubUeLbvC5oNgJM
+provider: ollama
+chat_model: 'qwen2.5:7b'
+embedding_model: bge-m3
+top_k: 6
+min_score: 0.015
+monthly_token_limit: 2000000
+kosten_pro_1k_chf: 0.0
+safety_terms:
+  de:
+    - 'Schutzhaube*'
+    - 'Verriegelung*'
+    - verriegeln
+    - Lockout
+    - Lockout-Tagout
+    - stromlos
+    - Hochspannung
+    - 'Hochfrequenz*'
+    - HF-Generator
+    - 'Heizpatrone*'
+    - 'Quetsch*'
+    - 'Reinigungsmittel*'
+    - 'Chemikalie*'
+    - überbrücken
+    - 'Überbrückung*'
+    - 'Sicherheitsschalter*'
+    - 'Not-Halt*'
+    - 'Nothalt*'
+    - 'Lichtvorhang*'
+    - 'Laser*'
+    - Druckluft
+    - 'Schutzeinrichtung*'
+    - 'Verbrennung*'
+    - 'Stromschlag*'
+  en:
+    - 'safety guard*'
+    - 'protective cover*'
+    - 'interlock*'
+    - lockout
+    - lockout-tagout
+    - tagout
+    - 'de-energi*'
+    - 'high voltage'
+    - 'high frequency'
+    - 'HF generator*'
+    - 'heating cartridge*'
+    - 'crush*'
+    - 'pinch*'
+    - 'cleaning agent*'
+    - 'chemical*'
+    - 'bypass*'
+    - 'safety switch*'
+    - 'emergency stop*'
+    - 'e-stop*'
+    - 'light curtain*'
+    - 'laser*'
+    - 'compressed air'
+    - 'burn*'
+    - 'electric shock*'
+  fr:
+    - 'capot de protection'
+    - 'carter de protection'
+    - 'verrouillage*'
+    - 'consignation*'
+    - 'cadenassage*'
+    - 'hors tension'
+    - 'haute tension'
+    - 'haute fréquence'
+    - 'générateur HF'
+    - 'cartouche chauffante*'
+    - 'écrasement*'
+    - 'pincement*'
+    - 'produit de nettoyage*'
+    - 'produits de nettoyage*'
+    - 'produit chimique*'
+    - 'pontage*'
+    - ponter
+    - 'interrupteur de sécurité*'
+    - "arrêt d'urgence*"
+    - 'barrière immatérielle*'
+    - 'rideau lumineux*'
+    - 'laser*'
+    - 'air comprimé'
+    - 'brûlure*'
+    - 'électrocution*'
+assistant_enabled: true
