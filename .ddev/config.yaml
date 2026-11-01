@@ -14,7 +14,7 @@ database:
 use_dns_when_possible: true
 composer_version: "2"
 web_environment:
-    - SIMPLETEST_BASE_URL=https://tannwald-portal.ddev.site
+    - SIMPLETEST_BASE_URL=https://tannwald-portal.ddev.site:30001
     - SIMPLETEST_DB=mysql://db:db@db/db
     - BROWSERTEST_OUTPUT_DIRECTORY=/var/www/html/web/sites/simpletest/browser_output
     - OLLAMA_HOST=http://host.docker.internal:11434
