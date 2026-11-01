@@ -63,6 +63,11 @@ trait SummaryFixturesTrait {
   protected array $chatCalls = [];
 
   /**
+   * Läuft einmal während des nächsten Chat-Aufrufs (paralleler Prozess).
+   */
+  protected ?\Closure $duringChat = NULL;
+
+  /**
    * Letzte Konfiguration (setConfiguration) des Doubles.
    */
   protected array $chatConfiguration = [];
@@ -200,6 +205,11 @@ trait SummaryFixturesTrait {
           ];
           if ($this->chatFailing) {
             throw new \RuntimeException('Chat provider down (test double).');
+          }
+          if ($this->duringChat !== NULL) {
+            $during = $this->duringChat;
+            $this->duringChat = NULL;
+            $during();
           }
           $reply = $this->chatReply ?? (str_contains($system, 'Write in English') ? self::SUMMARY_EN : self::SUMMARY_DE);
           $usage = new TokenUsageDto(input: 1500, output: 90);

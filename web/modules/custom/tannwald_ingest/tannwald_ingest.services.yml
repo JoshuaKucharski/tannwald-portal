@@ -25,7 +25,7 @@ services:
 
   tannwald_ingest.summary_generator:
     class: Drupal\tannwald_ingest\Summary\SummaryGenerator
-    arguments: ['@entity_type.manager', '@tannwald_ingest.chunker', '@ai.provider', '@config.factory', '@tannwald_ingest.usage', '@datetime.time', '@keyvalue']
+    arguments: ['@entity_type.manager', '@tannwald_ingest.chunker', '@ai.provider', '@config.factory', '@tannwald_ingest.usage', '@datetime.time', '@keyvalue', '@lock', '@database']
   Drupal\tannwald_ingest\Summary\SummaryGenerator: '@tannwald_ingest.summary_generator'
 
   tannwald_ingest.review_transition:

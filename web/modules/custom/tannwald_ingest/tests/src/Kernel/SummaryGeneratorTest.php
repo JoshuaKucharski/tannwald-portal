@@ -140,6 +140,57 @@ class SummaryGeneratorTest extends SummaryKernelTestBase {
   }
 
   /**
+   * Race aus dem Seeder-Lauf: zwei Prozesse, de und en derselben Revision.
+   *
+   * Während der de-Lauf auf das Modell wartet, legt ein paralleler Lauf die
+   * en-Zusammenfassung an; der de-Lauf hängt danach seine Übersetzung an
+   * denselben Node statt einen zweiten Node anzulegen.
+   */
+  public function testParallelRunAttachesTranslation(): void {
+    $dokument = $this->createPublishedDocument();
+    $dokument->addTranslation('en', [
+      'title' => 'Operating instructions TB-200',
+      'body' => ['value' => self::documentHtml('en'), 'format' => 'dokument_html'],
+      'field_version' => '3.2',
+      'moderation_state' => 'published',
+    ])->save();
+    $dokument = $this->container->get('entity_type.manager')->getStorage('node')->loadUnchanged($dokument->id());
+    $this->duringChat = fn() => $this->assertNotNull($this->generator()->generate($dokument, 'en'));
+
+    $de = $this->generator()->generate($dokument, 'de');
+    $this->assertCount(2, $this->chatCalls);
+    $ids = $this->container->get('entity_type.manager')->getStorage('node')->getQuery()
+      ->accessCheck(FALSE)->condition('type', 'zusammenfassung')->execute();
+    $this->assertCount(1, $ids, 'One node, not two.');
+    $this->assertSame((int) reset($ids), (int) $de->id());
+    $node = $this->generator()->findExisting((int) $dokument->id(), (int) $dokument->getRevisionId());
+    $this->assertTrue($node->hasTranslation('de'));
+    $this->assertTrue($node->hasTranslation('en'));
+  }
+
+  /**
+   * Revision während des Chat-Aufrufs gelöscht oder unveröffentlicht.
+   */
+  public function testRevisionGoneDuringChatIsDiscarded(): void {
+    $storage = $this->container->get('entity_type.manager')->getStorage('node');
+    // Unveröffentlicht (Status der Revisionszeile 0, wie nach einem Wechsel).
+    $dokument = $this->createPublishedDocument();
+    $this->duringChat = fn() => $this->container->get('database')->update('node_field_revision')
+      ->fields(['status' => 0])
+      ->condition('vid', $dokument->getRevisionId())
+      ->execute();
+    $this->assertNull($this->generator()->generate($dokument, 'de'));
+
+    // Gelöscht (demo-reset während des Laufs).
+    $gone = $this->createPublishedDocument('Gelöschtes Dokument');
+    $this->duringChat = fn() => $storage->load($gone->id())->delete();
+    $this->assertNull($this->generator()->generate($gone, 'de'));
+
+    $this->assertCount(2, $this->chatCalls);
+    $this->assertSame(0, (int) $storage->getQuery()->accessCheck(FALSE)->condition('type', 'zusammenfassung')->count()->execute());
+  }
+
+  /**
    * Leere oder fremdsprachige Antwort ist ein Fehler (Versuch zählt).
    */
   public function testEmptyOrForeignAnswerFails(): void {
