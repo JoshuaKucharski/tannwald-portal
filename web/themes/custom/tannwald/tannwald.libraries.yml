@@ -1,0 +1,12 @@
+# Bibliotheken des Themes. dist/ wird von Vite gebaut (npm run build) und ist eingecheckt:
+# feste Dateinamen ohne Hash, damit die Pfade hier stabil bleiben.
+global:
+  version: 1.0.0
+  css:
+    theme:
+      dist/tailwind.css: { weight: -10 }
+  js:
+    dist/app.js: { attributes: { defer: true } }
+  dependencies:
+    - core/drupal
+# 5.3: hier anhängen

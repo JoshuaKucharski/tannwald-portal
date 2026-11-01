@@ -1,0 +1,21 @@
+# Theme myTannwald (Pflichtenheft §6.5, ADR-008): Twig, SDC, Tailwind 4, Alpine 3, Vite 6.
+# Erzeugt aus web/core/themes/starterkit_theme (Kopie und Umbenennung wie der Generator, Aufgabe 5.1).
+name: myTannwald
+type: theme
+description: 'Kundenportal der Tannwald Verpackungstechnik AG (PoC).'
+package: Custom
+core_version_requirement: ^11
+'base theme': false
+generator: 'starterkit_theme:11.4.11'
+'interface translation project': tannwald
+'interface translation server pattern': themes/custom/tannwald/translations/%language.po
+libraries:
+  - tannwald/global
+regions:
+  demo_bar: 'Demo bar'
+  header: Header
+  primary_menu: 'Primary menu'
+  breadcrumb: Breadcrumb
+  content: Content
+  sidebar: 'Sidebar (assistant)'
+  footer: Footer

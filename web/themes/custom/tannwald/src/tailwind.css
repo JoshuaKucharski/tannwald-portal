@@ -1,0 +1,90 @@
+/* Tailwind 4 des Themes myTannwald. Tokens aus den Wireframes (docs/wireframes/README.md, 01-maschinen-detail.html).
+   Quellen für die Klassensuche: Templates, Komponenten, Theme-PHP. */
+@import "tailwindcss";
+
+@source "../templates";
+@source "../components";
+@source "../includes";
+@source "../tannwald.theme";
+
+@theme {
+  /* Schrift: Inter mit Systemschrift-Fallback, kein Webfont (keine Binärdatei ohne Lizenzprüfung). */
+  --font-sans: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  /* Farben (Wireframe-Werte, Kontrast ≥ 4.5:1 auf ihren Flächen). */
+  --color-accent: #1F4E79;
+  --color-accent-hover: #15385A;
+  --color-ink: #1C2024;
+  --color-muted: #5B6470;
+  --color-surface: #F3F4F2;
+  --color-panel: #FFFFFF;
+  --color-chat: #F8F9F8;
+  --color-line: #D6DAE0;
+  --color-line-soft: #ECEEF1;
+  --color-bar: #1C2024;
+  --color-bar-muted: #C9CED6;
+  --color-ok: #1E6B3A;
+  --color-ok-bg: #E6F2EA;
+  --color-warn: #7A3508;
+  --color-warn-strong: #B4530A;
+  --color-warn-bg: #FBEFE4;
+  --color-warn-line: #E3B48A;
+  --color-danger: #A32D2D;
+  --color-danger-bg: #FBEAEA;
+  --color-dualuse: #4A2378;
+  --color-dualuse-bg: #EEE7F7;
+  --color-private: #1F4E79;
+  --color-private-bg: #E8EEF5;
+
+  /* Abstände und Radien der Wireframes. */
+  --radius-card: 8px;
+  --radius-control: 6px;
+  --radius-pill: 12px;
+  --spacing-page: 32px;
+  --container-page: 1376px;
+}
+
+@layer base {
+  html { font-size: 15px; line-height: 1.45; }
+  body { @apply bg-surface text-ink font-sans antialiased; }
+  a { @apply text-accent hover:text-accent-hover; }
+  :focus-visible { @apply outline-2 outline-offset-2 outline-accent; }
+  /* Alpine: Elemente vor der Initialisierung verbergen (x-cloak). */
+  [x-cloak] { display: none !important; }
+}
+
+@layer components {
+  .btn { @apply inline-flex h-11 items-center justify-center gap-2 rounded-control px-4 font-semibold no-underline; }
+  .btn-primary { @apply bg-accent text-white hover:bg-accent-hover hover:text-white; }
+  .btn-outline { @apply border border-accent text-accent hover:text-accent-hover hover:border-accent-hover; }
+  .btn-warn { @apply bg-warn-strong text-white hover:bg-warn hover:text-white; }
+  .card { @apply rounded-card border border-line bg-panel; }
+  .card-head { @apply flex flex-wrap items-center gap-4 border-b border-line px-5 py-4; }
+  .card-title { @apply m-0 text-lg font-semibold; }
+  .meta { @apply text-[13px] text-muted; }
+  .pill { @apply rounded-pill border px-2 py-[3px] text-xs; }
+  .prose-doc h2 { @apply mt-8 mb-3 scroll-mt-24 text-xl font-semibold; }
+  .prose-doc h3 { @apply mt-6 mb-2 scroll-mt-24 text-base font-semibold; }
+  .prose-doc p { @apply my-3; }
+  .prose-doc ul { @apply my-3 list-disc pl-6; }
+  .prose-doc ol { @apply my-3 list-decimal pl-6; }
+  .prose-doc li { @apply my-1; }
+  .prose-doc code { @apply rounded bg-surface px-1 text-[0.95em]; }
+  .prose-doc .table-wrap { @apply my-4 w-full overflow-x-auto; }
+  .prose-doc table { @apply w-full min-w-[480px] border-collapse text-sm; }
+  .prose-doc th { @apply border-b border-line bg-surface px-3 py-2 text-left font-semibold; }
+  .prose-doc td { @apply border-b border-line-soft px-3 py-2 align-top; }
+  .form-input { @apply h-11 w-full rounded-control border border-line bg-panel px-3; }
+  /* Core-Formulare (Login, Bestätigung): size="60" darf bei 390 px keinen Querlauf erzeugen. */
+  .form-item { @apply mb-4 flex flex-col gap-1.5; }
+  .form-item label { @apply text-sm font-medium; }
+  .form-item input[type="text"], .form-item input[type="password"], .form-item input[type="email"],
+  .form-item textarea, .form-item select { @apply h-11 w-full max-w-full min-w-0 rounded-control border border-line bg-panel px-3; }
+  .form-item textarea { @apply h-auto py-2; }
+  .form-actions { @apply mt-2 flex flex-wrap gap-3; }
+  .tabs a { @apply inline-flex rounded-control border border-line bg-panel px-3 py-1.5 text-sm no-underline; }
+  .tabs .is-active a { @apply border-accent bg-private-bg; }
+  .messages { @apply max-w-full; }
+}
+
+/* 5.3: hier anhängen */
