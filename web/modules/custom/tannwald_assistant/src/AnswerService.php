@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\tannwald_assistant;
 
 use Drupal\Component\Datetime\TimeInterface;
-use Drupal\Component\Plugin\PluginManagerInterface;
+use Drupal\Component\Plugin\Factory\FactoryInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Session\AccountInterface;
@@ -27,8 +27,8 @@ use Psr\Log\LoggerInterface;
  * eine Zeile in tannwald_assistant_log. Usage schreibt seit 4.2 nur der
  * UsageTracker (Event des AI-Moduls, Tag tannwald_assistant).
  *
- * ai.provider ist als PluginManagerInterface getippt (AiProviderPluginManager
- * ist final); createInstance() liefert den ProviderProxy des AI-Moduls.
+ * ai.provider ist als FactoryInterface getippt (AiProviderPluginManager ist
+ * final); createInstance() liefert den ProviderProxy des AI-Moduls.
  */
 final class AnswerService {
 
@@ -49,7 +49,7 @@ final class AnswerService {
     private readonly OutputFilter $outputFilter,
     private readonly LanguageDetector $languageDetector,
     private readonly InjectionHeuristic $injectionHeuristic,
-    private readonly PluginManagerInterface $aiProvider,
+    private readonly FactoryInterface $aiProvider,
     private readonly LimitCheckInterface $limitCheck,
     private readonly Connection $database,
     private readonly ConfigFactoryInterface $configFactory,

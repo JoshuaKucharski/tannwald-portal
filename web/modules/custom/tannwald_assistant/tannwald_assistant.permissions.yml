@@ -1,0 +1,4 @@
+administer tannwald assistant:
+  title: 'Administer the Tannwald assistant'
+  description: 'Change provider, models, limit, costs and safety terms; manage support requests.'
+  restrict access: true

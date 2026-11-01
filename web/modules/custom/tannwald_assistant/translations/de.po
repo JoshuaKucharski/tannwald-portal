@@ -40,3 +40,174 @@ msgstr "Der Assistent steht zurzeit nicht zur Verfügung. Die Suche können Sie 
 # AnswerTexts::LIMIT_REACHED
 msgid "The monthly limit of the assistant has been reached. Search remains available."
 msgstr "Das Monatslimit des Assistenten ist erreicht. Die Suche bleibt verfügbar."
+
+# API (4.2)
+msgid "Too many questions. Please wait a minute."
+msgstr "Zu viele Fragen. Bitte warten Sie eine Minute."
+
+msgid "Too many searches. Please wait a minute."
+msgstr "Zu viele Suchanfragen. Bitte warten Sie eine Minute."
+
+msgid "The question is longer than 1,000 characters."
+msgstr "Die Frage ist länger als 1'000 Zeichen."
+
+msgid "Machine not found."
+msgstr "Maschine nicht gefunden."
+
+msgid "Expected log_id and bewertung 1 or -1."
+msgstr "Erwartet: log_id und bewertung 1 oder -1."
+
+msgid "Expected log_id."
+msgstr "Erwartet: log_id."
+
+msgid "Answer not found."
+msgstr "Antwort nicht gefunden."
+
+
+# Suche-Seite (4.2)
+msgid "Search"
+msgstr "Suche"
+
+msgid "Search term"
+msgstr "Suchbegriff"
+
+msgid "Hybrid"
+msgstr "Hybrid"
+
+msgid "Full text only"
+msgstr "Nur Volltext"
+
+msgid "Current versions only"
+msgstr "Nur aktuelle Versionen"
+
+msgid "Document type"
+msgstr "Dokumenttyp"
+
+msgid "Machine type"
+msgstr "Maschinentyp"
+
+msgid "Reset filters"
+msgstr "Filter zurücksetzen"
+
+msgid "@total hits in @seconds s · Mode @modus · only documents you are allowed to see"
+msgstr "@total Treffer in @seconds s · Modus @modus · nur Dokumente, die Sie sehen dürfen"
+
+msgid "Hit by meaning"
+msgstr "Treffer über Bedeutung"
+
+msgid "Open chapter"
+msgstr "Kapitel öffnen"
+
+msgid "Document"
+msgstr "Dokument"
+
+msgid "To machine @serial"
+msgstr "Zur Maschine @serial"
+
+msgid "Confirmed on @date"
+msgstr "Bestätigt am @date"
+
+msgid "No hits."
+msgstr "Keine Treffer."
+
+
+# Formular, Permission, Entity (4.2)
+msgid "Assistant"
+msgstr "Assistent"
+
+msgid "Administer the Tannwald assistant"
+msgstr "Tannwald-Assistent verwalten"
+
+msgid "Change provider, models, limit, costs and safety terms; manage support requests."
+msgstr "Provider, Modelle, Limit, Kosten und Sicherheitsbegriffe ändern; Support-Anfragen verwalten."
+
+msgid "Assistant enabled"
+msgstr "Assistent eingeschaltet"
+
+msgid "Plugin ID of the AI module, e.g. ollama."
+msgstr "Plugin-ID des AI-Moduls, z. B. ollama."
+
+msgid "Chat model"
+msgstr "Chat-Modell"
+
+msgid "Raw model name of the provider, e.g. qwen2.5:7b."
+msgstr "Modellname beim Provider, z. B. qwen2.5:7b."
+
+msgid "Embedding model"
+msgstr "Embedding-Modell"
+
+msgid "Chunks in the prompt (top_k)"
+msgstr "Abschnitte im Prompt (top_k)"
+
+msgid "Minimum RRF score (min_score)"
+msgstr "Mindestwert RRF (min_score)"
+
+msgid "Monthly token limit"
+msgstr "Monatslimit (Tokens)"
+
+msgid "0 = unlimited. Warning mail at 80 %, search only at 100 %."
+msgstr "0 = unbegrenzt. Warnmail bei 80 %, nur Suche ab 100 %."
+
+msgid "Cost per 1,000 tokens (CHF)"
+msgstr "Kosten je 1'000 Tokens (CHF)"
+
+msgid "Safety terms"
+msgstr "Sicherheitsbegriffe"
+
+msgid "One term per line; a trailing * also matches longer words."
+msgstr "Ein Begriff je Zeile; ein * am Ende trifft auch längere Wörter."
+
+msgid "Safety terms (@langcode)"
+msgstr "Sicherheitsbegriffe (@langcode)"
+
+msgid "Only letters, digits and . _ : / - are allowed."
+msgstr "Erlaubt sind nur Buchstaben, Ziffern und . _ : / -."
+
+msgid "At least one safety term per language is required."
+msgstr "Je Sprache ist mindestens ein Sicherheitsbegriff nötig."
+
+msgid "Support request"
+msgstr "Support-Anfrage"
+
+msgid "Support requests"
+msgstr "Support-Anfragen"
+
+msgid "support request"
+msgstr "Support-Anfrage"
+
+msgid "support requests"
+msgstr "Support-Anfragen"
+
+msgid "Machine"
+msgstr "Maschine"
+
+msgid "Question"
+msgstr "Frage"
+
+msgid "History (JSON)"
+msgstr "Verlauf (JSON)"
+
+msgid "Up to five assistant log entries of the same session: question, status, answer, time."
+msgstr "Bis zu fünf Einträge derselben Sitzung: Frage, Status, Antwort, Zeit."
+
+
+# Warnmail (4.2)
+msgid "Assistant limit warning"
+msgstr "Limit-Warnung Assistent"
+
+msgid "Assistant: 80 % of the monthly limit reached"
+msgstr "Assistent: 80 % des Monatslimits erreicht"
+
+msgid "Hello @name,"
+msgstr "Guten Tag @name"
+
+msgid "The assistant has used @usage of @limit tokens this month (@share %)."
+msgstr "Der Assistent hat diesen Monat @usage von @limit Tokens verbraucht (@share %)."
+
+msgid "At 100 % the assistant switches to search-only mode until the end of the month; search remains available."
+msgstr "Ab 100 % antwortet der Assistent bis Monatsende nicht mehr; die Suche bleibt verfügbar."
+
+# Button auf der Suche-Seite (Wireframe 02: „Suchen“)
+msgctxt "tannwald button"
+msgid "Search"
+msgstr "Suchen"

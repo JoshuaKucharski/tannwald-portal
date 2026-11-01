@@ -1,0 +1,59 @@
+{#
+/**
+ * @file
+ * Schlichte Suche-Seite (Fallback; 5.2 ersetzt die Gestaltung im Theme).
+ *
+ * Variablen (Vertrag 4.2 b): query, modus (hybrid|volltext), aktuell (bool),
+ * filters {dokumenttyp[], maschinentyp[], sprache[]}, hits[] {nid, titel,
+ * heading_path, snippet_html, langcode, dokumenttyp, maschinentypen[], version,
+ * freigegeben_am, url_kapitel, url_dokument, url_maschine, maschine_titel,
+ * matched_by, bulletin_bestaetigt_am}, facets {dokumenttyp[], maschinentyp[],
+ * sprache[]} je {id, label, count, active}, total, dauer_ms, pager, live_url.
+ */
+#}
+<div class="tannwald-search">
+  <form class="tannwald-search__form" action="{{ path('tannwald_assistant.search') }}" method="get" role="search">
+    <label for="tannwald-search-q">{{ 'Search term'|t }}</label>
+    <input id="tannwald-search-q" type="search" name="q" value="{{ query }}" maxlength="1000" data-live-url="{{ live_url }}" autocomplete="off">
+    <fieldset class="tannwald-search__modus">
+      <label><input type="radio" name="modus" value="hybrid"{{ modus == 'hybrid' ? ' checked' }}> {{ 'Hybrid'|t }}</label>
+      <label><input type="radio" name="modus" value="volltext"{{ modus == 'volltext' ? ' checked' }}> {{ 'Full text only'|t }}</label>
+    </fieldset>
+    <label><input type="checkbox" name="aktuell" value="1"{{ aktuell ? ' checked' }}> {{ 'Current versions only'|t }}</label>
+    {% for name, options in facets %}
+      {% if options %}
+        <fieldset class="tannwald-search__facet" data-facet="{{ name }}">
+          <legend>{{ name == 'dokumenttyp' ? 'Document type'|t : (name == 'maschinentyp' ? 'Machine type'|t : 'Language'|t) }}</legend>
+          {% for option in options %}
+            <label><input type="checkbox" name="{{ name }}[]" value="{{ option.id }}"{{ option.active ? ' checked' }}> {{ option.label }} <span class="count">{{ option.count }}</span></label>
+          {% endfor %}
+        </fieldset>
+      {% endif %}
+    {% endfor %}
+    <button type="submit">{{ 'Search'|t({}, {'context': 'tannwald button'}) }}</button>
+    <a href="{{ path('tannwald_assistant.search', {}, {'query': {'q': query}}) }}">{{ 'Reset filters'|t }}</a>
+  </form>
+
+  {% if query %}
+    <p class="tannwald-search__summary">{{ '@total hits in @seconds s · Mode @modus · only documents you are allowed to see'|t({'@total': total, '@seconds': (dauer_ms / 1000)|number_format(2), '@modus': modus == 'volltext' ? 'Full text only'|t : 'Hybrid'|t}) }}</p>
+    <ol class="tannwald-search__hits">
+      {% for hit in hits %}
+        <li class="tannwald-search__hit" data-nid="{{ hit.nid }}" data-matched-by="{{ hit.matched_by }}">
+          <p class="meta">{{ hit.dokumenttyp }} · {{ hit.titel }}{% if hit.version %} · v{{ hit.version }}{% endif %} · {{ hit.langcode|upper }}{% if hit.freigegeben_am %} · {{ hit.freigegeben_am }}{% endif %}</p>
+          {% if hit.matched_by == 'vector' %}<p class="badge">{{ 'Hit by meaning'|t }}</p>{% endif %}
+          <h3><a href="{{ hit.url_kapitel }}">{{ hit.heading_path }}</a></h3>
+          <p class="snippet">{{ hit.snippet_html }}</p>
+          <p class="links">
+            <a href="{{ hit.url_kapitel }}">{{ 'Open chapter'|t }}</a>
+            <a href="{{ hit.url_dokument }}">{{ 'Document'|t }}</a>
+            {% if hit.url_maschine %}<a href="{{ hit.url_maschine }}">{{ 'To machine @serial'|t({'@serial': hit.maschine_titel}) }}</a>{% endif %}
+            {% if hit.bulletin_bestaetigt_am %}<span>{{ 'Confirmed on @date'|t({'@date': hit.bulletin_bestaetigt_am}) }}</span>{% endif %}
+          </p>
+        </li>
+      {% else %}
+        <li>{{ 'No hits.'|t }}</li>
+      {% endfor %}
+    </ol>
+    {{ pager }}
+  {% endif %}
+</div>
