@@ -32,6 +32,8 @@ final class AssistantHooks {
           'dauer_ms' => 0,
           'pager' => NULL,
           'live_url' => '',
+          'sort' => 'relevanz',
+          'sort_urls' => [],
         ],
       ],
     ];

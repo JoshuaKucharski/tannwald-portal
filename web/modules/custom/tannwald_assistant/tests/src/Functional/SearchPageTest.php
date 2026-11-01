@@ -66,6 +66,12 @@ final class SearchPageTest extends AssistantFunctionalTestBase {
     $this->assertSession()->pageTextContains('Hit by meaning');
     $this->assertSession()->elementAttributeContains('css', '#tannwald-search-q', 'data-live-url', '/api/search/live');
 
+    // 6.1: Sortierung Relevanz/Datum; aktive Sortierung mit aria-current.
+    $this->drupalGet('suche', ['query' => ['q' => 'Siegelstation', 'sort' => 'datum']]);
+    $this->assertSession()->elementExists('css', '.tannwald-search__sort a[aria-current="true"][href*="sort=datum"]');
+    $this->assertSession()->elementExists('css', '.tannwald-search__sort a[href*="sort=relevanz"]');
+    $this->assertCount(3, $this->hits(), 'Sortierung ändert die Treffermenge nicht.');
+
     foreach (['volltext', 'hybrid'] as $modus) {
       $this->drupalGet('suche', ['query' => ['q' => 'E-4711', 'modus' => $modus]]);
       $this->assertSame('9 Störungen › 9.1 Störungstabelle', $this->hits()[0]['heading'], $modus);

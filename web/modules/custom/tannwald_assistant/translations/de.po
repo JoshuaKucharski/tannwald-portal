@@ -322,3 +322,13 @@ msgstr "Nutzer"
 
 msgid "current month"
 msgstr "aktueller Monat"
+
+# Sortierung /suche (6.1, Wireframe 02)
+msgid "Sort by"
+msgstr "Sortierung"
+
+msgid "Relevance"
+msgstr "Relevanz"
+
+msgid "Date"
+msgstr "Datum"

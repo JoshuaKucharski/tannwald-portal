@@ -33,6 +33,10 @@ final class SearchPageController implements ContainerInjectionInterface {
 
   public const SNIPPET_LENGTH = 200;
 
+  public const SORT_RELEVANCE = 'relevanz';
+
+  public const SORT_DATE = 'datum';
+
   public function __construct(
     private readonly Retriever $retriever,
     private readonly EntityTypeManagerInterface $entityTypeManager,
@@ -62,6 +66,7 @@ final class SearchPageController implements ContainerInjectionInterface {
     $q = trim((string) $request->query->get('q', ''));
     $modus = $request->query->get('modus') === RetrievalResult::MODE_FULLTEXT ? RetrievalResult::MODE_FULLTEXT : RetrievalResult::MODE_HYBRID;
     $aktuell = (string) $request->query->get('aktuell', '') === '1';
+    $sort = $request->query->get('sort') === self::SORT_DATE ? self::SORT_DATE : self::SORT_RELEVANCE;
     $filters = [
       'dokumenttyp' => array_map('intval', self::listParam($request, 'dokumenttyp')),
       'maschinentyp' => array_map('intval', self::listParam($request, 'maschinentyp')),
@@ -82,6 +87,9 @@ final class SearchPageController implements ContainerInjectionInterface {
     }
     $facets = $this->facets($hits, $filters);
     $hits = array_values(array_filter($hits, static fn (array $hit): bool => self::passes($hit, $filters)));
+    if ($sort === self::SORT_DATE) {
+      $hits = self::sortByDate($hits, $nodes);
+    }
 
     $total = count($hits);
     $pager = $this->pagerManager->createPager($total, self::PER_PAGE);
@@ -99,6 +107,8 @@ final class SearchPageController implements ContainerInjectionInterface {
       '#dauer_ms' => $dauerMs,
       '#pager' => ['#type' => 'pager'],
       '#live_url' => Url::fromRoute('tannwald_assistant.api_live')->toString(),
+      '#sort' => $sort,
+      '#sort_urls' => $this->sortUrls($request),
       '#cache' => ['max-age' => 0],
     ];
   }
@@ -199,6 +209,47 @@ final class SearchPageController implements ContainerInjectionInterface {
       return FALSE;
     }
     return $filters['sprache'] === [] || in_array((string) $hit['langcode'], $filters['sprache'], TRUE);
+  }
+
+  /**
+   * Sortierung „Datum“: freigegeben_am absteigend, sonst Änderungsdatum.
+   *
+   * Stabil: bei gleichem Datum bleibt die Relevanz-Reihenfolge.
+   *
+   * @param array<int, array> $hits
+   *   Treffer in Relevanz-Reihenfolge.
+   * @param array<int, \Drupal\node\NodeInterface> $nodes
+   *   Geladene Nodes nach nid.
+   */
+  private static function sortByDate(array $hits, array $nodes): array {
+    $keyed = [];
+    foreach ($hits as $position => $hit) {
+      $node = $nodes[$hit['nid']] ?? NULL;
+      $date = 0;
+      if ($node instanceof NodeInterface) {
+        $released = $node->hasField('field_freigegeben_am') && !$node->get('field_freigegeben_am')->isEmpty() ? strtotime((string) $node->get('field_freigegeben_am')->value) : FALSE;
+        $date = $released !== FALSE ? (int) $released : (int) $node->getChangedTime();
+      }
+      $keyed[] = [$date, $position, $hit];
+    }
+    usort($keyed, static fn (array $a, array $b): int => $b[0] <=> $a[0] ?: $a[1] <=> $b[1]);
+    return array_column($keyed, 2);
+  }
+
+  /**
+   * Links für beide Sortierungen mit den übrigen Parametern, ohne page.
+   *
+   * @return array<string, string>
+   *   relevanz|datum => URL.
+   */
+  private function sortUrls(Request $request): array {
+    $query = $request->query->all();
+    unset($query['page']);
+    $urls = [];
+    foreach ([self::SORT_RELEVANCE, self::SORT_DATE] as $sort) {
+      $urls[$sort] = Url::fromRoute('tannwald_assistant.search', [], ['query' => ['sort' => $sort] + $query])->toString();
+    }
+    return $urls;
   }
 
   /**

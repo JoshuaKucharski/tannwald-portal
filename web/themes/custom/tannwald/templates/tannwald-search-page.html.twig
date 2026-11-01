@@ -68,6 +68,15 @@
           <strong class="text-ink">{{ total == 1 ? '1 hit'|t : '@total hits'|t({'@total': total}) }}</strong>
           {{ 'in @seconds s'|t({'@seconds': duration_text}) }} · {{ 'Mode @modus'|t({'@modus': modus_label}) }} · {{ 'only documents you are allowed to see'|t }}
         </p>
+        {# 6.1 (E): Sortierung Relevanz/Datum (Wireframe 02), Links aus dem Controller. #}
+        {% if sort_urls %}
+          <p class="m-0 text-sm text-muted" data-search-sort>
+            {{ 'Sort by'|t }}:
+            <a href="{{ sort_urls.relevanz }}" class="underline-offset-2 {{ sort == 'relevanz' ? 'font-semibold text-ink' : 'hover:underline' }}"{{ sort == 'relevanz' ? ' aria-current="true"' }}>{{ 'Relevance'|t }}</a>
+            ·
+            <a href="{{ sort_urls.datum }}" class="underline-offset-2 {{ sort == 'datum' ? 'font-semibold text-ink' : 'hover:underline' }}"{{ sort == 'datum' ? ' aria-current="true"' }}>{{ 'Date'|t }}</a>
+          </p>
+        {% endif %}
         {% if hits %}
           <ol class="tannwald-search__hits card m-0 list-none p-0">
             {% for hit in hits %}

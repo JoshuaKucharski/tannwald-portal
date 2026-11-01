@@ -36,6 +36,7 @@
 
   {% if query %}
     <p class="tannwald-search__summary">{{ '@total hits in @seconds s · Mode @modus · only documents you are allowed to see'|t({'@total': total, '@seconds': (dauer_ms / 1000)|number_format(2), '@modus': modus == 'volltext' ? 'Full text only'|t : 'Hybrid'|t}) }}</p>
+    <p class="tannwald-search__sort">{{ 'Sort by'|t }}: <a href="{{ sort_urls.relevanz }}"{{ sort == 'relevanz' ? ' aria-current="true"' }}>{{ 'Relevance'|t }}</a> · <a href="{{ sort_urls.datum }}"{{ sort == 'datum' ? ' aria-current="true"' }}>{{ 'Date'|t }}</a></p>
     <ol class="tannwald-search__hits">
       {% for hit in hits %}
         <li class="tannwald-search__hit" data-nid="{{ hit.nid }}" data-matched-by="{{ hit.matched_by }}">
