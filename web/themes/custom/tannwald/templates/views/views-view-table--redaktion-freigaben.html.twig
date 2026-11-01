@@ -1,0 +1,45 @@
+{#
+/**
+ * @file
+ * Zeilen der Freigabe-Queue als Review-Karten (tannwald:review-card, F) mit D's Daten und Formular:
+ * cards[] aus tannwald_preprocess_views_view_table__redaktion_freigaben() (includes/redaktion.inc).
+ */
+#}
+{% for item in cards %}
+  {% embed 'tannwald:review-card' with {
+    document: item.card.document,
+    status: item.card.status,
+    generated_at: item.card.generated_at,
+    model: item.card.model,
+    tokens: item.card.tokens,
+    created_by: item.card.created_by,
+    change_note: item.card.change_note,
+    safety_mentioned: item.card.safety_mentioned,
+    attributes: create_attribute({'data-summary-nid': item.nid, 'data-langcode': item.language_label}),
+    item: item,
+  } only %}
+    {% block body %}
+      <div class="flex flex-col gap-2" data-review-checks>
+        <span class="text-sm font-medium text-muted">{{ 'Checks'|t }}</span>
+        {% for check in item.checks %}
+          <span class="review-check" data-ok="{{ check.ok ? '1' : '0' }}">
+            <span class="mark font-semibold" aria-hidden="true">{{ check.ok ? '✓' : '✗' }}</span>
+            <span>{{ check.label }}</span>
+          </span>
+        {% endfor %}
+        <span class="meta">{{ 'Language: @language'|t({'@language': item.language_label}) }}</span>
+      </div>
+    {% endblock %}
+    {% block actions %}
+      {% embed 'tannwald:review-actions' with {
+        word_count: item.word_count,
+        word_count_target: item.word_target,
+        four_eyes_notice: null,
+        queue_hint: 'After approval: indexing via the queue, about one minute'|t,
+        item: item,
+      } only %}
+        {% block form %}{{ item.form }}{% endblock %}
+      {% endembed %}
+    {% endblock %}
+  {% endembed %}
+{% endfor %}

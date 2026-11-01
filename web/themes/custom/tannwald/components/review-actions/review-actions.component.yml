@@ -1,0 +1,29 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: 'Review actions'
+status: stable
+description: 'Textarea mit Wortzähler „n Wörter · Zielwert maximal 120“ und D’s Formular-Buttons (Freigeben / Entwurf speichern / Zurückweisen, gestylt in tannwald_form_tannwald_ingest_review_form_alter()); Vier-Augen-Hinweis; Slot form = Render-Array von tannwald_ingest_review_form().'
+props:
+  type: object
+  properties:
+    word_count:
+      type: integer
+      title: 'Initial word count'
+      default: 0
+    word_count_target:
+      type: integer
+      title: 'Word count target'
+      default: 120
+    four_eyes_notice:
+      type: [string, 'null']
+      title: 'Four-eyes notice'
+    queue_hint:
+      type: [string, 'null']
+      title: 'Queue hint'
+      description: '„Nach Freigabe: Indexierung über die Queue, ca. 1 Minute“.'
+    attributes:
+      type: Drupal\Core\Template\Attribute
+      title: Attributes
+slots:
+  form:
+    title: Form
+    description: 'Render-Array ReviewForm (Textarea body, Buttons mit formaction).'

@@ -242,5 +242,18 @@ Alpine.data('chat', (config) => ({
   },
 }));
 
+// Review-Karte (5.3, SDC tannwald:review-actions): Wortzähler über D's Textarea [data-review-body].
+Alpine.data('reviewActions', (config) => ({
+  words: config.initial || 0,
+  init() {
+    const area = this.$root.querySelector('[data-review-body]');
+    if (!area) return;
+    const count = () => { const text = area.value.trim(); this.words = text ? text.split(/\s+/).length : 0; };
+    count();
+    area.addEventListener('input', count);
+  },
+  label() { return `${this.words} ${config.labels.words} · ${config.labels.target}`; },
+}));
+
 // Start zuletzt: alle Alpine.data()-Registrierungen (5.1, 5.2 und A's 5.3-Hunk) müssen davor stehen.
 Alpine.start();

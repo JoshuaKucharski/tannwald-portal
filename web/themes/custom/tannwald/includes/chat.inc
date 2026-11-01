@@ -32,10 +32,9 @@ function _tannwald_chat_props(?int $maschineNid, ?string $machineLabel, string $
     $limitNotice = (string) t('The assistant is currently unavailable. You can still use the search.');
   }
   elseif (\Drupal::hasService('tannwald_assistant.limit_check')) {
+    /** @var \Drupal\tannwald_assistant\Limit\LimitService $limit */
     $limit = \Drupal::service('tannwald_assistant.limit_check');
-    if (method_exists($limit, 'noticeForUi')) {
-      $limitNotice = $limit->noticeForUi();
-    }
+    $limitNotice = $limit->noticeForUi();
   }
   $names = [];
   foreach (\Drupal::languageManager()->getLanguages() as $code => $language) {
@@ -63,5 +62,8 @@ function _tannwald_chat_props(?int $maschineNid, ?string $machineLabel, string $
  * Cache-Element für Seiten mit Chat: Limit-Tag und Konfiguration.
  */
 function _tannwald_chat_cache_bubble(): array {
-  return _tannwald_cache_bubble(['user', 'languages:language_interface'], ['tannwald_assistant_limit', 'config:tannwald_assistant.settings']);
+  return _tannwald_cache_bubble(
+    ['user', 'languages:language_interface'],
+    ['tannwald_assistant_limit', 'config:tannwald_assistant.settings']
+  );
 }

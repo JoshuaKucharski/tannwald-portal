@@ -1,0 +1,17 @@
+{#
+/**
+ * @file
+ * SDC tannwald:review-actions — Wortzähler (Alpine reviewActions) über D's Textarea [data-review-body];
+ * die Buttons sind D's Submit-Buttons (formaction auf /redaktion/zusammenfassung/{node}/{transition}).
+ */
+#}
+<div{{ attributes.addClass('review-actions flex w-full flex-col gap-2') }} x-data="reviewActions({ target: {{ word_count_target|default(120) }}, initial: {{ word_count|default(0) }}, labels: { words: '{{ 'words'|t|e('js') }}', target: '{{ 'target at most @target'|t({'@target': word_count_target|default(120)})|e('js') }}' } })" data-review-actions>
+  {% if four_eyes_notice %}
+    <p class="four-eyes-notice m-0" data-four-eyes>{{ four_eyes_notice }}</p>
+  {% endif %}
+  {% block form %}{% endblock %}
+  <div class="-mt-1 flex flex-wrap items-center justify-between gap-2 text-sm text-muted">
+    <span data-word-count x-text="label()">{{ '@count words · target at most @target'|t({'@count': word_count|default(0), '@target': word_count_target|default(120)}) }}</span>
+    {% if queue_hint %}<span>{{ queue_hint }}</span>{% endif %}
+  </div>
+</div>

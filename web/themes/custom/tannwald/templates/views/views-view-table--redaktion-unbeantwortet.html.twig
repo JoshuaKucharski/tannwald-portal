@@ -1,0 +1,42 @@
+{#
+/**
+ * @file
+ * Tabelle „Unbeantwortete Fragen“ (Wireframe 03): Frage, Anzahl „n×“, Maschinentyp, Zuletzt, Buttons
+ * „Dokument anlegen“ (nur mit Recht, ?title= vorbelegt) und „An Support“. rows[].question/url_create/url_support
+ * aus tannwald_preprocess_views_view_table__redaktion_unbeantwortet() (includes/redaktion.inc).
+ */
+#}
+<div class="overflow-x-auto rounded-card border border-line bg-panel">
+<table{{ attributes.addClass('redaktion-table', 'views-table') }}>
+  <thead>
+    <tr>
+      {% for key, column in header %}
+        {% if key != 'nothing' %}
+          <th scope="col"{{ column.attributes.removeAttribute('class') }}>{{ column.content }}</th>
+        {% endif %}
+      {% endfor %}
+      <th scope="col"><span class="visually-hidden">{{ 'Actions'|t }}</span></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for row in rows %}
+      <tr{{ row.attributes }} data-question="{{ row.question }}">
+        {% for key, column in row.columns %}
+          {% if key != 'nothing' %}
+            <td{{ column.attributes.removeAttribute('class') }}{% if key == 'frage_normalisiert' %} class="font-medium"{% endif %}>
+              {%- for content in column.content %}{{ content.separator }}{{ content.field_output }}{% endfor -%}
+              {%- if key == 'id' %}×{% endif -%}
+            </td>
+          {% endif %}
+        {% endfor %}
+        <td class="whitespace-nowrap">
+          <span class="flex flex-wrap gap-2">
+            {% if row.url_create %}<a href="{{ row.url_create }}" class="btn btn-outline h-9 px-3 text-sm">{{ 'Create document'|t }}</a>{% endif %}
+            <a href="{{ row.url_support }}" class="btn btn-outline h-9 px-3 text-sm">{{ 'To support'|t }}</a>
+          </span>
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>

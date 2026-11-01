@@ -1,0 +1,34 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: 'Redaktion navigation'
+status: stable
+description: 'Linke Navigation des Redaktionsbereichs (Wireframe 03, 5.3): Einträge mit Zählern und Queue-Stand. Items aus includes/redaktion.inc (_tannwald_redaktion_nav_items()).'
+props:
+  type: object
+  required:
+    - items
+  properties:
+    items:
+      type: array
+      title: Items
+      items:
+        type: object
+        properties:
+          label:
+            type: string
+          url:
+            type: string
+          count:
+            type: [integer, 'null']
+          active:
+            type: boolean
+    queue_label:
+      type: [string, 'null']
+      title: 'Queue label'
+      description: '„Queue: n offen“.'
+    queue_detail:
+      type: [string, 'null']
+      title: 'Queue detail'
+      description: 'Aufschlüsselung je Queue.'
+    attributes:
+      type: Drupal\Core\Template\Attribute
+      title: Attributes

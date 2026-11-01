@@ -2,8 +2,10 @@
 
 /**
  * @file
- * Redaktion (5.3, Wireframe 03): Navigation mit Zählern, Review-Karten,
- * Tabelle „Unbeantwortete Fragen“, Layout der /redaktion- und /compliance-Seiten.
+ * Redaktion (5.3, Wireframe 03).
+ *
+ * Navigation mit Zählern, Review-Karten, Tabelle „Unbeantwortete Fragen“,
+ * Layout der /redaktion- und /compliance-Seiten.
  */
 
 declare(strict_types=1);
@@ -12,6 +14,7 @@ use Drupal\Component\Utility\Html;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
+use Drupal\tannwald_ingest\Plugin\views\area\ReviewCounts;
 
 /**
  * Rollen, die den Redaktionsbereich sehen (Pflichtenheft-Namen, D5).
@@ -57,13 +60,48 @@ function _tannwald_redaktion_nav_items(): array {
   $current = _tannwald_redaktion_current_path();
   $counts = _tannwald_redaktion_counts();
   $candidates = [
-    ['label' => t('Approvals'), 'url' => Url::fromUserInput('/redaktion/freigaben'), 'count' => $counts['freigaben'], 'match' => '/redaktion/freigaben'],
-    ['label' => t('Documents'), 'url' => Url::fromRoute('system.admin_content', [], ['query' => ['type' => 'dokument']]), 'count' => $counts['dokumente'], 'match' => '/admin/content'],
-    ['label' => t('Bulletins'), 'url' => Url::fromUserInput('/bulletins'), 'count' => $counts['bulletins'], 'match' => '/bulletins'],
-    ['label' => t('Unanswered questions'), 'url' => Url::fromUserInput('/redaktion/unbeantwortet'), 'count' => $counts['unbeantwortet'], 'match' => '/redaktion/unbeantwortet'],
-    ['label' => t('Usage and costs'), 'url' => Url::fromUserInput('/admin/tannwald/nutzung'), 'count' => NULL, 'match' => '/admin/tannwald'],
-    ['label' => t('Export rules'), 'url' => Url::fromUserInput('/compliance/exportregeln'), 'count' => NULL, 'match' => '/compliance/exportregeln'],
-    ['label' => t('Audit log'), 'url' => Url::fromUserInput('/compliance/audit'), 'count' => NULL, 'match' => '/compliance/audit'],
+    [
+      'label' => t('Approvals'),
+      'url' => Url::fromUserInput('/redaktion/freigaben'),
+      'count' => $counts['freigaben'],
+      'match' => '/redaktion/freigaben',
+    ],
+    [
+      'label' => t('Documents'),
+      'url' => Url::fromRoute('system.admin_content', [], ['query' => ['type' => 'dokument']]),
+      'count' => $counts['dokumente'],
+      'match' => '/admin/content',
+    ],
+    [
+      'label' => t('Bulletins'),
+      'url' => Url::fromUserInput('/bulletins'),
+      'count' => $counts['bulletins'],
+      'match' => '/bulletins',
+    ],
+    [
+      'label' => t('Unanswered questions'),
+      'url' => Url::fromUserInput('/redaktion/unbeantwortet'),
+      'count' => $counts['unbeantwortet'],
+      'match' => '/redaktion/unbeantwortet',
+    ],
+    [
+      'label' => t('Usage and costs'),
+      'url' => Url::fromUserInput('/admin/tannwald/nutzung'),
+      'count' => NULL,
+      'match' => '/admin/tannwald',
+    ],
+    [
+      'label' => t('Export rules'),
+      'url' => Url::fromUserInput('/compliance/exportregeln'),
+      'count' => NULL,
+      'match' => '/compliance/exportregeln',
+    ],
+    [
+      'label' => t('Audit log'),
+      'url' => Url::fromUserInput('/compliance/audit'),
+      'count' => NULL,
+      'match' => '/compliance/audit',
+    ],
   ];
   $items = [];
   foreach ($candidates as $candidate) {
@@ -94,8 +132,8 @@ function _tannwald_redaktion_nav_items(): array {
 function _tannwald_redaktion_counts(): array {
   $database = \Drupal::database();
   $freigaben = 0;
-  if (class_exists('\Drupal\tannwald_ingest\Plugin\views\area\ReviewCounts')) {
-    $freigaben = \Drupal\tannwald_ingest\Plugin\views\area\ReviewCounts::counts($database)['zur_pruefung'] ?? 0;
+  if (class_exists(ReviewCounts::class)) {
+    $freigaben = ReviewCounts::counts($database)['zur_pruefung'] ?? 0;
   }
   $storage = \Drupal::entityTypeManager()->getStorage('node');
   $dokumente = (int) $storage->getQuery()->accessCheck(FALSE)->condition('type', 'dokument')->count()->execute();
@@ -105,7 +143,8 @@ function _tannwald_redaktion_counts(): array {
   // runter, je Frage einmal (frage_normalisiert) — wie E's View, nur gezählt.
   $unbeantwortet = 0;
   if ($database->schema()->tableExists('tannwald_assistant_log')) {
-    $monthStart = (new \DateTimeImmutable('first day of this month 00:00:00', new \DateTimeZone(date_default_timezone_get())))->getTimestamp();
+    $timezone = new \DateTimeZone(date_default_timezone_get());
+    $monthStart = (new \DateTimeImmutable('first day of this month 00:00:00', $timezone))->getTimestamp();
     $query = $database->select('tannwald_assistant_log', 'l');
     $query->addExpression('COUNT(DISTINCT l.frage_normalisiert)', 'total');
     $query->condition('l.created', $monthStart, '>=');
@@ -113,7 +152,12 @@ function _tannwald_redaktion_counts(): array {
     $query->condition($group);
     $unbeantwortet = (int) $query->execute()->fetchField();
   }
-  return ['freigaben' => (int) $freigaben, 'dokumente' => $dokumente, 'bulletins' => $bulletins, 'unbeantwortet' => $unbeantwortet];
+  return [
+    'freigaben' => (int) $freigaben,
+    'dokumente' => $dokumente,
+    'bulletins' => $bulletins,
+    'unbeantwortet' => $unbeantwortet,
+  ];
 }
 
 /**
@@ -148,8 +192,13 @@ function _tannwald_redaktion_page_prepare(array &$variables): void {
     'queue_detail' => $queue['detail'],
   ];
   $route = (string) \Drupal::routeMatch()->getRouteName();
-  $variables['redaktion_csv_url'] = $route === 'tannwald_access.audit' ? Url::fromRoute('tannwald_access.audit_csv')->toString() : NULL;
-  $variables['redaktion_cache'] = _tannwald_cache_bubble(['user.roles', 'url.path'], ['node_list:zusammenfassung', 'node_list:dokument', 'node_list:bulletin']);
+  $variables['redaktion_csv_url'] = $route === 'tannwald_access.audit'
+    ? Url::fromRoute('tannwald_access.audit_csv')->toString()
+    : NULL;
+  $variables['redaktion_cache'] = _tannwald_cache_bubble(
+    ['user.roles', 'url.path'],
+    ['node_list:zusammenfassung', 'node_list:dokument', 'node_list:bulletin']
+  );
 }
 
 /**
@@ -228,7 +277,10 @@ function _tannwald_review_card_props(NodeInterface $summary): array {
     'checks' => [
       ['label' => t('Safety-relevant chapters mentioned'), 'ok' => $safety],
       ['label' => t('At most @count words', ['@count' => $target]), 'ok' => $words <= $target],
-      ['label' => t('Language of the document (@language)', ['@language' => _tannwald_language_name($langcode)]), 'ok' => $languageMatches],
+      [
+        'label' => t('Language of the document (@language)', ['@language' => _tannwald_language_name($langcode)]),
+        'ok' => $languageMatches,
+      ],
     ],
   ];
 }
