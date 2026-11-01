@@ -18,6 +18,15 @@ final class RetrievalResult {
   public const MODE_FULLTEXT = 'volltext';
 
   /**
+   * Facetten ohne Treffer.
+   */
+  public const EMPTY_FACETS = [
+    'dokumenttyp' => [],
+    'maschinentyp' => [],
+    'sprache' => [],
+  ];
+
+  /**
    * Schlüssel eines Treffers in der Reihenfolge von toArray().
    */
   public const HIT_KEYS = [
@@ -93,11 +102,7 @@ final class RetrievalResult {
    * Leeres Ergebnis (keine Keys, keine Treffer).
    */
   public static function empty(string $frage, string $langcode, string $modus = self::MODE_HYBRID, int $dauerMs = 0): self {
-    return new self($frage, $langcode, $modus, [], [
-      'dokumenttyp' => [],
-      'maschinentyp' => [],
-      'sprache' => [],
-    ], $dauerMs);
+    return new self($frage, $langcode, $modus, [], self::EMPTY_FACETS, $dauerMs);
   }
 
   /**
