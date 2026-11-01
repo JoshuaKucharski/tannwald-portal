@@ -1,6 +1,8 @@
 # Bulletins (fixtures/bulletins/manifest.json) → Nodes "bulletin".
 # Titel "<Kennung> <Titel>" (Vertrag BulletinLabel aus 2.5), Autor =
-# erstellt_von, created = veroeffentlicht_am 08:00 Zürich, "published".
+# erstellt_von, created = veroeffentlicht_am 08:00 Zürich. Moderationsstatus aus
+# dem Manifest-Feld "status" (published | zur_pruefung | draft), Standard
+# "published" (6.1: SB-2026-08 als zur_pruefung für den Vier-Augen-Moment).
 id: tannwald_bulletins
 label: 'Tannwald: bulletins'
 migration_tags:
@@ -16,8 +18,6 @@ source:
   constants:
     langcode: de
     text_format: dokument_html
-    state: published
-    published: 1
     morning: '08:00'
   fields:
     - name: id
@@ -47,6 +47,9 @@ source:
     - name: erstellt_von
       label: Author
       selector: erstellt_von
+    - name: moderation_status
+      label: 'Moderation status'
+      selector: status
   ids:
     id:
       type: string
@@ -95,8 +98,16 @@ process:
     source: erstellt_von
     no_stub: true
   revision_uid: '@uid'
-  moderation_state: constants/state
-  status: constants/published
+  moderation_state:
+    plugin: default_value
+    source: moderation_status
+    default_value: published
+  status:
+    plugin: static_map
+    source: '@moderation_state'
+    map:
+      published: 1
+    default_value: 0
 destination:
   plugin: 'entity:node'
   default_bundle: bulletin

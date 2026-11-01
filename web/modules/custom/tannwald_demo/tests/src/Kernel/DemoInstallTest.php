@@ -138,13 +138,13 @@ class DemoInstallTest extends KernelTestBase {
     $this->assertTrue($admin->hasRole('portal_admin'));
     $this->assertSame('admin@tannwald.example', $admin->getEmail());
     $this->assertSame('created', $report['confirmation']);
-    $this->assertSame(2, $report['notify_cleared'], 'Two safety bulletins with confirmation duty queued mails, the seeder cleared them.');
+    $this->assertSame(1, $report['notify_cleared'], 'One published safety bulletin with confirmation duty queued mails (SB-2026-08 is zur_pruefung), the seeder cleared them.');
     $this->assertSame(0, $this->container->get('queue')->get('tannwald_notify')->numberOfItems());
     $this->assertSame(0, $report['queues']['embed']['failed']);
     $first = $report['counts'];
     $this->assertSame(self::EXPECTED, array_intersect_key($first, self::EXPECTED));
     $this->assertGreaterThan(0, $first['chunks']);
-    $this->assertSame(31 + 3, $first['chunk_documents'], 'One chunk set per published document revision and language, plus the three bulletins.');
+    $this->assertSame(31 + 2, $first['chunk_documents'], 'One chunk set per published document revision and language, plus the two published bulletins.');
     $this->assertSame(DemoInstaller::exportRules(), $this->config('tannwald_access.settings')->get('export_rules'));
 
     $this->assertDocuments();
@@ -266,6 +266,10 @@ class DemoInstallTest extends KernelTestBase {
     $this->assertSame('redaktion', $srv->getOwner()->getAccountName());
     $this->assertSame((new \DateTimeImmutable('2026-08-22 08:00', new \DateTimeZone('Europe/Zurich')))->getTimestamp(), (int) $srv->getCreatedTime());
     $this->assertSame('sicherheit', $this->loadNode((int) $lookup->nidOf('SB-2026-07'))->get('field_bulletin_art')->value);
+    // 6.1: Manifest-Feld status → SB-2026-08 wartet auf die Freigabe (Vier-Augen).
+    $sb08 = $this->loadNode((int) $lookup->nidOf('SB-2026-08'));
+    $this->assertSame('zur_pruefung', $sb08->get('moderation_state')->value);
+    $this->assertFalse($sb08->isPublished());
 
     $fixture = json_decode((string) file_get_contents(dirname(DRUPAL_ROOT) . '/fixtures/sap/nutzer.json'), TRUE);
     $this->assertSame(array_column($fixture, 'anzeigename', 'name'), DisplayNames::ACCOUNTS);
