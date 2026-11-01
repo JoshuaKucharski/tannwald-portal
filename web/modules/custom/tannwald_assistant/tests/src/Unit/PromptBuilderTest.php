@@ -195,6 +195,23 @@ final class PromptBuilderTest extends UnitTestCase {
       $hit(11, 5, '2 Safety › 2.2 Protective hood and interlock'),
     ]);
     $this->assertSame([1], $builder->safetyAnswer($onlyDuplicate, 'de')['citations'], 'Kein Duplikat als zweite Stelle.');
+
+    // 6.1: Unterkapitel vor dem allgemeinen Kapitel, Antwortsprache vor
+    // Rang, höchstens drei Stellen.
+    $typed = static fn (int $id, string $path, string $langcode = 'de'): array => [
+      'nid' => $id,
+      'title' => 'Dokument ' . $id,
+      'version' => '1.0',
+      'heading_path' => $path,
+      'langcode' => $langcode,
+    ];
+    $mixed = new RetrievalResult('Ohne stromlos reinigen?', 'de', 'hybrid', [
+      $typed(20, '2 Sicherheit'),
+      $typed(21, '2 Safety › 2.3 De-energising', 'en'),
+      $typed(22, '2 Sicherheit'),
+      $typed(23, '2 Sicherheit › 2.6 Quetschstellen'),
+    ]);
+    $this->assertSame([4, 2, 1], $builder->safetyAnswer($mixed, 'de')['citations']);
   }
 
   /**

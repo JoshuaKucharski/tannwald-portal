@@ -20,6 +20,8 @@ use Drupal\tannwald_assistant\Result\RetrievalResult;
  */
 final class PromptBuilder {
 
+  public const SAFETY_CITATIONS = 3;
+
   public const TEMPERATURE = 0.1;
 
   public const MAX_TOKENS = 400;
@@ -162,21 +164,37 @@ final class PromptBuilder {
     $langcode = self::langcode($langcode);
     $citations = [];
     $safetyNumbers = [];
-    foreach ($result->hits as $hit) {
+    $priority = [];
+    foreach ($result->hits as $position => $hit) {
       if (SafetyTopicDetector::isSafetyHeading((string) $hit['heading_path'])) {
         $safetyNumbers[] = (int) $hit['n'];
+        // 6.1: Unterkapitel (2.3) vor dem allgemeinen Kapitel „2 Sicherheit“,
+        // dann Antwortsprache, dann Rang (gemessen über die 30
+        // Sicherheitsfragen; Betriebsanleitung zuerst war eine Frage
+        // schlechter).
+        $priority[(int) $hit['n']] = [
+          preg_match('/^\d+\.\d+/', self::lastHeading((string) $hit['heading_path'])) === 1 ? 0 : 1,
+          ($hit['langcode'] ?? $langcode) === $langcode ? 0 : 1,
+          $position,
+        ];
       }
     }
+    usort($safetyNumbers, static fn (int $a, int $b): int => $priority[$a] <=> $priority[$b]);
     if ($safetyNumbers !== []) {
       $citations[] = $safetyNumbers[0];
-      // 6.1: zweite Stelle nie dasselbe Kapitel in einer anderen Sprache.
-      $first = self::chapterKey($result->hit($safetyNumbers[0]) ?? []);
-      $candidates = array_merge(array_slice($safetyNumbers, 1), [1]);
-      foreach ($candidates as $candidate) {
+      // 6.1: bis zu SAFETY_CITATIONS verschiedene Kapitel, nie dasselbe
+      // Kapitel in zwei Sprachen; der Top-Treffer ersetzt nur eine fehlende
+      // zweite Stelle.
+      $chapters = [self::chapterKey($result->hit($safetyNumbers[0]) ?? [])];
+      foreach (array_merge(array_slice($safetyNumbers, 1), [1]) as $candidate) {
         $hit = $result->hit($candidate);
-        if ($candidate !== $safetyNumbers[0] && $hit !== NULL && self::chapterKey($hit) !== $first) {
-          $citations[] = $candidate;
+        $full = count($citations) >= self::SAFETY_CITATIONS || ($candidate === 1 && !in_array(1, $safetyNumbers, TRUE) && count($citations) >= 2);
+        if ($full) {
           break;
+        }
+        if ($hit !== NULL && !in_array($candidate, $citations, TRUE) && !in_array(self::chapterKey($hit), $chapters, TRUE)) {
+          $citations[] = $candidate;
+          $chapters[] = self::chapterKey($hit);
         }
       }
     }
