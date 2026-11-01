@@ -11,6 +11,7 @@ export_rules:
       - NL
       - US
       - JP
+      - BR
     gesperrte_firmen: {  }
   klasse_2:
     laender:

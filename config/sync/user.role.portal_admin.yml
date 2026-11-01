@@ -16,6 +16,7 @@ dependencies:
     - node
     - system
     - tannwald_access
+    - tannwald_assistant
     - taxonomy
 id: portal_admin
 label: Portal-Admin
@@ -27,6 +28,7 @@ permissions:
   - 'access content overview'
   - 'access navigation'
   - 'administer nodes'
+  - 'administer tannwald assistant'
   - 'administer taxonomy'
   - 'administer users'
   - 'create bulletin content'
