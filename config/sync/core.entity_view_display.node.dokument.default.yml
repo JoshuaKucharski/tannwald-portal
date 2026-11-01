@@ -115,5 +115,10 @@ content:
     third_party_settings: {  }
     weight: 100
     region: content
+  tannwald_summary:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 5
+    region: content
 hidden:
   langcode: true
