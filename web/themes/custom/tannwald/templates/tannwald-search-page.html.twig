@@ -95,7 +95,7 @@
       {% endif %}
 
       {# 5.3: chat-bridge #}
-      <div class="card flex flex-wrap items-center gap-4 px-6 py-4" data-chat-bridge data-question="{{ query }}">
+      <div class="card flex flex-wrap items-center gap-4 px-6 py-4" data-chat-bridge data-question="{{ query }}" x-data>
         <span class="flex-1 basis-80 text-sm">{{ 'Prefer an answer instead of a list of hits? The assistant summarises the matching chapters and cites them.'|t }}</span>
         <button type="button" class="btn btn-secondary" @click="$dispatch('tannwald:ask', { frage: $el.closest('[data-chat-bridge]').dataset.question })">{{ 'Ask the assistant'|t }}</button>
       </div>
