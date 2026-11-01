@@ -129,7 +129,7 @@
   .chat-answer-text p { @apply m-0; }
   .chat-answer-text p + p { @apply mt-2; }
   .chat-answer-text ul { @apply my-1 list-disc pl-5; }
-  .chat-cite { @apply inline-block px-0.5 font-semibold text-accent no-underline hover:underline; }
+  .chat-cite { @apply font-semibold text-accent no-underline hover:underline; }
   .chat-safety-badge { @apply self-start rounded-pill bg-warn-strong px-2.5 py-[3px] text-xs font-semibold text-white; }
   .chat-sources { @apply flex flex-col gap-1 border-t border-line-soft pt-2 text-[13px]; }
   .chat-answer--safety .chat-sources a { @apply font-semibold; }
