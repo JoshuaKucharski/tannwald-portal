@@ -72,6 +72,7 @@ function tannwald_assistant_schema(): array {
         'not null' => TRUE,
         'default' => 0,
       ],
+    ] + tannwald_assistant_log_fields_4_2() + [
       'created' => [
         'type' => 'int',
         'not null' => TRUE,
@@ -83,7 +84,70 @@ function tannwald_assistant_schema(): array {
       'created' => ['created'],
       'status_created' => ['status', 'created'],
       'uid_hash' => ['uid_hash'],
+      'session_hash' => ['session_hash'],
+      'frage_normalisiert' => ['frage_normalisiert'],
     ],
   ];
   return $schema;
+}
+
+/**
+ * Spalten aus 4.2 (TC-16, Unbeantwortete Fragen).
+ *
+ * @return array<string, array<string, mixed>>
+ *   Feld-Definitionen für hook_schema() und hook_update_10001().
+ */
+function tannwald_assistant_log_fields_4_2(): array {
+  return [
+    'injection_verdacht' => [
+      'description' => 'Number of context chunks matching an injection pattern (TC-16).',
+      'type' => 'int',
+      'size' => 'small',
+      'unsigned' => TRUE,
+      'not null' => TRUE,
+      'default' => 0,
+    ],
+    'maschine_nid' => [
+      'description' => 'Machine node the question was asked for, NULL without machine.',
+      'type' => 'int',
+      'unsigned' => TRUE,
+      'not null' => FALSE,
+    ],
+    'frage_normalisiert' => [
+      'description' => 'Question lowercased, whitespace collapsed, for grouping.',
+      'type' => 'varchar',
+      'length' => 255,
+      'not null' => TRUE,
+      'default' => '',
+    ],
+  ];
+}
+
+/**
+ * Log: Spalten injection_verdacht, maschine_nid, frage_normalisiert.
+ */
+function tannwald_assistant_update_10001(): string {
+  $schema = \Drupal::database()->schema();
+  foreach (tannwald_assistant_log_fields_4_2() as $name => $spec) {
+    if (!$schema->fieldExists('tannwald_assistant_log', $name)) {
+      $schema->addField('tannwald_assistant_log', $name, $spec);
+    }
+  }
+  foreach (['session_hash' => ['session_hash'], 'frage_normalisiert' => ['frage_normalisiert']] as $index => $fields) {
+    if (!$schema->indexExists('tannwald_assistant_log', $index)) {
+      $schema->addIndex('tannwald_assistant_log', $index, $fields, tannwald_assistant_schema()['tannwald_assistant_log']);
+    }
+  }
+  return 'tannwald_assistant_log: injection_verdacht, maschine_nid, frage_normalisiert added.';
+}
+
+/**
+ * Entity support_anfrage installieren.
+ */
+function tannwald_assistant_update_10002(): string {
+  $manager = \Drupal::entityDefinitionUpdateManager();
+  if ($manager->getEntityType('support_anfrage') === NULL) {
+    $manager->installEntityType(\Drupal::entityTypeManager()->getDefinition('support_anfrage'));
+  }
+  return 'Entity type support_anfrage installed.';
 }
