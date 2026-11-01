@@ -1,0 +1,13 @@
+name: 'Tannwald Assistant'
+type: module
+description: 'Retrieval (keyword and vector with RRF), prompt, safety mode, citation check and answers for the myTannwald assistant.'
+package: Tannwald
+core_version_requirement: ^11
+dependencies:
+  - drupal:node
+  - drupal:user
+  - ai:ai
+  - tannwald_ingest:tannwald_ingest
+  - tannwald_access:tannwald_access
+'interface translation project': tannwald_assistant
+'interface translation server pattern': modules/custom/tannwald_assistant/translations/%language.po
