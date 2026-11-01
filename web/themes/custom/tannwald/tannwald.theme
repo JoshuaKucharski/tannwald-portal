@@ -12,6 +12,7 @@
 declare(strict_types=1);
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 
 require_once __DIR__ . '/includes/common.inc';
@@ -86,4 +87,152 @@ function tannwald_form_user_login_form_alter(array &$form, FormStateInterface $f
  */
 function tannwald_form_tannwald_bulletin_confirm_form_alter(array &$form, FormStateInterface $form_state): void {
   $form['actions']['submit']['#attributes']['class'] = ['btn', 'btn-warn'];
+}
+
+/*
+ * Aufgabe 5.3 (A): Assistent und Redaktion. Logik in includes/chat.inc und
+ * includes/redaktion.inc; hier nur die Hook-Funktionen.
+ */
+require_once __DIR__ . '/includes/chat.inc';
+require_once __DIR__ . '/includes/redaktion.inc';
+
+/**
+ * Implements hook_preprocess_HOOK() for node--maschine templates.
+ *
+ * Chat in der Aside der Maschinenseite (Marker 5.3: chat).
+ */
+function tannwald_preprocess_node__maschine(array &$variables): void {
+  if (($variables['view_mode'] ?? '') !== 'full' || empty($variables['maschine_nid'])) {
+    return;
+  }
+  $variables['chat'] = _tannwald_chat_props((int) $variables['maschine_nid'], $variables['machine']['serial'] ?? NULL, 'embedded');
+  $variables['chat_cache'] = _tannwald_chat_cache_bubble();
+}
+
+/**
+ * Implements hook_preprocess().
+ *
+ * Seite: Navigationseintrag „Redaktion“ für die Redaktionsrollen und der Chat
+ * als Sheet auf /suche (Brücke tannwald:ask von 5.2).
+ */
+function tannwald_preprocess(array &$variables, string $hook): void {
+  if ($hook !== 'page') {
+    return;
+  }
+  $account = \Drupal::currentUser();
+  $variables['redaktion_link'] = NULL;
+  $variables['chat'] = NULL;
+  $variables['chat_cache'] = NULL;
+  if ($account->isAuthenticated() && _tannwald_redaktion_visible($account)) {
+    $variables['redaktion_link'] = [
+      'label' => t('Editorial'),
+      'url' => Url::fromUserInput('/redaktion/freigaben')->toString(),
+      'active' => _tannwald_redaktion_is_path(_tannwald_redaktion_current_path()),
+    ];
+  }
+  if ($account->isAuthenticated() && \Drupal::routeMatch()->getRouteName() === 'tannwald_assistant.search') {
+    $variables['chat'] = _tannwald_chat_props(NULL, NULL, 'sheet');
+    $variables['chat_cache'] = _tannwald_chat_cache_bubble();
+  }
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter() for page templates.
+ *
+ * /redaktion/* und /compliance/* bekommen page--redaktion.html.twig (linke Navigation).
+ */
+function tannwald_theme_suggestions_page_alter(array &$suggestions, array $variables): void {
+  if (_tannwald_redaktion_is_path(_tannwald_redaktion_current_path()) && _tannwald_redaktion_visible(\Drupal::currentUser())) {
+    $suggestions[] = 'page__redaktion';
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for page--redaktion templates.
+ */
+function tannwald_preprocess_page__redaktion(array &$variables): void {
+  _tannwald_redaktion_page_prepare($variables);
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for views-view-table--redaktion-freigaben templates.
+ */
+function tannwald_preprocess_views_view_table__redaktion_freigaben(array &$variables): void {
+  _tannwald_review_cards($variables);
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for views-view-table--redaktion-unbeantwortet templates.
+ */
+function tannwald_preprocess_views_view_table__redaktion_unbeantwortet(array &$variables): void {
+  _tannwald_unanswered_rows($variables);
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter() for tannwald_ingest_review_form.
+ *
+ * D's Buttons gestylt (Freigeben primär, Entwurf speichern sekundär,
+ * Zurückweisen Warnfarbe); Textarea trägt den Wortzähler (SDC review-actions).
+ */
+function tannwald_form_tannwald_ingest_review_form_alter(array &$form, FormStateInterface $form_state): void {
+  $classes = ['freigeben' => ['btn', 'btn-primary'], 'entwurf_speichern' => ['btn', 'btn-outline'], 'zurueckweisen' => ['btn', 'btn-warn']];
+  foreach ($classes as $transition => $class) {
+    if (isset($form['actions'][$transition])) {
+      $form['actions'][$transition]['#attributes']['class'] = $class;
+    }
+  }
+  $form['body']['#attributes']['data-review-body'] = '';
+  $form['body']['#attributes']['class'][] = 'review-textarea';
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter() for content_moderation_entity_moderation_form.
+ *
+ * Vier-Augen-Hinweis auf Sicherheits-Bulletins der eigenen Erstellung (C's
+ * Constraint NotOwnBulletinApproval meldet beim Freigeben); Buttons im Theme-Stil.
+ */
+function tannwald_form_content_moderation_entity_moderation_form_alter(array &$form, FormStateInterface $form_state): void {
+  if (isset($form['submit'])) {
+    $form['submit']['#attributes']['class'] = ['btn', 'btn-primary'];
+  }
+  $entity = $form_state->get('entity');
+  if (!$entity instanceof NodeInterface || $entity->bundle() !== 'bulletin') {
+    return;
+  }
+  $isSafety = $entity->hasField('field_bulletin_art') && (string) $entity->get('field_bulletin_art')->value === 'sicherheit';
+  $uid = (int) \Drupal::currentUser()->id();
+  $own = (int) $entity->getOwnerId() === $uid;
+  if (!$own && $entity->getRevisionUserId() !== NULL) {
+    $own = (int) $entity->getRevisionUserId() === $uid;
+  }
+  if ($isSafety && $own && !$entity->isPublished()) {
+    $form['tannwald_four_eyes'] = [
+      '#type' => 'html_tag',
+      '#tag' => 'p',
+      '#attributes' => ['class' => ['four-eyes-notice'], 'data-four-eyes' => ''],
+      '#value' => t('Four-eyes principle: the person who created the bulletin must not approve it.'),
+      '#weight' => -10,
+    ];
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter() for node_dokument_form.
+ *
+ * „Dokument anlegen“ aus den unbeantworteten Fragen bringt ?title= mit.
+ */
+function tannwald_form_node_dokument_form_alter(array &$form, FormStateInterface $form_state): void {
+  $title = \Drupal::request()->query->get('title');
+  if (is_string($title) && $title !== '' && isset($form['title']['widget'][0]['value']) && empty($form['title']['widget'][0]['value']['#default_value'])) {
+    $form['title']['widget'][0]['value']['#default_value'] = mb_substr($title, 0, 255);
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter() for tannwald_access_export_rules.
+ */
+function tannwald_form_tannwald_access_export_rules_alter(array &$form, FormStateInterface $form_state): void {
+  if (isset($form['actions']['submit'])) {
+    $form['actions']['submit']['#attributes']['class'] = ['btn', 'btn-primary'];
+  }
 }

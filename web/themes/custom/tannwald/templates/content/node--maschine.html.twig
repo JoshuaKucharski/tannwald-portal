@@ -106,9 +106,8 @@
         <span class="meta">{{ 'Answers only from approved documents of this machine'|t }}</span>
       </div>
       {# 5.3: chat #}
-      <div class="flex flex-col gap-3 bg-chat p-5 text-sm text-muted" data-chat-placeholder>
-        <p class="m-0">{{ 'The assistant is being prepared and will answer here with citations from the documents of this machine.'|t }}</p>
-      </div>
+      {{ chat_cache }}
+      {% if chat %}{{ include('tannwald:chat', chat, with_context = false) }}{% endif %}
     </aside>
   </div>
 </article>

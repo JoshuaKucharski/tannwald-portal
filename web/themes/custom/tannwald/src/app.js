@@ -64,5 +64,183 @@ Alpine.data('searchLive', (config) => ({
 
 /* 5.3: hier anhängen */
 
+// Assistent (5.3, SDC tannwald:chat). Store „chat“: Sitzung (UUID in sessionStorage), Verlauf, CSRF-Token,
+// ask()/feedback()/support() gegen /api/assistant*; Komponente „chat“: Eingabe, Sheet, Zitat-Links, Brücke tannwald:ask.
+const chatSession = () => {
+  const key = 'tannwald_chat_session';
+  let id = window.sessionStorage.getItem(key);
+  if (!id) { id = window.crypto.randomUUID(); window.sessionStorage.setItem(key, id); }
+  return id;
+};
+
+Alpine.store('chat', {
+  config: null,
+  session: chatSession(),
+  history: [],
+  busy: false,
+  elapsed: 0,
+  limitNotice: null,
+  token: null,
+  controller: null,
+  timer: null,
+  configure(config) {
+    this.config = config;
+    if (config.limitNotice) this.limitNotice = config.limitNotice;
+  },
+  async csrfToken(renew = false) {
+    if (!this.token || renew) {
+      const response = await fetch(this.config.tokenEndpoint, { credentials: 'same-origin' });
+      this.token = (await response.text()).trim();
+    }
+    return this.token;
+  },
+  // POST als JSON mit Session-Cookie und X-CSRF-Token; bei 403 Token einmal erneuern (masquerade erneuert den Seed).
+  async post(url, payload, signal) {
+    const attempt = async (renew) => fetch(url, {
+      method: 'POST',
+      credentials: 'same-origin',
+      signal,
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json', 'X-CSRF-Token': await this.csrfToken(renew) },
+      body: JSON.stringify(payload),
+    });
+    let response = await attempt(false);
+    if (response.status === 403) response = await attempt(true);
+    return response;
+  },
+  async ask(frage) {
+    const question = (frage || '').trim();
+    if (!question || this.busy || this.limitNotice) return null;
+    const labels = this.config.labels;
+    const entry = { id: Date.now(), frage: question, status: 'pending', antwort_html: '', text: '', quellen: [], log_id: null, bewertung: null, support_id: null, supporting: false, support_error: '', dauer_ms: null };
+    this.history.push(entry);
+    this.busy = true;
+    this.elapsed = 0;
+    const started = Date.now();
+    this.timer = window.setInterval(() => { this.elapsed = Math.round((Date.now() - started) / 1000); }, 1000);
+    this.controller = new AbortController();
+    const stored = this.history[this.history.length - 1];
+    try {
+      const payload = { frage: question, session: this.session };
+      if (this.config.maschineNid) payload.maschine_nid = this.config.maschineNid;
+      const response = await this.post(this.config.endpoint, payload, this.controller.signal);
+      const data = await response.json().catch(() => ({}));
+      stored.dauer_ms = Date.now() - started;
+      if (response.status === 429) {
+        stored.status = 'error'; stored.text = labels.busy;
+      } else if (response.status === 503 || data.status === 'limit') {
+        stored.status = 'limit'; stored.text = data.hinweis || labels.unreachable; this.limitNotice = data.hinweis || labels.unreachable;
+      } else if (!response.ok) {
+        stored.status = 'error'; stored.text = data.fehler || labels.unreachable;
+      } else {
+        stored.status = data.status; stored.antwort_html = data.antwort_html || ''; stored.quellen = data.quellen || []; stored.log_id = data.log_id ?? null;
+      }
+    } catch (error) {
+      stored.status = 'error';
+      stored.text = error.name === 'AbortError' ? '' : labels.unreachable;
+      if (error.name === 'AbortError') this.history.splice(this.history.indexOf(stored), 1);
+    } finally {
+      this.busy = false;
+      window.clearInterval(this.timer);
+      this.controller = null;
+    }
+    return stored;
+  },
+  async feedback(entry, bewertung) {
+    if (entry.bewertung !== null || !entry.log_id) return;
+    entry.bewertung = bewertung;
+    try { await this.post(this.config.feedbackEndpoint, { log_id: entry.log_id, bewertung }); } catch { /* Rückmeldung ist freiwillig */ }
+  },
+  async support(entry) {
+    if (entry.support_id || entry.supporting || !entry.log_id) return;
+    entry.supporting = true;
+    entry.support_error = '';
+    try {
+      const payload = { log_id: entry.log_id };
+      if (this.config.maschineNid) payload.maschine_nid = this.config.maschineNid;
+      const response = await this.post(this.config.supportEndpoint, payload);
+      const data = await response.json().catch(() => ({}));
+      if (response.ok && data.support_anfrage_id) entry.support_id = data.support_anfrage_id;
+      else entry.support_error = data.fehler || this.config.labels.unreachable;
+    } catch { entry.support_error = this.config.labels.unreachable; }
+    finally { entry.supporting = false; }
+  },
+  abort() { if (this.controller) this.controller.abort(); },
+});
+
+Alpine.data('chat', (config) => ({
+  open: false,
+  input: '',
+  mode: config.mode || 'embedded',
+  labels: config.labels,
+  uiLangcode: config.uiLangcode,
+  init() {
+    this.$store.chat.configure(config);
+    // Sheet: Scroll-Lock des Hintergrunds, solange es offen ist (Phone bzw. Sheet-Modus).
+    this.$watch('open', (open) => {
+      const sheet = this.mode === 'sheet' || window.matchMedia('(max-width: 767px)').matches;
+      document.body.classList.toggle('overflow-hidden', open && sheet);
+      if (open) this.$nextTick(() => { this.$refs.input?.focus(); this.scrollDown(); });
+    });
+    this.$watch('$store.chat.history.length', () => this.scrollDown());
+  },
+  disabled() { return this.$store.chat.busy || !!this.$store.chat.limitNotice; },
+  toggle() { this.open = !this.open; },
+  close() { this.open = false; this.$store.chat.abort(); },
+  // Brücke von /suche (F, 5.2): $dispatch('tannwald:ask', {frage}) öffnet das Sheet und fragt.
+  onAsk(detail) {
+    const frage = detail && detail.frage ? String(detail.frage) : '';
+    this.open = true;
+    if (frage) { this.input = frage; this.send(); } else { this.$nextTick(() => this.$refs.input?.focus()); }
+  },
+  onEnter(event) {
+    if (event.shiftKey) return;
+    event.preventDefault();
+    this.send();
+  },
+  async send() {
+    const frage = this.input.trim();
+    if (!frage || this.disabled()) return;
+    this.input = '';
+    await this.$store.chat.ask(frage);
+    this.scrollDown();
+  },
+  scrollDown() { this.$nextTick(() => { const h = this.$refs.history; if (h) h.scrollTop = h.scrollHeight; }); },
+  sourceLabel(q) {
+    const path = String(q.heading_path || '').split(' › ');
+    const chapter = path[path.length - 1] || '';
+    return `[${q.n}] ${q.titel} v${q.version}` + (chapter ? ` · ${this.labels.chapter} ${chapter}` : '');
+  },
+  languageName(code) { return (config.languageNames && config.languageNames[code]) || String(code).toUpperCase(); },
+  supportCreated(entry) { return this.labels.supportCreated.replace('@id', entry.support_id); },
+  // [n] im eingesetzten Server-HTML per DOM in Links wandeln (nach x-html, nicht per Regex über rohes HTML).
+  linkCitations(root, entry) {
+    const sources = new Map((entry.quellen || []).map((q) => [String(q.n), q]));
+    if (!sources.size) return;
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: (n) => (n.parentElement.closest('a') ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT) });
+    const nodes = [];
+    while (walker.nextNode()) if (/\[\d+\]/.test(walker.currentNode.nodeValue)) nodes.push(walker.currentNode);
+    nodes.forEach((node) => {
+      const fragment = document.createDocumentFragment();
+      let last = 0;
+      const text = node.nodeValue;
+      text.replace(/\[(\d+)\]/g, (match, n, offset) => {
+        fragment.appendChild(document.createTextNode(text.slice(last, offset)));
+        const q = sources.get(n);
+        if (q) {
+          const a = document.createElement('a');
+          a.href = q.url; a.className = 'chat-cite'; a.dataset.n = n; a.title = this.sourceLabel(q); a.textContent = match;
+          fragment.appendChild(a);
+        } else {
+          fragment.appendChild(document.createTextNode(match));
+        }
+        last = offset + match.length;
+        return match;
+      });
+      fragment.appendChild(document.createTextNode(text.slice(last)));
+      node.parentNode.replaceChild(fragment, node);
+    });
+  },
+}));
+
 // Start zuletzt: alle Alpine.data()-Registrierungen (5.1, 5.2 und A's 5.3-Hunk) müssen davor stehen.
 Alpine.start();

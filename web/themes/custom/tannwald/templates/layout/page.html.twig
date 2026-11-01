@@ -36,6 +36,9 @@
           <a href="{{ item.url }}" class="py-2 no-underline md:py-5 {{ item.active ? 'border-b-2 border-accent text-ink' : 'text-muted hover:text-ink' }}"{% if item.active %} aria-current="page"{% endif %}>{{ item.label }}</a>
         {% endfor %}
         {# 5.3: hier anhängen (Redaktion) #}
+        {% if redaktion_link %}
+          <a href="{{ redaktion_link.url }}" class="py-2 no-underline md:py-5 {{ redaktion_link.active ? 'border-b-2 border-accent text-ink' : 'text-muted hover:text-ink' }}"{% if redaktion_link.active %} aria-current="page"{% endif %}>{{ redaktion_link.label }}</a>
+        {% endif %}
       </nav>
       {{ page.primary_menu }}
       {% if account %}
@@ -61,4 +64,6 @@
     </footer>
   {% endif %}
   {# 5.3: hier anhängen #}
+  {{ chat_cache }}
+  {% if chat %}{{ include('tannwald:chat', chat, with_context = false) }}{% endif %}
 </div>
