@@ -94,7 +94,7 @@ final class IngestCommands extends DrushCommands {
     /** @var \Drupal\tannwald_ingest\Plugin\QueueWorker\EmbedQueueWorker $worker */
     $worker = $this->workerManager->createInstance(EmbedQueueWorker::QUEUE);
     $counts = ['ok' => 0, 'skipped' => 0, 'retry' => 0, 'failed' => 0];
-    while ($item = $queue->claimItem(300)) {
+    while (is_object($item = $queue->claimItem(300))) {
       $worker->processItem($item->data);
       $queue->deleteItem($item);
       $counts[$worker->lastOutcome()]++;
@@ -116,7 +116,13 @@ final class IngestCommands extends DrushCommands {
    * Zeilen in tannwald_chunk je Bundle und Sprache (Hilfe für Berichte).
    */
   #[CLI\Command(name: 'tannwald:chunk-stats')]
-  #[CLI\FieldLabels(labels: ['bundle' => 'Bundle', 'langcode' => 'Language', 'documents' => 'Documents', 'chunks' => 'Chunks', 'tokens' => 'Tokens'])]
+  #[CLI\FieldLabels(labels: [
+    'bundle' => 'Bundle',
+    'langcode' => 'Language',
+    'documents' => 'Documents',
+    'chunks' => 'Chunks',
+    'tokens' => 'Tokens',
+  ])]
   public function chunkStats(array $options = ['format' => 'table']): RowsOfFields {
     $result = $this->database->query('SELECT COALESCE(n.type, :none) AS bundle, c.langcode, COUNT(DISTINCT c.nid, c.vid) AS documents, COUNT(*) AS chunks, SUM(c.token_count) AS tokens
       FROM {tannwald_chunk} c LEFT JOIN {node} n ON n.nid = c.nid

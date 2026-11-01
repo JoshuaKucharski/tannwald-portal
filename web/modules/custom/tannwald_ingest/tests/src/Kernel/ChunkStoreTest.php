@@ -85,7 +85,7 @@ class ChunkStoreTest extends KernelTestBase {
   }
 
   /**
-   * Legt drei Dokumente an: TB-200 de (nid 10), TB-200 fr (nid 10), KT-500 (nid 20).
+   * Legt an: TB-200 de und fr (nid 10), KT-500 de (nid 20).
    */
   protected function seed(): void {
     $this->store->replaceForRevision(10, 100, 'de', [
@@ -153,13 +153,16 @@ class ChunkStoreTest extends KernelTestBase {
     $this->assertSame([1], $hits[0]['maschinentyp_tids']);
     $this->assertGreaterThan(0, $hits[0]['score']);
     $this->assertNotContains(20, array_column($hits, 'nid'), 'KT-500 chunk is filtered by access keys.');
-    $this->assertSame(array_keys($hits[0]), ['id', 'nid', 'vid', 'langcode', 'chunk_index', 'heading_path', 'title', 'text', 'exportklasse', 'dokumenttyp_tid', 'maschinentyp_tids', 'score']);
+    $this->assertSame([
+      'id', 'nid', 'vid', 'langcode', 'chunk_index', 'heading_path', 'title', 'text',
+      'exportklasse', 'dokumenttyp_tid', 'maschinentyp_tids', 'score',
+    ], array_keys($hits[0]));
 
     // Operatorzeichen entfernt: „E-4711“ negiert nicht, sondern trifft 4711.
     $hits = $this->store->keyword('E-4711', self::KEYS_TB200, 5);
     $this->assertSame([10, 1], [$hits[0]['nid'], $hits[0]['chunk_index']]);
 
-    // ODER-Semantik: „Lieferzeit Teil 4711“ findet die Tabelle trotz „Lieferzeit“.
+    // ODER-Semantik: „Lieferzeit Teil 4711“ findet die Tabelle.
     $hits = $this->store->keyword('Lieferzeit Teil 4711', self::KEYS_TB200, 5);
     $this->assertSame([10, 1], [$hits[0]['nid'], $hits[0]['chunk_index']]);
 

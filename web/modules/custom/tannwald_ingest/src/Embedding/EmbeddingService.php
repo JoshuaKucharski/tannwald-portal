@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\tannwald_ingest\Embedding;
 
 use Drupal\ai\OperationType\Embeddings\EmbeddingsCollectionInput;
+use Drupal\ai\OperationType\Embeddings\EmbeddingsCollectionOutput;
 use Drupal\Component\Plugin\PluginManagerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\tannwald_ingest\Store\VectorPack;
@@ -21,6 +22,8 @@ class EmbeddingService {
   public const BATCH_SIZE = 16;
 
   /**
+   * Konstruktor.
+   *
    * @param \Drupal\Component\Plugin\PluginManagerInterface $providerManager
    *   ai.provider (AiProviderPluginManager ist final; das Interface erlaubt
    *   Test-Doubles).
@@ -51,20 +54,23 @@ class EmbeddingService {
       return [];
     }
     [$providerId, $model] = $this->providerAndModel();
-    /** @var \Drupal\ai\Plugin\ProviderProxy $provider */
+    // ProviderProxy reicht embeddingsCollection() per __call an das Plugin.
     $provider = $this->providerManager->createInstance($providerId);
     $keys = array_keys($texts);
     $vectors = [];
     foreach (array_chunk(array_values($texts), self::BATCH_SIZE) as $batch) {
       $batch = array_map('strval', $batch);
-      $output = $provider->embeddingsCollection(new EmbeddingsCollectionInput($batch), $model, ['tannwald_ingest']);
+      $output = call_user_func([$provider, 'embeddingsCollection'], new EmbeddingsCollectionInput($batch), $model, ['tannwald_ingest']);
+      if (!$output instanceof EmbeddingsCollectionOutput) {
+        throw new \RuntimeException(sprintf('Embedding provider %s returned no embeddings collection.', $providerId));
+      }
       $normalized = $output->getNormalized();
       if (count($normalized) !== count($batch)) {
         throw new \RuntimeException(sprintf('Embedding provider %s returned %d vectors for %d texts.', $providerId, count($normalized), count($batch)));
       }
       foreach ($normalized as $vector) {
-        if (!is_array($vector) || count($vector) !== VectorPack::DIMENSION) {
-          throw new \RuntimeException(sprintf('Embedding model %s returned dimension %d, expected %d.', $model, is_array($vector) ? count($vector) : 0, VectorPack::DIMENSION));
+        if (count($vector) !== VectorPack::DIMENSION) {
+          throw new \RuntimeException(sprintf('Embedding model %s returned dimension %d, expected %d.', $model, count($vector), VectorPack::DIMENSION));
         }
         $vectors[] = array_map('floatval', array_values($vector));
       }
@@ -82,7 +88,7 @@ class EmbeddingService {
   }
 
   /**
-   * Provider aus ai.settings, Modell aus tannwald_assistant.settings (falls da).
+   * Provider aus ai.settings, Modell aus tannwald_assistant.settings.
    *
    * @return string[]
    *   [provider_id, model].

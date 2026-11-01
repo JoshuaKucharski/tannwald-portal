@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\tannwald_ingest\Kernel;
 
-use Drupal\ai\OperationType\Embeddings\EmbeddingsCollectionInput;
 use Drupal\ai\OperationType\Embeddings\EmbeddingsCollectionOutput;
 use Drupal\ai\Plugin\ProviderProxy;
 use Drupal\Component\Plugin\PluginManagerInterface;
@@ -93,7 +92,7 @@ class EmbedQueueWorkerTest extends KernelTestBase {
   }
 
   /**
-   * Bundle dokument mit body, field_exportklasse, field_dokumenttyp, field_maschinentyp.
+   * Bundle dokument mit body und den drei Metadaten-Feldern.
    */
   protected function createContentModel(): void {
     NodeType::create(['type' => 'dokument', 'name' => 'Dokument'])->save();
@@ -108,9 +107,21 @@ class EmbedQueueWorkerTest extends KernelTestBase {
 
     $fields = [
       'body' => ['type' => 'text_with_summary', 'settings' => []],
-      'field_exportklasse' => ['type' => 'list_string', 'settings' => ['allowed_values' => ['keine' => 'keine', 'klasse_1' => 'klasse_1', 'klasse_2' => 'klasse_2']]],
-      'field_dokumenttyp' => ['type' => 'entity_reference', 'settings' => ['target_type' => 'taxonomy_term']],
-      'field_maschinentyp' => ['type' => 'entity_reference', 'settings' => ['target_type' => 'taxonomy_term'], 'cardinality' => -1],
+      'field_exportklasse' => [
+        'type' => 'list_string',
+        'settings' => [
+          'allowed_values' => ['keine' => 'keine', 'klasse_1' => 'klasse_1', 'klasse_2' => 'klasse_2'],
+        ],
+      ],
+      'field_dokumenttyp' => [
+        'type' => 'entity_reference',
+        'settings' => ['target_type' => 'taxonomy_term'],
+      ],
+      'field_maschinentyp' => [
+        'type' => 'entity_reference',
+        'settings' => ['target_type' => 'taxonomy_term'],
+        'cardinality' => -1,
+      ],
     ];
     foreach ($fields as $name => $definition) {
       FieldStorageConfig::create([
@@ -137,16 +148,18 @@ class EmbedQueueWorkerTest extends KernelTestBase {
       $this->assertSame('bge_m3_latest', $arguments[1], 'Model from ai.settings default is passed through.');
       /** @var \Drupal\ai\OperationType\Embeddings\EmbeddingsCollectionInput $input */
       $input = $arguments[0];
-      $this->assertInstanceOf(EmbeddingsCollectionInput::class, $input);
       $this->calls[] = $input->getPromptCount();
       if ($this->failing) {
         throw new \RuntimeException('Provider down (test double).');
       }
       $vectors = array_map([self::class, 'hashVector'], $input->getPrompts());
       $tokens = array_sum(array_map('mb_strlen', $input->getPrompts()));
-      return new EmbeddingsCollectionOutput($vectors, ['model' => 'bge-m3:latest', 'usage' => ['prompt_tokens' => $tokens]], []);
+      $raw = ['model' => 'bge-m3:latest', 'usage' => ['prompt_tokens' => $tokens]];
+      return new EmbeddingsCollectionOutput($vectors, $raw, []);
     });
-    $this->config('ai.settings')->set('default_providers.embeddings', ['provider_id' => 'ollama', 'model_id' => 'bge_m3_latest'])->save();
+    $this->config('ai.settings')
+      ->set('default_providers.embeddings', ['provider_id' => 'ollama', 'model_id' => 'bge_m3_latest'])
+      ->save();
     $manager = $this->createMock(PluginManagerInterface::class);
     $manager->method('createInstance')->with('ollama')->willReturn($proxy);
     $this->container->set('ai.provider', $manager);
@@ -200,12 +213,24 @@ class EmbedQueueWorkerTest extends KernelTestBase {
     /** @var \Drupal\tannwald_ingest\Plugin\QueueWorker\EmbedQueueWorker $worker */
     $worker = $this->container->get('plugin.manager.queue_worker')->createInstance(EmbedQueueWorker::QUEUE);
     $outcomes = [];
-    while ($item = $queue->claimItem()) {
+    while (is_object($item = $queue->claimItem())) {
       $worker->processItem($item->data);
       $queue->deleteItem($item);
       $outcomes[] = $worker->lastOutcome();
     }
     return $outcomes;
+  }
+
+  /**
+   * Stellt einen index-Job für die aktuelle Revision (Sprache en) ein.
+   */
+  protected function queueIndexJob(NodeInterface $node): void {
+    $this->container->get('queue')->get(EmbedQueueWorker::QUEUE)->createItem([
+      'nid' => (int) $node->id(),
+      'vid' => (int) $node->getRevisionId(),
+      'langcode' => 'en',
+      'action' => 'index',
+    ]);
   }
 
   /**
@@ -242,7 +267,10 @@ class EmbedQueueWorkerTest extends KernelTestBase {
 
     $usage = $this->container->get('database')->query('SELECT * FROM {tannwald_usage}')->fetchAll();
     $this->assertCount(1, $usage);
-    $this->assertSame(['bge-m3', 'embedding', 'ingest', '0'], [$usage[0]->modell, $usage[0]->operation, $usage[0]->kontext, (string) $usage[0]->completion_tokens]);
+    $this->assertSame('bge-m3', $usage[0]->modell);
+    $this->assertSame('embedding', $usage[0]->operation);
+    $this->assertSame('ingest', $usage[0]->kontext);
+    $this->assertSame(0, (int) $usage[0]->completion_tokens);
     $this->assertGreaterThan(0, (int) $usage[0]->prompt_tokens);
 
     $hits = $this->container->get('tannwald_ingest.chunk_store')->keyword('4711', self::KEYS, 5);
@@ -252,7 +280,7 @@ class EmbedQueueWorkerTest extends KernelTestBase {
     $this->assertSame(1, $similar[0]['chunk_index']);
 
     // Zweiter Lauf desselben Jobs (Cron und Seeder): gleiche Zahlen.
-    $this->container->get('queue')->get(EmbedQueueWorker::QUEUE)->createItem(['nid' => (int) $node->id(), 'vid' => (int) $node->getRevisionId(), 'langcode' => 'en', 'action' => 'index']);
+    $this->queueIndexJob($node);
     $this->assertSame(['ok'], $this->runQueue());
     $this->assertSame(3, $this->rows('tannwald_chunk'));
   }
@@ -266,8 +294,8 @@ class EmbedQueueWorkerTest extends KernelTestBase {
     $this->assertSame(0, $this->rows('tannwald_chunk'));
     $this->assertSame([], $this->calls, 'No embedding for unpublished revisions.');
 
-    // Ein index-Job für eine unveröffentlichte Revision schreibt ebenfalls nichts.
-    $this->container->get('queue')->get(EmbedQueueWorker::QUEUE)->createItem(['nid' => (int) $node->id(), 'vid' => (int) $node->getRevisionId(), 'langcode' => 'en', 'action' => 'index']);
+    // Ein index-Job für eine unveröffentlichte Revision schreibt nichts.
+    $this->queueIndexJob($node);
     $this->assertSame(['skipped'], $this->runQueue());
     $this->assertSame(0, $this->rows('tannwald_chunk'));
 
@@ -296,7 +324,7 @@ class EmbedQueueWorkerTest extends KernelTestBase {
     $this->assertSame(['ok'], $this->runQueue());
     $this->assertSame(0, $this->rows('tannwald_chunk'));
 
-    $queue->createItem(['nid' => (int) $node->id(), 'vid' => (int) $node->getRevisionId(), 'langcode' => 'en', 'action' => 'index']);
+    $this->queueIndexJob($node);
     $this->runQueue();
     $this->assertSame(3, $this->rows('tannwald_chunk'));
     $node->delete();

@@ -6,10 +6,11 @@ namespace Drupal\tannwald_ingest\Store;
 
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Database\Statement\FetchAs;
 use Psr\Log\LoggerInterface;
 
 /**
- * Chunk-Store auf MariaDB: FULLTEXT für keyword(), Cosinus in PHP für similar().
+ * Chunk-Store auf MariaDB: FULLTEXT für keyword(), Cosinus in PHP (similar).
  *
  * Beide Wege filtern in SQL über access_keys; leere Nutzer-Keys liefern nie
  * Treffer. Produktiv ersetzt ein OpenSearch-Store diese Klasse (ADR-003).
@@ -29,7 +30,19 @@ class DatabaseChunkStore implements ChunkStoreInterface {
   /**
    * Spalten einer Treffer-Zeile (ohne score).
    */
-  protected const HIT_COLUMNS = ['id', 'nid', 'vid', 'langcode', 'chunk_index', 'heading_path', 'title', 'text', 'exportklasse', 'dokumenttyp_tid', 'maschinentyp_tids'];
+  protected const HIT_COLUMNS = [
+    'id',
+    'nid',
+    'vid',
+    'langcode',
+    'chunk_index',
+    'heading_path',
+    'title',
+    'text',
+    'exportklasse',
+    'dokumenttyp_tid',
+    'maschinentyp_tids',
+  ];
 
   public function __construct(
     protected Connection $database,
@@ -185,7 +198,7 @@ class DatabaseChunkStore implements ChunkStoreInterface {
       ->fields('c', self::HIT_COLUMNS)
       ->condition('c.id', array_keys($top), 'IN')
       ->execute()
-      ->fetchAllAssoc('id', \PDO::FETCH_ASSOC);
+      ->fetchAllAssoc('id', FetchAs::Associative);
     $hits = [];
     foreach ($top as $id => $score) {
       if (isset($rowsById[$id])) {

@@ -52,6 +52,8 @@ final class EmbedQueueWorker extends QueueWorkerBase implements ContainerFactory
   protected string $lastOutcome = 'ok';
 
   /**
+   * Konstruktor.
+   *
    * @param array $configuration
    *   Plugin-Konfiguration.
    * @param string $plugin_id
@@ -256,8 +258,8 @@ final class EmbedQueueWorker extends QueueWorkerBase implements ContainerFactory
     }
     $types = [];
     if ($source->hasField('field_maschinentyp')) {
-      foreach ($source->get('field_maschinentyp') as $type) {
-        $types[] = (int) $type->target_id;
+      foreach ($source->get('field_maschinentyp')->getValue() as $value) {
+        $types[] = (int) ($value['target_id'] ?? 0);
       }
     }
     return [

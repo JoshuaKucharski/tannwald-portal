@@ -21,6 +21,10 @@ final class HeadingSlug {
     'ä' => 'ae',
     'ö' => 'oe',
     'ü' => 'ue',
+    // Zerlegte Umlaute (NFD) für den Weg ohne Normalizer.
+    "a\u{0308}" => 'ae',
+    "o\u{0308}" => 'oe',
+    "u\u{0308}" => 'ue',
     'ß' => 'ss',
     'ẞ' => 'ss',
     'æ' => 'ae',

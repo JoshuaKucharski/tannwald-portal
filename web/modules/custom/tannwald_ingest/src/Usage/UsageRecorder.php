@@ -33,13 +33,13 @@ class UsageRecorder {
    * @param string $modell
    *   Rohname des Modells (z. B. bge-m3, qwen2.5:7b).
    * @param string $operation
-   *   chat|embedding.
+   *   Operation: chat|embedding.
    * @param int $promptTokens
    *   Eingabe-Tokens.
    * @param int $completionTokens
    *   Ausgabe-Tokens (Embeddings: 0).
    * @param string $kontext
-   *   assistent|ingest|eval.
+   *   Kontext: assistent|ingest|eval.
    * @param float $kostenChf
    *   Kosten in CHF (Ollama: 0).
    */

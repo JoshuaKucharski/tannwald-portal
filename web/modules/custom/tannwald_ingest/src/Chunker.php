@@ -278,10 +278,8 @@ class Chunker {
         $fresh++;
         continue;
       }
-      // Laufender Chunk ist voll.
-      if ($fresh > 0) {
-        $texts[] = $this->join($heading, $buffer);
-      }
+      // Laufender Chunk ist voll (enthält immer mindestens eine neue Unit).
+      $texts[] = $this->join($heading, $buffer);
       $overlap = $unit['atomic'] ? [] : $this->overlap($buffer, $overlapChars);
       if ($overlap !== [] && mb_strlen($this->join($heading, array_merge($overlap, [$unit])), 'UTF-8') > $maxChars) {
         $overlap = [];
@@ -346,8 +344,9 @@ class Chunker {
   }
 
   /**
-   * Fügt Überschrift und Units zu einem Text: Sätze mit Leerzeichen, sonst
-   * Zeilenumbruch.
+   * Fügt Überschrift und Units zu einem Text.
+   *
+   * Sätze mit Leerzeichen, sonst Zeilenumbruch.
    */
   protected function join(string $heading, array $units): string {
     $text = $heading;
