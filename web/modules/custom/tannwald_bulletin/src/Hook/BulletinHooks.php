@@ -104,9 +104,9 @@ final class BulletinHooks {
     if ($this->currentState($node) !== 'published' || $from === 'published') {
       return;
     }
-    if (!$node->hasField('field_bestaetigung_pflicht') || !$node->get('field_bestaetigung_pflicht')->value) {
-      // Ohne Bestätigungspflicht keine Mail (Master-Präzisierung 2.5); den
-      // Hinweis im Portal zeigt das Theme für alle Bulletins.
+    // Mail bei Bestätigungspflicht oder Sicherheits-Bulletin (TC-05, Entscheid
+    // Master 2.5); den Hinweis im Portal zeigt das Theme für alle Bulletins.
+    if (!$node->get('field_bestaetigung_pflicht')->value && $node->get('field_bulletin_art')->value !== 'sicherheit') {
       return;
     }
     $key = self::NOTIFIED_STATE_PREFIX . $node->id() . '.' . $node->getRevisionId();

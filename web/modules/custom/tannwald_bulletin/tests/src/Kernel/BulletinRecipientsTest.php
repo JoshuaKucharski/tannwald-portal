@@ -99,26 +99,33 @@ final class BulletinRecipientsTest extends BulletinKernelTestBase {
    * Job nur beim Übergang nach published mit Pflicht; idempotent.
    */
   public function testJobs(): void {
-    $this->assertSame(0, $this->jobs(), 'Welt ohne Pflicht-Bulletin.');
+    $this->assertSame(1, $this->jobs(), 'Welt: SB-2026-07 (Sicherheit, ohne Pflichtfeld) erzeugt einen Job.');
+    $this->container->get('queue')->get('tannwald_notify')->deleteQueue();
+    $this->assertSame(0, $this->jobs());
     $this->bulletin('SRV-2026-96 Service', [
       'field_maschinentyp' => [$this->w['tb200']],
       'field_bulletin_art' => 'service',
       'field_bestaetigung_pflicht' => FALSE,
     ]);
     $this->assertSame(0, $this->jobs(), 'Service-Bulletin ohne Pflicht.');
+    $safety = $this->bulletin('SB-2026-99 Sicherheit ohne Pflicht', [
+      'field_maschinentyp' => [$this->w['tb200']],
+      'field_bestaetigung_pflicht' => FALSE,
+    ]);
+    $this->assertSame(1, $this->jobs(), 'Sicherheits-Bulletin ohne Pflicht (TC-05).');
 
     $published = $this->bulletin('SB-2026-97 Sofort', ['field_maschinentyp' => [$this->w['tb200']]]);
-    $this->assertSame(1, $this->jobs(), 'Insert mit published.');
+    $this->assertSame(2, $this->jobs(), 'Insert mit published.');
     $published->setTitle('SB-2026-97 Sofort, korrigiert')->save();
-    $this->assertSame(1, $this->jobs(), 'Zweites Speichern ohne Übergang.');
+    $this->assertSame(2, $this->jobs(), 'Zweites Speichern ohne Übergang.');
 
     $draft = $this->bulletin('SB-2026-98 Entwurf', ['field_maschinentyp' => [$this->w['tb200']]], FALSE);
-    $this->assertSame(1, $this->jobs(), 'Entwurf.');
+    $this->assertSame(2, $this->jobs(), 'Entwurf.');
     $draft->setPublished()->save();
-    $this->assertSame(2, $this->jobs(), 'Update nach published.');
+    $this->assertSame(3, $this->jobs(), 'Update nach published.');
     $item = $this->container->get('queue')->get('tannwald_notify')->claimItem();
     $this->assertIsObject($item);
-    $this->assertSame(['bulletin_nid' => (int) $published->id()], $item->data);
+    $this->assertSame(['bulletin_nid' => (int) $safety->id()], $item->data);
   }
 
   /**
