@@ -1,0 +1,75 @@
+<h2>1 Scope and export control</h2>
+<p>This wiring diagram describes the electrical structure of the high-frequency sealing option of the TB-200 blister line. It covers the high-frequency generator, the matching unit, the electrode assembly at the sealing station and the signal interfaces to the line controller. The document is intended for qualified electrical specialists of the operator and for the service of Tannwald Verpackungstechnik AG. It contains no commissioning procedure; commissioning of the high-frequency sealing is carried out exclusively by Tannwald service.</p>
+<p>The high-frequency sealing option is classified as export class 2. This document may only be made available to persons in countries and companies that are approved according to the export rules of Tannwald Verpackungstechnik AG. In the myTannwald portal, access is restricted by the export class and every access is recorded in the audit log. Copying, forwarding or storing this document outside the portal is not permitted without written approval of the compliance department.</p>
+<h3>1.1 Document structure</h3>
+<p>Chapter 2 contains the safety notes for work on the high-frequency assemblies. Chapter 3 describes the assemblies and their function. Chapter 4 contains the signal list between the high-frequency generator and the line controller. Chapter 5 describes the interlock chain of the high-frequency sealing. Chapter 6 lists the terminal assignments of the generator cabinet. Chapter 7 contains the fault signals of the generator and their meaning. The diagram sheets referenced in the tables are part of the machine-specific documentation and are not reproduced in this overview.</p>
+<h3>1.2 Applicable documents</h3>
+<ul>
+<li>Operating instructions TB-200, chapter 2 Safety and chapter 3 Transport and installation</li>
+<li>Maintenance schedule TB-200, chapter 7 Electrical system and safety devices</li>
+<li>Spare parts catalogue TB-200, chapter 6 Control system and electrical equipment</li>
+<li>Machine documentation of the respective serial number with the machine-specific diagram sheets</li>
+</ul>
+<h2>2 Safety</h2>
+<p>Work on the high-frequency sealing is reserved for qualified electrical specialists who have been instructed by Tannwald Verpackungstechnik AG on this option. The safety chapter of the operating instructions TB-200 applies in full. Before any work on the generator cabinet, the matching unit or the electrode assembly, the line must be de-energised at the main switch, secured against being switched on again and the absence of voltage must be verified by the specialist. The generator cabinet must remain closed during operation; its door is interlocked and opening it stops the generator.</p>
+<p>The high-frequency field at the electrode assembly is present only while the sealing cycle is active and the protective hood of the sealing station is closed and locked. Bypassing the hood interlock, the cabinet door interlock or the two-hand control is prohibited; it leads to loss of conformity and exposes persons to the high-frequency field and to the hot electrode. Persons with active medical implants must not work on the high-frequency sealing and must keep the distance to the sealing station defined by the operator. This document does not describe how safety functions can be overridden for test purposes; test modes are available to Tannwald service only.</p>
+<h2>3 Assemblies</h2>
+<p>The high-frequency sealing option consists of four assemblies that are installed in and next to the TB-200. The assemblies are supplied as a set and are assigned to the serial number of the machine.</p>
+<h3>3.1 High-frequency generator</h3>
+<p>The high-frequency generator is installed in a separate cabinet next to the main control cabinet of the TB-200. It generates the sealing energy on request of the line controller and monitors its own operating state. The generator reports readiness, active output and faults to the line controller via the signal interface described in chapter 4. The generator has its own mains disconnect switch that is linked to the main switch of the line so that the whole line is de-energised together. The cabinet contains the generator module, the control board, the cooling fan with filter and the terminal strips listed in chapter 6.</p>
+<h3>3.2 Matching unit</h3>
+<p>The matching unit sits between the generator and the electrode assembly and adapts the generator output to the electrode and the film material. It is tuned by Tannwald service during commissioning for the film specification of the customer; the tuning values are stored in the format data set. A change of film material that requires retuning is reported to Tannwald service. The matching unit carries a temperature sensor whose signal is evaluated by the generator control board.</p>
+<h3>3.3 Electrode assembly</h3>
+<p>The electrode assembly replaces the plate sealing jaw of the standard TB-200 at the sealing station. It consists of the upper electrode with the sealing grid, the insulated electrode holder, the lower electrode integrated into the counter plate and the shielding of the sealing station. The electrode assembly is heated by the same heating cartridges and monitored by the same temperature sensor as the standard sealing jaw, so that the parts 4712 and 4715 of the spare parts catalogue TB-200 apply. The shielding is part of the protective hood of the sealing station and must not be modified.</p>
+<h3>3.4 Signal interface to the line controller</h3>
+<p>The signal interface connects the generator control board with the line controller of the TB-200. It transmits the request for a sealing cycle, the enable from the safety chain and the status and fault signals of the generator. The interface uses the signals listed in chapter 4; all signals are hard-wired and documented on the diagram sheets referenced there. A fieldbus connection is not used for the safety-relevant signals.</p>
+<h2>4 Signal list</h2>
+<p>The following signal list contains the signals between the high-frequency generator and the line controller. The direction is given from the point of view of the generator. The sheet column refers to the machine-specific diagram sheets.</p>
+<table>
+<thead><tr><th>Signal</th><th>Direction</th><th>Meaning</th><th>Sheet</th></tr></thead>
+<tbody>
+<tr><td>HF_REQ</td><td>input</td><td>request for sealing cycle from line controller</td><td>HF-10</td></tr>
+<tr><td>HF_ENABLE</td><td>input</td><td>enable from safety chain, hood closed and locked</td><td>HF-11</td></tr>
+<tr><td>HF_READY</td><td>output</td><td>generator ready, no fault</td><td>HF-12</td></tr>
+<tr><td>HF_ACTIVE</td><td>output</td><td>output active during sealing cycle</td><td>HF-12</td></tr>
+<tr><td>HF_FAULT</td><td>output</td><td>collective fault of the generator</td><td>HF-13</td></tr>
+<tr><td>HF_TEMP_OK</td><td>output</td><td>temperature of matching unit within range</td><td>HF-13</td></tr>
+<tr><td>HF_RESET</td><td>input</td><td>fault reset from operator panel</td><td>HF-14</td></tr>
+<tr><td>HF_DOOR</td><td>output</td><td>cabinet door closed</td><td>HF-15</td></tr>
+<tr><td>HF_ESTOP</td><td>input</td><td>emergency stop chain of the line</td><td>HF-16</td></tr>
+<tr><td>HF_FORMAT_ID</td><td>input</td><td>format data set identifier, four bits</td><td>HF-17</td></tr>
+</tbody>
+</table>
+<p>The signals HF_ENABLE, HF_ESTOP and HF_DOOR are part of the safety chain and are wired with two channels each. The line controller evaluates both channels and stops the generator if the channels disagree. The signals HF_REQ and HF_ACTIVE are timed by the line controller; the maximum duration of a sealing cycle is limited by the format data set.</p>
+<h2>5 Interlock chain</h2>
+<p>The interlock chain of the high-frequency sealing is an extension of the safety chain of the TB-200. The generator receives the enable signal HF_ENABLE only when all of the following conditions are fulfilled: the protective hood of the sealing station is closed and locked, the cabinet door of the generator is closed, the emergency stop chain of the line is not actuated and the two-hand control is not active. If any condition is lost during a sealing cycle, the generator switches off its output within the reaction time defined in the machine documentation and reports HF_FAULT.</p>
+<p>The interlock chain is checked by the specialist every six months as part of the maintenance schedule TB-200, chapter 7, and by Tannwald service at the yearly service. The check comprises the function of each condition and the reaction of the generator. A failed check leads to a standstill of the high-frequency sealing until the fault has been repaired. The interlock chain must not be modified, bridged or extended by the operator.</p>
+<h2>6 Terminal assignment of the generator cabinet</h2>
+<p>The terminal strips of the generator cabinet are designated X1 to X4. X1 carries the mains supply, X2 the signal interface to the line controller, X3 the sensors of the matching unit and X4 the connection to the electrode assembly. The following table lists the terminal strips with their function; the individual terminals are documented on the machine-specific diagram sheets.</p>
+<table>
+<thead><tr><th>Terminal strip</th><th>Function</th><th>Connected to</th><th>Sheet</th></tr></thead>
+<tbody>
+<tr><td>X1</td><td>mains supply of the generator</td><td>main switch of the line</td><td>HF-01</td></tr>
+<tr><td>X2</td><td>signal interface</td><td>line controller</td><td>HF-10 to HF-17</td></tr>
+<tr><td>X3</td><td>sensors matching unit</td><td>matching unit</td><td>HF-20</td></tr>
+<tr><td>X4</td><td>output to electrode assembly</td><td>matching unit, electrode</td><td>HF-30</td></tr>
+</tbody>
+</table>
+<p>All connections to the electrode assembly use the shielded cable set supplied with the option. The shielding is connected at the generator cabinet and at the sealing station as shown on sheet HF-30. A damaged cable set is replaced completely; repairs of the cable set are not permitted.</p>
+<h2>7 Fault signals of the generator</h2>
+<p>The generator reports faults via HF_FAULT and shows a fault number on its own display inside the cabinet. The line controller displays the fault as a high-frequency fault on the operator panel. The following table lists the fault numbers of the generator with their meaning. Fault reset is carried out from the operator panel via HF_RESET after the cause has been removed; the cabinet is not opened for this purpose.</p>
+<table>
+<thead><tr><th>Fault number</th><th>Meaning</th><th>Cause</th><th>Action</th></tr></thead>
+<tbody>
+<tr><td>H-01</td><td>enable missing</td><td>hood, door or emergency stop condition not fulfilled</td><td>check interlock conditions, reset</td></tr>
+<tr><td>H-02</td><td>matching unit temperature</td><td>temperature of the matching unit out of range</td><td>let cool down, check fan and filter</td></tr>
+<tr><td>H-03</td><td>output mismatch</td><td>matching unit not tuned to film material</td><td>contact Tannwald service</td></tr>
+<tr><td>H-04</td><td>cycle time exceeded</td><td>HF_REQ longer than permitted by format data set</td><td>check format data set, reset</td></tr>
+<tr><td>H-05</td><td>channel discrepancy</td><td>two channels of a safety signal disagree</td><td>have wiring checked by specialist</td></tr>
+<tr><td>H-06</td><td>cabinet door open</td><td>HF_DOOR not fulfilled during operation</td><td>close door, reset</td></tr>
+<tr><td>H-07</td><td>generator module fault</td><td>internal fault of the generator module</td><td>contact Tannwald service</td></tr>
+</tbody>
+</table>
+<p>Faults H-03, H-05 and H-07 cannot be remedied by the operator. The high-frequency sealing remains locked until Tannwald service has repaired the fault and released the option again. The standard plate sealing of the TB-200 can be used in the meantime if the format data set provides a plate sealing variant.</p>
+<h2>8 Revision history</h2>
+<p>Version 1.4 of this wiring diagram adds the signal HF_FORMAT_ID and the fault number H-04 for the cycle time monitoring introduced with the format data sets of 2026. Version 1.3 introduced the two-channel wiring of HF_DOOR. Version 1.2 added the temperature monitoring of the matching unit. Earlier versions are available from Tannwald service on request. Changes to this document are published in the myTannwald portal with a change note; the portal shows the current version for the serial number of the machine.</p>
