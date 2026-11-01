@@ -78,10 +78,14 @@ function tannwald_access_schema(): array {
 /**
  * Implements hook_install().
  */
-function tannwald_access_install(): void {
-  // Die Grants dieses Moduls gelten erst nach einem Neuaufbau der Tabelle
-  // node_access; der Seeder (2.3) ruft node_access_rebuild() nach dem Import.
-  \Drupal::service(NodeAccessRebuild::class)->setNeedsRebuild();
+function tannwald_access_install(bool $is_syncing): void {
+  // node_install() schreibt die Standardzeile nid 0 / Realm "all" mit
+  // grant_view 1. Bliebe sie stehen, könnte jedes Konto mit "access content"
+  // jeden veröffentlichten Node sehen, bis jemand neu aufbaut. Darum sofort
+  // und ohne Batch neu aufbauen: auf einer frischen Installation gibt es noch
+  // keine Nodes, im PoC wenige. Der Seeder (2.3) baut nach dem Import erneut
+  // auf.
+  \Drupal::service(NodeAccessRebuild::class)->rebuild();
 }
 
 /**

@@ -28,6 +28,20 @@ final class ExportRulesFormTest extends BrowserTestBase {
   protected $defaultTheme = 'stark';
 
   /**
+   * Nach der Installation steht keine Standardzeile nid 0 / Realm all mehr.
+   *
+   * Core schreibt sie in node_install(); ohne Neuaufbau gäbe sie jedem Konto
+   * mit "access content" Sicht auf jeden veröffentlichten Node.
+   */
+  public function testInstallRemovesDefaultGrant(): void {
+    $rows = (int) $this->container->get('database')->select('node_access', 'na')
+      ->condition('nid', 0)
+      ->condition('realm', 'all')
+      ->countQuery()->execute()->fetchField();
+    $this->assertSame(0, $rows);
+  }
+
+  /**
    * Speichern validiert, schreibt Konfiguration und Audit, stösst Rebuild an.
    */
   public function testSaveWritesAuditAndCsv(): void {
