@@ -1,1 +1,32 @@
-[]
+[
+  {
+    "id": "SB-2026-07",
+    "titel": "Schutzhaube Siegelstation",
+    "art": "sicherheit",
+    "maschinentypen": ["TB-200"],
+    "bestaetigung_pflicht": true,
+    "veroeffentlicht_am": "2026-10-14",
+    "datei": "sb-2026-07.html",
+    "erstellt_von": "redaktion"
+  },
+  {
+    "id": "SRV-2026-19",
+    "titel": "Folienspannung nach Rollenwechsel",
+    "art": "service",
+    "maschinentypen": ["TB-200"],
+    "bestaetigung_pflicht": false,
+    "veroeffentlicht_am": "2026-08-22",
+    "datei": "srv-2026-19.html",
+    "erstellt_von": "redaktion"
+  },
+  {
+    "id": "SB-2026-08",
+    "titel": "Heizpatronen Siegelbacken",
+    "art": "sicherheit",
+    "maschinentypen": ["TB-200"],
+    "bestaetigung_pflicht": true,
+    "veroeffentlicht_am": "2026-10-30",
+    "datei": "sb-2026-08.html",
+    "erstellt_von": "redaktion"
+  }
+]
