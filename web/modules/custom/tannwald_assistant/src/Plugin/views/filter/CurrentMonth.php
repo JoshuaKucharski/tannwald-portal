@@ -57,7 +57,7 @@ final class CurrentMonth extends FilterPluginBase {
       return;
     }
     $this->ensureMyTable();
-    $this->query->addWhere($this->options['group'], $this->tableAlias . '.' . $this->realField, $this->limitService->monthStart(), '>=');
+    $this->query->addWhere($this->options['group'], $this->tableAlias . '.' . $this->realField, (string) $this->limitService->monthStart(), '>=');
   }
 
 }
