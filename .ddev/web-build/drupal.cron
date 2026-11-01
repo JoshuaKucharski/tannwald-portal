@@ -1,0 +1,2 @@
+# Drupal-Cron alle 5 Minuten (Queue tannwald_embed, Mails). Cron erbt web_environment nicht: Variablen hier setzen.
+*/5 * * * * IS_DDEV_PROJECT=true OLLAMA_HOST=http://host.docker.internal:11434 /var/www/html/vendor/bin/drush --root=/var/www/html cron > /dev/null 2>&1

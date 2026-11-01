@@ -1,0 +1,33 @@
+# Grundlage: web/example.gitignore (Drupal-Core-Scaffold), umgeschrieben auf den Repo-Stamm mit Docroot web/.
+# Abweichung: web/sites/default/settings.php wird committet (enthält kein Geheimnis; ohne Datei scheitert ein
+# frischer Klon). Ignoriert bleiben settings.local.php (Geheimnisse, falls je nötig) und settings.ddev.php (schreibt
+# DDEV selbst; zusätzlich durch das selbst-ignorierende web/sites/default/.gitignore von DDEV abgedeckt).
+
+# Von Composer verwaltet
+/vendor/
+/web/core/
+/web/modules/contrib/
+/web/themes/contrib/
+/web/profiles/contrib/
+/web/libraries/
+/drush/Commands/contrib/
+/recipes/*
+!/recipes/README.txt
+
+# Site-Dateien
+/web/sites/*/settings.local.php
+/web/sites/*/settings.ddev.php
+/web/sites/*/*services*.yml
+!/web/sites/*/default.services.yml
+/web/sites/*/files
+/web/sites/*/private
+/web/sites/simpletest/
+
+# Privates Dateisystem (ausserhalb web/), nur der Ordner selbst ist im Repo
+/private/*
+!/private/.gitkeep
+
+# Werkzeuge
+/.phpunit.cache/
+node_modules/
+.DS_Store
