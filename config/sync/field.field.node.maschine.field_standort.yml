@@ -1,0 +1,19 @@
+uuid: c5eba875-09aa-440b-9ce4-a1767c28dd8a
+langcode: de
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_standort
+    - node.type.maschine
+id: node.maschine.field_standort
+field_name: field_standort
+entity_type: node
+bundle: maschine
+label: Standort
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

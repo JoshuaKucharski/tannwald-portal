@@ -1,0 +1,27 @@
+uuid: d9ef967e-0e69-4879-8fa0-487db15a5517
+langcode: de
+status: true
+dependencies:
+  module:
+    - node
+    - options
+id: node.field_vertrag
+field_name: field_vertrag
+entity_type: node
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: basis
+      label: Basis
+    -
+      value: service_plus
+      label: 'Service Plus'
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

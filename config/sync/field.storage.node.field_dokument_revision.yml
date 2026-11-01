@@ -1,0 +1,20 @@
+uuid: 4066639a-cd1e-474e-b068-c5230796a881
+langcode: de
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_dokument_revision
+field_name: field_dokument_revision
+entity_type: node
+type: integer
+settings:
+  unsigned: true
+  size: normal
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

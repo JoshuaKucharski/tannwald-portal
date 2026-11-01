@@ -1,0 +1,11 @@
+uuid: 8d758552-5b60-4f1a-8943-2332c2ede1f0
+langcode: de
+status: true
+dependencies:
+  config:
+    - node.type.maschine
+id: node.maschine
+target_entity_type_id: node
+target_bundle: maschine
+default_langcode: site_default
+language_alterable: false

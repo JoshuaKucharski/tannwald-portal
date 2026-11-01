@@ -1,0 +1,14 @@
+uuid: a9c82b88-1fc3-4d3a-9aba-303c303ef485
+langcode: de
+status: true
+dependencies:
+  config:
+    - user.role.kunde
+  module:
+    - user
+id: user_add_role_action.kunde
+label: 'Den ausgewählten Benutzern die Rolle Kunde zuweisen'
+type: user
+plugin: user_add_role_action
+configuration:
+  rid: kunde

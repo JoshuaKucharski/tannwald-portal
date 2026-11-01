@@ -1,0 +1,21 @@
+uuid: d2125ce2-131a-49ca-970f-9ff3fbd865db
+langcode: de
+status: true
+dependencies:
+  module:
+    - taxonomy
+id: taxonomy_term.field_land
+field_name: field_land
+entity_type: taxonomy_term
+type: string
+settings:
+  max_length: 2
+  case_sensitive: false
+  is_ascii: false
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

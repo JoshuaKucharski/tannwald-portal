@@ -1,0 +1,27 @@
+uuid: 0e72d3af-f0a0-42d1-a3af-108808ab8909
+langcode: de
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_datei
+    - node.type.dokument
+  module:
+    - file
+id: node.dokument.field_datei
+field_name: field_datei
+entity_type: node
+bundle: dokument
+label: Datei
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:file'
+  handler_settings: {  }
+  file_directory: dokumente
+  file_extensions: 'html pdf'
+  max_filesize: ''
+  description_field: false
+field_type: file

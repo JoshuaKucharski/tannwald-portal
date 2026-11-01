@@ -1,0 +1,11 @@
+uuid: 85ec0f50-8800-47f6-b370-da23511724f8
+langcode: de
+status: true
+dependencies: {  }
+name: Zusammenfassung
+type: zusammenfassung
+description: 'KI-Zusammenfassung einer Dokument-Revision; entsteht nur durch den SummaryGenerator.'
+help: null
+new_revision: true
+preview_mode: 0
+display_submitted: false

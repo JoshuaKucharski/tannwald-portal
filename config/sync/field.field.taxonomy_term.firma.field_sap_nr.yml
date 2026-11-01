@@ -1,0 +1,19 @@
+uuid: bc9ac378-01d4-4f52-96b7-4545ba5d1b39
+langcode: de
+status: true
+dependencies:
+  config:
+    - field.storage.taxonomy_term.field_sap_nr
+    - taxonomy.vocabulary.firma
+id: taxonomy_term.firma.field_sap_nr
+field_name: field_sap_nr
+entity_type: taxonomy_term
+bundle: firma
+label: SAP-Nummer
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

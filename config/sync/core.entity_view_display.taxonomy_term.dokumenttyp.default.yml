@@ -1,0 +1,32 @@
+uuid: 23a7f760-3078-4e85-8740-9652eee83464
+langcode: de
+status: true
+dependencies:
+  config:
+    - field.field.taxonomy_term.dokumenttyp.field_slug
+    - taxonomy.vocabulary.dokumenttyp
+  module:
+    - text
+id: taxonomy_term.dokumenttyp.default
+targetEntityType: taxonomy_term
+bundle: dokumenttyp
+mode: default
+content:
+  description:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_slug:
+    type: string
+    label: inline
+    settings:
+      link_to_entity: false
+      link_rel: canonical
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  langcode: true

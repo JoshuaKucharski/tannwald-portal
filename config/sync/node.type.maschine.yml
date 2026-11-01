@@ -1,0 +1,11 @@
+uuid: 57391d74-bd60-4140-90ed-29091450859f
+langcode: de
+status: true
+dependencies: {  }
+name: Maschine
+type: maschine
+description: 'Maschine eines Kunden (Quelle SAP über Migrate); der Titel ist die Seriennummer.'
+help: null
+new_revision: true
+preview_mode: 0
+display_submitted: false

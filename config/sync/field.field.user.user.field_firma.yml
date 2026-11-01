@@ -1,0 +1,29 @@
+uuid: ce55f4bf-a12c-4d34-a3ed-df07e6a4e0bc
+langcode: de
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_firma
+    - taxonomy.vocabulary.firma
+  module:
+    - user
+id: user.user.field_firma
+field_name: field_firma
+entity_type: user
+bundle: user
+label: Firma
+description: 'Leer für interne Rollen.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      firma: firma
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+field_type: entity_reference

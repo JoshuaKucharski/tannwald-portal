@@ -1,0 +1,19 @@
+uuid: 7b10621b-d915-49c6-9340-51352bc009d6
+langcode: de
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_modell
+    - node.type.zusammenfassung
+id: node.zusammenfassung.field_modell
+field_name: field_modell
+entity_type: node
+bundle: zusammenfassung
+label: Modell
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

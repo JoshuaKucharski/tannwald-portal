@@ -1,0 +1,28 @@
+uuid: b366b2a0-2266-4237-9f9a-53656d2b6f0a
+langcode: de
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_maschinentyp
+    - node.type.bulletin
+    - taxonomy.vocabulary.maschinentyp
+id: node.bulletin.field_maschinentyp
+field_name: field_maschinentyp
+entity_type: node
+bundle: bulletin
+label: Maschinentyp
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      maschinentyp: maschinentyp
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+field_type: entity_reference

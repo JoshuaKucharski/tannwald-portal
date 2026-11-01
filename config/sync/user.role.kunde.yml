@@ -1,0 +1,12 @@
+uuid: 0e0301cc-74c2-4c1c-b47d-0dac6da01ca5
+langcode: de
+status: true
+dependencies:
+  module:
+    - system
+id: kunde
+label: Kunde
+weight: 3
+is_admin: false
+permissions:
+  - 'access content'

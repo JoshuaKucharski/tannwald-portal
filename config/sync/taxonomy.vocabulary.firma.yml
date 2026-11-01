@@ -1,0 +1,9 @@
+uuid: 993d8d95-e180-446f-83b0-683e73129ae6
+langcode: de
+status: true
+dependencies: {  }
+name: Firma
+vid: firma
+description: 'Kundenfirmen und Händler (Quelle SAP über Migrate).'
+weight: 0
+new_revision: false

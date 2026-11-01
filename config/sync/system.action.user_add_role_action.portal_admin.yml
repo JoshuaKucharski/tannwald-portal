@@ -1,0 +1,14 @@
+uuid: 50e4b2cf-f3c8-4ae0-9b46-8c88ab0e528b
+langcode: de
+status: true
+dependencies:
+  config:
+    - user.role.portal_admin
+  module:
+    - user
+id: user_add_role_action.portal_admin
+label: 'Den ausgewählten Benutzern die Rolle Portal-Admin zuweisen'
+type: user
+plugin: user_add_role_action
+configuration:
+  rid: portal_admin

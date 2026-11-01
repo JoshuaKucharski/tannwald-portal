@@ -1,0 +1,154 @@
+uuid: 97412ea0-b0da-44ff-856a-a986cd5a985e
+langcode: de
+status: true
+dependencies:
+  config:
+    - field.field.node.dokument.body
+    - field.field.node.dokument.field_aenderungsvermerk
+    - field.field.node.dokument.field_datei
+    - field.field.node.dokument.field_dokumenttyp
+    - field.field.node.dokument.field_exportklasse
+    - field.field.node.dokument.field_freigegeben_am
+    - field.field.node.dokument.field_gueltig_bis
+    - field.field.node.dokument.field_maschinentyp
+    - field.field.node.dokument.field_seriennummer
+    - field.field.node.dokument.field_version
+    - node.type.dokument
+    - workflows.workflow.redaktion
+  module:
+    - content_moderation
+    - datetime
+    - file
+    - path
+    - text
+id: node.dokument.default
+targetEntityType: node
+bundle: dokument
+mode: default
+content:
+  body:
+    type: text_textarea_with_summary
+    weight: 1
+    region: content
+    settings:
+      rows: 20
+      summary_rows: 3
+      placeholder: ''
+      show_summary: false
+    third_party_settings: {  }
+  created:
+    type: datetime_timestamp
+    weight: 10
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_aenderungsvermerk:
+    type: string_textarea
+    weight: 6
+    region: content
+    settings:
+      rows: 3
+      placeholder: ''
+    third_party_settings: {  }
+  field_datei:
+    type: file_generic
+    weight: 9
+    region: content
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
+  field_dokumenttyp:
+    type: options_select
+    weight: 2
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_exportklasse:
+    type: options_select
+    weight: 7
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_freigegeben_am:
+    type: datetime_default
+    weight: 8
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_gueltig_bis:
+    type: datetime_default
+    weight: 10
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_maschinentyp:
+    type: options_buttons
+    weight: 3
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_seriennummer:
+    type: entity_reference_autocomplete
+    weight: 4
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_version:
+    type: string_textfield
+    weight: 5
+    region: content
+    settings:
+      size: 16
+      placeholder: ''
+    third_party_settings: {  }
+  langcode:
+    type: language_select
+    weight: 2
+    region: content
+    settings:
+      include_locked: true
+    third_party_settings: {  }
+  moderation_state:
+    type: moderation_state_default
+    weight: 100
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  path:
+    type: path
+    weight: 30
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    weight: 120
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  title:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  uid:
+    type: entity_reference_autocomplete
+    weight: 5
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  promote: true
+  sticky: true

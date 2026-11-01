@@ -1,0 +1,30 @@
+uuid: 9e157a4a-5b98-449d-a9a3-06bb68d95b62
+langcode: de
+status: true
+dependencies:
+  module:
+    - node
+    - options
+id: node.field_exportklasse
+field_name: field_exportklasse
+entity_type: node
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: keine
+      label: Keine
+    -
+      value: klasse_1
+      label: 'Klasse 1'
+    -
+      value: klasse_2
+      label: 'Klasse 2'
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

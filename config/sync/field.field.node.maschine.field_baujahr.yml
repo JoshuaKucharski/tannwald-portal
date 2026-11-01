@@ -1,0 +1,23 @@
+uuid: 4c9e3b1d-4f87-4879-b96a-7fb6c8862c1d
+langcode: de
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_baujahr
+    - node.type.maschine
+id: node.maschine.field_baujahr
+field_name: field_baujahr
+entity_type: node
+bundle: maschine
+label: Baujahr
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

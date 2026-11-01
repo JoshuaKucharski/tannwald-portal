@@ -1,0 +1,23 @@
+uuid: 8249dce2-ed16-4922-8495-772eed62b420
+langcode: de
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_dokument_revision
+    - node.type.zusammenfassung
+id: node.zusammenfassung.field_dokument_revision
+field_name: field_dokument_revision
+entity_type: node
+bundle: zusammenfassung
+label: Dokument-Revision
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

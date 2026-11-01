@@ -1,0 +1,21 @@
+uuid: 8d367653-8f03-4700-a78d-27e1c3b05fe8
+langcode: de
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_vertrag
+    - node.type.maschine
+  module:
+    - options
+id: node.maschine.field_vertrag
+field_name: field_vertrag
+entity_type: node
+bundle: maschine
+label: Vertrag
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string

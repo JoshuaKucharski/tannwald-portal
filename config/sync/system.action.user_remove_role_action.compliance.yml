@@ -1,0 +1,14 @@
+uuid: 1b599517-35be-4bf3-af38-3575e794a5be
+langcode: de
+status: true
+dependencies:
+  config:
+    - user.role.compliance
+  module:
+    - user
+id: user_remove_role_action.compliance
+label: 'Den ausgewählten Benutzern die Rolle Compliance entziehen'
+type: user
+plugin: user_remove_role_action
+configuration:
+  rid: compliance

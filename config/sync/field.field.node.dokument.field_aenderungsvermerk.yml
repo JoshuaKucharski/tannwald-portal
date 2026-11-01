@@ -1,0 +1,19 @@
+uuid: 5039aaab-d654-41ab-9c1f-eb8ff7119158
+langcode: de
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_aenderungsvermerk
+    - node.type.dokument
+id: node.dokument.field_aenderungsvermerk
+field_name: field_aenderungsvermerk
+entity_type: node
+bundle: dokument
+label: Änderungsvermerk
+description: ''
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long

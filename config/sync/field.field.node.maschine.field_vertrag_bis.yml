@@ -1,0 +1,21 @@
+uuid: fc5e3b56-fd77-4c28-950e-fb568e4f7ecb
+langcode: de
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_vertrag_bis
+    - node.type.maschine
+  module:
+    - datetime
+id: node.maschine.field_vertrag_bis
+field_name: field_vertrag_bis
+entity_type: node
+bundle: maschine
+label: 'Vertrag bis'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: datetime

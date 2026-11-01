@@ -3,6 +3,8 @@ langcode: de
 status: true
 dependencies:
   config:
+    - field.field.user.user.field_firma
+    - field.field.user.user.field_land
     - field.field.user.user.user_picture
     - image.style.thumbnail
   module:
@@ -33,4 +35,6 @@ content:
       preview_image_style: thumbnail
     third_party_settings: {  }
 hidden:
+  field_firma: true
+  field_land: true
   langcode: true

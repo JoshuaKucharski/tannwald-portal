@@ -1,0 +1,14 @@
+uuid: fa99d1f2-e0c5-4247-a82f-7da0ced42eb0
+langcode: de
+status: true
+dependencies:
+  module:
+    - node
+    - system
+id: techniker
+label: Techniker
+weight: 5
+is_admin: false
+permissions:
+  - 'access content'
+  - 'view all revisions'

@@ -1,0 +1,70 @@
+uuid: 8b9a43fa-dd8c-4adb-81ee-92950c86049b
+langcode: de
+status: true
+dependencies:
+  config:
+    - node.type.bulletin
+    - node.type.dokument
+    - node.type.zusammenfassung
+  module:
+    - content_moderation
+id: redaktion
+label: Redaktion
+type: content_moderation
+type_settings:
+  states:
+    draft:
+      label: Entwurf
+      weight: 0
+      published: false
+      default_revision: false
+    published:
+      label: Freigegeben
+      weight: 2
+      published: true
+      default_revision: true
+    zur_pruefung:
+      label: 'Zur Prüfung'
+      weight: 1
+      published: false
+      default_revision: false
+    zurueckgewiesen:
+      label: Zurückgewiesen
+      weight: 3
+      published: false
+      default_revision: false
+  transitions:
+    entwurf_speichern:
+      label: 'Entwurf speichern'
+      from:
+        - draft
+        - zur_pruefung
+        - zurueckgewiesen
+        - published
+      to: draft
+      weight: 3
+    freigeben:
+      label: Freigeben
+      from:
+        - zur_pruefung
+      to: published
+      weight: 1
+    zur_pruefung_senden:
+      label: 'Zur Prüfung senden'
+      from:
+        - draft
+        - zurueckgewiesen
+      to: zur_pruefung
+      weight: 0
+    zurueckweisen:
+      label: Zurückweisen
+      from:
+        - zur_pruefung
+      to: zurueckgewiesen
+      weight: 2
+  entity_types:
+    node:
+      - bulletin
+      - dokument
+      - zusammenfassung
+  default_moderation_state: draft

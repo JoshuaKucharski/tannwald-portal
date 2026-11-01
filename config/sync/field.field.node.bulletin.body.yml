@@ -1,0 +1,26 @@
+uuid: f30f3ac4-1b74-4069-b882-40a9cd15a393
+langcode: de
+status: true
+dependencies:
+  config:
+    - field.storage.node.body
+    - filter.format.dokument_html
+    - node.type.bulletin
+  module:
+    - text
+id: node.bulletin.body
+field_name: body
+entity_type: node
+bundle: bulletin
+label: Inhalt
+description: ''
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  display_summary: false
+  required_summary: false
+  allowed_formats:
+    - dokument_html
+field_type: text_with_summary

@@ -1,0 +1,21 @@
+uuid: 1828b3e1-43eb-4c46-9cd5-4109117b52e6
+langcode: de
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_gueltig_bis
+    - node.type.dokument
+  module:
+    - datetime
+id: node.dokument.field_gueltig_bis
+field_name: field_gueltig_bis
+entity_type: node
+bundle: dokument
+label: 'Gültig bis'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: datetime

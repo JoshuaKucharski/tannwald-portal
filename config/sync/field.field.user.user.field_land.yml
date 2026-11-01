@@ -1,0 +1,20 @@
+uuid: c2ab0174-82be-47d7-b3e6-fc9d6db210fb
+langcode: de
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_land
+  module:
+    - user
+id: user.user.field_land
+field_name: field_land
+entity_type: user
+bundle: user
+label: Land
+description: 'ISO-3166 alpha-2, z. B. CH.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

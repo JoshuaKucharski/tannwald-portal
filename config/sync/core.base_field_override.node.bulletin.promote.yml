@@ -1,0 +1,22 @@
+uuid: 0bea0bbf-41fa-4e9b-a9bd-50942a5af603
+langcode: de
+status: true
+dependencies:
+  config:
+    - node.type.bulletin
+id: node.bulletin.promote
+field_name: promote
+entity_type: node
+bundle: bulletin
+label: 'Auf der Startseite anzeigen'
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: An
+  off_label: Aus
+field_type: boolean

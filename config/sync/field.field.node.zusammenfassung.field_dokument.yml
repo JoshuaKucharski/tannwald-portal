@@ -1,0 +1,28 @@
+uuid: 2b1a4daf-edcc-458d-9c8a-965b9699d871
+langcode: de
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_dokument
+    - node.type.dokument
+    - node.type.zusammenfassung
+id: node.zusammenfassung.field_dokument
+field_name: field_dokument
+entity_type: node
+bundle: zusammenfassung
+label: Dokument
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      dokument: dokument
+    sort:
+      field: title
+      direction: asc
+    auto_create: false
+field_type: entity_reference

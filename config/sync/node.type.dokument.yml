@@ -1,0 +1,11 @@
+uuid: 65fd6082-1c65-4e02-9ad6-54fc581d7376
+langcode: de
+status: true
+dependencies: {  }
+name: Dokument
+type: dokument
+description: 'Technisches Dokument einer Maschine mit Versionen, Sprachen und Exportklasse.'
+help: null
+new_revision: true
+preview_mode: 0
+display_submitted: false

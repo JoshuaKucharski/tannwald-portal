@@ -1,0 +1,25 @@
+uuid: 7bf93b57-99ab-4d39-86c9-b5f9553a313b
+langcode: de
+status: true
+dependencies:
+  config:
+    - filter.format.dokument_html
+    - workflows.workflow.redaktion
+  module:
+    - content_moderation
+    - filter
+    - node
+    - system
+id: compliance
+label: Compliance
+weight: 7
+is_admin: false
+permissions:
+  - 'access content'
+  - 'access content overview'
+  - 'use redaktion transition freigeben'
+  - 'use redaktion transition zurueckweisen'
+  - 'use text format dokument_html'
+  - 'view all revisions'
+  - 'view any unpublished content'
+  - 'view latest version'

@@ -3,6 +3,8 @@ langcode: de
 status: true
 dependencies:
   config:
+    - field.field.user.user.field_firma
+    - field.field.user.user.field_land
     - field.field.user.user.user_picture
     - image.style.thumbnail
   module:
@@ -15,6 +17,11 @@ targetEntityType: user
 bundle: user
 mode: default
 content:
+  masquerade:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 50
+    region: content
   member_for:
     weight: 5
     region: content
@@ -30,4 +37,6 @@ content:
     weight: 0
     region: content
 hidden:
+  field_firma: true
+  field_land: true
   langcode: true

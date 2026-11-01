@@ -1,0 +1,23 @@
+uuid: 5d650339-6930-4fc3-9185-778590cf4334
+langcode: de
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_bestaetigung_pflicht
+    - node.type.bulletin
+id: node.bulletin.field_bestaetigung_pflicht
+field_name: field_bestaetigung_pflicht
+entity_type: node
+bundle: bulletin
+label: 'Bestätigung Pflicht'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: Ja
+  off_label: Nein
+field_type: boolean

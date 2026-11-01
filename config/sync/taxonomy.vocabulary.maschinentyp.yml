@@ -1,0 +1,9 @@
+uuid: a9833abd-b9de-4c99-ba8c-7bf138fc56ab
+langcode: de
+status: true
+dependencies: {  }
+name: Maschinentyp
+vid: maschinentyp
+description: 'Maschinentypen (TB-200, TB-400, KT-500). Terme legt der Seeder an.'
+weight: 0
+new_revision: false

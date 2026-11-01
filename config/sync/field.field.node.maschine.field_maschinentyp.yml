@@ -1,0 +1,28 @@
+uuid: 099d25c1-40d6-4009-91db-9cbcbcbb2602
+langcode: de
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_maschinentyp
+    - node.type.maschine
+    - taxonomy.vocabulary.maschinentyp
+id: node.maschine.field_maschinentyp
+field_name: field_maschinentyp
+entity_type: node
+bundle: maschine
+label: Maschinentyp
+description: 'Genau ein Maschinentyp (die Storage ist mit dokument und bulletin geteilt und darum mehrwertig).'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      maschinentyp: maschinentyp
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+field_type: entity_reference

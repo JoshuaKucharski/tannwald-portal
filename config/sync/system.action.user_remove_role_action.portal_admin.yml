@@ -1,0 +1,14 @@
+uuid: a8768cbd-0d8a-4583-9085-5269ebe8bc70
+langcode: de
+status: true
+dependencies:
+  config:
+    - user.role.portal_admin
+  module:
+    - user
+id: user_remove_role_action.portal_admin
+label: 'Den ausgewählten Benutzern die Rolle Portal-Admin entziehen'
+type: user
+plugin: user_remove_role_action
+configuration:
+  rid: portal_admin
