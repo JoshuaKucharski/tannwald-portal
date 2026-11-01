@@ -7,79 +7,83 @@ monthly_token_limit: 2000000
 kosten_pro_1k_chf: 0.0
 safety_terms:
   de:
-    - Schutzhaube*
-    - Verriegelung*
-    - verriegeln
-    - Lockout
-    - Lockout-Tagout
+    - 'überbrück*'
+    - 'Überbrückung*'
+    - 'umgeh*'
+    - 'deaktivier*'
+    - 'Lockout*'
+    - 'Hauptschalter*'
     - stromlos
+    - 'unter Spannung'
     - Hochspannung
-    - Hochfrequenz*
-    - HF-Generator
-    - Heizpatrone*
-    - Quetsch*
-    - Reinigungsmittel*
-    - Chemikalie*
-    - überbrücken
-    - Überbrückung*
-    - Sicherheitsschalter*
-    - Not-Halt*
-    - Nothalt*
-    - Lichtvorhang*
-    - Laser*
-    - Druckluft
-    - Schutzeinrichtung*
-    - Verbrennung*
-    - Stromschlag*
+    - 'Not-Halt*'
+    - 'Nothalt*'
+    - 'Lichtvorhang*'
+    - 'Sicherheitsschalter*'
+    - 'Sicherheitskette*'
+    - 'Zweihand*'
+    - 'Lösungsmittel*'
+    - 'Quetsch*'
+    - 'Stromschlag*'
+    - 'Verbrennung*'
+    - 'ohne Schulung'
+    - 'ohne Begleitung'
+    - 'Schutzhaube* + offen*'
+    - 'Schutzhaube* + trotzdem'
+    - 'Schutzhaube* + entfern*'
+    - 'Heizpatrone* + selbst'
+    - 'Heizpatrone* + berühr*'
+    - 'Schaltschrank* + offen*'
+    - 'ohne + stopp*'
+    - 'während + läuft'
+    - 'heiss* + nachfüll*'
   en:
-    - safety guard*
-    - protective cover*
-    - interlock*
-    - lockout
-    - lockout-tagout
+    - 'bypass*'
+    - bridge
+    - bridging
+    - 'disabl*'
+    - 'lockout*'
     - tagout
-    - de-energi*
-    - high voltage
-    - high frequency
-    - HF generator*
-    - heating cartridge*
-    - crush*
-    - pinch*
-    - cleaning agent*
-    - chemical*
-    - bypass*
-    - safety switch*
-    - emergency stop*
-    - e-stop*
-    - light curtain*
-    - laser*
-    - compressed air
-    - burn*
-    - electric shock*
+    - 'emergency stop*'
+    - 'e-stop*'
+    - 'light curtain*'
+    - 'safety switch*'
+    - 'safety chain*'
+    - 'two-hand*'
+    - 'solvent*'
+    - 'crush*'
+    - 'pinch*'
+    - 'electric shock*'
+    - 'high voltage'
+    - 'de-energi*'
+    - 'without + switch*'
+    - 'while + powered'
+    - 'while + running'
+    - 'protective hood* + remov*'
+    - 'hood* + open*'
+    - 'heating cartridge* + touch*'
+    - 'heating cartridge* + without'
+    - 'cabinet* + open*'
   fr:
-    - capot de protection
-    - carter de protection
-    - verrouillage*
-    - consignation*
-    - cadenassage*
-    - hors tension
-    - haute tension
-    - haute fréquence
-    - générateur HF
-    - cartouche chauffante*
-    - écrasement*
-    - pincement*
-    - produit de nettoyage*
-    - produits de nettoyage*
-    - produit chimique*
-    - pontage*
+    - 'contourn*'
     - ponter
-    - interrupteur de sécurité*
-    - arrêt d'urgence*
-    - barrière immatérielle*
-    - rideau lumineux*
-    - laser*
-    - air comprimé
-    - brûlure*
-    - électrocution*
+    - 'pontage*'
+    - shunter
+    - 'consignation*'
+    - 'cadenassage*'
+    - 'hors tension'
+    - 'sous tension'
+    - 'haute tension'
+    - 'arrêt d''urgence*'
+    - 'barrière immatérielle*'
+    - 'rideau lumineux*'
+    - 'interrupteur de sécurité*'
+    - 'solvant*'
+    - 'écrasement*'
+    - 'pincement*'
+    - 'électrocution*'
+    - 'brûlure*'
+    - 'pendant + tourne'
+    - 'cartouche* + moi-même'
+    - 'capot* + ouvert*'
 assistant_enabled: true

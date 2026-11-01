@@ -11,11 +11,14 @@ use Drupal\tannwald_assistant\Result\RetrievalResult;
  * Erkennt Sicherheitsthemen (FA-AI-04, TC-09).
  *
  * Sicherheit, wenn (a) ein Begriff aus safety_terms der Antwortsprache oder
- * der beiden anderen Sprachen in der Frage vorkommt, oder (b) einer der drei
- * besten Treffer im heading_path „Sicherheit“, „Safety“ oder „Sécurité“
- * enthält. Vergleich auf normalisiertem Text: Kleinbuchstaben, ä/ö/ü/ß →
- * ae/oe/ue/ss, Akzente entfernt, Apostrophe vereinheitlicht. Begriffe gelten
- * an Wortgrenzen; ein Stern am Ende erlaubt Verlängerungen (Schutzhaube* →
+ * der beiden anderen Sprachen in der Frage vorkommt — ein Begriff „A + B“
+ * verlangt alle Teile (Bauteil + riskante Handlung, 6.1) —, oder (b) einer der
+ * drei besten Treffer im heading_path „Sicherheit“, „Safety“ oder „Sécurité“
+ * enthält **und** die Frage ein Risiko-Signalwort trägt (RISK_MARKERS, 6.1:
+ * sonst lösten reine Informationsfragen über Sicherheitskapitel aus).
+ * Vergleich auf normalisiertem Text: Kleinbuchstaben, ä/ö/ü/ß → ae/oe/ue/ss,
+ * Akzente entfernt, Apostrophe vereinheitlicht. Begriffe gelten an
+ * Wortgrenzen; ein Stern am Ende erlaubt Verlängerungen (Schutzhaube* →
  * Schutzhauben, Schutzhaubenschalter); Leerzeichen und Bindestriche in einem
  * Begriff passen auf Leerzeichen, Bindestrich oder nichts (Not-Halt →
  * Nothalt, Not Halt).
@@ -33,9 +36,62 @@ final class SafetyTopicDetector {
   public const HEADING_TOP = 3;
 
   /**
+   * Risiko-Signalwörter für die Kapitel-Regel (gleiche Syntax wie Begriffe).
+   */
+  public const RISK_MARKERS = [
+    'de' => [
+      'ohne',
+      'während',
+      'trotzdem',
+      'selbst',
+      'allein*',
+      'offen*',
+      'öffn*',
+      'entfern*',
+      'berühr*',
+      'greif*',
+      'umgeh*',
+      'überbrück*',
+      'abschalt*',
+      'schalte',
+      'deaktivier*',
+      'nachfüll*',
+      'heiss*',
+      'laufend*',
+      'läuft',
+    ],
+    'en' => [
+      'without',
+      'while',
+      'remove*',
+      'disabl*',
+      'touch*',
+      'reach*',
+      'open*',
+      'bypass*',
+      'bridg*',
+      'running',
+      'powered',
+      'alone',
+      'myself',
+    ],
+    'fr' => [
+      'sans',
+      'pendant',
+      'retirer',
+      'toucher',
+      'moi-même',
+      'contourn*',
+      'ouvert*',
+      'tourne',
+      'seul*',
+    ],
+  ];
+
+  /**
    * Zwischenspeicher der Muster je Sprache.
    *
-   * @var array<string, string[]>
+   * @var array<string, array<string, string[]>>
    */
   private array $patterns = [];
 
@@ -47,7 +103,23 @@ final class SafetyTopicDetector {
    * TRUE, wenn Frage oder Top-Treffer ein Sicherheitsthema anzeigen.
    */
   public function isSafety(string $frage, RetrievalResult $result, string $langcode): bool {
-    return $this->matchedTerm($frage, $langcode) !== NULL || $this->safetyHitNumbers($result) !== [];
+    return $this->matchedTerm($frage, $langcode) !== NULL
+      || ($this->safetyHitNumbers($result) !== [] && $this->hasRiskMarker($frage));
+  }
+
+  /**
+   * TRUE, wenn die Frage ein Risiko-Signalwort (alle Sprachen) enthält.
+   */
+  public function hasRiskMarker(string $frage): bool {
+    $text = self::normalize($frage);
+    foreach (self::RISK_MARKERS as $markers) {
+      foreach ($markers as $marker) {
+        if (self::matchesTerm($marker, $text)) {
+          return TRUE;
+        }
+      }
+    }
+    return FALSE;
   }
 
   /**
@@ -56,8 +128,8 @@ final class SafetyTopicDetector {
   public function matchedTerm(string $frage, string $langcode): ?string {
     $text = self::normalize($frage);
     foreach ($this->orderedLangcodes($langcode) as $code) {
-      foreach ($this->patternsFor($code) as $term => $pattern) {
-        if (preg_match($pattern, $text) === 1) {
+      foreach ($this->patternsFor($code) as $term => $patterns) {
+        if (self::allMatch($patterns, $text)) {
           return $term;
         }
       }
@@ -138,6 +210,44 @@ final class SafetyTopicDetector {
   }
 
   /**
+   * TRUE, wenn ein Begriff (auch „A + B“) im normalisierten Text vorkommt.
+   */
+  public static function matchesTerm(string $term, string $normalizedText): bool {
+    return self::allMatch(self::patternsForTerm($term), $normalizedText);
+  }
+
+  /**
+   * Muster eines Begriffs; „A + B“ ergibt ein Muster je Teil.
+   *
+   * @return string[]
+   *   Regexe (alle müssen passen).
+   */
+  public static function patternsForTerm(string $term): array {
+    $parts = array_values(array_filter(array_map('trim', explode(' + ', $term)), static fn (string $part): bool => trim($part, '* ') !== ''));
+    return array_map([self::class, 'patternForTerm'], $parts);
+  }
+
+  /**
+   * TRUE, wenn alle Muster passen (leere Liste: FALSE).
+   *
+   * @param string[] $patterns
+   *   Regexe.
+   * @param string $text
+   *   Normalisierter Text.
+   */
+  private static function allMatch(array $patterns, string $text): bool {
+    if ($patterns === []) {
+      return FALSE;
+    }
+    foreach ($patterns as $pattern) {
+      if (preg_match($pattern, $text) !== 1) {
+        return FALSE;
+      }
+    }
+    return TRUE;
+  }
+
+  /**
    * Baut das Suchmuster eines Begriffs.
    */
   public static function patternForTerm(string $term): string {
@@ -167,8 +277,8 @@ final class SafetyTopicDetector {
   /**
    * Muster aller Begriffe einer Sprache aus der Konfiguration.
    *
-   * @return array<string, string>
-   *   Begriff => Regex.
+   * @return array<string, string[]>
+   *   Begriff => Regexe (alle müssen passen).
    */
   private function patternsFor(string $langcode): array {
     if (!isset($this->patterns[$langcode])) {
@@ -176,7 +286,7 @@ final class SafetyTopicDetector {
       $this->patterns[$langcode] = [];
       foreach ($terms as $term) {
         if (is_string($term) && trim($term, " *\t") !== '') {
-          $this->patterns[$langcode][$term] = self::patternForTerm($term);
+          $this->patterns[$langcode][$term] = self::patternsForTerm($term);
         }
       }
     }

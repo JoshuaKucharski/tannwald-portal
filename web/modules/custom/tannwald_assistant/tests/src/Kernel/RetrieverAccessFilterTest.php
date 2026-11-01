@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace Drupal\Tests\tannwald_assistant\Kernel;
 
 use Drupal\tannwald_assistant\Result\RetrievalResult;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\tannwald_assistant\Retriever;
+use Drupal\taxonomy\Entity\Term;
 use Drupal\user\UserInterface;
 use PHPUnit\Framework\Attributes\Group;
 
@@ -177,6 +180,73 @@ final class RetrieverAccessFilterTest extends AssistantKernelTestBase {
 
     $all = $this->retriever()->search('Siegelstation reinigen', $this->viewer, NULL);
     $this->assertSame([1, 2], array_column($all->hits, 'chunk_id'), 'search() behält alte Revisionen.');
+  }
+
+  /**
+   * Zahl der Zusatzabfragen auf Sicherheitsüberschriften (Hebel 1).
+   */
+  private int $safetyQueries = 0;
+
+  /**
+   * Hebel 1 (6.1): Sicherheitsfrage hebt das Sicherheitskapitel nach vorn.
+   */
+  public function testSafetyListLiftsSafetyChapter(): void {
+    $doc = $this->createDocument('Betriebsanleitung TB-200');
+    $cleaning = $this->row(1, $doc, 0, '7 Reinigung › 7.3 Reinigung Siegelstation');
+    $faults = $this->row(2, $doc, 1, '9 Störungen › 9.1 Störungstabelle');
+    $other = $this->row(4, $doc, 3, '9 Störungen › 9.2 Störungen Formstation');
+    $other2 = $this->row(5, $doc, 4, '1 Aufbau');
+    $safety = $this->row(3, $doc, 2, '2 Sicherheit › 2.3 Stromlos schalten');
+    $topical = [$cleaning, $faults, $other, $other2];
+    $this->accessKeys->method('forAccount')->willReturn(self::KEYS);
+    $this->store->method('keyword')->willReturnCallback(function (string $query) use ($topical, $safety): array {
+      if ($query === Retriever::SAFETY_QUERY) {
+        $this->safetyQueries++;
+        return [$safety];
+      }
+      return $topical;
+    });
+    $pool = [$cleaning, $safety];
+    $this->store->method('similar')->willReturnCallback(
+      static fn (array $vector, array $keys, int $limit): array => $limit === Retriever::SAFETY_POOL ? $pool : $topical,
+    );
+    $this->store->method('facetCounts')->willReturn(RetrievalResult::EMPTY_FACETS);
+
+    $plain = $this->retriever()->retrieve('Wie oft reinige ich die Siegelstation?', $this->viewer, NULL);
+    $this->assertNotContains(3, array_column($plain->hits, 'chunk_id'), 'Ohne Sicherheitsbegriff keine Sicherheitsliste.');
+    $this->assertSame(0, $this->safetyQueries);
+
+    $result = $this->retriever()->retrieve('Darf ich die Siegelstation reinigen, ohne stromlos zu schalten?', $this->viewer, NULL);
+    $ids = array_column($result->hits, 'chunk_id');
+    $this->assertContains(3, array_slice($ids, 0, 2), 'Sicherheitskapitel unter den ersten zwei.');
+    $this->assertSame(1, $this->safetyQueries);
+    $byId = array_column($result->hits, NULL, 'chunk_id');
+    $this->assertSame('vector', $byId[3]['matched_by'], 'matched_by bleibt keyword|vector|both.');
+  }
+
+  /**
+   * Hebel 2 (6.1): Typcode in der Frage filtert fremde Maschinentypen.
+   */
+  public function testTypeCodeFilter(): void {
+    FieldStorageConfig::create(['field_name' => 'field_typ_code', 'entity_type' => 'taxonomy_term', 'type' => 'string'])->save();
+    FieldConfig::create(['field_name' => 'field_typ_code', 'entity_type' => 'taxonomy_term', 'bundle' => 'maschinentyp'])->save();
+    foreach ([$this->tb200 => 'TB200', $this->kt500 => 'KT500'] as $tid => $code) {
+      Term::load($tid)->set('field_typ_code', $code)->save();
+    }
+    $tbDoc = $this->createDocument('Wartungsplan TB-200');
+    $ktDoc = $this->createDocument('Wartungsplan KT-500');
+    $rows = [$this->row(1, $tbDoc, 0, '3 Siegelstation'), $this->row(2, $ktDoc, 0, '3 Kartonmagazin', [$this->kt500])];
+    $this->accessKeys->method('forAccount')->willReturn(self::KEYS);
+    $this->store->method('keyword')->willReturn($rows);
+    $this->store->method('similar')->willReturn($rows);
+    $this->store->method('facetCounts')->willReturn(RetrievalResult::EMPTY_FACETS);
+
+    $kt = $this->retriever()->retrieve('Wie oft wird die KT-500 gewartet?', $this->viewer, NULL);
+    $this->assertSame([(int) $ktDoc->id()], array_column($kt->hits, 'nid'));
+    $both = $this->retriever()->retrieve('Unterschied TB 200 und KT500?', $this->viewer, NULL);
+    $this->assertCount(2, $both->hits, 'Zwei genannte Typen: beide bleiben.');
+    $none = $this->retriever()->retrieve('Wie oft wird die TB-400 gewartet?', $this->viewer, NULL);
+    $this->assertCount(2, $none->hits, 'Typ ohne Treffer: ungefiltert statt leer.');
   }
 
   /**

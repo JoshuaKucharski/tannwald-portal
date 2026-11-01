@@ -7,7 +7,8 @@ namespace Drupal\tannwald_assistant;
 /**
  * Reciprocal Rank Fusion über mehrere Trefferlisten.
  *
- * Score(chunk) = Σ über alle Listen 1 / (k + rang), rang ab 1. Identität eines
+ * Score(chunk) = Σ über alle Listen gewicht / (k + rang), rang ab 1, Gewicht 1
+ * wenn nicht angegeben (6.1: Sicherheitsliste mit 2). Identität eines
  * Treffers ist die Chunk-ID (Schlüssel "id"). matched_by ist der Name der
  * Liste, oder "both", wenn der Treffer in mehr als einer Liste steht.
  * Gleichstand wird stabil nach nid, chunk_index, id aufgelöst.
@@ -24,12 +25,14 @@ final class Rrf {
    *   Rangfolge (bester zuerst); jede Zeile braucht id, nid, chunk_index.
    * @param int $k
    *   RRF-Konstante (Standard 60).
+   * @param array<string, float> $weights
+   *   Gewicht je Listenname (Standard 1.0).
    *
    * @return array<int, array>
    *   Zeilen der ersten Liste, in der der Treffer vorkam, mit score
    *   (RRF-Summe), matched_by und ranks {liste: rang}; absteigend nach score.
    */
-  public static function fuse(array $lists, int $k = self::DEFAULT_K): array {
+  public static function fuse(array $lists, int $k = self::DEFAULT_K, array $weights = []): array {
     if ($k < 1) {
       throw new \InvalidArgumentException('RRF k must be at least 1.');
     }
@@ -49,7 +52,7 @@ final class Rrf {
           $fused[$id]['ranks'] = [];
         }
         $fused[$id]['ranks'][$listName] = $rank;
-        $fused[$id]['score'] += 1 / ($k + $rank);
+        $fused[$id]['score'] += ($weights[$listName] ?? 1.0) / ($k + $rank);
       }
     }
     foreach ($fused as &$row) {

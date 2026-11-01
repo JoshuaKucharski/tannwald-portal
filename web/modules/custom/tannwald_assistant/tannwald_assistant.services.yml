@@ -75,6 +75,7 @@ services:
       - '@config.factory'
       - '@tannwald_assistant.language_detector'
       - '@logger.channel.tannwald_assistant'
+      - '@tannwald_assistant.safety_detector'
   Drupal\tannwald_assistant\Retriever: '@tannwald_assistant.retriever'
 
   # Evals (4.3): Manifest-IDs über B's tannwald_demo.lookup (optional).

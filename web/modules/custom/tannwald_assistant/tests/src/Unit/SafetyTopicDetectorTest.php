@@ -52,27 +52,31 @@ final class SafetyTopicDetectorTest extends UnitTestCase {
   public static function safetyQuestionProvider(): array {
     return [
       'de Schutzhaube' => ['de', 'Wie kann ich die Schutzhaube während des Betriebs offen lassen?'],
-      'de Plural über Stern' => ['de', 'Wo sind die Schutzhauben verriegelt?'],
+      'de Bauteil + Handlung' => ['de', 'Kann ich mit offener Schutzhaube produzieren?'],
+      'de Heizpatrone + selbst' => ['de', 'Darf ich die Heizpatronen selbst tauschen?'],
       'de überbrücken' => ['de', 'Darf ich den Sicherheitsschalter überbrücken?'],
       'de ohne Umlaute' => ['de', 'Kann man den Schalter ueberbruecken?'],
       'de Not-Halt als Nothalt' => ['de', 'Der Nothalt reagiert verzögert.'],
-      'de Reinigungsmittel' => ['de', 'Welches Reinigungsmittel ist erlaubt?'],
+      'de Lösungsmittel' => ['de', 'Darf ich ein stärkeres Lösungsmittel nehmen?'],
+      'de ohne Schulung' => ['de', 'Darf mein Lehrling ohne Schulung den Rollenwechsel machen?'],
       'de Quetsch-' => ['de', 'Besteht Quetschgefahr an der Siegelbacke?'],
       'de stromlos' => ['de', 'Muss die Linie stromlos sein?'],
       'en lockout' => ['en', 'How do I perform lockout before cleaning?'],
       'en interlock' => ['en', 'Can I bypass the interlock?'],
+      'en while + running' => ['en', 'Can I clean the jaws while the machine is running?'],
       'en light curtain' => ['en', 'Is the light curtain required during setup?'],
       'en high voltage' => ['en', 'Where is the high voltage area?'],
       'fr consignation' => ['fr', 'Comment faire la consignation de la machine ?'],
       'fr interrupteur de sécurité' => ['fr', 'Puis-je ponter l’interrupteur de sécurité ?'],
       'fr arrêt d’urgence' => ['fr', 'Où est l’arrêt d’urgence ?'],
       'fr haute tension' => ['fr', 'La zone haute tension est-elle protégée ?'],
+      'fr pendant + tourne' => ['fr', 'Puis-je retirer le film pendant que la machine tourne ?'],
       'de Frage mit en-Begriff' => ['de', 'Wo ist der E-Stop an der TB-200?'],
     ];
   }
 
   /**
-   * Ein Top-3-Treffer mit Sicherheitsabschnitt genügt; Rang 4 nicht.
+   * Kapitel-Regel: Top-3-Treffer im Sicherheitskapitel UND Risiko-Signalwort.
    */
   public function testHeadingPathRule(): void {
     $detector = $this->detector();
@@ -85,6 +89,22 @@ final class SafetyTopicDetectorTest extends UnitTestCase {
     $this->assertTrue($detector->isSafety($question, self::hits(['A', 'B', '2 Sécurité › 2.2 Capots']), 'de'));
     $this->assertFalse($detector->isSafety($question, self::hits(['A', 'B', 'C', '2 Sicherheitshinweise']), 'de'), 'Nur die drei besten Treffer zählen.');
     $this->assertTrue(SafetyTopicDetector::isSafetyHeading('2 Sicherheitshinweise'));
+    // Ohne Signalwort macht ein Sicherheitskapitel die Frage nicht unsicher.
+    $info = 'Welche Schutzmassnahmen gelten für die TB-200?';
+    $this->assertFalse($detector->hasRiskMarker($info));
+    $this->assertFalse($detector->isSafety($info, self::hits(['2 Sicherheit › 2.1 Grundregeln']), 'de'));
+    $this->assertTrue($detector->hasRiskMarker('Can I do this without gloves?'));
+  }
+
+  /**
+   * „A + B“ verlangt alle Teile.
+   */
+  public function testCombinedTerms(): void {
+    $text = SafetyTopicDetector::normalize('Wie viele Heizpatronen gehören zur Siegelbacke?');
+    $this->assertFalse(SafetyTopicDetector::matchesTerm('Heizpatrone* + selbst', $text));
+    $this->assertTrue(SafetyTopicDetector::matchesTerm('Heizpatrone*', $text));
+    $this->assertTrue(SafetyTopicDetector::matchesTerm('Heizpatrone* + selbst', SafetyTopicDetector::normalize('Heizpatronen selbst tauschen')));
+    $this->assertCount(2, SafetyTopicDetector::patternsForTerm('Schutzhaube* + offen*'));
   }
 
   /**
@@ -108,6 +128,11 @@ final class SafetyTopicDetectorTest extends UnitTestCase {
       'Druckluft nur als Wort' => ['de', 'Welchen Druckluftanschluss hat die TB-200?'],
       'Fehlercode' => ['de', 'Was bedeutet E-4711?'],
       'en delivery' => ['en', 'What is the delivery time for part 4711?'],
+      'Reinigungsmittel (Wireframe 01)' => ['de', 'Welche Reinigungsmittel sind freigegeben?'],
+      'Hochfrequenz-Fehlernummern' => ['de', 'Welche Fehlernummern meldet der Hochfrequenz-Generator?'],
+      'Heizpatronen-Teilenummer' => ['de', 'Wie viele Heizpatronen gehören zur Siegelbacke?'],
+      'en cleaning agents' => ['en', 'Which cleaning agents are approved for the KT-500?'],
+      'fr produits de nettoyage' => ['fr', 'Quels produits de nettoyage sont homologués pour la TB-200 ?'],
       'fr scellage' => ['fr', 'Pourquoi le film se déchire-t-il pendant le scellage ?'],
     ];
   }
