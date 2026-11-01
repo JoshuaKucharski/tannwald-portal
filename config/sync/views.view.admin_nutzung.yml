@@ -1,0 +1,158 @@
+uuid: 4111daac-bf04-4503-8c92-ef0be92e6b0a
+langcode: de
+status: true
+dependencies:
+  config:
+    - user.role.portal_admin
+  module:
+    - tannwald_assistant
+    - user
+_core:
+  default_config_hash: TRaQxmiEyNzSImfsglSdr5VnKVhmBLsfZQkQBK6ofLY
+id: admin_nutzung
+label: 'Nutzung und Kosten: Nutzung'
+module: views
+description: 'Tokens und Aufrufe je Tag und Kontext aus tannwald_usage; Antworten und Durchschnittsdauer aus dem Assistent-Log (FA-REP-01).'
+tag: tannwald
+base_table: tannwald_usage
+base_field: id
+display:
+  default:
+    id: default
+    display_title: Standard
+    display_plugin: default
+    position: 0
+    display_options:
+      title: 'Nutzung und Kosten: Nutzung je Tag'
+      fields:
+        period_day:
+          id: period_day
+          table: tannwald_usage
+          field: period_day
+          relationship: none
+          group_type: group
+          plugin_id: tannwald_period
+          label: Tag
+        kontext:
+          id: kontext
+          table: tannwald_usage
+          field: kontext
+          relationship: none
+          group_type: group
+          plugin_id: standard
+          label: Kontext
+        operation:
+          id: operation
+          table: tannwald_usage
+          field: operation
+          relationship: none
+          group_type: group
+          plugin_id: standard
+          label: Operation
+        id:
+          id: id
+          table: tannwald_usage
+          field: id
+          relationship: none
+          group_type: count
+          plugin_id: numeric
+          label: Aufrufe
+        prompt_tokens:
+          id: prompt_tokens
+          table: tannwald_usage
+          field: prompt_tokens
+          relationship: none
+          group_type: sum
+          plugin_id: numeric
+          label: Prompt-Tokens
+          separator: ’
+        completion_tokens:
+          id: completion_tokens
+          table: tannwald_usage
+          field: completion_tokens
+          relationship: none
+          group_type: sum
+          plugin_id: numeric
+          label: Antwort-Tokens
+          separator: ’
+      pager:
+        type: some
+        options:
+          offset: 0
+          items_per_page: 200
+      access:
+        type: role
+        options:
+          role:
+            portal_admin: portal_admin
+      cache:
+        type: none
+      empty:
+        area_text_custom:
+          id: area_text_custom
+          table: views
+          field: area_text_custom
+          relationship: none
+          group_type: group
+          plugin_id: text_custom
+          empty: true
+          content: 'Keine Nutzung in den letzten 30 Tagen.'
+      sorts:
+        created:
+          id: created
+          table: tannwald_usage
+          field: created
+          relationship: none
+          group_type: max
+          plugin_id: date
+          order: DESC
+      filters:
+        created:
+          id: created
+          table: tannwald_usage
+          field: created
+          relationship: none
+          group_type: group
+          plugin_id: date
+          operator: '>='
+          value:
+            value: '-30 days'
+            type: offset
+      style:
+        type: table
+      row:
+        type: fields
+      query:
+        type: views_query
+        options: {  }
+      group_by: true
+      header:
+        tannwald_answer_stats:
+          id: tannwald_answer_stats
+          table: views
+          field: tannwald_answer_stats
+          relationship: none
+          group_type: group
+          plugin_id: tannwald_answer_stats
+          empty: true
+      display_extenders: {  }
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_interface'
+        - user.roles
+      tags: {  }
+  page_1:
+    id: page_1
+    display_title: Seite
+    display_plugin: page
+    position: 1
+    display_options:
+      display_extenders: {  }
+      path: admin/tannwald/nutzung
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_interface'
+        - user.roles
+      tags: {  }
