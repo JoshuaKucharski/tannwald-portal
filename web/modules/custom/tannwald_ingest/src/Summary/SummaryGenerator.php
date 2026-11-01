@@ -59,6 +59,13 @@ class SummaryGenerator {
   ];
 
   /**
+   * Titelpräfix je Sprache.
+   *
+   * Inhalt, nicht Oberfläche: unabhängig vom Import der Übersetzungen.
+   */
+  public const TITLE_PREFIX = ['de' => 'Zusammenfassung', 'en' => 'Summary', 'fr' => 'Résumé'];
+
+  /**
    * Bezeichnungen im Kontextblock je Sprache.
    */
   public const LABELS = [
@@ -142,6 +149,10 @@ class SummaryGenerator {
 
     $message = $output->getNormalized();
     $html = SummaryText::toHtml($message instanceof ChatMessage ? $message->getText() : '', $maxWords);
+    if ($prompt === 'de') {
+      // de-CH: „ss“ statt „ß“ (das 7B-Modell hält sich nicht immer daran).
+      $html = str_replace(['ß', 'ẞ'], ['ss', 'SS'], $html);
+    }
     if (SummaryText::wordCount($html) === 0) {
       throw new \RuntimeException(sprintf('Empty summary for document %d revision %d (%s).', $dokument->id(), $dokument->getRevisionId(), $langcode));
     }
@@ -151,10 +162,11 @@ class SummaryGenerator {
     }
 
     $values = [
-      'title' => mb_substr((string) $this->t('Summary: @title @version', [
-        '@title' => $dokument->label(),
-        '@version' => $dokument->hasField('field_version') ? (string) $dokument->get('field_version')->value : '',
-      ], ['langcode' => $langcode]), 0, 255),
+      'title' => mb_substr(trim(sprintf('%s: %s %s',
+        self::TITLE_PREFIX[$prompt],
+        $dokument->label(),
+        $dokument->hasField('field_version') ? (string) $dokument->get('field_version')->value : '',
+      )), 0, 255),
       'body' => ['value' => $html, 'format' => 'dokument_html'],
       'moderation_state' => 'zur_pruefung',
     ];
@@ -237,12 +249,24 @@ class SummaryGenerator {
         $start[] = $text;
       }
     }
-    $chapterText = self::cut(implode("\n", $paths), 1500);
-    $safetyText = self::cut(implode("\n\n", $safety), 2500);
-    $budget = max(0, $maxChars - mb_strlen($chapterText) - mb_strlen($safetyText));
-    $startText = self::cut(implode("\n\n", $start), $budget);
+    $sections = [
+      'chapters' => self::cut(implode("\n", $paths), min(1500, $maxChars)),
+      'start' => '',
+      'safety' => self::cut(implode("\n\n", $safety), min(2500, $maxChars)),
+    ];
+    // Der Anfang füllt, was nach Kapitelliste, Sicherheitskapiteln und den
+    // Bezeichnungen bis $maxChars übrig bleibt.
+    $fixed = mb_strlen(self::assemble($sections, $labels)) + mb_strlen($labels['start']) + 4;
+    $sections['start'] = self::cut(implode("\n\n", $start), max(0, $maxChars - $fixed));
+    return mb_substr(self::assemble($sections, $labels), 0, $maxChars);
+  }
+
+  /**
+   * Fügt die nicht leeren Abschnitte mit Bezeichnung zusammen.
+   */
+  protected static function assemble(array $sections, array $labels): string {
     $parts = [];
-    foreach (['chapters' => $chapterText, 'start' => $startText, 'safety' => $safetyText] as $key => $text) {
+    foreach ($sections as $key => $text) {
       if ($text !== '') {
         $parts[] = $labels[$key] . ":\n" . $text;
       }
@@ -346,7 +370,10 @@ class SummaryGenerator {
     if (mb_strlen($text) <= $max) {
       return $text;
     }
-    $cut = mb_substr($text, 0, $max);
+    if ($max < 3) {
+      return '';
+    }
+    $cut = mb_substr($text, 0, $max - 2);
     $space = mb_strrpos($cut, ' ');
     return rtrim($space !== FALSE ? mb_substr($cut, 0, $space) : $cut) . ' …';
   }

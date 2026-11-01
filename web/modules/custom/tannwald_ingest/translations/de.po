@@ -47,9 +47,6 @@ msgstr "@jobs Zusammenfassungs-Jobs eingestellt (tannwald_summarize enthält jet
 msgid "Tannwald document summaries"
 msgstr "Tannwald: Dokument-Zusammenfassungen"
 
-msgid "Summary: @title @version"
-msgstr "Zusammenfassung: @title @version"
-
 msgctxt "tannwald review"
 msgid "Summary (editable)"
 msgstr "Zusammenfassung (bearbeitbar)"

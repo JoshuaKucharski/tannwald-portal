@@ -35,7 +35,7 @@ class SummaryGeneratorTest extends SummaryKernelTestBase {
 
     $this->assertSame('zusammenfassung', $summary->bundle());
     $this->assertSame('de', $summary->language()->getId());
-    $this->assertStringContainsString('Betriebsanleitung TB-200 3.2', $summary->label());
+    $this->assertSame('Zusammenfassung: Betriebsanleitung TB-200 3.2', $summary->label());
     $this->assertSame('zur_pruefung', $summary->get('moderation_state')->value);
     $this->assertFalse($summary->isPublished());
     $this->assertSame('dokument_html', $summary->get('body')->format);
@@ -91,6 +91,17 @@ class SummaryGeneratorTest extends SummaryKernelTestBase {
     $this->assertStringNotContainsString('<script', $body);
     $this->assertStringNotContainsString('onclick', $body);
     $this->assertStringNotContainsString('<h2', $body);
+
+    // de-CH: ß wird ss.
+    $this->chatReply = 'Die Anleitung nennt die Maßnahmen für die Reinigung der Siegelstation und die Sicherheit in Kapitel 2.';
+    $third = $this->createPublishedDocument('Drittes Dokument');
+    $summary = $this->generator()->generate($third, 'de');
+    $this->assertStringContainsString('Massnahmen', (string) $summary->get('body')->value);
+
+    // Kontextblock bleibt im Zeichenbudget.
+    foreach ([200, 400, 6000] as $max) {
+      $this->assertLessThanOrEqual($max, mb_strlen($this->generator()->contextBlock($third, 'de', $max)));
+    }
 
     // Markdown-Liste und Fett werden zu ul/li/strong.
     $this->chatReply = "Die Anleitung beschreibt die Linie und die Reinigung der Station für den Betrieb.\n\n- **Kapitel 2** Sicherheit\n- Kapitel 7.3 Reinigung";
