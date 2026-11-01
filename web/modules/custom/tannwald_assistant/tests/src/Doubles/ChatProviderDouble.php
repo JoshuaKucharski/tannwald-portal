@@ -46,6 +46,13 @@ final class ChatProviderDouble extends ProviderProxy {
   public int $calls = 0;
 
   /**
+   * Antworten je Aufruf (leer: immer $reply).
+   *
+   * @var string[]
+   */
+  public array $queue = [];
+
+  /**
    * Erzeugt das Double ohne Dienste.
    *
    * @param string $reply
@@ -79,7 +86,8 @@ final class ChatProviderDouble extends ProviderProxy {
       $this->model = $arguments[1];
       $this->tags = $arguments[2] ?? [];
       $raw = ['usage' => ['prompt_tokens' => 812, 'completion_tokens' => 64]];
-      $output = new ChatOutput(new ChatMessage('assistant', $this->reply), $raw, [], new TokenUsageDto(input: 812, output: 64, total: 876));
+      $reply = $this->queue !== [] ? (string) array_shift($this->queue) : $this->reply;
+      $output = new ChatOutput(new ChatMessage('assistant', $reply), $raw, [], new TokenUsageDto(input: 812, output: 64, total: 876));
       $this->dispatcher?->dispatch(new PostGenerateResponseEvent('thread-1', 'ollama', 'chat', $this->configuration, $this->input, (string) $this->model, $output, $this->tags), PostGenerateResponseEvent::EVENT_NAME);
       return $output;
     }

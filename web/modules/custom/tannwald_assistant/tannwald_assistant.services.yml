@@ -77,6 +77,30 @@ services:
       - '@logger.channel.tannwald_assistant'
   Drupal\tannwald_assistant\Retriever: '@tannwald_assistant.retriever'
 
+  # Evals (4.3): Manifest-IDs über B's tannwald_demo.lookup (optional).
+  tannwald_assistant.manifest_lookup:
+    class: Drupal\tannwald_assistant\Eval\DemoManifestLookup
+    arguments: ['@?tannwald_demo.lookup']
+  Drupal\tannwald_assistant\Eval\ManifestLookupInterface: '@tannwald_assistant.manifest_lookup'
+
+  tannwald_assistant.eval_source_resolver:
+    class: Drupal\tannwald_assistant\Eval\SourceResolver
+    arguments: ['@tannwald_assistant.manifest_lookup', '@entity_type.manager', '@database']
+  Drupal\tannwald_assistant\Eval\SourceResolver: '@tannwald_assistant.eval_source_resolver'
+
+  tannwald_assistant.eval_runner:
+    class: Drupal\tannwald_assistant\Eval\EvalRunner
+    arguments:
+      - '@tannwald_assistant.eval_source_resolver'
+      - '@tannwald_assistant.retriever'
+      - '@tannwald_assistant.answer'
+      - '@entity_type.manager'
+      - '@account_switcher'
+      - '@request_stack'
+      - '@config.factory'
+      - '@datetime.time'
+  Drupal\tannwald_assistant\Eval\EvalRunner: '@tannwald_assistant.eval_runner'
+
   tannwald_assistant.answer:
     class: Drupal\tannwald_assistant\AnswerService
     arguments:
