@@ -1,0 +1,45 @@
+/* Seiten „Meine Maschinen“ und Maschine (1.2): Kartenraster, Typenschild, Dokumenten-Tabelle mit Thumb. */
+@layer components {
+  /* Kartenraster 3 / 2 / 1, Gutter 24 (Phone 16). */
+  .machine-grid { @apply grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-3; }
+  /* Karte ohne Rahmen auf der Fläche: Bild, Titel 17/500, Meta; Hover nur Rahmen --color-control. */
+  .machine-card { @apply rounded-card border border-transparent bg-panel; transition: border-color var(--duration-fast) var(--ease-out-soft); }
+  .machine-card:hover { @apply border-control; }
+  .machine-card:focus-within { @apply border-control; }
+  .machine-card-link { @apply flex flex-col gap-3 p-3 text-ink no-underline hover:text-ink; }
+  .machine-card-link:focus-visible { outline-offset: 0; }
+  .machine-card-body { @apply flex flex-col gap-1 px-1 pb-1; }
+  .machine-card-title { @apply text-lg font-medium leading-title; }
+  .machine-card-quiet { @apply mt-1; }
+
+  /* Typenschild: dl mit Zeilenraster. */
+  .plate { @apply m-0 flex flex-col; }
+  .plate-row { @apply grid grid-cols-[9rem_minmax(0,1fr)] gap-x-4 border-b border-line-soft py-2 last:border-b-0; }
+  .plate-label { @apply text-sm text-muted; }
+  .plate-value { @apply m-0 text-base text-ink tabular-nums; }
+  .plate-value--muted { @apply text-muted; }
+  .plate-value--ok { @apply text-ok; }
+  .plate-value--warn { @apply text-warn; }
+
+  /* Seitenkopf mit Bild rechts (Maschine, Dokument): links Titel und Typenschild, rechts 3:2. */
+  .head-split { @apply grid grid-cols-1 items-start gap-6 md:grid-cols-[minmax(0,1fr)_minmax(16rem,22rem)] md:gap-8 lg:grid-cols-[minmax(0,1fr)_26rem]; }
+  .head-split .figure { @apply md:order-last; }
+
+  /* Dokumenten-Tabelle: Thumb 320 (3:2, 96 px breit), Gruppenzeile je Dokumenttyp; unter md gestapelt. */
+  .doc-table th:first-child, .doc-table td:first-child { @apply w-28 pr-0; }
+  .doc-thumb { @apply block w-24 overflow-hidden rounded bg-line-soft; }
+  .doc-thumb .tw-image { @apply aspect-card h-auto w-full; }
+  .doc-table .table-group th { @apply border-b border-line bg-surface pt-4 text-sm font-medium text-muted; }
+  .doc-table tr[data-revision="older"] td { @apply text-muted; }
+  .doc-title { @apply font-medium text-ink no-underline hover:text-accent; }
+  @media (max-width: 47.99rem) {
+    .table--stack thead { @apply hidden; }
+    .table--stack tbody, .table--stack tr, .table--stack td { @apply block; }
+    .table--stack tr { @apply grid grid-cols-[6rem_minmax(0,1fr)] gap-x-3 border-b border-line-soft py-3; }
+    .table--stack tr.table-group { @apply block border-b-0 py-0; }
+    .table--stack tr.table-group th { @apply block px-0 pt-4; }
+    .table--stack td { @apply border-0 px-0 py-0.5; }
+    .table--stack td:first-child { @apply row-span-6 w-auto; }
+    .table--stack td:empty { @apply hidden; }
+  }
+}

@@ -1,6 +1,8 @@
 // Einstieg des Themes myTannwald: Alpine 3 global starten (defer-Skript, siehe tannwald.libraries.yml).
 // Komponenten nutzen x-data direkt im Twig; Plugins und Stores kommen hier dazu.
 import Alpine from 'alpinejs';
+import toc from './modules/toc.js';
+import docHistory from './modules/history.js';
 
 window.Alpine = Alpine;
 
@@ -267,6 +269,10 @@ Alpine.data('reviewActions', (config) => ({
   },
   label() { return `${this.words} ${config.labels.words} · ${config.labels.target}`; },
 }));
+
+// 1.2 (A): Inhaltsverzeichnis mit Scrollspy und Änderungshistorie (src/modules/).
+Alpine.data('toc', toc);
+Alpine.data('docHistory', docHistory);
 
 /* 1.3: hier anhängen */
 

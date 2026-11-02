@@ -659,3 +659,206 @@ msgstr "Hall de conditionnement avec deux lignes de blisters"
 
 msgid "No image available"
 msgstr "Aucune image disponible"
+
+# Pages I (1.2)
+msgid "1 document"
+msgstr "1 document"
+
+msgid "@count documents"
+msgstr "@count documents"
+
+msgid "1 open bulletin"
+msgstr "1 bulletin ouvert"
+
+msgid "@count open bulletins"
+msgstr "@count bulletins ouverts"
+
+msgid "Machine @serial"
+msgstr "Machine @serial"
+
+msgid "No machines yet"
+msgstr "Pas encore de machines"
+
+msgid "No machines are assigned to your company yet. Your Tannwald contact links them to your account; type documents are available through the search."
+msgstr "Aucune machine n’est encore attribuée à votre entreprise. Votre interlocuteur Tannwald les associe à votre compte ; les documents de type sont accessibles par la recherche."
+
+msgid "Type"
+msgstr "Type"
+
+msgid "Serial number"
+msgstr "Numéro de série"
+
+msgid "Company"
+msgstr "Entreprise"
+
+msgid "Location"
+msgstr "Site"
+
+msgid "Year built"
+msgstr "Année de construction"
+
+msgid "Type image @type"
+msgstr "Image du type @type"
+
+msgid "Image"
+msgstr "Image"
+
+msgid "Languages"
+msgstr "Langues"
+
+msgid "Version"
+msgstr "Version"
+
+msgid "No documents yet"
+msgstr "Pas encore de documents"
+
+msgid "No documents are available for this machine yet. The editorial team adds them after approval."
+msgstr "Aucun document n’est encore disponible pour cette machine. La rédaction les ajoute après validation."
+
+msgid "No bulletins"
+msgstr "Aucun bulletin"
+
+msgid "Valid until"
+msgstr "Valable jusqu’au"
+
+msgid "not available in your language"
+msgstr "non disponible dans votre langue"
+
+msgid "All revisions"
+msgstr "Toutes les révisions"
+
+msgid "Current"
+msgstr "Actuelle"
+
+msgid "This document is export-controlled. Every download is logged with your account and the serial number."
+msgstr "Ce document est soumis au contrôle des exportations. Chaque téléchargement est journalisé avec votre compte et le numéro de série."
+
+msgid "No approved summary yet. The editorial team releases one after review."
+msgstr "Pas encore de résumé validé. La rédaction le publie après vérification."
+
+msgid "Confirm the reading on the page of the affected machine (button “Gelesen bestätigen”)."
+msgstr "Confirmez la lecture sur la page de la machine concernée (bouton « Gelesen bestätigen »)."
+
+msgid "Customers and dealers"
+msgstr "Clients et revendeurs"
+
+msgid "Tannwald internal"
+msgstr "Tannwald interne"
+
+msgid "No access"
+msgstr "Pas d’accès"
+
+msgid "This page belongs to another company or your role does not cover it. If you think you should see it, contact your Tannwald contact."
+msgstr "Cette page appartient à une autre entreprise ou votre rôle ne la couvre pas. Si vous pensez devoir la voir, contactez votre interlocuteur Tannwald."
+
+msgid "Please log in to see this page."
+msgstr "Veuillez vous connecter pour voir cette page."
+
+msgid "The address does not exist or the document has been withdrawn. Use the search or go back to your machines."
+msgstr "L’adresse n’existe pas ou le document a été retiré. Utilisez la recherche ou revenez à vos machines."
+
+msgid "To my machines"
+msgstr "Vers mes machines"
+
+# Refonte des pages II (1.3, B) : recherche, assistant, rédaction, vues d'administration, formulaires
+msgid "Only documents you are allowed to see. Hybrid also finds hits by meaning."
+msgstr "Uniquement les documents que vous pouvez consulter. Hybride trouve aussi des résultats par le sens."
+
+msgid "Filter (@count)"
+msgstr "Filtres (@count)"
+
+msgid "Reset all"
+msgstr "Tout réinitialiser"
+
+msgid "Show hits"
+msgstr "Afficher les résultats"
+
+msgid "Try another spelling, switch to Hybrid, or ask the assistant."
+msgstr "Essayez une autre orthographe, passez en Hybride ou demandez à l'assistant."
+
+msgid "Examples: a fault code, a part, an activity."
+msgstr "Exemples : un code de défaut, une pièce, une activité."
+
+msgid "Or ask the assistant:"
+msgstr "Ou demandez à l'assistant :"
+
+msgid "approved @date"
+msgstr "validé le @date"
+
+msgid "How often is the sealing station cleaned?"
+msgstr "À quelle fréquence la station de scellage est-elle nettoyée ?"
+
+msgid "What does fault code E-4711 mean?"
+msgstr "Que signifie le code de défaut E-4711 ?"
+
+msgid "Which film thickness is approved?"
+msgstr "Quelle épaisseur de film est autorisée ?"
+
+msgid "Answers come only from approved documents you are allowed to see. Please check the cited chapters before acting."
+msgstr "Les réponses proviennent uniquement de documents validés que vous pouvez consulter. Vérifiez les chapitres cités avant d'agir."
+
+msgid "Nothing to review."
+msgstr "Rien à vérifier."
+
+msgid "As soon as the queue generates a summary for a new document revision, it appears here."
+msgstr "Dès que la file génère un résumé pour une nouvelle révision de document, il apparaît ici."
+
+msgid "Change note"
+msgstr "Note de modification"
+
+msgid "Reject summary"
+msgstr "Rejeter le résumé"
+
+msgid "The summary stays invisible on the document, in search and in the assistant. The queue generates no new one; the editorial team edits the text or publishes a new document revision."
+msgstr "Le résumé reste invisible sur le document, dans la recherche et dans l'assistant. La file n'en génère pas de nouveau ; la rédaction modifie le texte ou publie une nouvelle révision du document."
+
+msgid "Reason (for your records)"
+msgstr "Motif (pour vos notes)"
+
+msgid "e.g. names a chapter that does not exist"
+msgstr "p. ex. mentionne un chapitre qui n'existe pas"
+
+msgid "The reason is not saved; note it in the change note of the next revision."
+msgstr "Le motif n'est pas enregistré ; notez-le dans la note de modification de la prochaine révision."
+
+msgid "Cancel"
+msgstr "Annuler"
+
+msgid "Reject"
+msgstr "Rejeter"
+
+msgid "Read confirmations: @confirmed of @total"
+msgstr "Confirmations de lecture : @confirmed sur @total"
+
+msgid "Show confirmations"
+msgstr "Afficher les confirmations"
+
+msgid "Calls and tokens of the assistant per day, context and operation."
+msgstr "Appels et jetons de l'assistant par jour, contexte et opération."
+
+msgid "Period"
+msgstr "Période"
+
+msgid "30 days"
+msgstr "30 jours"
+
+msgid "90 days"
+msgstr "90 jours"
+
+msgid "365 days"
+msgstr "365 jours"
+
+msgid "No usage in this period."
+msgstr "Aucune utilisation sur cette période."
+
+msgid "As soon as the assistant answers, calls and tokens appear here."
+msgstr "Dès que l'assistant répond, les appels et les jetons apparaissent ici."
+
+msgid "Tokens, costs in CHF and share of the monthly limit, per month."
+msgstr "Jetons, coûts en CHF et part de la limite mensuelle, par mois."
+
+msgid "No costs yet."
+msgstr "Pas encore de coûts."
+
+msgid "As soon as the assistant answers, tokens and costs appear here per month."
+msgstr "Dès que l'assistant répond, les jetons et les coûts apparaissent ici par mois."

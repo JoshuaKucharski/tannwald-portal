@@ -80,9 +80,20 @@ function _tannwald_layout_prepare(array &$variables): void {
     }
   }
 
+  $routeMatch = \Drupal::routeMatch();
+  // 1.2: Fehlerseiten 403/404 im eigenen System (page.html.twig zeigt den
+  // Leer-Zustand mit Weg zurück; Core-Titel und -Inhalt bleiben aus).
+  $variables['error_page'] = _tannwald_error_page($routeMatch->getRouteName());
+  if ($variables['error_page'] !== NULL) {
+    foreach (['tannwald_page_title', 'tannwald_content', 'tannwald_local_tasks'] as $block) {
+      if (isset($variables['page']['content'][$block])) {
+        $variables['page']['content'][$block]['#access'] = FALSE;
+      }
+    }
+  }
+
   // Nutzerseiten (Anmelden, Passwort): kein Seitentitel-Block (das Template
   // zeigt den einen Titel) und keine lokalen Reiter (Leitplanken §5 und §6).
-  $routeMatch = \Drupal::routeMatch();
   if (in_array($routeMatch->getRouteName(), _tannwald_user_routes(), TRUE)) {
     foreach (['tannwald_page_title', 'tannwald_local_tasks'] as $block) {
       if (isset($variables['page']['content'][$block])) {
@@ -328,7 +339,44 @@ function _tannwald_demo_account_chips(): array {
         }
       }
     }
-    $chips[] = ['name' => $name, 'label' => $label ?? $name];
+    // 1.2: zwei Gruppen für das Chip-Raster (Kunden · Intern).
+    $chips[] = [
+      'name' => $name,
+      'label' => $label ?? $name,
+      'group' => in_array($name, ['kunde-a', 'kunde-b', 'haendler'], TRUE) ? 'customers' : 'internal',
+    ];
   }
   return $chips;
+}
+
+/**
+ * Texte der Fehlerseiten 403 und 404 (1.2), sonst NULL.
+ *
+ * @return array{code: int, title: \Drupal\Core\StringTranslation\TranslatableMarkup, text: \Drupal\Core\StringTranslation\TranslatableMarkup, back_url: string, back_label: \Drupal\Core\StringTranslation\TranslatableMarkup}|null
+ *   Titel, Satz und Weg zurück.
+ */
+function _tannwald_error_page(?string $route): ?array {
+  $authenticated = \Drupal::currentUser()->isAuthenticated();
+  $back = $authenticated
+    ? ['url' => Url::fromUserInput('/meine-maschinen')->toString(), 'label' => t('To my machines')]
+    : ['url' => Url::fromRoute('user.login')->toString(), 'label' => t('Log in')];
+  return match ($route) {
+    'system.403' => [
+      'code' => 403,
+      'title' => t('No access'),
+      'text' => $authenticated
+        ? t('This page belongs to another company or your role does not cover it. If you think you should see it, contact your Tannwald contact.')
+        : t('Please log in to see this page.'),
+      'back_url' => $back['url'],
+      'back_label' => $back['label'],
+    ],
+    'system.404' => [
+      'code' => 404,
+      'title' => t('Page not found'),
+      'text' => t('The address does not exist or the document has been withdrawn. Use the search or go back to your machines.'),
+      'back_url' => $back['url'],
+      'back_label' => $back['label'],
+    ],
+    default => NULL,
+  };
 }

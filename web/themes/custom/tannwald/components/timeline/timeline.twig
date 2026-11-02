@@ -1,0 +1,21 @@
+{#
+/**
+ * @file
+ * SDC tannwald:timeline — ol mit Linie links, Punkt je Eintrag; aktuelle Version mit Akzentpunkt und Badge.
+ */
+#}
+<ol{{ attributes.addClass('timeline') }}>
+  {% for entry in entries %}
+    <li class="timeline-item{% if entry.current %} is-current{% endif %}">
+      <span class="timeline-dot" aria-hidden="true"></span>
+      <div class="timeline-body">
+        <span class="timeline-head">
+          <span class="timeline-date num">{{ entry.date ?: '—' }}</span>
+          {% if entry.url %}<a href="{{ entry.url }}" class="timeline-version">{{ 'Version @version'|t({'@version': entry.version}) }}</a>{% else %}<span class="timeline-version">{{ 'Version @version'|t({'@version': entry.version}) }}</span>{% endif %}
+          {% if entry.current %}{{ include('tannwald:badge', {label: 'Current'|t, variant: 'ok', pill: true}, with_context = false) }}{% endif %}
+        </span>
+        {% if entry.note %}<p class="timeline-note">{{ entry.note }}</p>{% endif %}
+      </div>
+    </li>
+  {% endfor %}
+</ol>

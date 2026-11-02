@@ -385,4 +385,9 @@
   .redaktion-main a[href$="/compliance/audit.csv"]:not(.btn) { @apply hidden; }
 }
 
+/* 1.2 (A): Seiten I — Maschinen, Dokument, Login (src/pages/). */
+@import "./pages/machine.css";
+@import "./pages/document.css";
+@import "./pages/login.css";
+
 /* 1.3: hier anhängen */

@@ -1,0 +1,44 @@
+/* Dokumentseite (1.2): Lesespalte 68 Zeichen, Inhaltsverzeichnis haftend, Zusammenfassung abgesetzt, Zeitleiste, Druck. */
+@layer components {
+  .doc-layout { @apply grid grid-cols-1 items-start gap-8 lg:grid-cols-[16rem_minmax(0,1fr)] lg:gap-12; }
+  .doc-main { @apply flex min-w-0 flex-col gap-8; }
+  .prose-doc { max-width: 68ch; }
+  .doc-summary { @apply m-0 border-l-2 border-accent pl-4 text-lg leading-copy; }
+  .doc-summary p { @apply m-0; }
+  .doc-summary p + p { @apply mt-2; }
+  .doc-summary-meta { @apply mt-2 text-sm text-muted; }
+
+  /* Inhaltsverzeichnis: ohne Karte, Schiene links, aktives Kapitel mit Akzent. */
+  .toc { @apply lg:sticky lg:top-6; }
+  .toc-heading { @apply m-0 mb-2 text-sm font-medium text-muted; }
+  .toc-list { @apply m-0 flex list-none flex-col border-l border-line p-0; }
+  .toc-item--3 .toc-link { @apply pl-7 text-sm; }
+  .toc-link { @apply -ml-px block border-l-2 border-transparent py-1.5 pl-4 text-base text-muted no-underline hover:text-ink; transition: color var(--duration-fast) var(--ease-out-soft), border-color var(--duration-fast) var(--ease-out-soft); }
+  .toc-link.is-active { @apply border-accent text-ink; }
+
+  /* Zeitleiste. */
+  .timeline { @apply m-0 flex list-none flex-col p-0; }
+  .timeline-item { @apply relative grid grid-cols-[1.25rem_minmax(0,1fr)] gap-x-3 pb-6 last:pb-0; }
+  .timeline-item::before { content: ''; @apply absolute bottom-0 left-[9px] top-5 w-px bg-line; }
+  .timeline-item:last-child::before { @apply hidden; }
+  .timeline-dot { @apply mt-1.5 h-[19px] w-[19px] rounded-full border-2 border-control bg-panel; }
+  .timeline-item.is-current .timeline-dot { @apply border-accent bg-accent; }
+  .timeline-body { @apply flex min-w-0 flex-col gap-1; }
+  .timeline-head { @apply flex flex-wrap items-center gap-x-3 gap-y-1; }
+  .timeline-date { @apply text-sm text-muted; }
+  .timeline-version { @apply font-medium; }
+  .timeline-note { @apply m-0 max-w-prose text-base text-muted; }
+}
+
+/* Druckansicht (Leitplanken v2 §13 (d)): nur Titel, Typenschild-Meta und Lesespalte; keine Navigation, keine Buttons. */
+@media print {
+  [data-demo-bar], header.site-header, footer, .toc, .doc-actions, .chat-root, .chat-launcher, .toast-stack, .figure, .timeline-section, .breadcrumb, .sheet, .sheet-scrim { display: none !important; }
+  body { background: #fff; color: #000; font-size: 11pt; }
+  main { padding: 0 !important; max-width: none !important; }
+  .doc-layout { display: block; }
+  .prose-doc { max-width: none; font-size: 11pt; }
+  .prose-doc h2 { break-after: avoid; }
+  .prose-doc table, .prose-doc tr { break-inside: avoid; }
+  a { color: #000; text-decoration: none; }
+  .doc-summary { border-left-color: #000; }
+}

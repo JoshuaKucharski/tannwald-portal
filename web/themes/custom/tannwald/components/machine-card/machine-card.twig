@@ -1,0 +1,25 @@
+{#
+/**
+ * @file
+ * SDC tannwald:machine-card — Typbild 3:2, Seriennummer 17/500, Typ und Standort als Meta, stille Zeile.
+ * Die ganze Karte ist der Link; Hover nur Rahmen --color-control (Leitplanken v2 §7). Slot image wird einmal
+ * in image_markup gerendert und an tannwald:figure weitergereicht.
+ */
+#}
+{% set image_markup = block('image')|trim %}
+<article{{ attributes.addClass('machine-card') }}>
+  <a href="{{ url }}" class="machine-card-link" aria-label="{{ 'Machine @serial'|t({'@serial': serial}) }}">
+    {# include statt embed: ein Embed in einem SDC-Template würde als tannwald:machine-card validiert (gemessen 1.2). #}
+    {{ include('tannwald:figure', {ratio: 'card', placeholder_label: 'No image available'|t, image_markup: image_markup}, with_context = false) }}
+    <div class="machine-card-body">
+      <span class="machine-card-title">{{ serial }}</span>
+      <span class="meta">{{ type_name }}{% if location %} · {{ location }}{% endif %}{% if year %} · {{ year }}{% endif %}</span>
+      <span class="meta machine-card-quiet">
+        {{ documents_current == 1 ? '1 document'|t : '@count documents'|t({'@count': documents_current}) }}
+        {%- if documents_new %} · <span class="text-ok">{{ documents_new == 1 ? '1 new version'|t : '@count new versions'|t({'@count': documents_new}) }}</span>{% endif %}
+        {%- if bulletins_open %} · <span class="text-warn">{{ bulletins_open == 1 ? '1 open bulletin'|t : '@count open bulletins'|t({'@count': bulletins_open}) }}</span>{% endif -%}
+      </span>
+    </div>
+  </a>
+  {% if false %}{% block image %}{% endblock %}{% endif %}
+</article>

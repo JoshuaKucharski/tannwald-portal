@@ -1,0 +1,27 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Plate
+status: stable
+description: 'Typenschild (1.2): Begriff/Wert-Zeilen mit Zeilenraster, Label 13 px gedämpft, Wert 15 px; für Maschinen- und Dokumentkopf.'
+props:
+  type: object
+  required:
+    - rows
+  properties:
+    rows:
+      type: array
+      title: Rows
+      description: 'Liste {label, value, url (optional), tone (optional: ok|warn|muted)}; leere Werte werden ausgelassen.'
+      items:
+        type: object
+        properties:
+          label:
+            type: string
+          value:
+            type: [string, integer, 'null']
+          url:
+            type: [string, 'null']
+          tone:
+            type: [string, 'null']
+    attributes:
+      type: Drupal\Core\Template\Attribute
+      title: Attributes

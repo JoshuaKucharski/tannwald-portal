@@ -1,40 +1,44 @@
 {#
 /**
  * @file
- * Bulletinseite: Kopf mit Art und Datum, Body mit Kapitel-Ankern (Zitate des Assistenten springen hierher).
- * Variablen aus tannwald_preprocess_node() (includes/document.inc): kind_label, published,
- * requires_confirmation, toc[], body, cache_bubble.
+ * Bulletinseite (1.2 auf das Design-System gehoben): Kopf mit Art, Datum und Bild (Bulletin, sonst Platzhalter),
+ * Inhaltsverzeichnis haftend, Lesespalte mit Kapitel-Ankern (Zitate des Assistenten springen hierher).
+ * Variablen aus tannwald_preprocess_node() (includes/document.inc): kind_label, published, requires_confirmation,
+ * toc[], body, image, cache_bubble.
  */
 #}
 {{ cache_bubble }}
-<article{{ attributes.addClass('flex flex-col gap-6') }}>
+<article{{ attributes.addClass('flex flex-col gap-10') }}>
   {{ title_prefix }}{{ title_suffix }}
-  <header class="card flex flex-col gap-2 p-4 md:p-6">
-    <span class="flex flex-wrap items-center gap-2">
-      {{ include('tannwald:badge', {label: kind_label, variant: requires_confirmation ? 'warn' : 'neutral'}, with_context = false) }}
-    </span>
-    <h1 class="m-0 text-2xl font-semibold leading-display">{{ label }}</h1>
-    <p class="m-0 meta">
-      {{ 'Published @date'|t({'@date': published}) }}
-      {%- if requires_confirmation %} · {{ 'Read confirmation required'|t }}{% endif -%}
-    </p>
+  <header class="head-split">
+    <div class="flex min-w-0 flex-col gap-3">
+      <span class="flex flex-wrap items-center gap-2">
+        {{ include('tannwald:badge', {label: kind_label, variant: requires_confirmation ? 'warn' : 'neutral'}, with_context = false) }}
+      </span>
+      <h1 class="page-title">{{ label }}</h1>
+      <p class="m-0 meta">
+        {{ 'Published @date'|t({'@date': published}) }}
+        {%- if requires_confirmation %} · {{ 'Read confirmation required'|t }}{% endif -%}
+      </p>
+      {% if requires_confirmation %}
+        <p class="m-0 max-w-prose text-muted">{{ 'Confirm the reading on the page of the affected machine (button “Gelesen bestätigen”).'|t }}</p>
+      {% endif %}
+    </div>
+    {% embed 'tannwald:figure' with {ratio: 'card', placeholder_label: 'No image available'|t, image: image} only %}
+      {% block image %}{{ image }}{% endblock %}
+    {% endembed %}
   </header>
   {# 6.1 (E): Moderations-Formular (Freigeben/Zurückweisen) auf /latest für redaktion und compliance. #}
   {% if content.content_moderation_control|render|trim %}
-    <div class="card p-4 md:p-6">{{ content.content_moderation_control }}</div>
+    <div class="card card-body">{{ content.content_moderation_control }}</div>
   {% endif %}
-  <div class="flex flex-wrap items-start gap-6">
+  <div class="doc-layout">
     {% if toc %}
-      <nav aria-label="{{ 'Table of contents'|t }}" class="card w-full p-4 md:p-6 lg:sticky lg:top-6 lg:w-72 lg:shrink-0">
-        <h2 class="m-0 mb-3 text-sm font-semibold text-muted">{{ 'Contents'|t }}</h2>
-        <ol class="m-0 flex list-none flex-col gap-1 p-0 text-sm">
-          {% for entry in toc %}
-            <li class="{{ entry.level == 3 ? 'pl-4' : 'font-medium' }}"><a href="#{{ entry.anchor }}" class="no-underline hover:underline">{{ entry.text }}</a></li>
-          {% endfor %}
-        </ol>
-      </nav>
+      {{ include('tannwald:toc', {entries: toc}, with_context = false) }}
+    {% else %}
+      <span class="hidden lg:block" aria-hidden="true"></span>
     {% endif %}
-    <div class="card min-w-0 flex-1 basis-[560px] p-4 md:p-6">
+    <div class="doc-main">
       <div class="prose-doc">{{ body }}</div>
     </div>
   </div>

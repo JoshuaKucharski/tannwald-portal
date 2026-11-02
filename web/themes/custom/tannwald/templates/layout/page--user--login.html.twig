@@ -5,7 +5,7 @@
  * Akzentblock (Bildmarke, Wortmarke, Satz, drei Nutzen-Zeilen) und dem Hero-Bild hero-login.webp (Theme-Asset,
  * 16:9, füllt den Rest der Höhe); rechts das Formular (ein Titel, 44-px-Felder, Passwort anzeigen, Primärbutton,
  * Textlink „Passwort vergessen?“). Phone: eine Spalte, Markenpanel als schmaler Kopf ohne Bild (Formular zuerst).
- * Demo-Konten als Chips (nur Split dev), Klick füllt Benutzername und Passwort „demo“ aus.
+ * Demo-Konten als Chips in zwei Gruppen (nur Split dev), Klick füllt Benutzername und Passwort „demo“ aus.
  *
  * Variablen: site_name, demo_accounts[] {name, label} (leer ausserhalb von dev), directory (Theme-Pfad),
  * cache_bubble; page.content enthält Meldungen (inline) und das Formular; Reiter und Seitentitel-Block sind
@@ -14,8 +14,8 @@
 #}
 {{ cache_bubble }}
 <div class="flex min-h-screen flex-col lg:flex-row" x-data="{ showPassword: false, fill(name) { const form = document.getElementById('user-login-form'); if (!form) { return; } form.elements.name.value = name; form.elements.pass.value = 'demo'; form.elements.name.focus(); } }">
-  <aside class="flex flex-col bg-accent text-white lg:w-[46%] lg:min-h-screen" aria-label="{{ 'About the portal'|t }}">
-    <div class="flex flex-col gap-8 px-4 py-5 lg:gap-12 lg:px-16 lg:pb-14 lg:pt-14">
+  <aside class="brand-panel" aria-label="{{ 'About the portal'|t }}">
+    <div class="brand-panel-text">
       <div class="flex items-center gap-3">
         <svg width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" class="shrink-0">
           <rect x="4" y="20" width="28" height="10" rx="2.5"/>
@@ -36,8 +36,9 @@
         </ul>
       </div>
     </div>
-    <figure class="figure figure--bleed relative m-0 hidden min-h-[320px] flex-1 lg:block">
-      <img src="{{ base_path ~ directory }}/images/hero-login.webp" alt="{{ 'Packaging hall with two blister lines'|t }}" width="1600" height="900" class="absolute inset-0 h-full w-full object-cover" decoding="async">
+    {# 1.2: Foto im Rahmen mit 24 px Innenabstand auf dem Akzent, Radius 8 (weicher Übergang). #}
+    <figure class="brand-photo">
+      <img src="{{ base_path ~ directory }}/images/hero-login.webp" alt="{{ 'Packaging hall with two blister lines'|t }}" width="1600" height="900" decoding="async">
     </figure>
   </aside>
 
@@ -47,13 +48,19 @@
       {{ page.content }}
       <p class="m-0 mt-2"><a href="{{ path('user.pass') }}" class="btn-text -ml-1 text-base">{{ 'Forgot your password?'|t }}</a></p>
       {% if demo_accounts %}
-        <div class="mt-12 border-t border-line pt-6" data-demo-accounts>
-          <p class="m-0 mb-3 meta">{{ 'Demo accounts, password demo'|t }}</p>
-          <div class="flex flex-wrap gap-2">
-            {% for account in demo_accounts %}
-              <button type="button" class="chip" @click="fill('{{ account.name|e('js') }}')">{{ account.name }} · {{ account.label }}</button>
-            {% endfor %}
-          </div>
+        {# 1.2: zwei Gruppen (Kunden · Intern) als zweispaltiges Raster gleicher Breite. #}
+        <div class="demo-groups" data-demo-accounts>
+          <p class="m-0 meta">{{ 'Demo accounts, password demo'|t }}</p>
+          {% for group, heading in {customers: 'Customers and dealers'|t, internal: 'Tannwald internal'|t} %}
+            <div class="demo-group">
+              <span class="text-sm font-medium">{{ heading }}</span>
+              <div class="demo-grid">
+                {% for account in demo_accounts|filter(a => a.group == group) %}
+                  <button type="button" class="chip" @click="fill('{{ account.name|e('js') }}')" title="{{ account.label }}">{{ account.name }} · {{ account.label }}</button>
+                {% endfor %}
+              </div>
+            </div>
+          {% endfor %}
         </div>
       {% endif %}
     </div>
