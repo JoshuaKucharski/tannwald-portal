@@ -1,6 +1,6 @@
 _core:
   default_config_hash: Dw66xNMWEra5Cg5nPUv7UlVMjKxibubUeLbvC5oNgJM
-provider_chat: ollama
+provider_chat: dashscope
 provider_embeddings: ollama
 providers:
   ollama:
