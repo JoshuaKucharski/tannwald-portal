@@ -20,7 +20,7 @@
           {% for badge in badges %}{{ include('tannwald:badge', badge, with_context = false) }}{% endfor %}
         </span>
       {% endif %}
-      <h1 class="m-0 text-[28px] font-semibold leading-tight">{{ label }}</h1>
+      <h1 class="m-0 text-2xl font-semibold leading-display">{{ label }}</h1>
       <p class="m-0 meta">
         {{ 'Version @version'|t({'@version': version}) }}
         {%- if approved %} · {{ 'approved @date'|t({'@date': approved}) }}{% endif %}
@@ -38,7 +38,7 @@
     <div class="flex flex-wrap items-center gap-3">
       {{ include('tannwald:lang-pills', {languages: languages}, with_context = false) }}
       {% if url_history %}
-        <a href="{{ url_history }}" class="btn btn-outline">{{ 'Change history'|t }}</a>
+        <a href="{{ url_history }}" class="btn btn-secondary">{{ 'Change history'|t }}</a>
       {% endif %}
       {% if url_download %}
         <a href="{{ url_download }}" class="btn btn-primary">{{ 'Download'|t({}, {'context': 'tannwald'}) }}</a>

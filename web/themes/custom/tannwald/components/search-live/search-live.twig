@@ -19,8 +19,8 @@
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12"></path><path d="M18 6 6 18"></path></svg>
     </button>
   </div>
-  <div id="{{ input_id }}-live" x-show="open" x-cloak class="absolute left-0 right-0 top-full z-40 mt-1 overflow-hidden rounded-card border border-line bg-panel shadow-lg" aria-label="{{ 'Live results while typing'|t }}">
-    <div class="flex flex-wrap items-center justify-between gap-2 border-b border-line-soft px-4 py-2 text-xs text-muted">
+  <div id="{{ input_id }}-live" x-show="open" x-cloak class="absolute left-0 right-0 top-full z-40 mt-1 overflow-hidden rounded-card border border-line bg-panel shadow-card" aria-label="{{ 'Live results while typing'|t }}">
+    <div class="flex flex-wrap items-center justify-between gap-2 border-b border-line-soft px-4 py-2 text-sm text-muted">
       <span x-text="results.length ? '{{ 'While typing: top @n'|t({'@n': '4'})|e('js') }} · ' + (duration / 1000).toFixed(2) + ' s' : notice"></span>
       <span>{{ 'Enter for all hits'|t }}</span>
     </div>
@@ -29,7 +29,7 @@
         <li role="option" :id="'{{ input_id }}-opt-' + i" :aria-selected="i === index ? 'true' : 'false'">
           <a :href="r.url" class="flex flex-wrap items-center justify-between gap-2 px-4 py-2.5 text-sm text-ink no-underline hover:bg-surface" :class="i === index ? 'bg-surface' : ''" @mouseenter="index = i">
             <span class="min-w-0 flex-1 basis-64"><span class="font-medium" x-text="r.titel"></span> <span class="text-muted">›</span> <span x-text="r.heading_path"></span></span>
-            <span class="flex items-center gap-1.5 text-xs text-muted"><span class="pill border-line uppercase" x-text="r.langcode"></span><span x-text="r.dokumenttyp"></span></span>
+            <span class="flex items-center gap-1.5 text-sm text-muted"><span class="pill border-line uppercase" x-text="r.langcode"></span><span x-text="r.dokumenttyp"></span></span>
           </a>
         </li>
       </template>

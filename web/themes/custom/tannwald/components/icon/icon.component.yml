@@ -1,0 +1,26 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Icon
+status: stable
+description: 'Icon-Set des Design-Systems (Leitplanken v2 §6): 16 Zeichen als inline-SVG, 1.5 px Strich, Farbe aus dem Text (currentColor). Dekorativ (aria-hidden) ohne label; mit label als role=img.'
+props:
+  type: object
+  required:
+    - name
+  properties:
+    name:
+      type: string
+      title: Name
+      enum: [download, search, arrow, check, warning, info, close, menu, chat, document, machine, bulletin, language, filter, sort, external]
+      description: 'Eines der 16 Zeichen.'
+    size:
+      type: integer
+      title: Size
+      default: 20
+      description: 'Kantenlänge in px (16, 20 oder 24).'
+    label:
+      type: string
+      title: Label
+      description: 'Zugänglicher Name, wenn das Icon allein steht (sonst leer: dekorativ).'
+    attributes:
+      type: Drupal\Core\Template\Attribute
+      title: Attributes

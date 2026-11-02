@@ -20,10 +20,10 @@
       {{ include('tannwald:badge', {label: 'Hit by meaning'|t, variant: 'accent', pill: true, attributes: create_attribute({'data-matched-pill': ''})}, with_context = false) }}
     {% endif %}
   </div>
-  <h3 class="m-0 text-base font-semibold leading-snug">
+  <h3 class="m-0 text-base font-semibold leading-title">
     <a href="{{ url_kapitel }}" class="text-ink no-underline hover:text-accent"><span class="text-muted font-medium">{{ titel }}</span> <span class="text-muted" aria-hidden="true">›</span> {{ heading_path }}</a>
   </h3>
-  <p class="m-0 text-sm leading-relaxed">{% block snippet %}{% endblock %}</p>
+  <p class="m-0 text-sm leading-copy">{% block snippet %}{% endblock %}</p>
   <div class="flex flex-wrap items-center gap-4 text-sm">
     <a href="{{ url_kapitel }}" class="font-medium">{{ is_bulletin ? 'Open bulletin'|t : 'Open chapter'|t }}</a>
     {% if not is_bulletin %}<a href="{{ url_dokument }}">{{ 'Document'|t({}, {'context': 'tannwald search'}) }}</a>{% endif %}

@@ -18,7 +18,7 @@
   <section class="card flex flex-wrap items-start gap-6 p-4 md:p-6" aria-label="{{ 'Machine'|t }}">
     <div class="flex min-w-0 flex-1 basis-[420px] flex-col gap-1.5">
       <span class="meta">{{ machine.type_note ?: machine.company }}</span>
-      <h1 class="m-0 text-[28px] font-semibold leading-tight">{{ machine.type_name }} · {{ 'Serial number @serial'|t({'@serial': machine.serial}) }}</h1>
+      <h1 class="m-0 text-2xl font-semibold leading-display">{{ machine.type_name }} · {{ 'Serial number @serial'|t({'@serial': machine.serial}) }}</h1>
       <p class="m-0 text-muted">
         {%- if machine.location %}{{ 'Location @location'|t({'@location': machine.location}) }}{% endif %}
         {%- if machine.year %} · {{ 'Year built @year'|t({'@year': machine.year}) }}{% endif -%}
@@ -26,17 +26,17 @@
     </div>
     <dl class="m-0 grid flex-1 basis-[420px] grid-cols-1 gap-4 sm:grid-cols-3">
       <div class="flex flex-col gap-1 rounded-control bg-surface px-4 py-3">
-        <dt class="text-xs text-muted">{{ 'Contract'|t }}</dt>
+        <dt class="text-sm text-muted">{{ 'Contract'|t }}</dt>
         <dd class="m-0 font-semibold">{{ machine.contract_label ?: '—' }}</dd>
         {% if machine.contract_until %}<dd class="m-0 meta">{{ 'until @date'|t({'@date': machine.contract_until}) }}</dd>{% endif %}
       </div>
       <div class="flex flex-col gap-1 rounded-control bg-surface px-4 py-3">
-        <dt class="text-xs text-muted">{{ 'Documents'|t }}</dt>
+        <dt class="text-sm text-muted">{{ 'Documents'|t }}</dt>
         <dd class="m-0 font-semibold">{{ '@count current'|t({'@count': documents_current}) }}</dd>
         <dd class="m-0 meta">{{ documents_new == 1 ? '1 new version'|t : '@count new versions'|t({'@count': documents_new}) }}</dd>
       </div>
       <div class="flex flex-col gap-1 rounded-control bg-surface px-4 py-3">
-        <dt class="text-xs text-muted">{{ 'Bulletins'|t }}</dt>
+        <dt class="text-sm text-muted">{{ 'Bulletins'|t }}</dt>
         <dd class="m-0 font-semibold {{ bulletins_open ? 'text-warn' : '' }}">{{ '@count open'|t({'@count': bulletins_open}) }}</dd>
         <dd class="m-0 meta">{{ '@count confirmed'|t({'@count': bulletins_confirmed}) }}</dd>
       </div>

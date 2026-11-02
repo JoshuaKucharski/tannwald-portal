@@ -93,7 +93,7 @@ function _tannwald_layout_prepare(array &$variables): void {
   // Seitentitel-Block ausblenden, wo das Template den einen Titel zeigt:
   // Maschinen-, Dokument- und Bulletinseiten (Kopfkarte) und die Suche.
   $node = $routeMatch->getParameter('node');
-  $ownTitle = $routeMatch->getRouteName() === 'tannwald_assistant.search'
+  $ownTitle = in_array($routeMatch->getRouteName(), ['tannwald_assistant.search', 'tannwald_demo.styleguide'], TRUE)
     || ($routeMatch->getRouteName() === 'entity.node.canonical' && $node instanceof NodeInterface
       && in_array($node->bundle(), ['maschine', 'dokument', 'bulletin'], TRUE));
   if ($ownTitle && isset($variables['page']['content']['tannwald_page_title'])) {

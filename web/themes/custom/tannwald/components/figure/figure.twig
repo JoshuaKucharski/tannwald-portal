@@ -1,0 +1,26 @@
+{#
+/**
+ * @file
+ * SDC tannwald:figure — Props: ratio, caption, placeholder_label, bleed, attributes; Slot image.
+ * Ohne Bild zeigt der Rahmen die Bildmarke (drei Blister-Rechtecke) auf der Platzhalter-Fläche.
+ * Der Slot wird einmal in image_markup gerendert; die Block-Deklaration selbst gibt nichts aus.
+ */
+#}
+{% set image_markup = block('image')|trim %}
+{% set classes = ['figure', 'figure--' ~ ratio|default('card')] %}
+{% if bleed %}{% set classes = classes|merge(['figure--bleed']) %}{% endif %}
+<figure{{ attributes.addClass(classes) }}>
+  {% if image_markup %}
+    {{ image_markup|raw }}
+  {% else %}
+    <div class="figure-placeholder" role="img" aria-label="{{ placeholder_label|default('No image available'|t) }}">
+      <svg width="48" height="48" viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+        <rect x="4" y="20" width="28" height="10" rx="2.5"/>
+        <rect x="7" y="13" width="22" height="10" rx="2.5"/>
+        <rect x="10" y="6" width="16" height="10" rx="2.5"/>
+      </svg>
+    </div>
+  {% endif %}
+  {% if false %}{% block image %}{% endblock %}{% endif %}
+  {% if caption %}<figcaption class="figure-caption">{{ caption }}</figcaption>{% endif %}
+</figure>

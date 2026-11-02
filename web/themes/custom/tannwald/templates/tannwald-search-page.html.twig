@@ -12,7 +12,7 @@
 #}
 <div class="tannwald-search flex flex-col gap-6" data-search-page>
   <section class="card flex flex-col gap-4 p-4 md:p-6">
-    <h1 class="m-0 text-[28px] font-semibold leading-tight">{{ 'Search your documents'|t }}</h1>
+    <h1 class="m-0 text-2xl font-semibold leading-display">{{ 'Search your documents'|t }}</h1>
     <form id="{{ form_id }}" action="{{ search_url }}" method="get" role="search" class="flex flex-col gap-3">
       <label for="tannwald-search-q" class="text-sm font-medium">{{ 'Search term'|t }}</label>
       <div class="flex flex-wrap items-start gap-3">
@@ -56,7 +56,7 @@
             {{ include('tannwald:facet-group', group|merge({form_id: form_id}), with_context = false) }}
           {% endfor %}
           {% if active_filters %}
-            <a href="{{ reset_all_url }}" class="btn btn-outline self-start text-sm">{{ 'Reset filters'|t }}</a>
+            <a href="{{ reset_all_url }}" class="btn btn-secondary self-start text-sm">{{ 'Reset filters'|t }}</a>
           {% endif %}
         </div>
       </details>

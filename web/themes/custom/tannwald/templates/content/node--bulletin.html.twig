@@ -13,7 +13,7 @@
     <span class="flex flex-wrap items-center gap-2">
       {{ include('tannwald:badge', {label: kind_label, variant: requires_confirmation ? 'warn' : 'neutral'}, with_context = false) }}
     </span>
-    <h1 class="m-0 text-[28px] font-semibold leading-tight">{{ label }}</h1>
+    <h1 class="m-0 text-2xl font-semibold leading-display">{{ label }}</h1>
     <p class="m-0 meta">
       {{ 'Published @date'|t({'@date': published}) }}
       {%- if requires_confirmation %} · {{ 'Read confirmation required'|t }}{% endif -%}

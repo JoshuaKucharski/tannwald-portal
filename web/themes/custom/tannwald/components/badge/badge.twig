@@ -14,4 +14,4 @@
   private: 'bg-private-bg text-private',
 } %}
 {% set shape = pill ? 'rounded-pill px-2.5 py-[3px]' : 'rounded px-2 py-[2px]' %}
-<span{{ attributes.addClass('inline-flex items-center whitespace-nowrap text-xs font-semibold', shape, colors[variant|default('neutral')]) }}>{{ label }}</span>
+<span{{ attributes.addClass('inline-flex items-center whitespace-nowrap text-sm font-semibold', shape, colors[variant|default('neutral')]) }}>{{ label }}</span>

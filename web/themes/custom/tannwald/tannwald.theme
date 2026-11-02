@@ -222,7 +222,7 @@ function tannwald_preprocess_views_view_table__redaktion_unbeantwortet(array &$v
 function tannwald_form_tannwald_ingest_review_form_alter(array &$form, FormStateInterface $form_state): void {
   $classes = [
     'freigeben' => ['btn', 'btn-primary'],
-    'entwurf_speichern' => ['btn', 'btn-outline'],
+    'entwurf_speichern' => ['btn', 'btn-secondary'],
     'zurueckweisen' => ['btn', 'btn-warn'],
   ];
   foreach ($classes as $transition => $class) {
@@ -351,4 +351,35 @@ function tannwald_preprocess_views_view_field(array &$variables): void {
       '#attributes' => ['class' => ['ml-2']],
     ],
   ];
+}
+
+/*
+ * Aufgabe 1.1 (A, Phase 2): Design-System v2. Styleguide-Seite (/styleguide,
+ * Route von C in tannwald_demo), Logik in includes/styleguide.inc.
+ */
+require_once __DIR__ . '/includes/styleguide.inc';
+// Bild-Helfer tannwald_image() von C (2.2), eigene Datei.
+require_once __DIR__ . '/includes/images.inc';
+
+/**
+ * Implements hook_theme().
+ *
+ * Theme-Hook der Styleguide-Seite; C's Controller gibt #theme
+ * tannwald_styleguide zurück, das Template liegt im Theme.
+ */
+function tannwald_theme(array $existing, string $type, string $theme, string $path): array {
+  return [
+    'tannwald_styleguide' => [
+      'variables' => [],
+      'template' => 'styleguide',
+      'path' => $path . '/templates',
+    ],
+  ];
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for tannwald_styleguide templates.
+ */
+function tannwald_preprocess_tannwald_styleguide(array &$variables): void {
+  _tannwald_styleguide_prepare($variables);
 }

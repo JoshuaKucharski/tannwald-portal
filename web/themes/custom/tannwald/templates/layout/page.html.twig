@@ -30,7 +30,7 @@
 
   <header class="border-b border-line bg-panel">
     <div class="mx-auto flex max-w-page flex-wrap items-center gap-x-8 gap-y-1 px-4 py-2 md:min-h-16 md:px-8 md:py-0">
-      <a href="{{ nav.home_url }}" class="text-lg font-bold text-accent no-underline hover:text-accent-hover">{{ site_name }}</a>
+      <a href="{{ nav.home_url }}" class="text-lg font-semibold text-accent no-underline hover:text-accent-hover">{{ site_name }}</a>
       <nav aria-label="{{ 'Main navigation'|t }}" class="flex flex-wrap gap-x-6 font-medium">
         {% for item in nav.items %}
           <a href="{{ item.url }}" class="py-2 no-underline md:py-5 {{ item.active ? 'border-b-2 border-accent text-ink' : 'text-muted hover:text-ink' }}"{% if item.active %} aria-current="page"{% endif %}>{{ item.label }}</a>
@@ -44,7 +44,7 @@
       {% if account %}
         <div class="flex items-center gap-4 text-sm md:ml-auto">
           <span class="text-muted">{{ account.display_name }}{% if account.company %} · {{ account.company }}{% endif %}</span>
-          <span class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-private-bg text-[13px] font-semibold text-accent" aria-hidden="true">{{ account.initials }}</span>
+          <span class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-private-bg text-sm font-semibold text-accent" aria-hidden="true">{{ account.initials }}</span>
           {{ account.logout }}
         </div>
       {% endif %}
@@ -66,4 +66,5 @@
   {# 5.3: hier anhängen #}
   {{ chat_cache }}
   {% if chat %}{{ include('tannwald:chat', chat, with_context = false) }}{% endif %}
+  {# 1.3: hier anhängen #}
 </div>

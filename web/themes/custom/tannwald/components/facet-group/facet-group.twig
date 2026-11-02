@@ -11,14 +11,14 @@
     <legend class="mb-1.5 flex w-full items-center justify-between text-sm font-semibold">
       <span>{{ label }}</span>
       {% if active_count and reset_url %}
-        <a href="{{ reset_url }}" class="text-xs font-normal">{{ 'Reset'|t({}, {'context': 'tannwald facet'}) }}</a>
+        <a href="{{ reset_url }}" class="text-sm font-normal">{{ 'Reset'|t({}, {'context': 'tannwald facet'}) }}</a>
       {% endif %}
     </legend>
     {% for item in items %}
       <label class="flex cursor-pointer items-center gap-2 rounded px-1 py-1 text-sm hover:bg-surface">
         <input type="checkbox" name="{{ field_name }}" value="{{ item.id }}" form="{{ form_id }}" class="h-4 w-4 accent-accent"{{ item.active ? ' checked' }} @change="$el.form.requestSubmit()">
         <span class="flex-1">{{ item.label }}</span>
-        <span class="rounded-pill bg-surface px-2 text-xs text-muted">{{ item.count }}</span>
+        <span class="rounded-pill bg-surface px-2 text-sm text-muted">{{ item.count }}</span>
       </label>
     {% endfor %}
   </fieldset>

@@ -268,5 +268,7 @@ Alpine.data('reviewActions', (config) => ({
   label() { return `${this.words} ${config.labels.words} · ${config.labels.target}`; },
 }));
 
+/* 1.3: hier anhängen */
+
 // Start zuletzt: alle Alpine.data()-Registrierungen (5.1, 5.2 und A's 5.3-Hunk) müssen davor stehen.
 Alpine.start();

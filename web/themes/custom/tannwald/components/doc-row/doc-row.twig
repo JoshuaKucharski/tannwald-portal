@@ -31,6 +31,6 @@
     {{ include('tannwald:badge', {label: 'New version'|t, variant: 'ok', pill: true}, with_context = false) }}
   {% endif %}
   {% if url_download %}
-    <a href="{{ url_download }}" class="btn btn-outline">{{ 'Download'|t({}, {'context': 'tannwald'}) }}</a>
+    <a href="{{ url_download }}" class="btn btn-secondary">{{ 'Download'|t({}, {'context': 'tannwald'}) }}</a>
   {% endif %}
 </div>

@@ -41,7 +41,7 @@
 
   {# Launcher: sekundär (ein Primärbutton je Ansicht, Leitplanken §5); Phone als fixe Leiste unten, Sheet-Modus auf md+ als Button unten rechts. #}
   <div class="h-14 md:hidden" x-show="!open" aria-hidden="true"></div>
-  <button type="button" class="chat-launcher btn btn-outline" :class="{ 'md:hidden': mode === 'embedded' }" x-show="!open" x-cloak @click="toggle()">
+  <button type="button" class="chat-launcher btn btn-secondary" :class="{ 'md:hidden': mode === 'embedded' }" x-show="!open" x-cloak @click="toggle()">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
     {{ 'Ask the assistant'|t }}
   </button>
@@ -120,7 +120,7 @@
               <div class="flex flex-col gap-2">
                 <template x-if="!entry.support_id">
                   <div class="flex flex-col gap-1.5">
-                    <button type="button" class="btn btn-outline self-start bg-panel" :disabled="entry.supporting" @click="$store.chat.support(entry)" data-chat-support>{{ 'Create support request'|t }}</button>
+                    <button type="button" class="btn btn-secondary self-start bg-panel" :disabled="entry.supporting" @click="$store.chat.support(entry)" data-chat-support>{{ 'Create support request'|t }}</button>
                     <span class="meta">{{ 'Question, history and serial number are sent along.'|t }}</span>
                   </div>
                 </template>
