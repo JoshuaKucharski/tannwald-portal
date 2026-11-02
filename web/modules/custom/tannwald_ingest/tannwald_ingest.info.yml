@@ -1,0 +1,14 @@
+name: 'Tannwald Ingest'
+type: module
+description: 'Chunking, embeddings, chunk store (FULLTEXT and vectors) and the tannwald_embed queue for myTannwald.'
+package: Tannwald
+core_version_requirement: ^11
+dependencies:
+  - drupal:node
+  - drupal:taxonomy
+  - drupal:content_moderation
+  - drupal:datetime
+  - ai:ai
+  - tannwald_access:tannwald_access
+'interface translation project': tannwald_ingest
+'interface translation server pattern': modules/custom/tannwald_ingest/translations/%language.po

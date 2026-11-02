@@ -1,0 +1,12 @@
+# PHPStan für tannwald-portal (Pflichtenheft §4: Level 5, phpstan-drupal).
+# mglaman/phpstan-drupal kommt über phpstan/extension-installer (vendor/phpstan/extension-installer/src/GeneratedConfig.php),
+# darum kein includes-Eintrag. Aufruf: ddev exec vendor/bin/phpstan analyse
+parameters:
+  level: 5
+  paths:
+    - web/modules/custom
+    - web/themes/custom
+    - tests
+  excludePaths:
+    - */node_modules/*
+    - */dist/*

@@ -1,0 +1,78 @@
+uuid: 55255918-5700-4d97-b4c3-8f0d6821ac02
+langcode: de
+status: true
+dependencies:
+  config:
+    - field.field.node.maschine.field_baujahr
+    - field.field.node.maschine.field_firma
+    - field.field.node.maschine.field_maschinentyp
+    - field.field.node.maschine.field_standort
+    - field.field.node.maschine.field_vertrag
+    - field.field.node.maschine.field_vertrag_bis
+    - node.type.maschine
+  module:
+    - datetime
+    - options
+    - user
+id: node.maschine.default
+targetEntityType: node
+bundle: maschine
+mode: default
+content:
+  field_baujahr:
+    type: number_integer
+    label: inline
+    settings:
+      thousand_separator: ''
+      prefix_suffix: false
+    third_party_settings: {  }
+    weight: 4
+    region: content
+  field_firma:
+    type: entity_reference_label
+    label: inline
+    settings:
+      link: false
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_maschinentyp:
+    type: entity_reference_label
+    label: inline
+    settings:
+      link: false
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_standort:
+    type: string
+    label: inline
+    settings:
+      link_to_entity: false
+      link_rel: canonical
+    third_party_settings: {  }
+    weight: 3
+    region: content
+  field_vertrag:
+    type: list_default
+    label: inline
+    settings: {  }
+    third_party_settings: {  }
+    weight: 5
+    region: content
+  field_vertrag_bis:
+    type: datetime_default
+    label: inline
+    settings:
+      timezone_override: ''
+      format_type: tannwald_datum
+    third_party_settings: {  }
+    weight: 6
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden:
+  langcode: true

@@ -1,0 +1,16 @@
+uuid: 49bfec5b-a2db-4e20-bdeb-aa9fde6889a4
+langcode: de
+status: true
+dependencies:
+  config:
+    - node.type.bulletin
+  module:
+    - content_translation
+third_party_settings:
+  content_translation:
+    enabled: true
+id: node.bulletin
+target_entity_type_id: node
+target_bundle: bulletin
+default_langcode: current_interface
+language_alterable: false

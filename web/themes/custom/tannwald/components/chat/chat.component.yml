@@ -1,0 +1,61 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Chat
+status: stable
+description: 'Assistent (Wireframe 01 rechts, Aufgabe 5.3): Alpine-Store chat, POST /api/assistant mit CSRF-Token und Session, Antwort mit [n]-Links auf Kapitel-Anker, Quellenliste mit Sprachhinweis, Feedback, Support-Anfrage, Sicherheits- und Limit-Darstellung, Bottom-Sheet auf dem Phone. Props aus includes/chat.inc (_tannwald_chat_props()).'
+props:
+  type: object
+  required:
+    - endpoint
+    - feedback_endpoint
+    - support_endpoint
+    - token_endpoint
+  properties:
+    maschine_nid:
+      type: [integer, 'null']
+      title: 'Machine nid'
+      description: 'null auf /suche.'
+    machine_label:
+      type: [string, 'null']
+      title: 'Machine label'
+      description: 'Seriennummer, z. B. TB200-2021-0417.'
+    model_label:
+      type: [string, 'null']
+      title: 'Model label'
+      description: 'chat_model aus tannwald_assistant.settings.'
+    limit_notice:
+      type: [string, 'null']
+      title: 'Limit notice'
+      description: 'LimitService::noticeForUi() oder Hinweis bei abgeschaltetem Assistenten; null = Senden erlaubt.'
+    endpoint:
+      type: string
+      title: Endpoint
+    feedback_endpoint:
+      type: string
+      title: 'Feedback endpoint'
+    support_endpoint:
+      type: string
+      title: 'Support endpoint'
+    token_endpoint:
+      type: string
+      title: 'Token endpoint'
+    intro:
+      type: [string, 'null']
+      title: Intro
+      description: 'Hinweis unter dem Titel (nur im Sheet-Kopf; eingebettet zeigt die Aside ihn).'
+    ui_langcode:
+      type: string
+      title: 'UI language'
+      default: de
+    language_names:
+      type: object
+      title: 'Language names'
+      description: 'langcode → Name in der Oberflächensprache (für die Sprach-Pille der Quellen).'
+    mode:
+      type: string
+      title: Mode
+      enum: [embedded, sheet]
+      default: embedded
+      description: 'embedded: Karte in der Aside (Phone als Bottom-Sheet); sheet: nur Sheet mit Button (/suche).'
+    attributes:
+      type: Drupal\Core\Template\Attribute
+      title: Attributes

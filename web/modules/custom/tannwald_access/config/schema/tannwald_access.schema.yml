@@ -1,0 +1,31 @@
+tannwald_access.settings:
+  type: config_object
+  label: 'Tannwald Access settings'
+  mapping:
+    export_rules:
+      type: mapping
+      label: 'Export rules per export class'
+      mapping:
+        klasse_1:
+          type: tannwald_access.export_rule
+          label: 'Export class 1'
+        klasse_2:
+          type: tannwald_access.export_rule
+          label: 'Export class 2'
+
+tannwald_access.export_rule:
+  type: mapping
+  label: 'Export rule'
+  mapping:
+    laender:
+      type: sequence
+      label: 'Allowed countries (ISO 3166-1 alpha-2)'
+      sequence:
+        type: string
+        label: 'Country code'
+    gesperrte_firmen:
+      type: sequence
+      label: 'Blocked companies (SAP number)'
+      sequence:
+        type: string
+        label: 'SAP number'

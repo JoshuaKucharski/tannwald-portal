@@ -1,0 +1,8 @@
+name: 'Tannwald Assistant test'
+type: module
+description: 'Test doubles for tannwald_assistant: fixed embeddings and a fake chat provider (never Ollama).'
+package: Testing
+hidden: true
+core_version_requirement: ^11
+dependencies:
+  - tannwald_assistant:tannwald_assistant

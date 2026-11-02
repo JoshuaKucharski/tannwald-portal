@@ -1,0 +1,123 @@
+services:
+  logger.channel.tannwald_assistant:
+    parent: logger.channel_base
+    arguments: ['tannwald_assistant']
+
+  tannwald_assistant.access_keys:
+    class: Drupal\tannwald_assistant\Access\EntitlementAccessKeys
+    arguments: ['@tannwald_access.entitlement']
+  Drupal\tannwald_assistant\Access\AccessKeysInterface: '@tannwald_assistant.access_keys'
+
+  tannwald_assistant.language_detector:
+    class: Drupal\tannwald_assistant\LanguageDetector
+  Drupal\tannwald_assistant\LanguageDetector: '@tannwald_assistant.language_detector'
+
+  tannwald_assistant.safety_detector:
+    class: Drupal\tannwald_assistant\SafetyTopicDetector
+    arguments: ['@config.factory']
+  Drupal\tannwald_assistant\SafetyTopicDetector: '@tannwald_assistant.safety_detector'
+
+  tannwald_assistant.prompt_builder:
+    class: Drupal\tannwald_assistant\PromptBuilder
+  Drupal\tannwald_assistant\PromptBuilder: '@tannwald_assistant.prompt_builder'
+
+  tannwald_assistant.citation_validator:
+    class: Drupal\tannwald_assistant\CitationValidator
+  Drupal\tannwald_assistant\CitationValidator: '@tannwald_assistant.citation_validator'
+
+  tannwald_assistant.output_filter:
+    class: Drupal\tannwald_assistant\OutputFilter
+  Drupal\tannwald_assistant\OutputFilter: '@tannwald_assistant.output_filter'
+
+  tannwald_assistant.injection_heuristic:
+    class: Drupal\tannwald_assistant\InjectionHeuristic
+  Drupal\tannwald_assistant\InjectionHeuristic: '@tannwald_assistant.injection_heuristic'
+
+  # Seit 4.2 der LimitService (4.1: NullLimitCheck); Alias tannwald_assistant.limit.
+  tannwald_assistant.limit_check:
+    class: Drupal\tannwald_assistant\Limit\LimitService
+    arguments:
+      - '@database'
+      - '@config.factory'
+      - '@state'
+      - '@cache.default'
+      - '@datetime.time'
+      - '@entity_type.manager'
+      - '@Drupal\tannwald_assistant\Limit\LimitMailerInterface'
+      - '@logger.channel.tannwald_assistant'
+  tannwald_assistant.limit: '@tannwald_assistant.limit_check'
+  Drupal\tannwald_assistant\Limit\LimitCheckInterface: '@tannwald_assistant.limit_check'
+  Drupal\tannwald_assistant\Limit\LimitService: '@tannwald_assistant.limit_check'
+
+  # symfony_mailer setzt $baseTag aus #[MailerInfo] (MailerPass).
+  Drupal\tannwald_assistant\Limit\LimitMailerInterface:
+    class: Drupal\tannwald_assistant\Limit\LimitMailer
+    autowire: true
+
+  tannwald_assistant.ticket_sink:
+    class: Drupal\tannwald_assistant\Ticket\LocalTicketSink
+  Drupal\tannwald_assistant\Ticket\TicketSinkInterface: '@tannwald_assistant.ticket_sink'
+
+  tannwald_assistant.usage_tracker:
+    class: Drupal\tannwald_assistant\Usage\UsageTracker
+    arguments: ['@tannwald_ingest.usage', '@config.factory', '@request_stack', '@cache_tags.invalidator']
+    tags:
+      - { name: event_subscriber }
+
+  tannwald_assistant.retriever:
+    class: Drupal\tannwald_assistant\Retriever
+    arguments:
+      - '@tannwald_assistant.access_keys'
+      - '@tannwald_ingest.chunk_store'
+      - '@tannwald_ingest.embedding'
+      - '@entity_type.manager'
+      - '@entity_field.manager'
+      - '@config.factory'
+      - '@tannwald_assistant.language_detector'
+      - '@logger.channel.tannwald_assistant'
+      - '@tannwald_assistant.safety_detector'
+      - '@language_manager'
+      - '@entity.repository'
+  Drupal\tannwald_assistant\Retriever: '@tannwald_assistant.retriever'
+
+  # Evals (4.3): Manifest-IDs über B's tannwald_demo.lookup (optional).
+  tannwald_assistant.manifest_lookup:
+    class: Drupal\tannwald_assistant\Eval\DemoManifestLookup
+    arguments: ['@?tannwald_demo.lookup']
+  Drupal\tannwald_assistant\Eval\ManifestLookupInterface: '@tannwald_assistant.manifest_lookup'
+
+  tannwald_assistant.eval_source_resolver:
+    class: Drupal\tannwald_assistant\Eval\SourceResolver
+    arguments: ['@tannwald_assistant.manifest_lookup', '@entity_type.manager', '@database']
+  Drupal\tannwald_assistant\Eval\SourceResolver: '@tannwald_assistant.eval_source_resolver'
+
+  tannwald_assistant.eval_runner:
+    class: Drupal\tannwald_assistant\Eval\EvalRunner
+    arguments:
+      - '@tannwald_assistant.eval_source_resolver'
+      - '@tannwald_assistant.retriever'
+      - '@tannwald_assistant.answer'
+      - '@entity_type.manager'
+      - '@account_switcher'
+      - '@request_stack'
+      - '@config.factory'
+      - '@datetime.time'
+  Drupal\tannwald_assistant\Eval\EvalRunner: '@tannwald_assistant.eval_runner'
+
+  tannwald_assistant.answer:
+    class: Drupal\tannwald_assistant\AnswerService
+    arguments:
+      - '@tannwald_assistant.retriever'
+      - '@tannwald_assistant.safety_detector'
+      - '@tannwald_assistant.prompt_builder'
+      - '@tannwald_assistant.citation_validator'
+      - '@tannwald_assistant.output_filter'
+      - '@tannwald_assistant.language_detector'
+      - '@tannwald_assistant.injection_heuristic'
+      - '@ai.provider'
+      - '@tannwald_assistant.limit_check'
+      - '@database'
+      - '@config.factory'
+      - '@datetime.time'
+      - '@logger.channel.tannwald_assistant'
+  Drupal\tannwald_assistant\AnswerService: '@tannwald_assistant.answer'

@@ -1,0 +1,19 @@
+uuid: deaebe5c-3629-4361-a0f3-edd1cb920955
+langcode: de
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_version
+    - node.type.dokument
+id: node.dokument.field_version
+field_name: field_version
+entity_type: node
+bundle: dokument
+label: Version
+description: 'Zum Beispiel 3.2.'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

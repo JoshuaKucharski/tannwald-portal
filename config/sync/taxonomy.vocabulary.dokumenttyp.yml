@@ -1,0 +1,9 @@
+uuid: 55fd90ea-b23b-48d8-950f-f8c0ef05e665
+langcode: de
+status: true
+dependencies: {  }
+name: Dokumenttyp
+vid: dokumenttyp
+description: 'Dokumenttypen (Betriebsanleitung, Ersatzteilkatalog …). Terme legt der Seeder an.'
+weight: 0
+new_revision: false

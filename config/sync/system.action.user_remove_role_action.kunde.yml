@@ -1,0 +1,14 @@
+uuid: 4afff1aa-8a8e-4a3f-bf4a-4badbfd62742
+langcode: de
+status: true
+dependencies:
+  config:
+    - user.role.kunde
+  module:
+    - user
+id: user_remove_role_action.kunde
+label: 'Den ausgewählten Benutzern die Rolle Kunde entziehen'
+type: user
+plugin: user_remove_role_action
+configuration:
+  rid: kunde

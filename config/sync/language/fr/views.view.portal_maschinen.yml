@@ -1,0 +1,26 @@
+# Erzeugt von docs/i18n/config-translate.php (Aufgabe 6.5) — nicht von Hand ändern.
+display:
+  default:
+    display_options:
+      title: 'Mes machines'
+      fields:
+        title:
+          label: 'Numéro de série'
+        field_maschinentyp:
+          label: 'Type de machine'
+        field_standort:
+          label: 'Site'
+        field_baujahr:
+          label: 'Année de construction'
+        field_vertrag:
+          label: 'Contrat'
+        field_vertrag_bis:
+          label: 'Contrat jusqu’au'
+      exposed_form:
+        options:
+          submit_button: 'Appliquer'
+          exposed_sorts_label: 'Trier par'
+  page_1:
+    display_options:
+      menu:
+        title: 'Mes machines'

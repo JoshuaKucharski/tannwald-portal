@@ -1,0 +1,32 @@
+uuid: f6b4ffd9-147a-4156-a8f0-01208113364c
+langcode: de
+status: true
+dependencies:
+  config:
+    - field.field.taxonomy_term.maschinentyp.field_typ_code
+    - taxonomy.vocabulary.maschinentyp
+  module:
+    - text
+id: taxonomy_term.maschinentyp.default
+targetEntityType: taxonomy_term
+bundle: maschinentyp
+mode: default
+content:
+  description:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_typ_code:
+    type: string
+    label: inline
+    settings:
+      link_to_entity: false
+      link_rel: canonical
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  langcode: true

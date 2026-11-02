@@ -1,0 +1,38 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: 'Live search'
+status: stable
+description: 'Suchfeld mit Live-Resultaten (Wireframe 02): Alpine-Komponente searchLive in src/app.js, GET live_url?q=&modus=, Debounce 200 ms, Top 4, Pfeiltasten/Enter/Escape.'
+props:
+  type: object
+  required:
+    - input_id
+    - live_url
+  properties:
+    input_id:
+      type: string
+      title: 'Input id'
+      description: 'id des Suchfelds (Vertrag 4.2: tannwald-search-q).'
+    live_url:
+      type: string
+      title: 'Live URL'
+      description: '/api/search/live (ohne Query).'
+    modus_input:
+      type: string
+      title: 'Mode input name'
+      default: modus
+      description: 'Name der Radio-Inputs im Suchformular; der aktuelle Wert geht als modus= mit.'
+    query:
+      type: string
+      title: Query
+      default: ''
+    maschine_nid:
+      type: [integer, 'null']
+      title: 'Machine nid'
+      description: 'Optionaler Maschinenfilter, geht als maschine_nid= mit.'
+    placeholder:
+      type: string
+      title: Placeholder
+      default: ''
+    attributes:
+      type: Drupal\Core\Template\Attribute
+      title: Attributes

@@ -1,0 +1,40 @@
+{#
+/**
+ * @file
+ * SDC tannwald:review-card — Hülle der Review-Karte; Slots body und actions.
+ */
+#}
+{% set status_labels = {
+  zur_pruefung: 'Under review'|t,
+  published: 'Approved'|t,
+  zurueckgewiesen: 'Rejected'|t,
+  draft: 'Draft'|t,
+} %}
+{% set status_variants = {zur_pruefung: 'warn', published: 'ok', zurueckgewiesen: 'danger', draft: 'neutral'} %}
+<article{{ attributes.addClass('card flex flex-col') }} data-status="{{ status|default('zur_pruefung') }}">
+  <header class="flex flex-col gap-1.5 border-b border-line px-6 py-4">
+    <div class="flex flex-wrap items-center gap-3">
+      <h3 class="card-title">
+        <a href="{{ document.url }}" class="text-ink no-underline hover:text-accent">{{ document.title }}</a>
+        <span class="font-normal text-muted">{{ 'Version @version'|t({'@version': document.version}) }}</span>
+      </h3>
+      {{ include('tannwald:badge', {label: status_labels[status|default('zur_pruefung')], variant: status_variants[status|default('zur_pruefung')], pill: true}, with_context = false) }}
+    </div>
+    <span class="meta">
+      {{ 'Generated @date'|t({'@date': generated_at}) }}
+      {%- if model %} · {{ 'Model @model'|t({'@model': model}) }}{% endif %}
+      {%- if tokens is not null %} · {{ '@count tokens'|t({'@count': tokens|number_format(0, '.', '’')}) }}{% endif %}
+      {%- if created_by %} · {{ 'new revision by @name'|t({'@name': created_by}) }}{% endif %}
+    </span>
+    {% if change_note %}
+      <span class="meta">{{ 'Change note: @note'|t({'@note': change_note}) }}</span>
+    {% endif %}
+    {# 6.1 (E): Sicherheitszeile nur noch in den Prüfpunkten (redaktion.inc), nicht doppelt im Kopf. #}
+  </header>
+  <div class="prose-doc px-6 py-4">
+    {% block body %}{% endblock %}
+  </div>
+  <footer class="flex flex-wrap items-center gap-3 border-t border-line px-6 py-4 empty:hidden">
+    {% block actions %}{% endblock %}
+  </footer>
+</article>

@@ -1,0 +1,14 @@
+{#
+/**
+ * @file
+ * Freigegebene Zusammenfassung am Dokument (schlicht; Theme 5.1 überschreibt).
+ *
+ * Variablen: body (gefiltertes HTML), generiert_am (TT.MM.JJJJ HH:MM),
+ * modell (Rohname), summary_nid.
+ */
+#}
+<section class="tannwald-summary" data-summary-nid="{{ summary_nid }}">
+  <h2 class="tannwald-summary__title">{{ 'Summary'|t({}, {'context': 'tannwald review'}) }}</h2>
+  <div class="tannwald-summary__body">{{ body }}</div>
+  <p class="tannwald-summary__meta">{{ 'Generated @date with @model, approved by the editorial team.'|t({'@date': generiert_am, '@model': modell}) }}</p>
+</section>

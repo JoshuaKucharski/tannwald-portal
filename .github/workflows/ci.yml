@@ -1,0 +1,86 @@
+# CI für tannwald-portal (Pflichtenheft §10): composer install → PHPCS → PHPStan → PHPUnit unit → PHPUnit kernel
+# (MariaDB-Service) → site:install aus config/sync → config:status leer. Ziel: unter 8 Minuten.
+# Datenbank-Werte sind Wegwerfwerte des CI-Containers, kein Geheimnis. GitHub setzt CI=true; damit ist der
+# Split „ci“ aktiv und der Split „dev“ (masquerade, queue_ui) aus (web/sites/default/settings.php).
+name: CI
+
+on:
+  push:
+    branches: [dev, main]
+  pull_request:
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      mariadb:
+        image: mariadb:11.4
+        env:
+          MARIADB_ROOT_PASSWORD: root
+          MARIADB_DATABASE: drupal
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+    env:
+      # 127.0.0.1 statt localhost: localhost wählt den Socket, der Service ist nur über TCP erreichbar.
+      SIMPLETEST_DB: mysql://root:root@127.0.0.1:3306/drupal
+      SIMPLETEST_BASE_URL: http://localhost
+      DB_URL: mysql://root:root@127.0.0.1:3306/drupal
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: gd, pdo_mysql, mbstring, xml, zip, intl, bcmath, apcu
+          tools: composer:v2
+          coverage: none
+
+      - name: Composer-Cache-Verzeichnis
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: composer-${{ runner.os }}-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-${{ runner.os }}-
+
+      - name: composer install
+        run: composer install --no-progress --prefer-dist
+
+      - name: PHPCS
+        run: vendor/bin/phpcs
+
+      - name: PHPStan
+        run: vendor/bin/phpstan analyse --no-progress
+
+      - name: PHPUnit unit
+        run: vendor/bin/phpunit --testsuite=unit
+
+      - name: PHPUnit kernel
+        run: vendor/bin/phpunit --testsuite=kernel
+
+      - name: site:install aus config/sync
+        run: vendor/bin/drush site:install --existing-config --db-url="$DB_URL" -y
+
+      # Core legt bei --existing-config mit Standardsprache de die Sprache en nicht an (gemessen 2026-11-01:
+      # language.entity.en und die Sammlung language.en fehlen, config:status meldet 101 Abweichungen).
+      # Ein config:import gleicht das an; schlägt er fehl, ist die Konfiguration im Repo kaputt.
+      - name: config:import (Sprache en nachziehen)
+        run: vendor/bin/drush config:import -y
+
+      - name: config:status muss leer sein
+        run: |
+          out="$(vendor/bin/drush config:status --format=json 2>/dev/null | tr -d '[:space:]')"
+          if [ "$out" != "[]" ]; then
+            vendor/bin/drush config:status
+            echo "config:status ist nicht leer — Konfiguration nicht exportiert?"
+            exit 1
+          fi
+          echo "config:status leer"

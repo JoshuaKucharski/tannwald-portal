@@ -1,0 +1,3 @@
+summaries_enabled: true
+summary_max_words: 120
+summary_input_chars: 6000

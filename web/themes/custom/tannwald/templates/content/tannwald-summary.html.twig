@@ -1,0 +1,12 @@
+{#
+/**
+ * @file
+ * Freigegebene Zusammenfassung am Dokument (Pseudo-Feld von 3.2, Modul tannwald_ingest; hier gestylt).
+ * Variablen: body, generiert_am, modell, summary_nid.
+ */
+#}
+<section class="rounded-card border border-line bg-surface p-4" data-summary-nid="{{ summary_nid }}">
+  <h2 class="m-0 mb-2 text-base font-semibold">{{ 'Summary'|t({}, {'context': 'tannwald review'}) }}</h2>
+  <div class="prose-doc text-sm">{{ body }}</div>
+  <p class="m-0 mt-2 meta">{{ 'Generated @date with @model, approved by the editorial team.'|t({'@date': generiert_am, '@model': modell}) }}</p>
+</section>

@@ -1,0 +1,173 @@
+/* Tailwind 4 des Themes myTannwald. Tokens aus den Wireframes (docs/wireframes/README.md, 01-maschinen-detail.html).
+   Quellen für die Klassensuche: Templates, Komponenten, Theme-PHP. */
+@import "tailwindcss";
+
+@source "../templates";
+@source "../components";
+@source "../includes";
+@source "../tannwald.theme";
+
+@theme {
+  /* Schrift: Inter mit Systemschrift-Fallback, kein Webfont (keine Binärdatei ohne Lizenzprüfung). */
+  --font-sans: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  /* Farben (Wireframe-Werte, Kontrast ≥ 4.5:1 auf ihren Flächen). */
+  --color-accent: #1F4E79;
+  --color-accent-hover: #15385A;
+  --color-ink: #1C2024;
+  --color-muted: #5B6470;
+  --color-surface: #F3F4F2;
+  --color-panel: #FFFFFF;
+  --color-chat: #F8F9F8;
+  --color-line: #D6DAE0;
+  --color-line-soft: #ECEEF1;
+  --color-bar: #1C2024;
+  --color-bar-muted: #C9CED6;
+  --color-ok: #1E6B3A;
+  --color-ok-bg: #E6F2EA;
+  --color-warn: #7A3508;
+  --color-warn-strong: #B4530A;
+  --color-warn-bg: #FBEFE4;
+  --color-warn-line: #E3B48A;
+  --color-danger: #A32D2D;
+  --color-danger-bg: #FBEAEA;
+  --color-dualuse: #4A2378;
+  --color-dualuse-bg: #EEE7F7;
+  --color-private: #1F4E79;
+  --color-private-bg: #E8EEF5;
+
+  /* Radien und Seitenbreite der Wireframes (Seitenrand 32 px = px-8; kein --spacing-page, weil
+     max-w-page sonst den Abstand statt --container-page nimmt — gemessen 5.1). */
+  --radius-card: 8px;
+  --radius-control: 6px;
+  --radius-pill: 12px;
+  --container-page: 1376px;
+}
+
+@layer base {
+  html { font-size: 16px; line-height: 1.5; }
+  body { @apply bg-surface text-ink font-sans antialiased; }
+  a { @apply text-accent hover:text-accent-hover; }
+  :focus-visible { @apply outline-2 outline-offset-2 outline-accent; }
+  /* Alpine: Elemente vor der Initialisierung verbergen (x-cloak). */
+  [x-cloak] { display: none !important; }
+}
+
+@layer components {
+  .btn { @apply inline-flex h-11 items-center justify-center gap-2 rounded-control px-4 font-semibold no-underline; }
+  .btn-primary { @apply bg-accent text-white hover:bg-accent-hover hover:text-white; }
+  .btn-outline { @apply border border-accent text-accent hover:text-accent-hover hover:border-accent-hover; }
+  .btn-warn { @apply bg-warn-strong text-white hover:bg-warn hover:text-white; }
+  .btn-secondary { @apply border border-line bg-panel text-ink hover:border-accent hover:text-accent; }
+  .btn-text { @apply inline-flex items-center font-medium text-accent no-underline hover:text-accent-hover hover:underline; }
+  .chip { @apply inline-flex h-9 items-center rounded-pill border border-line bg-panel px-3 text-sm text-ink hover:border-accent hover:text-accent; }
+  .card { @apply rounded-card border border-line bg-panel shadow-card; }
+  .card-head { @apply flex flex-wrap items-center gap-4 border-b border-line px-6 py-4; }
+  .card-title { @apply m-0 text-xl font-semibold leading-snug; }
+  .meta { @apply text-sm leading-[1.45] text-muted; }
+  .pill { @apply rounded-pill border px-2 py-[3px] text-xs font-medium; }
+  .prose-doc h2 { @apply mt-8 mb-3 scroll-mt-24 text-xl font-semibold; }
+  .prose-doc h3 { @apply mt-6 mb-2 scroll-mt-24 text-base font-semibold; }
+  .prose-doc p { @apply my-3; }
+  .prose-doc ul { @apply my-3 list-disc pl-6; }
+  .prose-doc ol { @apply my-3 list-decimal pl-6; }
+  .prose-doc li { @apply my-1; }
+  .prose-doc code { @apply rounded bg-surface px-1 text-[0.95em]; }
+  .prose-doc .table-wrap { @apply my-4 w-full overflow-x-auto; }
+  .prose-doc table { @apply w-full min-w-[480px] border-collapse text-sm; }
+  .prose-doc th { @apply border-b border-line bg-surface px-3 py-2 text-left font-semibold; }
+  .prose-doc td { @apply border-b border-line-soft px-3 py-2 align-top; }
+  .form-input { @apply h-11 w-full rounded-control border border-line bg-panel px-3; }
+  /* Core-Formulare (Login, Bestätigung): size="60" darf bei 390 px keinen Querlauf erzeugen. */
+  .form-item { @apply relative mb-4 flex flex-col gap-1.5; }
+  .form-item label { @apply text-sm font-medium; }
+  .form-type-password input { @apply pr-24; }
+  .form-type-password .field-suffix { @apply absolute right-3 top-[33px] inline-flex h-8 items-center; }
+  .form-item input.error { @apply border-danger; }
+  .form-item input[type="text"], .form-item input[type="password"], .form-item input[type="email"],
+  .form-item textarea, .form-item select { @apply h-11 w-full max-w-full min-w-0 rounded-control border border-line bg-panel px-3; }
+  .form-item textarea { @apply h-auto py-2; }
+  .form-actions { @apply mt-2 flex flex-wrap gap-3; }
+  .tabs { @apply mb-6 border-b border-line gap-0; }
+  .tabs a { @apply inline-flex border-b-2 border-transparent px-3 py-2 text-sm text-muted no-underline hover:text-ink; }
+  .tabs .is-active a { @apply border-accent text-ink; }
+  .messages { @apply max-w-full; }
+}
+
+/* Suche (5.2): Treffer-Hervorhebung, Pager, Facetten-Details. */
+@layer components {
+  .tannwald-search mark { @apply rounded bg-[#FFF3B0] px-0.5 text-ink; }
+  .pager__items { @apply m-0 flex list-none flex-wrap items-center gap-1 p-0; }
+  .pager__item a { @apply inline-flex h-9 min-w-9 items-center justify-center rounded-control border border-line bg-panel px-3 text-sm no-underline hover:border-accent; }
+  .pager__item.is-active a { @apply border-accent bg-accent text-white; }
+  details > summary::-webkit-details-marker { display: none; }
+}
+
+/* 5.3: hier anhängen */
+
+/* Assistent und Redaktion (5.3): Chat-Karte, Bottom-Sheet, Zitat-Links, Redaktions-Layout, Review-Reiter, Tabellen. */
+@theme {
+  /* Ein Schattenlevel (Design-Leitplanken §3). */
+  --shadow-card: 0 1px 2px rgba(28, 32, 36, 0.06);
+}
+@layer components {
+  .chat-root--embedded { @apply contents; }
+  .chat-launcher { @apply fixed inset-x-0 bottom-0 z-40 h-14 w-full rounded-none border-0 border-t border-line bg-panel md:inset-x-auto md:bottom-6 md:right-6 md:h-11 md:w-auto md:rounded-control md:border md:shadow-card; }
+  .chat-panel { @apply hidden flex-col bg-panel; }
+  .chat-root--embedded .chat-panel { @apply md:flex md:min-h-0 md:flex-1; }
+  .chat-panel.is-open { @apply fixed inset-0 z-50 flex h-dvh; }
+  .chat-root--embedded .chat-panel.is-open { @apply md:static md:h-auto; }
+  .chat-root--sheet .chat-panel.is-open { @apply md:inset-auto md:bottom-6 md:right-6 md:h-[72vh] md:w-[440px] md:rounded-card md:border md:border-line md:shadow-card; }
+  .chat-head { @apply flex items-center gap-3 border-b border-line px-4 py-3; }
+  .chat-history { @apply flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto bg-chat p-4; }
+  .chat-root--embedded .chat-history { @apply md:max-h-[560px] md:min-h-[240px]; }
+  .chat-entry { @apply flex flex-col gap-2; }
+  .chat-question { @apply max-w-[92%] self-end rounded-card bg-private-bg px-4 py-3 font-medium; }
+  .chat-answer { @apply flex flex-col gap-3 rounded-card border border-line bg-panel p-4 shadow-card; }
+  .chat-answer--safety { @apply border-warn-line bg-warn-bg; }
+  .chat-answer--muted { @apply text-muted; }
+  .chat-answer-text p { @apply m-0; }
+  .chat-answer-text p + p { @apply mt-2; }
+  .chat-answer-text ul { @apply my-1 list-disc pl-5; }
+  .chat-cite { @apply font-semibold text-accent no-underline hover:underline; }
+  .chat-safety-badge { @apply self-start rounded-pill bg-warn-strong px-2.5 py-[3px] text-xs font-semibold text-white; }
+  .chat-sources { @apply flex flex-col gap-1 border-t border-line-soft pt-2 text-[13px]; }
+  .chat-answer--safety .chat-sources a { @apply font-semibold; }
+  .chat-lang { @apply ml-1 border-line bg-panel text-[11px] text-muted; }
+  .chat-feedback { @apply flex flex-wrap items-center gap-2 text-[13px] text-muted; }
+  .chat-thumb { @apply inline-flex h-11 w-11 items-center justify-center rounded-control border border-line bg-panel text-ink hover:border-accent; }
+  .chat-pending { @apply flex items-center gap-2 text-sm text-muted; }
+  .chat-spinner { @apply inline-block h-4 w-4 animate-spin rounded-full border-2 border-line border-t-accent; }
+  .chat-notice { @apply border-t border-warn-line bg-warn-bg px-4 py-2.5 text-sm text-warn; }
+  .chat-form { @apply flex flex-col gap-1.5 border-t border-line px-4 py-3; }
+  .chat-input { @apply h-auto min-h-11 resize-none py-2.5; }
+  .chat-footer { @apply border-t border-line px-4 py-2.5 text-[12px] text-muted; }
+
+  .redaktion-layout { @apply grid grid-cols-[minmax(0,1fr)] items-start gap-6 md:grid-cols-[240px_minmax(0,1fr)]; }
+  .redaktion-nav { @apply flex flex-col gap-0.5 rounded-card border border-line bg-panel p-2; }
+  .redaktion-nav a { @apply flex items-center gap-2 rounded-control px-3 py-2 text-ink no-underline hover:bg-surface; }
+  .redaktion-nav a.is-active { @apply bg-private-bg font-semibold text-accent; }
+  .redaktion-nav .count { @apply ml-auto rounded-pill bg-surface px-2 py-[1px] text-xs text-muted; }
+  .redaktion-nav a.is-active .count { @apply bg-panel text-accent; }
+  .redaktion-queue { @apply mt-2 flex flex-col gap-0.5 border-t border-line-soft px-3 pt-3 text-[13px] text-muted; }
+  .redaktion-main { @apply flex min-w-0 flex-col gap-4; }
+  .tannwald-review-tabs { @apply m-0 flex list-none flex-wrap gap-x-6 gap-y-1 border-b border-line p-0; }
+  .tannwald-review-tabs li a { @apply -mb-px inline-flex border-b-2 border-transparent py-2 text-muted no-underline hover:text-ink; }
+  .tannwald-review-tabs li.is-active a { @apply border-accent font-semibold text-ink; }
+  .review-check { @apply flex items-center gap-2 text-sm; }
+  .review-check[data-ok="1"] .mark { @apply text-ok; }
+  .review-check[data-ok="0"] .mark { @apply text-warn; }
+  .redaktion-main table { @apply w-full border-collapse text-sm; }
+  .redaktion-main th { @apply border-b border-line bg-surface px-3 py-2 text-left text-[13px] font-semibold text-muted; }
+  .redaktion-main td { @apply border-b border-line-soft px-3 py-2.5 align-top; }
+  .redaktion-main tr:last-child td { @apply border-b-0; }
+  .redaktion-main .view-content > table, .redaktion-main form > table, .redaktion-main > table { @apply overflow-hidden rounded-card border border-line bg-panel; }
+  .redaktion-main .item-list + table { @apply mt-2; }
+  .redaktion-main details { @apply mb-4 rounded-card border border-line bg-panel p-4; }
+  .redaktion-main details > summary { @apply cursor-pointer font-semibold; }
+  .redaktion-main .form-item .description { @apply text-[13px] text-muted; }
+  .four-eyes-notice { @apply rounded-control border border-warn-line bg-warn-bg px-4 py-3 text-sm text-warn; }
+  .review-textarea { @apply min-h-40 w-full rounded-control border border-line bg-panel px-3 py-2 leading-relaxed; }
+  .review-actions .form-actions { @apply mt-3; }
+  .redaktion-main a[href$="/compliance/audit.csv"]:not(.btn) { @apply hidden; }
+}

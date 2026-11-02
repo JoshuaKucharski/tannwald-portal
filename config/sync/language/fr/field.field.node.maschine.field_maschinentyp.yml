@@ -1,0 +1,3 @@
+# Erzeugt von docs/i18n/config-translate.php (Aufgabe 6.5) — nicht von Hand ändern.
+label: 'Type de machine'
+description: 'Exactement un type de machine (le stockage est partagé avec document et bulletin et donc multivalué).'

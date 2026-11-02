@@ -1,0 +1,18 @@
+{#
+/**
+ * @file
+ * Brotkrumen „Meine Maschinen › TB200-2021-0417“ (Einträge aus tannwald_preprocess_breadcrumb()).
+ */
+#}
+{% if breadcrumb %}
+  <nav aria-label="{{ 'Breadcrumb'|t }}" class="flex flex-wrap items-center gap-2 text-sm text-muted">
+    {% for item in breadcrumb %}
+      {% if not loop.first %}<span aria-hidden="true">›</span>{% endif %}
+      {% if item.url %}
+        <a href="{{ item.url }}">{{ item.text }}</a>
+      {% else %}
+        <span class="text-ink" aria-current="page">{{ item.text }}</span>
+      {% endif %}
+    {% endfor %}
+  </nav>
+{% endif %}

@@ -1,0 +1,48 @@
+uuid: 9e91a825-40b4-41cb-b140-3b1a07ca9932
+langcode: de
+status: true
+dependencies:
+  config:
+    - filter.format.dokument_html
+    - node.type.bulletin
+    - node.type.dokument
+    - node.type.zusammenfassung
+    - workflows.workflow.redaktion
+  module:
+    - content_moderation
+    - content_translation
+    - filter
+    - node
+    - system
+    - tannwald_access
+id: redaktion
+label: Redaktion
+weight: 6
+is_admin: false
+permissions:
+  - 'access content'
+  - 'access content overview'
+  - 'create bulletin content'
+  - 'create content translations'
+  - 'create dokument content'
+  - 'delete content translations'
+  - 'delete own bulletin content'
+  - 'delete own dokument content'
+  - 'delete own zusammenfassung content'
+  - 'edit any bulletin content'
+  - 'edit any dokument content'
+  - 'edit any zusammenfassung content'
+  - 'revert all revisions'
+  - 'tannwald view all documents'
+  - 'translate bulletin node'
+  - 'translate dokument node'
+  - 'translate zusammenfassung node'
+  - 'update content translations'
+  - 'use redaktion transition entwurf_speichern'
+  - 'use redaktion transition freigeben'
+  - 'use redaktion transition zur_pruefung_senden'
+  - 'use redaktion transition zurueckweisen'
+  - 'use text format dokument_html'
+  - 'view all revisions'
+  - 'view any unpublished content'
+  - 'view latest version'

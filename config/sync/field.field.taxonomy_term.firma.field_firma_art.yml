@@ -1,0 +1,21 @@
+uuid: 53c03681-a21c-452f-ac6c-7b9dcf5079d7
+langcode: de
+status: true
+dependencies:
+  config:
+    - field.storage.taxonomy_term.field_firma_art
+    - taxonomy.vocabulary.firma
+  module:
+    - options
+id: taxonomy_term.firma.field_firma_art
+field_name: field_firma_art
+entity_type: taxonomy_term
+bundle: firma
+label: Art
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string

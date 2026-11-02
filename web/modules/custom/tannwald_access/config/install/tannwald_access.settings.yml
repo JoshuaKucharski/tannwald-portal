@@ -1,0 +1,23 @@
+export_rules:
+  klasse_1:
+    laender:
+      - CH
+      - DE
+      - AT
+      - FR
+      - IT
+      - NL
+      - US
+      - JP
+    gesperrte_firmen: {  }
+  klasse_2:
+    laender:
+      - CH
+      - DE
+      - AT
+      - FR
+      - IT
+      - NL
+      - US
+      - JP
+    gesperrte_firmen: {  }

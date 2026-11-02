@@ -1,0 +1,22 @@
+uuid: 81b3971e-e01b-448a-824f-c6a5344e98ba
+langcode: de
+status: true
+dependencies:
+  config:
+    - node.type.zusammenfassung
+id: node.zusammenfassung.promote
+field_name: promote
+entity_type: node
+bundle: zusammenfassung
+label: 'Auf der Startseite anzeigen'
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: An
+  off_label: Aus
+field_type: boolean

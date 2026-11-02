@@ -1,0 +1,85 @@
+uuid: 52f49a6c-d2b0-4a12-b33e-2b11538102e3
+langcode: de
+status: true
+dependencies:
+  config:
+    - field.field.taxonomy_term.firma.field_firma_art
+    - field.field.taxonomy_term.firma.field_haendler_gebiet
+    - field.field.taxonomy_term.firma.field_land
+    - field.field.taxonomy_term.firma.field_sap_nr
+    - taxonomy.vocabulary.firma
+  module:
+    - path
+    - text
+id: taxonomy_term.firma.default
+targetEntityType: taxonomy_term
+bundle: firma
+mode: default
+content:
+  description:
+    type: text_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_firma_art:
+    type: options_select
+    weight: 2
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_haendler_gebiet:
+    type: string_textfield
+    weight: 3
+    region: content
+    settings:
+      size: 2
+      placeholder: ''
+    third_party_settings: {  }
+  field_land:
+    type: string_textfield
+    weight: 1
+    region: content
+    settings:
+      size: 2
+      placeholder: ''
+    third_party_settings: {  }
+  field_sap_nr:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 16
+      placeholder: ''
+    third_party_settings: {  }
+  langcode:
+    type: language_select
+    weight: 2
+    region: content
+    settings:
+      include_locked: true
+    third_party_settings: {  }
+  name:
+    type: string_textfield
+    weight: -5
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  path:
+    type: path
+    weight: 30
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    weight: 100
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+hidden: {  }

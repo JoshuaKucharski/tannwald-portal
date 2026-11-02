@@ -1,0 +1,14 @@
+uuid: 109f2836-7438-49fb-aaec-ccb7738f7ecf
+langcode: de
+status: true
+dependencies:
+  config:
+    - user.role.compliance
+  module:
+    - user
+id: user_add_role_action.compliance
+label: 'Den ausgewählten Benutzern die Rolle Compliance zuweisen'
+type: user
+plugin: user_add_role_action
+configuration:
+  rid: compliance

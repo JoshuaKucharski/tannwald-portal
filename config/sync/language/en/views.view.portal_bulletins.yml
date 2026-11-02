@@ -1,0 +1,15 @@
+# Erzeugt von docs/i18n/config-translate.php (Aufgabe 6.5) — nicht von Hand ändern.
+display:
+  default:
+    display_options:
+      title: 'Bulletins'
+      fields:
+        title:
+          label: 'Bulletin'
+        field_bulletin_art:
+          label: 'Type'
+        created:
+          label: 'Date'
+      empty:
+        area_text_custom:
+          content: 'No bulletins available.'

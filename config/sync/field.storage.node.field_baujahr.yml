@@ -1,0 +1,20 @@
+uuid: 8c3a7ae2-620c-41fa-af04-e1e27b94385f
+langcode: de
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_baujahr
+field_name: field_baujahr
+entity_type: node
+type: integer
+settings:
+  unsigned: true
+  size: normal
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

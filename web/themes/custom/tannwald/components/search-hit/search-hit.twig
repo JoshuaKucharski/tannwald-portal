@@ -1,0 +1,33 @@
+{#
+/**
+ * @file
+ * SDC tannwald:search-hit — ein Treffer: Typ-Badge, Meta, Titel › Kapitel, Snippet, Links.
+ */
+#}
+{% set is_bulletin = dokumenttyp and ('ulletin' in dokumenttyp) %}
+{% set meta = [] %}
+{% if maschinentypen %}{% set meta = meta|merge([maschinentypen|join(' / ')]) %}{% endif %}
+{% if version %}{% set meta = meta|merge(['v' ~ version]) %}{% endif %}
+{% if langcode %}{% set meta = meta|merge([langcode|upper]) %}{% endif %}
+{% if freigegeben_am %}{% set meta = meta|merge([freigegeben_am]) %}{% endif %}
+<li{{ attributes.addClass('tannwald-search__hit flex flex-col gap-2 border-b border-line-soft px-6 py-4 last:border-b-0').setAttribute('data-nid', nid).setAttribute('data-matched-by', matched_by|default('keyword')) }}>
+  <div class="flex flex-wrap items-center gap-2.5">
+    {% if dokumenttyp %}
+      {{ include('tannwald:badge', {label: dokumenttyp, variant: is_bulletin ? 'warn' : 'neutral'}, with_context = false) }}
+    {% endif %}
+    <span class="meta">{{ meta|join(' · ') }}</span>
+    {% if matched_by == 'vector' %}
+      {{ include('tannwald:badge', {label: 'Hit by meaning'|t, variant: 'accent', pill: true, attributes: create_attribute({'data-matched-pill': ''})}, with_context = false) }}
+    {% endif %}
+  </div>
+  <h3 class="m-0 text-base font-semibold leading-snug">
+    <a href="{{ url_kapitel }}" class="text-ink no-underline hover:text-accent"><span class="text-muted font-medium">{{ titel }}</span> <span class="text-muted" aria-hidden="true">›</span> {{ heading_path }}</a>
+  </h3>
+  <p class="m-0 text-sm leading-relaxed">{% block snippet %}{% endblock %}</p>
+  <div class="flex flex-wrap items-center gap-4 text-sm">
+    <a href="{{ url_kapitel }}" class="font-medium">{{ is_bulletin ? 'Open bulletin'|t : 'Open chapter'|t }}</a>
+    {% if not is_bulletin %}<a href="{{ url_dokument }}">{{ 'Document'|t({}, {'context': 'tannwald search'}) }}</a>{% endif %}
+    {% if url_maschine %}<a href="{{ url_maschine }}">{{ 'To machine @serial'|t({'@serial': maschine_titel}) }}</a>{% endif %}
+    {% if bulletin_bestaetigt_am %}<span class="meta">{{ 'Confirmed on @date'|t({'@date': bulletin_bestaetigt_am}) }}</span>{% endif %}
+  </div>
+</li>

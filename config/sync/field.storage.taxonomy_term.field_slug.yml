@@ -1,0 +1,21 @@
+uuid: e2b6ccc6-0bd0-40ec-a53c-41cbd0facb15
+langcode: de
+status: true
+dependencies:
+  module:
+    - taxonomy
+id: taxonomy_term.field_slug
+field_name: field_slug
+entity_type: taxonomy_term
+type: string
+settings:
+  max_length: 64
+  case_sensitive: false
+  is_ascii: false
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

@@ -1,0 +1,25 @@
+# Erzeugt von docs/i18n/config-translate.php (Aufgabe 6.5) — nicht von Hand ändern.
+display:
+  default:
+    display_options:
+      title: 'Read confirmations'
+      fields:
+        name:
+          label: 'User'
+        field_firma:
+          label: 'Company'
+        title:
+          label: 'Machine'
+        bestaetigt_am:
+          label: 'Confirmed on'
+      empty:
+        area_text_custom:
+          content: 'No confirmations yet.'
+      exposed_form:
+        options:
+          submit_button: 'Apply'
+          exposed_sorts_label: 'Sort by'
+      arguments:
+        bulletin_nid:
+          exception:
+            title: 'All'

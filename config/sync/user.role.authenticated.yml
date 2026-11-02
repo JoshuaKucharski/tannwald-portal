@@ -1,0 +1,20 @@
+uuid: b90e58a6-61cc-436f-9d53-e23acde5f3c4
+langcode: de
+status: true
+dependencies:
+  config:
+    - filter.format.basic_html
+  module:
+    - file
+    - filter
+    - system
+_core:
+  default_config_hash: wkW7P5A53YhGmsgamrmTbfwpZrqdnPYiJdoAZQtdmJg
+id: authenticated
+label: 'Angemeldeter Benutzer'
+weight: 1
+is_admin: false
+permissions:
+  - 'access content'
+  - 'delete own files'
+  - 'use text format basic_html'

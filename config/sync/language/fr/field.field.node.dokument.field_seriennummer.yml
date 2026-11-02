@@ -1,0 +1,3 @@
+# Erzeugt von docs/i18n/config-translate.php (Aufgabe 6.5) — nicht von Hand ändern.
+label: 'Numéro de série'
+description: 'Uniquement pour la documentation spécifique à une installation : le document n’est alors visible que pour l’entreprise de cette machine.'

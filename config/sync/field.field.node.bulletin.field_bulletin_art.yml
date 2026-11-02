@@ -1,0 +1,21 @@
+uuid: d0937b28-37bd-4ca9-9b14-6c41a7377188
+langcode: de
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_bulletin_art
+    - node.type.bulletin
+  module:
+    - options
+id: node.bulletin.field_bulletin_art
+field_name: field_bulletin_art
+entity_type: node
+bundle: bulletin
+label: Art
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string

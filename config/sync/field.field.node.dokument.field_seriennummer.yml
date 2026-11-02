@@ -1,0 +1,28 @@
+uuid: ee117009-ea42-44b6-bf7a-6f23d4018ac3
+langcode: de
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_seriennummer
+    - node.type.dokument
+    - node.type.maschine
+id: node.dokument.field_seriennummer
+field_name: field_seriennummer
+entity_type: node
+bundle: dokument
+label: Seriennummer
+description: 'Nur für anlagenspezifische Dokumentation: dann ist das Dokument ausschliesslich für die Firma dieser Maschine sichtbar.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      maschine: maschine
+    sort:
+      field: title
+      direction: asc
+    auto_create: false
+field_type: entity_reference

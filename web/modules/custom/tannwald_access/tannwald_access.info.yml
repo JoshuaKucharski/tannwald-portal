@@ -1,0 +1,14 @@
+name: 'Tannwald Access'
+type: module
+description: 'Entitlements, node access grants, export rules, audit log and protected document download for myTannwald.'
+package: Tannwald
+core_version_requirement: ^11
+dependencies:
+  - drupal:node
+  - drupal:taxonomy
+  - drupal:user
+  - drupal:file
+  - drupal:content_moderation
+  - drupal:workflows
+'interface translation project': tannwald_access
+'interface translation server pattern': modules/custom/tannwald_access/translations/%language.po

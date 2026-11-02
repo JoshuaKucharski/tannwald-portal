@@ -1,0 +1,26 @@
+# Erzeugt von docs/i18n/config-translate.php (Aufgabe 6.5) — nicht von Hand ändern.
+display:
+  default:
+    display_options:
+      title: 'My machines'
+      fields:
+        title:
+          label: 'Serial number'
+        field_maschinentyp:
+          label: 'Machine type'
+        field_standort:
+          label: 'Location'
+        field_baujahr:
+          label: 'Year built'
+        field_vertrag:
+          label: 'Contract'
+        field_vertrag_bis:
+          label: 'Contract until'
+      exposed_form:
+        options:
+          submit_button: 'Apply'
+          exposed_sorts_label: 'Sort by'
+  page_1:
+    display_options:
+      menu:
+        title: 'My machines'

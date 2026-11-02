@@ -1,0 +1,19 @@
+uuid: 44b53b9a-99c0-4a1a-a0ff-cc8479b1a073
+langcode: de
+status: true
+dependencies:
+  config:
+    - field.storage.taxonomy_term.field_typ_code
+    - taxonomy.vocabulary.maschinentyp
+id: taxonomy_term.maschinentyp.field_typ_code
+field_name: field_typ_code
+entity_type: taxonomy_term
+bundle: maschinentyp
+label: Typ-Code
+description: 'Eindeutiger Code des Maschinentyps ohne Bindestrich, z. B. TB200; bildet den Realm type:&lt;code&gt;.'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>myTannwald Wireframes – Übersicht</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:Inter,system-ui,sans-serif;color:#1C2024;background:#F3F4F2;line-height:1.45}
+*{box-sizing:border-box}
+a{color:#1F4E79}a:hover{color:#15385A}
+</style>
+</head>
+<body>
+<main style="width: 100%; max-width: 1200px; margin: 0 auto; padding: 40px 32px 64px; display: flex; flex-direction: column; gap: 24px">
+  <div style="display: flex; flex-direction: column; gap: 6px">
+    <span style="font-size: 13px; color: #5B6470; text-transform: uppercase; letter-spacing: 0.04em">Proof of Concept · Block 5</span>
+    <h1 style="margin: 0; font-size: 28px">myTannwald Kundenportal – Wireframes</h1>
+    <p style="margin: 0; color: #5B6470">Drei Screens als eigenständige HTML-Seiten. Die Navigation in den Screens verlinkt sie untereinander. Fiktiver Kunde, erfundene Daten.</p>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px">
+    <a href="01-maschinen-detail.html" style="display: flex; flex-direction: column; gap: 12px; padding: 16px; background: #FFFFFF; border: 1px solid #D6DAE0; border-radius: 8px; text-decoration: none; color: #1C2024">
+      <img src="png/01-maschinen-detail.png" alt="Screenshot Maschinen-Detail mit Assistent" style="width: 100%; height: auto; border: 1px solid #ECEEF1; border-radius: 4px">
+      <strong>1 · Maschinen-Detail mit Assistent</strong>
+      <span style="font-size: 14px; color: #5B6470">Dokumente pro Seriennummer, Sicherheits-Bulletin, Dual-Use-Badge, Assistent mit Zitaten und Ablehnung. Rolle kunde-a.</span>
+    </a>
+    <a href="02-suche.html" style="display: flex; flex-direction: column; gap: 12px; padding: 16px; background: #FFFFFF; border: 1px solid #D6DAE0; border-radius: 8px; text-decoration: none; color: #1C2024">
+      <img src="png/02-suche.png" alt="Screenshot Suche mit Hybrid-Schalter" style="width: 100%; height: auto; border: 1px solid #ECEEF1; border-radius: 4px">
+      <strong>2 · Suche: Hybrid / Nur Volltext</strong>
+      <span style="font-size: 14px; color: #5B6470">Live-Resultate beim Tippen, Facetten, Treffer über Bedeutung, Brücke zum Assistenten. Rolle kunde-a.</span>
+    </a>
+    <a href="03-redaktion-freigabe.html" style="display: flex; flex-direction: column; gap: 12px; padding: 16px; background: #FFFFFF; border: 1px solid #D6DAE0; border-radius: 8px; text-decoration: none; color: #1C2024">
+      <img src="png/03-redaktion-freigabe.png" alt="Screenshot Freigabe-Queue der Redaktion" style="width: 100%; height: auto; border: 1px solid #ECEEF1; border-radius: 4px">
+      <strong>3 · Redaktion: Freigabe-Queue</strong>
+      <span style="font-size: 14px; color: #5B6470">KI-Zusammenfassung prüfen, freigeben oder zurückweisen, Vier-Augen-Prinzip, unbeantwortete Fragen. Rolle redaktion.</span>
+    </a>
+  </div>
+
+  <p style="margin: 0; font-size: 14px; color: #5B6470">Quelldateien des Design-Canvas liegen unter <code>source/</code>, Erläuterungen und Demo-Momente in <code>README.md</code>.</p>
+</main>
+</body>
+</html>

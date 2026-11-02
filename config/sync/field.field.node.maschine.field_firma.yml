@@ -1,0 +1,28 @@
+uuid: 38823646-b749-46f5-a754-6f517e9072dd
+langcode: de
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_firma
+    - node.type.maschine
+    - taxonomy.vocabulary.firma
+id: node.maschine.field_firma
+field_name: field_firma
+entity_type: node
+bundle: maschine
+label: Firma
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      firma: firma
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+field_type: entity_reference

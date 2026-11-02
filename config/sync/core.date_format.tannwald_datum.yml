@@ -1,0 +1,8 @@
+uuid: 80b26d64-9db5-426f-8717-16aee24806cb
+langcode: de
+status: true
+dependencies: {  }
+id: tannwald_datum
+label: 'Tannwald: Datum'
+locked: false
+pattern: d.m.Y

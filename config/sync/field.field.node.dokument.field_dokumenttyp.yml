@@ -1,0 +1,28 @@
+uuid: 6f66f237-5326-491f-881b-c44e97474703
+langcode: de
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_dokumenttyp
+    - node.type.dokument
+    - taxonomy.vocabulary.dokumenttyp
+id: node.dokument.field_dokumenttyp
+field_name: field_dokumenttyp
+entity_type: node
+bundle: dokument
+label: Dokumenttyp
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      dokumenttyp: dokumenttyp
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+field_type: entity_reference

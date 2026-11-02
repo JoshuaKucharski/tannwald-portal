@@ -1,0 +1,20 @@
+{#
+/**
+ * @file
+ * SDC tannwald:redaktion-nav — Props: items[] {label, url, count, active}, queue_label, queue_detail, attributes.
+ */
+#}
+<nav{{ attributes.addClass('redaktion-nav self-start') }} aria-label="{{ 'Editorial'|t }}">
+  {% for item in items %}
+    <a href="{{ item.url }}" class="{{ item.active ? 'is-active' : '' }}"{% if item.active %} aria-current="page"{% endif %}>
+      <span>{{ item.label }}</span>
+      {% if item.count is not null %}<span class="count">{{ item.count }}</span>{% endif %}
+    </a>
+  {% endfor %}
+  {% if queue_label %}
+    <div class="redaktion-queue" data-queue-status>
+      <span class="font-medium text-ink">{{ queue_label }}</span>
+      {% if queue_detail %}<span>{{ queue_detail }}</span>{% endif %}
+    </div>
+  {% endif %}
+</nav>

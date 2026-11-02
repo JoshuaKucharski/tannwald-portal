@@ -1,0 +1,89 @@
+provider: ollama
+chat_model: 'qwen2.5:7b'
+embedding_model: bge-m3
+top_k: 6
+min_score: 0.015
+monthly_token_limit: 2000000
+kosten_pro_1k_chf: 0.0
+safety_terms:
+  de:
+    - 'überbrück*'
+    - 'Überbrückung*'
+    - 'umgeh*'
+    - 'deaktivier*'
+    - 'Lockout*'
+    - 'Hauptschalter*'
+    - stromlos
+    - 'unter Spannung'
+    - Hochspannung
+    - 'Not-Halt*'
+    - 'Nothalt*'
+    - 'Lichtvorhang*'
+    - 'Sicherheitsschalter*'
+    - 'Sicherheitskette*'
+    - 'Zweihand*'
+    - 'Lösungsmittel*'
+    - 'Quetsch*'
+    - 'Stromschlag*'
+    - 'Verbrennung*'
+    - 'ohne Schulung'
+    - 'ohne Begleitung'
+    - 'Schutzhaube* + offen*'
+    - 'Schutzhaube* + trotzdem'
+    - 'Schutzhaube* + entfern*'
+    - 'Heizpatrone* + selbst'
+    - 'Heizpatrone* + berühr*'
+    - 'Schaltschrank* + offen*'
+    - 'ohne + stopp*'
+    - 'während + läuft'
+    - 'heiss* + nachfüll*'
+  en:
+    - 'bypass*'
+    - bridge
+    - bridging
+    - 'disabl*'
+    - 'lockout*'
+    - tagout
+    - 'emergency stop*'
+    - 'e-stop*'
+    - 'light curtain*'
+    - 'safety switch*'
+    - 'safety chain*'
+    - 'two-hand*'
+    - 'solvent*'
+    - 'crush*'
+    - 'pinch*'
+    - 'electric shock*'
+    - 'high voltage'
+    - 'de-energi*'
+    - 'without + switch*'
+    - 'while + powered'
+    - 'while + running'
+    - 'protective hood* + remov*'
+    - 'hood* + open*'
+    - 'heating cartridge* + touch*'
+    - 'heating cartridge* + without'
+    - 'cabinet* + open*'
+  fr:
+    - 'contourn*'
+    - ponter
+    - 'pontage*'
+    - shunter
+    - 'consignation*'
+    - 'cadenassage*'
+    - 'hors tension'
+    - 'sous tension'
+    - 'haute tension'
+    - 'arrêt d''urgence*'
+    - 'barrière immatérielle*'
+    - 'rideau lumineux*'
+    - 'interrupteur de sécurité*'
+    - 'solvant*'
+    - 'écrasement*'
+    - 'pincement*'
+    - 'électrocution*'
+    - 'brûlure*'
+    - 'pendant + tourne'
+    - 'cartouche* + moi-même'
+    - 'capot* + ouvert*'
+assistant_enabled: true

@@ -1,0 +1,183 @@
+langcode: de
+status: true
+dependencies:
+  config:
+    - user.role.compliance
+    - user.role.portal_admin
+    - user.role.redaktion
+  module:
+    - node
+    - tannwald_assistant
+    - taxonomy
+    - user
+id: redaktion_unbeantwortet
+label: 'Unbeantwortete Fragen'
+module: views
+description: 'Abgelehnte oder negativ bewertete Fragen des laufenden Monats, gruppiert nach normalisierter Frage (FA-AI-07).'
+tag: tannwald
+base_table: tannwald_assistant_log
+base_field: id
+display:
+  default:
+    id: default
+    display_title: Standard
+    display_plugin: default
+    position: 0
+    display_options:
+      title: 'Unbeantwortete Fragen'
+      group_by: true
+      relationships:
+        maschine_nid:
+          id: maschine_nid
+          table: tannwald_assistant_log
+          field: maschine_nid
+          relationship: none
+          group_type: group
+          admin_label: Maschine
+          plugin_id: standard
+          required: false
+        field_maschinentyp:
+          id: field_maschinentyp
+          table: node__field_maschinentyp
+          field: field_maschinentyp
+          relationship: maschine_nid
+          group_type: group
+          admin_label: Maschinentyp
+          plugin_id: standard
+          required: false
+      fields:
+        frage_normalisiert:
+          id: frage_normalisiert
+          table: tannwald_assistant_log
+          field: frage_normalisiert
+          relationship: none
+          group_type: group
+          plugin_id: standard
+          label: Frage
+          alter:
+            alter_text: true
+            text: '{{ frage_normalisiert|capitalize }}'
+        id:
+          id: id
+          table: tannwald_assistant_log
+          field: id
+          relationship: none
+          group_type: count
+          plugin_id: numeric
+          label: Anzahl
+        name:
+          id: name
+          table: taxonomy_term_field_data
+          field: name
+          relationship: field_maschinentyp
+          group_type: group
+          plugin_id: field
+          label: Maschinentyp
+          entity_type: taxonomy_term
+          entity_field: name
+          type: string
+          settings:
+            link_to_entity: false
+          group_column: value
+          group_columns: {  }
+        last_created:
+          id: last_created
+          table: tannwald_assistant_log
+          field: last_created
+          relationship: none
+          group_type: group
+          plugin_id: tannwald_last_date
+          label: Zuletzt
+        nothing:
+          id: nothing
+          table: views
+          field: nothing
+          relationship: none
+          group_type: group
+          plugin_id: custom
+          label: ''
+          alter:
+            alter_text: true
+            text: '<a href="/node/add/dokument">Dokument anlegen</a> · <a href="/redaktion/support-anfragen">An Support</a>'
+      filters:
+        current_month:
+          id: current_month
+          table: tannwald_assistant_log
+          field: current_month
+          relationship: none
+          group_type: group
+          plugin_id: tannwald_current_month
+          group: 1
+        status:
+          id: status
+          table: tannwald_assistant_log
+          field: status
+          relationship: none
+          group_type: group
+          plugin_id: string
+          operator: '='
+          value: abgelehnt
+          group: 2
+        bewertung:
+          id: bewertung
+          table: tannwald_assistant_log
+          field: bewertung
+          relationship: none
+          group_type: group
+          plugin_id: numeric
+          operator: '='
+          value:
+            value: '-1'
+          group: 2
+      filter_groups:
+        operator: AND
+        groups:
+          1: AND
+          2: OR
+      sorts:
+        id:
+          id: id
+          table: tannwald_assistant_log
+          field: id
+          relationship: none
+          group_type: count
+          plugin_id: standard
+          order: DESC
+      pager:
+        type: some
+        options:
+          items_per_page: 20
+          offset: 0
+      empty:
+        area_text_custom:
+          id: area_text_custom
+          table: views
+          field: area_text_custom
+          relationship: none
+          group_type: group
+          plugin_id: text_custom
+          empty: true
+          content: 'Keine unbeantworteten Fragen in diesem Monat.'
+      style:
+        type: table
+      row:
+        type: fields
+      query:
+        type: views_query
+        options: {  }
+      access:
+        type: role
+        options:
+          role:
+            redaktion: redaktion
+            compliance: compliance
+            portal_admin: portal_admin
+      cache:
+        type: none
+  page_1:
+    id: page_1
+    display_title: Seite
+    display_plugin: page
+    position: 1
+    display_options:
+      path: redaktion/unbeantwortet

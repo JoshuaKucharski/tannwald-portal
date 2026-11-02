@@ -1,0 +1,14 @@
+uuid: 64fda130-bcc5-4b22-bf26-33c4df7fa3d0
+langcode: de
+status: true
+dependencies:
+  config:
+    - user.role.techniker
+  module:
+    - user
+id: user_remove_role_action.techniker
+label: 'Den ausgewählten Benutzern die Rolle Techniker entziehen'
+type: user
+plugin: user_remove_role_action
+configuration:
+  rid: techniker

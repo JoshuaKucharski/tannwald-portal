@@ -1,0 +1,45 @@
+{#
+/**
+ * @file
+ * Statusmeldungen: als Toast oben rechts („Lesebestätigung gespeichert.“, Alpine blendet nach 8 s aus) oder inline
+ * im Fluss (Anmeldeseite, Variable inline aus tannwald_preprocess_status_messages). Ohne JavaScript bleiben die
+ * Meldungen sichtbar.
+ */
+#}
+{% if message_list %}
+{%
+  set classes = {
+    status: 'border-ok bg-ok-bg text-ok',
+    warning: 'border-warn-line bg-warn-bg text-warn',
+    error: 'border-danger bg-danger-bg text-danger',
+  }
+%}
+{% if inline %}
+<div data-drupal-messages class="mb-4 flex flex-col gap-2">
+{% for type, messages in message_list %}
+  <div role="{{ type == 'error' ? 'alert' : 'status' }}" aria-label="{{ status_headings[type] }}" class="rounded-control border border-l-4 px-4 py-3 text-sm {{ classes[type]|default('border-line bg-panel text-ink') }}">
+    {% if messages|length > 1 %}
+      <ul class="m-0 list-disc pl-4">{% for message in messages %}<li>{{ message }}</li>{% endfor %}</ul>
+    {% else %}
+      {{ messages|first }}
+    {% endif %}
+  </div>
+{% endfor %}
+</div>
+{% else %}
+<div data-drupal-messages class="pointer-events-none fixed right-4 top-4 z-50 flex w-[calc(100%-2rem)] max-w-sm flex-col gap-2">
+{% for type, messages in message_list %}
+  <div x-data="toast" x-show="open" x-transition.opacity role="{{ type == 'error' ? 'alert' : 'status' }}" aria-label="{{ status_headings[type] }}" class="pointer-events-auto flex items-start gap-3 rounded-card border border-l-4 bg-panel px-4 py-3 text-sm shadow-card {{ classes[type]|default('border-line bg-panel text-ink') }}">
+    <div class="flex-1">
+      {% if messages|length > 1 %}
+        <ul class="m-0 list-disc pl-4">{% for message in messages %}<li>{{ message }}</li>{% endfor %}</ul>
+      {% else %}
+        {{ messages|first }}
+      {% endif %}
+    </div>
+    <button type="button" class="-mr-1 -mt-1 inline-flex h-8 w-8 items-center justify-center rounded text-lg leading-none hover:bg-black/5" aria-label="{{ 'Close message'|t }}" @click="open = false">×</button>
+  </div>
+{% endfor %}
+</div>
+{% endif %}
+{% endif %}

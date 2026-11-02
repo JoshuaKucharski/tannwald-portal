@@ -1,0 +1,1 @@
+- | Tannwald document manifest, one row per version | web/modules/custom/tannwald_demo/src/Plugin/migrate_plus/data_parser/DocumentVersions.php:22

@@ -1,0 +1,74 @@
+uuid: 616d21a2-14eb-41da-982a-a2717286f8c4
+langcode: de
+status: true
+dependencies:
+  config:
+    - field.field.node.zusammenfassung.body
+    - field.field.node.zusammenfassung.field_dokument
+    - field.field.node.zusammenfassung.field_dokument_revision
+    - field.field.node.zusammenfassung.field_generiert_am
+    - field.field.node.zusammenfassung.field_modell
+    - node.type.zusammenfassung
+  module:
+    - datetime
+    - text
+    - user
+id: node.zusammenfassung.default
+targetEntityType: node
+bundle: zusammenfassung
+mode: default
+content:
+  body:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  content_moderation_control:
+    settings: {  }
+    third_party_settings: {  }
+    weight: -20
+    region: content
+  field_dokument:
+    type: entity_reference_label
+    label: inline
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_dokument_revision:
+    type: number_integer
+    label: inline
+    settings:
+      thousand_separator: ''
+      prefix_suffix: false
+    third_party_settings: {  }
+    weight: 3
+    region: content
+  field_generiert_am:
+    type: datetime_default
+    label: inline
+    settings:
+      timezone_override: ''
+      format_type: tannwald_datum_zeit
+    third_party_settings: {  }
+    weight: 5
+    region: content
+  field_modell:
+    type: string
+    label: inline
+    settings:
+      link_to_entity: false
+      link_rel: canonical
+    third_party_settings: {  }
+    weight: 4
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden:
+  langcode: true

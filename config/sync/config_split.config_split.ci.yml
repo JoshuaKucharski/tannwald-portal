@@ -1,0 +1,16 @@
+uuid: 017b0dab-1b37-4f2e-b812-cfb6f1cd0812
+langcode: de
+status: false
+dependencies: {  }
+id: ci
+label: 'CI (GitHub Actions)'
+description: 'Nur in CI aktiv (settings.php: CI). Vorerst leer.'
+weight: 0
+stackable: false
+no_patching: false
+storage: folder
+folder: ../config/split/ci
+module: {  }
+theme: {  }
+complete_list: {  }
+partial_list: {  }

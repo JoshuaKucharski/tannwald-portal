@@ -1,0 +1,21 @@
+# Erzeugt von docs/i18n/config-translate.php (Aufgabe 6.5) — nicht von Hand ändern.
+label: 'Rédaction'
+type_settings:
+  states:
+    draft:
+      label: 'Brouillon'
+    published:
+      label: 'Approuvé'
+    zur_pruefung:
+      label: 'À vérifier'
+    zurueckgewiesen:
+      label: 'Rejeté'
+  transitions:
+    entwurf_speichern:
+      label: 'Enregistrer le brouillon'
+    freigeben:
+      label: 'Approuver'
+    zur_pruefung_senden:
+      label: 'Envoyer pour vérification'
+    zurueckweisen:
+      label: 'Rejeter'

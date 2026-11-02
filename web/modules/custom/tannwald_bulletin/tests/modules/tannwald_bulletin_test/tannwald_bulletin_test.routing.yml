@@ -1,0 +1,13 @@
+tannwald_bulletin_test.banner:
+  path: '/tannwald-bulletin-test/{bulletin}/{maschine}'
+  defaults:
+    _controller: '\Drupal\tannwald_bulletin_test\Controller\BannerController::page'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+  options:
+    no_cache: TRUE
+    parameters:
+      bulletin:
+        type: 'entity:node'
+      maschine:
+        type: 'entity:node'

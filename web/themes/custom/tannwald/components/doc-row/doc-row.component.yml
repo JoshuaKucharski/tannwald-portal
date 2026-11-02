@@ -1,0 +1,60 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: 'Document row'
+status: stable
+description: 'Eine Zeile der Dokumentliste (Wireframe 01): Titel, Version, Freigabedatum, Änderungshistorie, Sprach-Pillen, Badges, Download.'
+props:
+  type: object
+  required:
+    - title
+    - version
+  properties:
+    title:
+      type: string
+      title: Title
+    url_dokument:
+      type: [string, 'null']
+      title: 'Document URL'
+      description: 'Ohne URL steht der Titel als Text (ältere Revision ohne Zugriff).'
+    url_download:
+      type: [string, 'null']
+      title: 'Download URL'
+      description: '/dokument/{nid}/download oder null (keine Datei, ältere Revision).'
+    version:
+      type: string
+      title: Version
+    freigegeben_am:
+      type: [string, 'null']
+      title: 'Approved on'
+      description: 'Formatiert TT.MM.JJJJ.'
+    url_history:
+      type: [string, 'null']
+      title: 'Change history URL'
+      description: 'Nur mit Recht „view all revisions“, sonst null.'
+    languages:
+      type: array
+      title: Languages
+      description: 'Siehe tannwald:lang-pills.'
+    badges:
+      type: array
+      title: Badges
+      description: 'Liste von Props für tannwald:badge ({label, variant, pill}).'
+      items:
+        type: object
+    is_new:
+      type: boolean
+      title: 'New version'
+      default: false
+      description: 'Badge „Neue Version“: ≥ 2 veröffentlichte Versionen und die aktuelle ist die jüngste.'
+    is_current:
+      type: boolean
+      title: 'Current revision'
+      default: true
+      description: 'false = ältere Revision; der Schalter „Nur aktuelle Versionen“ blendet sie aus.'
+    audit_hint:
+      type: boolean
+      title: 'Audit hint'
+      default: false
+      description: '„Zugriff wird protokolliert“ bei Exportklasse ungleich keine.'
+    attributes:
+      type: Drupal\Core\Template\Attribute
+      title: Attributes

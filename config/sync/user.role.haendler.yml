@@ -1,0 +1,14 @@
+uuid: 1fcbeb49-4b65-4916-a97d-ed2620c265b1
+langcode: de
+status: true
+dependencies:
+  module:
+    - system
+    - tannwald_access
+id: haendler
+label: Händler
+weight: 4
+is_admin: false
+permissions:
+  - 'access content'
+  - 'tannwald view own company documents'

@@ -1,0 +1,11 @@
+{#
+/**
+ * @file
+ * Seitentitel (Block) — auf Maschinen- und Dokumentseiten ausgeblendet, dort zeigen die Node-Templates den Titel.
+ */
+#}
+{{ title_prefix }}
+{% if title %}
+  <h1{{ title_attributes.addClass('m-0 text-[28px] font-semibold leading-tight') }}>{{ title }}</h1>
+{% endif %}
+{{ title_suffix }}

@@ -1,0 +1,46 @@
+[
+  {
+    "sap_nr": "100417",
+    "name": "Pharmalog AG",
+    "land": "CH",
+    "art": "kunde"
+  },
+  {
+    "sap_nr": "100588",
+    "name": "Farmacéutica del Valle S.A. de C.V.",
+    "land": "MX",
+    "art": "kunde"
+  },
+  {
+    "sap_nr": "100645",
+    "name": "Rheintal Nutrition GmbH",
+    "land": "DE",
+    "art": "kunde"
+  },
+  {
+    "sap_nr": "100701",
+    "name": "Laboratorios Austral S.A.",
+    "land": "AR",
+    "art": "kunde"
+  },
+  {
+    "sap_nr": "100733",
+    "name": "Vitalis Pharma SA",
+    "land": "FR",
+    "art": "kunde"
+  },
+  {
+    "sap_nr": "100802",
+    "name": "Hokuto Medical K.K.",
+    "land": "JP",
+    "art": "kunde"
+  },
+  {
+    "sap_nr": "200031",
+    "name": "Embalatec Serviços Ltda.",
+    "land": "BR",
+    "art": "haendler",
+    "haendler_gebiet": ["BR", "MX", "AR", "CL"],
+    "haendler_zuordnung": ["100588", "100701"]
+  }
+]

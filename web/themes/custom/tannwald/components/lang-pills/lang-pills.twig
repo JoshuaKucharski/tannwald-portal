@@ -1,0 +1,18 @@
+{#
+/**
+ * @file
+ * SDC tannwald:lang-pills — Props: languages[] {code, label, url, current, available}.
+ */
+#}
+<span{{ attributes.addClass('inline-flex flex-wrap gap-1.5') }} aria-label="{{ 'Available languages'|t }}">
+{% for language in languages %}
+  {% if language.available and language.url %}
+    <a href="{{ language.url }}" class="pill no-underline {{ language.current ? 'border-accent font-semibold text-accent' : 'border-line text-muted hover:border-accent hover:text-accent' }}" lang="{{ language.code }}" title="{{ language.label }}"{% if language.current %} aria-current="true"{% endif %}>{{ language.code|upper }}</a>
+  {% elseif language.available %}
+    <span class="pill {{ language.current ? 'border-accent font-semibold text-accent' : 'border-line text-muted' }}" lang="{{ language.code }}" title="{{ language.label }}">{{ language.code|upper }}</span>
+  {% else %}
+    {# 6.1 (E): gestrichelt auf Fläche statt hellgrau — Kontrast ≥ 4.5 (Leitplanken §7.4). #}
+    <span class="pill cursor-help border-dashed border-line bg-surface text-muted" title="{{ 'Not available'|t }}" aria-label="{{ '@language: not available'|t({'@language': language.label}) }}">{{ language.code|upper }}</span>
+  {% endif %}
+{% endfor %}
+</span>

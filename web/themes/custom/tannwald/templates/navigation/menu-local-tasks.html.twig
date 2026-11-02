@@ -1,0 +1,14 @@
+{#
+/**
+ * @file
+ * Lokale Reiter (Anmelden / Passwort zurücksetzen, Bearbeiten für die Redaktion) als Pillenleiste.
+ */
+#}
+{% if primary %}
+  <h2 class="visually-hidden">{{ 'Primary tabs'|t }}</h2>
+  <ul class="tabs primary m-0 flex list-none flex-wrap gap-2 p-0">{{ primary }}</ul>
+{% endif %}
+{% if secondary %}
+  <h2 class="visually-hidden">{{ 'Secondary tabs'|t }}</h2>
+  <ul class="tabs secondary m-0 flex list-none flex-wrap gap-2 p-0">{{ secondary }}</ul>
+{% endif %}

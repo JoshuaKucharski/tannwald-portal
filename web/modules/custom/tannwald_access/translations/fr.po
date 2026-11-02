@@ -1,0 +1,103 @@
+# French translation of tannwald_access (vous; terminologie: voir rapport tannwald-18).
+msgid ""
+msgstr ""
+"Project-Id-Version: tannwald_access\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Language: fr\n"
+
+msgid "%code is not an ISO 3166-1 alpha-2 code in capital letters."
+msgstr "%code n’est pas un code ISO 3166-1 alpha-2 en majuscules."
+
+msgid "%value is not a valid SAP number."
+msgstr "%value n’est pas un numéro SAP valide."
+
+msgid "Allowed countries"
+msgstr "Pays autorisés"
+
+msgid "Audit log"
+msgstr "Journal d’audit"
+
+msgid "Blocked companies"
+msgstr "Entreprises bloquées"
+
+msgid "Country"
+msgstr "Pays"
+
+msgid "Date"
+msgstr "Date"
+
+msgid "Details"
+msgstr "Détails"
+
+msgid "Download CSV"
+msgstr "Télécharger le CSV"
+
+msgid "Edit allowed countries and blocked companies per export class."
+msgstr "Modifier les pays autorisés et les entreprises bloquées par classe d’exportation."
+
+msgid "Entity ID"
+msgstr "ID de l’entité"
+
+msgid "Entity type"
+msgstr "Type d’entité"
+
+msgid "Event"
+msgstr "Événement"
+
+msgid "Export class 1"
+msgstr "Classe d’exportation 1"
+
+msgid "Export class 2 (dual use)"
+msgstr "Classe d’exportation 2 (double usage)"
+
+msgid "Export rules"
+msgstr "Règles d’exportation"
+
+msgid "Export rules saved; they take effect immediately."
+msgstr "Règles d’exportation enregistrées ; elles s’appliquent immédiatement."
+
+msgid "ID"
+msgstr "ID"
+
+msgid "ISO 3166-1 alpha-2 codes in capital letters, separated by commas, e.g. CH, DE, AT."
+msgstr "Codes ISO 3166-1 alpha-2 en majuscules, séparés par des virgules, p. ex. CH, DE, AT."
+
+msgid "Internal roles: shows lists across all companies. Export rules still apply."
+msgstr "Rôles internes : affiche les listes de toutes les entreprises. Les règles d’exportation restent applicables."
+
+msgid "Manage export rules"
+msgstr "Gérer les règles d’exportation"
+
+msgid "No audit entries."
+msgstr "Aucune entrée d’audit."
+
+msgid "SAP numbers, separated by commas."
+msgstr "Numéros SAP, séparés par des virgules."
+
+msgid "Safety bulletins must not be approved by the person who created them (four-eyes principle)."
+msgstr "Les bulletins de sécurité ne peuvent pas être approuvés par leur auteur (principe des quatre yeux)."
+
+msgid "Shows the document lists of the own company. Visibility itself is computed from company, machine types and export rules."
+msgstr "Affiche les listes de documents de sa propre entreprise. La visibilité est calculée à partir de l’entreprise, des types de machine et des règles d’exportation."
+
+msgid "User"
+msgstr "Utilisateur"
+
+msgid "View all documents"
+msgstr "Voir tous les documents"
+
+msgid "View and export the audit log."
+msgstr "Consulter et exporter le journal d’audit."
+
+msgid "View audit log"
+msgstr "Consulter le journal d’audit"
+
+msgid "View own company documents"
+msgstr "Voir les documents de sa propre entreprise"
+
+msgctxt "Validation"
+msgid "Safety bulletin not approved by its creator"
+msgstr "Bulletin de sécurité non approuvé par son auteur"

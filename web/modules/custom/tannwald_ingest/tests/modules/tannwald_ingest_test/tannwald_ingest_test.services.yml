@@ -1,0 +1,3 @@
+services:
+  tannwald_ingest_test.ai_provider:
+    class: Drupal\tannwald_ingest_test\FakeAiProviderManager

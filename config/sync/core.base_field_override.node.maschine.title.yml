@@ -1,0 +1,18 @@
+uuid: ef899321-8083-4c54-b49f-946e19dbe03f
+langcode: de
+status: true
+dependencies:
+  config:
+    - node.type.maschine
+id: node.maschine.title
+field_name: title
+entity_type: node
+bundle: maschine
+label: Seriennummer
+description: 'Der Titel ist die Seriennummer der Maschine (Quelle SAP), z. B. TB200-2021-0417.'
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

@@ -1,0 +1,3 @@
+# Erzeugt von docs/i18n/config-translate.php (Aufgabe 6.5) — nicht von Hand ändern.
+name: 'Type de machine'
+description: 'Types de machine (TB-200, TB-400, KT-500). Les termes sont créés par le seeder.'

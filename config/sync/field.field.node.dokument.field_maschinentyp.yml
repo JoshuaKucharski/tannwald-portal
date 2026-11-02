@@ -1,0 +1,28 @@
+uuid: cc565057-bcb5-4d3c-a8b6-ff63625e36a2
+langcode: de
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_maschinentyp
+    - node.type.dokument
+    - taxonomy.vocabulary.maschinentyp
+id: node.dokument.field_maschinentyp
+field_name: field_maschinentyp
+entity_type: node
+bundle: dokument
+label: Maschinentyp
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      maschinentyp: maschinentyp
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+field_type: entity_reference

@@ -1,0 +1,23 @@
+uuid: 737526f8-3130-4b0d-8b2f-2e64b4b79722
+langcode: de
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_exportklasse
+    - node.type.dokument
+  module:
+    - options
+id: node.dokument.field_exportklasse
+field_name: field_exportklasse
+entity_type: node
+bundle: dokument
+label: Exportklasse
+description: ''
+required: true
+translatable: false
+default_value:
+  -
+    value: keine
+default_value_callback: ''
+settings: {  }
+field_type: list_string

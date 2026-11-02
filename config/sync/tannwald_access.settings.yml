@@ -1,0 +1,26 @@
+_core:
+  default_config_hash: DcA-50CheZ6PMqWAS3nT856FO0i5RYdtJQqOdAqOEEo
+export_rules:
+  klasse_1:
+    laender:
+      - CH
+      - DE
+      - AT
+      - FR
+      - IT
+      - NL
+      - US
+      - JP
+      - BR
+    gesperrte_firmen: {  }
+  klasse_2:
+    laender:
+      - CH
+      - DE
+      - AT
+      - FR
+      - IT
+      - NL
+      - US
+      - JP
+    gesperrte_firmen: {  }

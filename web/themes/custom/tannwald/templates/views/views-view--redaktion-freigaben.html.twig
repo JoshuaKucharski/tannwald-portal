@@ -1,0 +1,18 @@
+{#
+/**
+ * @file
+ * Freigabe-Queue (Wireframe 03): Satz, Reiter mit Zählern (Area tannwald_review_counts, D), Karten, Pager.
+ */
+#}
+<div{{ attributes.addClass('view', 'view-redaktion-freigaben', 'flex', 'flex-col', 'gap-4') }}>
+  {{ title_prefix }}{{ title_suffix }}
+  <p class="m-0 text-muted">{{ 'Summaries become visible on the document, in search and in the assistant only after approval.'|t }}</p>
+  {% if header %}<div class="view-header">{{ header }}</div>{% endif %}
+  {% if rows %}
+    <div class="view-content flex flex-col gap-4">{{ rows }}</div>
+  {% elseif empty %}
+    <div class="view-empty rounded-card border border-dashed border-line px-6 py-8 text-center text-muted">{{ empty }}</div>
+  {% endif %}
+  {% if pager %}{{ pager }}{% endif %}
+  {% if footer %}<div class="view-footer">{{ footer }}</div>{% endif %}
+</div>

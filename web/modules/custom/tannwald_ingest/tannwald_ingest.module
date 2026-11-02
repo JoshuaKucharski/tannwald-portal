@@ -1,0 +1,38 @@
+<?php
+
+/**
+ * @file
+ * Datenhelfer für Theme 5.1 und 5.3 (Zusammenfassungen, Review-Karte).
+ */
+
+declare(strict_types=1);
+
+use Drupal\node\NodeInterface;
+use Drupal\tannwald_ingest\Form\ReviewForm;
+
+/**
+ * Review-Formular einer Zusammenfassung (für review-actions in 5.3).
+ */
+function tannwald_ingest_review_form(NodeInterface $zusammenfassung): array {
+  return \Drupal::formBuilder()->getForm(ReviewForm::class, $zusammenfassung);
+}
+
+/**
+ * Daten der Review-Karte (Wireframe 03).
+ *
+ * @return array
+ *   Siehe SummaryPresenter::reviewCard().
+ */
+function tannwald_ingest_review_card(NodeInterface $zusammenfassung): array {
+  return \Drupal::service('tannwald_ingest.summary_presenter')->reviewCard($zusammenfassung);
+}
+
+/**
+ * Freigegebene Zusammenfassung zur aktuellen Dokument-Revision oder NULL.
+ *
+ * @return array|null
+ *   Siehe SummaryPresenter::summaryFor().
+ */
+function tannwald_ingest_summary_for(NodeInterface $dokument, string $langcode): ?array {
+  return \Drupal::service('tannwald_ingest.summary_presenter')->summaryFor($dokument, $langcode);
+}

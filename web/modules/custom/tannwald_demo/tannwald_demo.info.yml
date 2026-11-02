@@ -1,0 +1,17 @@
+name: 'Tannwald Demo'
+type: module
+description: 'Demo seeder of myTannwald: migrations from fixtures/, drush tannwald:demo-install and tannwald:demo-reset.'
+package: Tannwald
+core_version_requirement: ^11
+dependencies:
+  - drupal:migrate
+  - migrate_plus:migrate_plus
+  - migrate_tools:migrate_tools
+  - drupal:node
+  - drupal:taxonomy
+  - drupal:user
+  - drupal:file
+  - drupal:content_moderation
+  - tannwald_access:tannwald_access
+'interface translation project': tannwald_demo
+'interface translation server pattern': modules/custom/tannwald_demo/translations/%language.po

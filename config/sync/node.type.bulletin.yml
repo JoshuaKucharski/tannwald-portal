@@ -1,0 +1,11 @@
+uuid: 62520a0e-4cdb-430e-a18b-7685b48a3dd8
+langcode: de
+status: true
+dependencies: {  }
+name: Bulletin
+type: bulletin
+description: 'Service- oder Sicherheits-Bulletin zu Maschinentypen oder Seriennummern.'
+help: null
+new_revision: true
+preview_mode: 0
+display_submitted: false

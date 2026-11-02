@@ -1,0 +1,16 @@
+uuid: 6e8c44e5-a557-46d7-857b-e45dc842050b
+langcode: de
+status: true
+dependencies:
+  config:
+    - node.type.dokument
+  module:
+    - content_translation
+third_party_settings:
+  content_translation:
+    enabled: true
+id: node.dokument
+target_entity_type_id: node
+target_bundle: dokument
+default_langcode: current_interface
+language_alterable: false

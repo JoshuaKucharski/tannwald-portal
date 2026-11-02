@@ -1,0 +1,161 @@
+uuid: 453a7b13-a186-4b8f-b8d6-706bc52f2cbc
+langcode: de
+status: true
+dependencies:
+  config:
+    - user.role.compliance
+    - user.role.portal_admin
+    - user.role.redaktion
+  module:
+    - tannwald_assistant
+    - user
+_core:
+  default_config_hash: iBHSXAAyJnW6KGexAaTUX1ukFG205C1J2PQgMmFPHdk
+id: redaktion_support_anfragen
+label: Support-Anfragen
+module: views
+description: 'Support-Anfragen aus dem Assistenten (FA-AI-03); Status-Wechsel folgt in 6.1.'
+tag: tannwald
+base_table: support_anfrage
+base_field: id
+display:
+  default:
+    id: default
+    display_title: Standard
+    display_plugin: default
+    position: 0
+    display_options:
+      title: Support-Anfragen
+      fields:
+        created:
+          id: created
+          table: support_anfrage
+          field: created
+          relationship: none
+          group_type: group
+          entity_type: support_anfrage
+          entity_field: created
+          plugin_id: field
+          label: Zeit
+          type: timestamp
+          settings:
+            date_format: custom
+            custom_date_format: 'd.m.Y H:i'
+            timezone: ''
+        uid:
+          id: uid
+          table: support_anfrage
+          field: uid
+          relationship: none
+          group_type: group
+          entity_type: support_anfrage
+          entity_field: uid
+          plugin_id: field
+          label: Nutzer
+          type: entity_reference_label
+          settings:
+            link: false
+        maschine_nid:
+          id: maschine_nid
+          table: support_anfrage
+          field: maschine_nid
+          relationship: none
+          group_type: group
+          entity_type: support_anfrage
+          entity_field: maschine_nid
+          plugin_id: field
+          label: Maschine
+          type: entity_reference_label
+          settings:
+            link: false
+        frage:
+          id: frage
+          table: support_anfrage
+          field: frage
+          relationship: none
+          group_type: group
+          entity_type: support_anfrage
+          entity_field: frage
+          plugin_id: field
+          label: Frage
+          type: basic_string
+        status:
+          id: status
+          table: support_anfrage
+          field: status
+          relationship: none
+          group_type: group
+          entity_type: support_anfrage
+          entity_field: status
+          plugin_id: field
+          label: Status
+          type: string
+          settings:
+            link_to_entity: false
+      pager:
+        type: full
+        options:
+          offset: 0
+          items_per_page: 50
+      access:
+        type: role
+        options:
+          role:
+            redaktion: redaktion
+            compliance: compliance
+            portal_admin: portal_admin
+      cache:
+        type: none
+      empty:
+        area_text_custom:
+          id: area_text_custom
+          table: views
+          field: area_text_custom
+          relationship: none
+          group_type: group
+          plugin_id: text_custom
+          empty: true
+          content: 'Keine Support-Anfragen.'
+      sorts:
+        created:
+          id: created
+          table: support_anfrage
+          field: created
+          relationship: none
+          group_type: group
+          entity_type: support_anfrage
+          entity_field: created
+          plugin_id: date
+          order: DESC
+      style:
+        type: table
+      row:
+        type: fields
+      query:
+        type: views_query
+        options: {  }
+      display_extenders: {  }
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - url.query_args
+        - user.roles
+      tags: {  }
+  page_1:
+    id: page_1
+    display_title: Seite
+    display_plugin: page
+    position: 1
+    display_options:
+      display_extenders: {  }
+      path: redaktion/support-anfragen
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - url.query_args
+        - user.roles
+      tags: {  }

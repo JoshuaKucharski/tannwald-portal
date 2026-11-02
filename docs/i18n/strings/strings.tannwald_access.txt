@@ -1,0 +1,31 @@
+- | %code is not an ISO 3166-1 alpha-2 code in capital letters. | web/modules/custom/tannwald_access/src/Form/ExportRulesForm.php:87
+- | %value is not a valid SAP number. | web/modules/custom/tannwald_access/src/Form/ExportRulesForm.php:92
+- | Allowed countries | web/modules/custom/tannwald_access/src/Form/ExportRulesForm.php:63
+- | Audit log | web/modules/custom/tannwald_access/tannwald_access.routing.yml:28
+- | Blocked companies | web/modules/custom/tannwald_access/src/Form/ExportRulesForm.php:70
+- | Country | web/modules/custom/tannwald_access/src/Controller/AuditController.php:84
+- | Date | web/modules/custom/tannwald_access/src/Controller/AuditController.php:79
+- | Details | web/modules/custom/tannwald_access/src/Controller/AuditController.php:85
+- | Download CSV | web/modules/custom/tannwald_access/src/Controller/AuditController.php:72
+- | Edit allowed countries and blocked companies per export class. | web/modules/custom/tannwald_access/tannwald_access.permissions.yml:9
+- | Entity ID | web/modules/custom/tannwald_access/src/Controller/AuditController.php:83
+- | Entity type | web/modules/custom/tannwald_access/src/Controller/AuditController.php:82
+- | Event | web/modules/custom/tannwald_access/src/Controller/AuditController.php:81
+- | Export class 1 | web/modules/custom/tannwald_access/src/Form/ExportRulesForm.php:52
+- | Export class 2 (dual use) | web/modules/custom/tannwald_access/src/Form/ExportRulesForm.php:53
+- | Export rules | web/modules/custom/tannwald_access/tannwald_access.routing.yml:20
+- | Export rules saved; they take effect immediately. | web/modules/custom/tannwald_access/src/Form/ExportRulesForm.php:122
+- | ID | web/modules/custom/tannwald_access/src/Controller/AuditController.php:78
+- | ISO 3166-1 alpha-2 codes in capital letters, separated by commas, e.g. CH, DE, AT. | web/modules/custom/tannwald_access/src/Form/ExportRulesForm.php:64
+- | Internal roles: shows lists across all companies. Export rules still apply. | web/modules/custom/tannwald_access/tannwald_access.permissions.yml:6
+- | Manage export rules | web/modules/custom/tannwald_access/tannwald_access.permissions.yml:8
+- | No audit entries. | web/modules/custom/tannwald_access/src/Controller/AuditController.php:88
+- | SAP numbers, separated by commas. | web/modules/custom/tannwald_access/src/Form/ExportRulesForm.php:71
+- | Safety bulletins must not be approved by the person who created them (four-eyes principle). | web/modules/custom/tannwald_access/src/Hook/AccessHooks.php:186
+- | Shows the document lists of the own company. Visibility itself is computed from company, machine types and export rules. | web/modules/custom/tannwald_access/tannwald_access.permissions.yml:3
+- | User | web/modules/custom/tannwald_access/src/Controller/AuditController.php:80
+- | View all documents | web/modules/custom/tannwald_access/tannwald_access.permissions.yml:5
+- | View and export the audit log. | web/modules/custom/tannwald_access/tannwald_access.permissions.yml:13
+- | View audit log | web/modules/custom/tannwald_access/tannwald_access.permissions.yml:12
+- | View own company documents | web/modules/custom/tannwald_access/tannwald_access.permissions.yml:2
+Validation | Safety bulletin not approved by its creator | web/modules/custom/tannwald_access/src/Plugin/Validation/Constraint/NotOwnBulletinApprovalConstraint.php:17

@@ -1,0 +1,64 @@
+tannwald_assistant.api_ask:
+  path: '/api/assistant'
+  defaults:
+    _controller: '\Drupal\tannwald_assistant\Controller\AssistantApiController::ask'
+  methods: [POST]
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    _csrf_request_header_token: 'TRUE'
+    _content_type_format: json
+  options:
+    no_cache: TRUE
+
+tannwald_assistant.api_feedback:
+  path: '/api/assistant/feedback'
+  defaults:
+    _controller: '\Drupal\tannwald_assistant\Controller\AssistantApiController::feedback'
+  methods: [POST]
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    _csrf_request_header_token: 'TRUE'
+    _content_type_format: json
+  options:
+    no_cache: TRUE
+
+tannwald_assistant.api_support:
+  path: '/api/assistant/support'
+  defaults:
+    _controller: '\Drupal\tannwald_assistant\Controller\AssistantApiController::support'
+  methods: [POST]
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    _csrf_request_header_token: 'TRUE'
+    _content_type_format: json
+  options:
+    no_cache: TRUE
+
+tannwald_assistant.api_live:
+  path: '/api/search/live'
+  defaults:
+    _controller: '\Drupal\tannwald_assistant\Controller\AssistantApiController::live'
+  methods: [GET]
+  requirements:
+    _user_is_logged_in: 'TRUE'
+  options:
+    no_cache: TRUE
+
+tannwald_assistant.search:
+  path: '/suche'
+  defaults:
+    _controller: '\Drupal\tannwald_assistant\Controller\SearchPageController::build'
+    _title: 'Search'
+  methods: [GET]
+  requirements:
+    _user_is_logged_in: 'TRUE'
+  options:
+    no_cache: TRUE
+
+tannwald_assistant.settings:
+  path: '/admin/config/tannwald/assistent'
+  defaults:
+    _form: '\Drupal\tannwald_assistant\Form\AssistantSettingsForm'
+    _title: 'Assistant'
+  requirements:
+    _permission: 'administer tannwald assistant'

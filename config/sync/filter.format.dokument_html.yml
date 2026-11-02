@@ -1,0 +1,23 @@
+uuid: a92902bf-9b6b-4c78-9240-43e16e6eed1f
+langcode: de
+status: true
+dependencies: {  }
+name: Dokument-HTML
+format: dokument_html
+weight: 10
+filters:
+  filter_html:
+    id: filter_html
+    provider: filter
+    status: true
+    weight: -10
+    settings:
+      allowed_html: '<h2 id> <h3 id> <p id> <table id> <thead id> <tbody id> <tr id> <th id> <td id> <ul id> <ol id> <li id> <strong id> <em id> <code id> <a href id>'
+      filter_html_help: false
+      filter_html_nofollow: false
+  filter_htmlcorrector:
+    id: filter_htmlcorrector
+    provider: filter
+    status: true
+    weight: 10
+    settings: {  }

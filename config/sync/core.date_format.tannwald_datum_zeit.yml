@@ -1,0 +1,8 @@
+uuid: 6b694a77-db72-4ee0-a1bd-28449b5a3a0b
+langcode: de
+status: true
+dependencies: {  }
+id: tannwald_datum_zeit
+label: 'Tannwald: Datum und Zeit'
+locked: false
+pattern: 'd.m.Y H:i'

@@ -1,0 +1,28 @@
+uuid: 12546e06-5e64-492c-bb2c-cbdcead628a8
+langcode: de
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_seriennummern
+    - node.type.bulletin
+    - node.type.maschine
+id: node.bulletin.field_seriennummern
+field_name: field_seriennummern
+entity_type: node
+bundle: bulletin
+label: Seriennummern
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      maschine: maschine
+    sort:
+      field: title
+      direction: asc
+    auto_create: false
+field_type: entity_reference

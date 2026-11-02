@@ -1,0 +1,93 @@
+- | 0 = unlimited. Warning mail at 80 %, search only at 100 %. | web/modules/custom/tannwald_assistant/src/Form/AssistantSettingsForm.php:84
+- | @total hits in @seconds s · Mode @modus · only documents you are allowed to see | web/modules/custom/tannwald_assistant/templates/tannwald-search-page.html.twig:38
+- | Administer the Tannwald assistant | web/modules/custom/tannwald_assistant/tannwald_assistant.permissions.yml:2
+- | Answer not found. | web/modules/custom/tannwald_assistant/src/Controller/AssistantApiController.php:124, web/modules/custom/tannwald_assistant/src/Controller/AssistantApiController.php:144
+- | Answers | web/modules/custom/tannwald_assistant/src/Plugin/views/area/AnswerStats.php:75
+- | Answers and average duration per day from the assistant log. | web/modules/custom/tannwald_assistant/src/Hook/AssistantHooks.php:129
+- | Assistant | web/modules/custom/tannwald_assistant/tannwald_assistant.routing.yml:62
+- | Assistant answers per day | web/modules/custom/tannwald_assistant/src/Hook/AssistantHooks.php:128
+- | Assistant answers per day (last @days days) | web/modules/custom/tannwald_assistant/src/Plugin/views/area/AnswerStats.php:74
+- | Assistant enabled | web/modules/custom/tannwald_assistant/src/Form/AssistantSettingsForm.php:41
+- | Assistant limit warning | web/modules/custom/tannwald_assistant/src/Limit/LimitMailer.php:21
+- | Assistant log | web/modules/custom/tannwald_assistant/src/Hook/AssistantHooks.php:52, web/modules/custom/tannwald_assistant/src/Hook/AssistantHooks.php:55
+- | Assistant usage | web/modules/custom/tannwald_assistant/src/Hook/AssistantHooks.php:91, web/modules/custom/tannwald_assistant/src/Hook/AssistantHooks.php:94
+- | Assistant: 80 % of the monthly limit reached | web/modules/custom/tannwald_assistant/src/Limit/LimitMailer.php:29
+- | At 100 % the assistant switches to search-only mode until the end of the month; search remains available. | web/modules/custom/tannwald_assistant/src/Limit/LimitMailer.php:32
+- | At least one safety term per language is required. | web/modules/custom/tannwald_assistant/src/Form/AssistantSettingsForm.php:126
+- | Average duration (ms) | web/modules/custom/tannwald_assistant/src/Plugin/views/area/AnswerStats.php:75
+- | Change provider, models, limit, costs and safety terms; manage support requests. | web/modules/custom/tannwald_assistant/tannwald_assistant.permissions.yml:3
+- | Chat model | web/modules/custom/tannwald_assistant/src/Form/AssistantSettingsForm.php:53
+- | Chunks in the prompt (top_k) | web/modules/custom/tannwald_assistant/src/Form/AssistantSettingsForm.php:66
+- | Completion tokens | web/modules/custom/tannwald_assistant/src/Hook/AssistantHooks.php:103
+- | Confirmed on @date | web/modules/custom/tannwald_assistant/templates/tannwald-search-page.html.twig:50
+- | Context | web/modules/custom/tannwald_assistant/src/Hook/AssistantHooks.php:101
+- | Cost (CHF) | web/modules/custom/tannwald_assistant/src/Hook/AssistantHooks.php:104
+- | Cost per 1,000 tokens (CHF) | web/modules/custom/tannwald_assistant/src/Form/AssistantSettingsForm.php:91
+- | Created | web/modules/custom/tannwald_assistant/src/Entity/SupportAnfrage.php:77, web/modules/custom/tannwald_assistant/src/Hook/AssistantHooks.php:76, web/modules/custom/tannwald_assistant/src/Hook/AssistantHooks.php:105
+- | Current month | web/modules/custom/tannwald_assistant/src/Hook/AssistantHooks.php:78
+- | Current versions only | web/modules/custom/tannwald_assistant/templates/tannwald-search-page.html.twig:22
+- | Day | web/modules/custom/tannwald_assistant/src/Hook/AssistantHooks.php:107, web/modules/custom/tannwald_assistant/src/Plugin/views/area/AnswerStats.php:75
+- | Document | web/modules/custom/tannwald_assistant/templates/tannwald-search-page.html.twig:48
+- | Document type | web/modules/custom/tannwald_assistant/templates/tannwald-search-page.html.twig:26
+- | Duration (ms) | web/modules/custom/tannwald_assistant/src/Hook/AssistantHooks.php:66
+- | Embedding model | web/modules/custom/tannwald_assistant/src/Form/AssistantSettingsForm.php:60
+- | Expected log_id and bewertung 1 or -1. | web/modules/custom/tannwald_assistant/src/Controller/AssistantApiController.php:121
+- | Expected log_id. | web/modules/custom/tannwald_assistant/src/Controller/AssistantApiController.php:140
+- | Full text only | web/modules/custom/tannwald_assistant/templates/tannwald-search-page.html.twig:20
+- | Hello @name, | web/modules/custom/tannwald_assistant/src/Limit/LimitMailer.php:30
+- | History (JSON) | web/modules/custom/tannwald_assistant/src/Entity/SupportAnfrage.php:67
+- | Hit by meaning | web/modules/custom/tannwald_assistant/templates/tannwald-search-page.html.twig:43
+- | Hybrid | web/modules/custom/tannwald_assistant/templates/tannwald-search-page.html.twig:19
+- | Injection suspicion | web/modules/custom/tannwald_assistant/src/Hook/AssistantHooks.php:67
+- | Language | web/modules/custom/tannwald_assistant/src/Hook/AssistantHooks.php:64, web/modules/custom/tannwald_assistant/templates/tannwald-search-page.html.twig:26
+- | Last asked | web/modules/custom/tannwald_assistant/src/Hook/AssistantHooks.php:84
+- | Log ID | web/modules/custom/tannwald_assistant/src/Hook/AssistantHooks.php:59
+- | Machine | web/modules/custom/tannwald_assistant/src/Entity/SupportAnfrage.php:57, web/modules/custom/tannwald_assistant/src/Hook/AssistantHooks.php:70, web/modules/custom/tannwald_assistant/src/Hook/AssistantHooks.php:74
+- | Machine ID | web/modules/custom/tannwald_assistant/src/Hook/AssistantHooks.php:68
+- | Machine not found. | web/modules/custom/tannwald_assistant/src/Controller/AssistantApiController.php:96, web/modules/custom/tannwald_assistant/src/Controller/AssistantApiController.php:148, web/modules/custom/tannwald_assistant/src/Controller/AssistantApiController.php:199
+- | Machine type | web/modules/custom/tannwald_assistant/templates/tannwald-search-page.html.twig:26
+- | Minimum RRF score (min_score) | web/modules/custom/tannwald_assistant/src/Form/AssistantSettingsForm.php:74
+- | Model | web/modules/custom/tannwald_assistant/src/Hook/AssistantHooks.php:99
+- | Month | web/modules/custom/tannwald_assistant/src/Hook/AssistantHooks.php:112
+- | Monthly token limit | web/modules/custom/tannwald_assistant/src/Form/AssistantSettingsForm.php:83
+- | No answers yet. | web/modules/custom/tannwald_assistant/src/Plugin/views/area/AnswerStats.php:77
+- | No hits. | web/modules/custom/tannwald_assistant/templates/tannwald-search-page.html.twig:54
+- | One row per assistant answer (pseudonymised). | web/modules/custom/tannwald_assistant/src/Hook/AssistantHooks.php:56
+- | One term per line; a trailing * also matches longer words. | web/modules/custom/tannwald_assistant/src/Form/AssistantSettingsForm.php:100
+- | Only letters, digits and . _ : / - are allowed. | web/modules/custom/tannwald_assistant/src/Form/AssistantSettingsForm.php:121
+- | Open chapter | web/modules/custom/tannwald_assistant/templates/tannwald-search-page.html.twig:47
+- | Operation | web/modules/custom/tannwald_assistant/src/Hook/AssistantHooks.php:100
+- | Please enter a question. | web/modules/custom/tannwald_assistant/src/Controller/AssistantApiController.php:89
+- | Plugin ID of the AI module, e.g. ollama. | web/modules/custom/tannwald_assistant/src/Form/AssistantSettingsForm.php:47
+- | Prompt tokens | web/modules/custom/tannwald_assistant/src/Hook/AssistantHooks.php:102
+- | Provider | web/modules/custom/tannwald_assistant/src/Form/AssistantSettingsForm.php:46
+- | Question | web/modules/custom/tannwald_assistant/src/Entity/SupportAnfrage.php:63, web/modules/custom/tannwald_assistant/src/Hook/AssistantHooks.php:60
+- | Question (normalised) | web/modules/custom/tannwald_assistant/src/Hook/AssistantHooks.php:61
+- | Rating | web/modules/custom/tannwald_assistant/src/Hook/AssistantHooks.php:65
+- | Raw model name of the provider, e.g. qwen2.5:7b. | web/modules/custom/tannwald_assistant/src/Form/AssistantSettingsForm.php:54
+- | Refused | web/modules/custom/tannwald_assistant/src/Plugin/views/area/AnswerStats.php:75
+- | Reset filters | web/modules/custom/tannwald_assistant/templates/tannwald-search-page.html.twig:34
+- | Rows created since the start of the current month (site time zone). | web/modules/custom/tannwald_assistant/src/Hook/AssistantHooks.php:79
+- | Safety terms | web/modules/custom/tannwald_assistant/src/Form/AssistantSettingsForm.php:99
+- | Safety terms (@langcode) | web/modules/custom/tannwald_assistant/src/Form/AssistantSettingsForm.php:107
+- | Search | web/modules/custom/tannwald_assistant/tannwald_assistant.routing.yml:51
+- | Search term | web/modules/custom/tannwald_assistant/templates/tannwald-search-page.html.twig:16
+- | Share of monthly limit | web/modules/custom/tannwald_assistant/src/Hook/AssistantHooks.php:122
+- | Status | web/modules/custom/tannwald_assistant/src/Entity/SupportAnfrage.php:71, web/modules/custom/tannwald_assistant/src/Hook/AssistantHooks.php:63
+- | Support request | web/modules/custom/tannwald_assistant/src/Entity/SupportAnfrage.php:25
+- | Support requests | web/modules/custom/tannwald_assistant/src/Entity/SupportAnfrage.php:26
+- | The assistant has used @usage of @limit tokens this month (@share %). | web/modules/custom/tannwald_assistant/src/Limit/LimitMailer.php:31
+- | The monthly limit of the assistant has been reached. Search remains available. | AnswerTexts::LIMIT_REACHED
+- | The question is longer than 1,000 characters. | web/modules/custom/tannwald_assistant/src/Controller/AssistantApiController.php:92
+- | To machine @serial | web/modules/custom/tannwald_assistant/templates/tannwald-search-page.html.twig:49
+- | Token usage per AI call (table of tannwald_ingest). | web/modules/custom/tannwald_assistant/src/Hook/AssistantHooks.php:95
+- | Tokens (total) | web/modules/custom/tannwald_assistant/src/Hook/AssistantHooks.php:117
+- | Too many questions. Please wait a minute. | web/modules/custom/tannwald_assistant/src/Controller/AssistantApiController.php:82
+- | Too many searches. Please wait a minute. | web/modules/custom/tannwald_assistant/src/Controller/AssistantApiController.php:188
+- | Up to five assistant log entries of the same session: question, status, answer, time. | web/modules/custom/tannwald_assistant/src/Entity/SupportAnfrage.php:68
+- | Usage ID | web/modules/custom/tannwald_assistant/src/Hook/AssistantHooks.php:98
+- | User | web/modules/custom/tannwald_assistant/src/Entity/SupportAnfrage.php:53
+- | current month | web/modules/custom/tannwald_assistant/src/Plugin/views/filter/CurrentMonth.php:49
+- | support request | web/modules/custom/tannwald_assistant/src/Entity/SupportAnfrage.php:27
+- | support requests | web/modules/custom/tannwald_assistant/src/Entity/SupportAnfrage.php:28
+tannwald button | Search | web/modules/custom/tannwald_assistant/templates/tannwald-search-page.html.twig:33

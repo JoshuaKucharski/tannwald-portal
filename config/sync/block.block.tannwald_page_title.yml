@@ -1,0 +1,18 @@
+uuid: 6bf3022d-6aec-4cd7-a6c2-5465c3afd565
+langcode: de
+status: true
+dependencies:
+  theme:
+    - tannwald
+id: tannwald_page_title
+theme: tannwald
+region: content
+weight: -5
+provider: null
+plugin: page_title_block
+settings:
+  id: page_title_block
+  label: Seitentitel
+  label_display: '0'
+  provider: core
+visibility: {  }

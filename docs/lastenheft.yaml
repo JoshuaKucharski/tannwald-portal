@@ -1,0 +1,1256 @@
+# =============================================================================
+# LASTENHEFT (Kundensicht) – fiktives Beispiel für den Schweizer Markt
+# -----------------------------------------------------------------------------
+# Hinweis: Firma, Personen, Systeme und Zahlen sind frei erfunden. Ähnlichkeiten
+# mit realen Unternehmen sind zufällig. Reale Produktnamen (SAP, Azure, Drupal …)
+# bezeichnen nur den Systemtyp in der fiktiven IT-Landschaft.
+#
+# Lastenheft = WAS der Auftraggeber will (Anforderungen, Ziele, Rahmen).
+# Pflichtenheft = WIE der Auftragnehmer es umsetzt (Antwort der Agentur).
+# =============================================================================
+
+meta:
+  dokument_typ: Lastenheft
+  titel: "myTannwald – Kundenportal für technische Dokumentation, Suche und AI-Assistenz"
+  version: "1.0"
+  status: Freigegeben zur Ausschreibung
+  datum: 2026-10-31
+  sprache: de-CH
+  fiktiv: true
+  aenderungshistorie:
+    - version: "0.9"
+      datum: 2026-10-31
+      aenderung: Entwurf mit Profil, Anforderungen, Schnittstellen, Datenmodell, Risiken
+    - version: "1.0"
+      datum: 2026-10-31
+      aenderung: Ergänzt um Mengengerüst, Anwendungsfälle, FA-DP-09, Lieferumfang, Migration, Schulung, Wartung, Ausschreibung, Entscheide zu offenen Punkten, Abnahme-Testfälle, PoC-Abdeckung
+  dokumentstruktur:
+    - "1 Auftraggeber-Profil"
+    - "2 Projekt, Zielgruppen, Scope"
+    - "3 Mengengerüst"
+    - "4 Anwendungsfälle"
+    - "5 Funktionale Anforderungen"
+    - "6 Nicht-funktionale Anforderungen"
+    - "7 Schnittstellen"
+    - "8 Datenmodell"
+    - "9 Rahmenbedingungen"
+    - "10 Lieferumfang"
+    - "11 Migration und Einführung"
+    - "12 Schulung und Dokumentation"
+    - "13 Wartung und Betrieb"
+    - "14 Projektorganisation und Abnahme"
+    - "15 Risiken, Annahmen, Entscheide"
+    - "16 Ausschreibung"
+    - "17 Anhang: Abnahme-Testfälle, PoC-Abdeckung"
+    - "18 Glossar"
+  verwendungszweck:
+    - Ausschreibung an drei Schweizer Digitalagenturen
+    - Grundlage für Pflichtenheft und Offerte
+    - Kontext für LLM-gestützte Planung (User Stories, Testfälle, Architektur-Entscheide)
+    - Referenz für den 48-Stunden-Proof-of-Concept (Anhang 17)
+  prioritaeten_schema:
+    MUSS: Ohne diese Anforderung keine Abnahme
+    SOLL: Erwartet; Abweichung nur mit Begründung
+    KANN: Optional; Umsetzung nach Budget und Zeit
+  phasen_schema:
+    P1: MVP – Go-live Q3 2027
+    P2: Ausbau – Q1 2028
+    P3: Optional oder Folgeprojekt
+
+# -----------------------------------------------------------------------------
+# 1. Auftraggeber-Profil
+# -----------------------------------------------------------------------------
+auftraggeber:
+  firma: Tannwald Verpackungstechnik AG
+  rechtsform: AG, inhabergeführt, nicht börsenkotiert
+  sitz: Langenthal BE, Schweiz
+  gruendung: 1923
+  branche: Maschinen- und Anlagenbau – Verpackungslinien für Pharma und Food
+  positionierung: "Hidden Champion: Weltmarktführer in der Nische Blister- und Kartonierlinien für Pharma"
+  kennzahlen:
+    mitarbeitende: 1150
+    umsatz_chf_mio: 340
+    exportanteil_prozent: 92
+    laendergesellschaften: 16
+    laender_mit_installierter_basis: 70
+    installierte_basis_maschinen: 9500
+    service_techniker: 38
+    haendler_und_servicepartner: 85
+    support_tickets_pro_jahr: 14000
+    anteil_tickets_dokumentation_und_howto_prozent: 35
+    technische_dokumente_anzahl: 280000
+    technische_dokumente_volumen_tb: 1.8
+    neue_dokumentversionen_pro_jahr: 22000
+  sprachen_portal: [de, en, fr, it, es, pt, zh, ja, ko, pl, tr, ru]
+  it_landschaft:
+    erp: SAP S/4HANA – Kundenstamm, Equipment (Seriennummern), Serviceverträge, Ersatzteile
+    crm: Salesforce Service Cloud – Tickets, Leads
+    pim: PIM-System – Produktdaten, Varianten, Stücklisten
+    dam: Bynder – Bilder, Videos, Marketing-Assets
+    dokumentenablage: Azure Blob Storage – technische Dokumente; heute zusätzlich SharePoint, FTP und E-Mail-Versand
+    identity_mitarbeitende: Microsoft Entra ID
+    identity_kunden: Entra External ID in Evaluation; heute Excel-Listen und FTP-Zugänge
+    website: Corporate-Website auf Drupal 10 (andere Agentur); Relaunch nicht Teil dieses Projekts
+    collaboration: Microsoft 365
+    cloud_region_bevorzugt: Azure Switzerland North
+  stakeholder:
+    - rolle: Sponsor
+      funktion: Chief Digital Officer
+      interesse: After-Sales digitalisieren; messbarer ROI innert 24 Monaten
+    - rolle: Business Owner
+      funktion: Leiter Customer Service
+      interesse: Ticketvolumen senken, Reaktionszeiten verkürzen, Techniker entlasten
+    - rolle: Content Owner
+      funktion: Leiterin Technische Dokumentation (12 Personen)
+      interesse: Eine Quelle der Wahrheit für Dokumente; Versionen und Freigaben kontrollieren
+    - rolle: IT
+      funktion: CIO, SAP-Team, Azure/M365-Team
+      interesse: Saubere Schnittstellen, Security, Betrieb in Azure Switzerland North
+    - rolle: Compliance
+      funktion: Legal und Exportkontrolle
+      interesse: Dual-Use-Dokumente nur an berechtigte Länder und Firmen; revisionssicher
+    - rolle: Vertrieb
+      funktion: Leiter Händler- und Partnermanagement
+      interesse: Händler mit aktuellen Unterlagen versorgen; Leads nicht verlieren
+  ausgangslage:
+    - Dokumente liegen verteilt auf Azure Blob, SharePoint, FTP und in Mailpostfächern
+    - Kunden erhalten Handbücher per Mail oder USB-Stick bei Inbetriebnahme; Updates erreichen sie selten
+    - Kein Zusammenhang zwischen Seriennummer und zugehöriger Dokumentversion ausserhalb von SAP
+    - 35 % der Tickets sind Fragen nach Dokumenten oder Vorgehensweisen, die dokumentiert wären
+    - Exportkontrolle wird manuell per Freigabe-Mail abgewickelt; kein Audit-Trail
+    - Pharmakunden (GMP) verlangen nachweisbare Dokumentenlenkung mit Änderungshistorie
+  schmerzpunkte_priorisiert:
+    - Techniker suchen durchschnittlich 25 Minuten pro Ticket nach dem richtigen Dokument
+    - Veraltete Handbücher im Umlauf; Sicherheitsrelevante Bulletins erreichen Kunden nicht nachweisbar
+    - Händler arbeiten mit 2–3 Jahre alten Unterlagen
+    - Keine Nutzungsdaten: unklar, welche Dokumentation fehlt oder schlecht ist
+  ziele_und_kpis:
+    - id: Z-01
+      ziel: Ticketvolumen für Dokumentations- und How-to-Fragen senken
+      kpi: "-30 % innert 12 Monaten nach Go-live (Basis: 4'900 Tickets/Jahr)"
+    - id: Z-02
+      ziel: Dokument-Suchzeit für Techniker und Kunden verkürzen
+      kpi: "Median unter 2 Minuten (Basis: 25 Minuten), gemessen per Nutzerstudie"
+    - id: Z-03
+      ziel: Nachweisbare Zustellung sicherheitsrelevanter Bulletins
+      kpi: "100 % der betroffenen Seriennummern mit Zustell- und Lesenachweis"
+    - id: Z-04
+      ziel: Händler und Kunden auf aktuellem Dokumentationsstand
+      kpi: "95 % der Downloads betreffen die aktuell freigegebene Version"
+    - id: Z-05
+      ziel: Portal-Adoption
+      kpi: "60 % der aktiven Kunden mit mindestens einem registrierten Nutzer nach 12 Monaten"
+    - id: Z-06
+      ziel: AI-Assistent beantwortet Standardfragen zuverlässig
+      kpi: "Trefferquote Quellen Top-5 >= 85 %; Antworten belegt >= 95 %; korrekte Ablehnung >= 90 %"
+  budget:
+    waehrung: CHF
+    phase_1_mvp: 320000–420000
+    phase_2_ausbau: 150000–220000
+    jaehrliche_betriebskosten: 90000–140000
+    betriebskosten_umfasst: [Hosting, Wartung, Security-Updates, LLM-Nutzung, Monitoring, Support-SLA]
+    hinweis: Schätzwerte für Offertvergleich; Agenturstundensätze CH 150–200 CHF
+  zeitplan:
+    discovery_und_konzept: Q1 2027 (6 Wochen)
+    mvp_entwicklung: Q2–Q3 2027
+    go_live_mvp: Q3 2027 (Pilot mit 20 Kunden und 10 Händlern)
+    rollout_weltweit: Q4 2027
+    phase_2: Q1 2028
+  entscheidungskriterien_agentur:
+    - Nachweisbare Drupal-Expertise mit Mehrsprachigkeit und komplexen Berechtigungen
+    - Referenzen für RAG-Suche oder AI-Assistenten im Unternehmenseinsatz
+    - Erfahrung mit SAP- und Azure-Anbindungen
+    - Entwicklung in der Schweiz, Datenhaltung in der Schweiz oder EU
+    - Open-Source-Stack ohne Lizenzkosten
+    - Teamkontinuität über die Projektlaufzeit
+    - Preis nicht das wichtigste Kriterium; Gewichtung 20 %
+
+# -----------------------------------------------------------------------------
+# 2. Projekt
+# -----------------------------------------------------------------------------
+projekt:
+  arbeitstitel: myTannwald Kundenportal
+  kurzbeschreibung: >-
+    Ein mehrsprachiges Kundenportal, das pro Maschine (Seriennummer) die richtige
+    technische Dokumentation bereitstellt, eine hybride Suche über alle Dokumente
+    bietet und einen AI-Assistenten, der Fragen belegt mit Quellen beantwortet.
+    Dokumente werden mit Azure Blob Storage bidirektional synchronisiert, Berechtigungen
+    stammen aus SAP (Kunde, Equipment, Vertrag) und der Exportkontrolle.
+  zielgruppen:
+    - id: ZG-01
+      persona: Instandhaltungs-Ingenieur beim Kunden
+      bedarf: Handbuch, Ersatzteilliste, Schaltplan zur eigenen Maschine in Landessprache
+      volumen: ca. 25000 Nutzende weltweit
+    - id: ZG-02
+      persona: Servicetechniker Tannwald (intern, mobil, oft offline)
+      bedarf: Schneller Zugriff vor Ort, Service-Bulletins, How-to-Antworten
+      volumen: 38 plus 120 Techniker der Ländergesellschaften
+    - id: ZG-03
+      persona: Händler und Servicepartner
+      bedarf: Aktuelle Unterlagen für ihr Gebiet; eingeschränkte Sicht gemäss Vertrag
+      volumen: 85 Firmen
+    - id: ZG-04
+      persona: Technische Redaktion (intern)
+      bedarf: Dokumente freigeben, Versionen steuern, AI-Zusammenfassungen prüfen
+      volumen: 12 Personen
+    - id: ZG-05
+      persona: Support-Agent (intern)
+      bedarf: Tickets mit Portal-Kontext beantworten; unbeantwortete Fragen sehen
+      volumen: 30 Personen
+    - id: ZG-06
+      persona: Compliance und Exportkontrolle
+      bedarf: Freigaben, Sperren, Audit-Trail
+      volumen: 3 Personen
+  scope_in:
+    - Kundenportal mit Login, Rollen und mandantenähnlicher Sicht pro Kundenfirma
+    - Download-Portal mit Seriennummern-Bezug, Versionen, Benachrichtigungen
+    - Bidirektionale Synchronisation mit Azure Blob Storage
+    - Hybride Suche (Volltext und semantisch) mit Facetten und Live-Resultaten
+    - AI-Assistent (RAG) mit Quellenangaben, Berechtigungsprüfung, Eskalation
+    - Redaktioneller Freigabe-Workflow inkl. Prüfung AI-generierter Zusammenfassungen
+    - Schnittstellen zu SAP, Entra ID, Salesforce, PIM, DAM
+    - Nutzungs- und Kosten-Dashboard
+    - Hosting, Betrieb, Wartung (Offerte separat ausweisen)
+  scope_out:
+    - Relaunch der Corporate-Website
+    - Ersatzteil-Shop mit Bestellung (Phase 3, siehe FA-COM)
+    - Ticketsystem-Ersatz (Salesforce bleibt)
+    - Eigenes Training von Sprachmodellen
+    - Native Mobile-Apps (PWA genügt)
+
+# -----------------------------------------------------------------------------
+# 3. Mengengerüst (Basis für Dimensionierung und Offerte)
+# -----------------------------------------------------------------------------
+mengengeruest:
+  dokumente:
+    bestand_dateien: 280000
+    bestand_volumen_tb: 1.8
+    dokument_objekte_nach_bereinigung_geschaetzt: 65000
+    versionen_pro_dokument_durchschnitt: 4.3
+    neue_versionen_pro_jahr: 22000
+    sprachen_pro_dokument_durchschnitt: 3.1
+    seiten_pro_dokument_median: 48
+    groesste_datei_gb: 1.9
+    dokumenttypen: [Betriebsanleitung, Ersatzteilkatalog, Schaltplan, Pneumatikplan, Zertifikat, Software-Release, Service-Bulletin, Sicherheits-Bulletin, Schulungsunterlage, Anlagenspezifische Dokumentation]
+    anteil_dual_use_prozent: 6
+    anteil_anlagenspezifisch_prozent: 18
+  nutzende:
+    kundenfirmen: 2400
+    kundennutzer_erwartet_jahr_1: 12000
+    kundennutzer_ziel_jahr_3: 25000
+    haendlerfirmen: 85
+    haendlernutzer: 600
+    interne_nutzer: 420
+    gleichzeitig_aktiv_spitze: 500
+  nutzung_erwartet_pro_tag:
+    logins: 3500
+    downloads: 8000
+    suchanfragen: 12000
+    assistent_fragen: 2500
+    support_anfragen_aus_portal: 60
+  bulletins:
+    service_bulletins_pro_jahr: 140
+    sicherheits_bulletins_pro_jahr: 12
+    empfaenger_pro_sicherheits_bulletin_durchschnitt: 1800
+  wachstum:
+    dokumente_prozent_pro_jahr: 20
+    nutzende_prozent_pro_jahr: 30
+  ki_last:
+    chunks_initial_geschaetzt: 2500000
+    embedding_neuberechnung_pro_tag_chunks: 15000
+    tokens_pro_assistent_frage_durchschnitt: 6000
+    tokens_pro_monat_geschaetzt_mio: 450
+
+# -----------------------------------------------------------------------------
+# 4. Anwendungsfälle (Kernflüsse aus Sicht der Akteure)
+# -----------------------------------------------------------------------------
+anwendungsfaelle:
+  - id: UC-01
+    titel: Dokument zur eigenen Maschine finden und herunterladen
+    akteur: ZG-01 Instandhaltungs-Ingenieur
+    ausloeser: Störung oder Wartung steht an
+    ablauf: Login, Maschine aus Liste wählen oder Seriennummer eingeben, Dokumentliste in Landessprache, Version prüfen, Download
+    ergebnis: Aktuelle freigegebene Version liegt lokal vor; Download protokolliert
+    anforderungen: [FA-AUTH-01, FA-DP-01, FA-DP-03, FA-DP-06, FA-DP-08]
+  - id: UC-02
+    titel: Sicherheits-Bulletin bestätigen
+    akteur: ZG-01
+    ausloeser: Benachrichtigung über neues Sicherheits-Bulletin
+    ablauf: Mail oder Portal-Hinweis, Bulletin lesen, Lesebestätigung pro betroffener Seriennummer
+    ergebnis: Revisionssicherer Nachweis je Nutzer und Maschine
+    anforderungen: [FA-DP-04, NFA-SEC-03, NFA-COMP-02]
+  - id: UC-03
+    titel: Frage an den Assistenten mit belegter Antwort
+    akteur: ZG-01, ZG-02
+    ausloeser: Konkrete Betriebs- oder Wartungsfrage
+    ablauf: Frage in Landessprache, Assistent sucht in berechtigten Dokumenten, Antwort mit Zitaten, Klick ins Kapitel, Bewertung
+    ergebnis: Antwort mit nachprüfbaren Quellen oder Ablehnung mit Eskalation
+    anforderungen: [FA-AI-01, FA-AI-02, FA-AI-05, FA-AI-07]
+  - id: UC-04
+    titel: Ablehnung und Eskalation ins Ticketsystem
+    akteur: ZG-01
+    ausloeser: Assistent findet keine belegbare Antwort
+    ablauf: Hinweis, Button Support-Anfrage, Vorbefüllung mit Frage, Verlauf und Seriennummer, Ticket in Salesforce
+    ergebnis: Ticket mit vollständigem Kontext; Frage im Dashboard unbeantworteter Fragen
+    anforderungen: [FA-AI-03, FA-INT-02, FA-AI-07]
+  - id: UC-05
+    titel: Sicherheitsrelevante Frage
+    akteur: ZG-01
+    ausloeser: Frage zu Lockout, Hochspannung, Chemikalien, Schutzeinrichtungen
+    ablauf: Erkennung über Themenklassifizierung, Verweis auf Sicherheitskapitel, keine verkürzte Anleitung
+    ergebnis: Kein Sicherheitsrisiko durch verkürzte Antwort
+    anforderungen: [FA-AI-04]
+  - id: UC-06
+    titel: Techniker arbeitet offline vor Ort
+    akteur: ZG-02
+    ausloeser: Einsatz ohne Netz
+    ablauf: Offline-Paket der Maschine vorab laden, PWA zeigt Dokumente, Ablauf nach 30 Tagen
+    ergebnis: Vollständige aktuelle Dokumentation ohne Verbindung
+    anforderungen: [FA-DP-07, NFA-UX-01]
+    phase: P2
+  - id: UC-07
+    titel: Händler mit Gebiets- und Exportbeschränkung
+    akteur: ZG-03
+    ausloeser: Händler sucht Unterlagen für eine Kundenmaschine
+    ablauf: Login, Sicht gemäss Vertrag und Gebiet, Dual-Use-Dokumente ohne Freigabe unsichtbar
+    ergebnis: Kein Zugriff ausserhalb Vertrag und Exportregeln; Versuche protokolliert
+    anforderungen: [FA-AUTH-03, FA-DP-05, FA-SE-04, FA-AI-02]
+  - id: UC-08
+    titel: Neue Dokumentversion freigeben
+    akteur: ZG-04 Technische Redaktion
+    ausloeser: Geänderte Datei in Azure Blob oder Upload
+    ablauf: Sync erkennt Änderung, Metadaten prüfen, Änderungsvermerk, Freigabe, Benachrichtigung, Re-Indexierung
+    ergebnis: Neue Version sichtbar; alte Version archiviert
+    anforderungen: [FA-DP-02, FA-DP-03, FA-DP-04, FA-RED-01, FA-RED-02]
+  - id: UC-09
+    titel: AI-Zusammenfassung prüfen
+    akteur: ZG-04
+    ausloeser: System erstellt Zusammenfassung zu neuer Version
+    ablauf: Freigabe-Queue, Text prüfen und korrigieren, Freigeben oder Zurückweisen
+    ergebnis: Nur geprüfte Zusammenfassungen in Suche und Assistent
+    anforderungen: [FA-AI-06, FA-RED-01]
+  - id: UC-10
+    titel: Dokumentationslücke erkennen und schliessen
+    akteur: ZG-04
+    ausloeser: Wiederkehrende unbeantwortete Fragen
+    ablauf: Dashboard sichten, Dokument anlegen oder ergänzen, Freigabe
+    ergebnis: Messbar weniger Ablehnungen zum Thema
+    anforderungen: [FA-AI-07, FA-REP-01]
+  - id: UC-11
+    titel: Support-Agent beantwortet Ticket mit Portal-Kontext
+    akteur: ZG-05
+    ausloeser: Ticket aus dem Portal
+    ablauf: Ticket in Salesforce öffnen, Verlauf und Seriennummer sehen, Antwortvorschlag des internen Assistenten prüfen
+    ergebnis: Schnellere Antwort; Vorschlag wird nie ungeprüft versendet
+    anforderungen: [FA-INT-02, FA-AI-09]
+    phase: P2
+  - id: UC-12
+    titel: Exportregel ändern
+    akteur: ZG-06 Compliance
+    ausloeser: Neue Sanktionsliste oder Freigabe
+    ablauf: Länder- und Firmenlisten pflegen, Wirkung sofort auf Listen, Suche, Assistent
+    ergebnis: Regel wirksam ohne Entwickler; Änderung im Audit-Log
+    anforderungen: [FA-DP-05, NFA-COMP-01, NFA-SEC-03]
+  - id: UC-13
+    titel: Kunden-Admin verwaltet Nutzer der eigenen Firma
+    akteur: ZG-01 Kunden-Admin
+    ausloeser: Mitarbeiterwechsel beim Kunden
+    ablauf: Nutzer einladen, Rollen setzen, Zugang entziehen, Downloads der Firma einsehen
+    ergebnis: Selbstverwaltung ohne Tannwald-Support
+    anforderungen: [FA-AUTH-04]
+    phase: P2
+  - id: UC-14
+    titel: Monatsreport und Kostenkontrolle
+    akteur: Business Owner, IT
+    ausloeser: Monatsende oder Limit-Warnung
+    ablauf: Dashboard sichten, Export, Limit anpassen
+    ergebnis: Transparenz über Nutzung, Qualität und Kosten
+    anforderungen: [FA-REP-01, FA-REP-02]
+
+# -----------------------------------------------------------------------------
+# 5. Funktionale Anforderungen
+# -----------------------------------------------------------------------------
+anforderungen_funktional:
+
+  zugang_und_berechtigungen:
+    - id: FA-AUTH-01
+      titel: Login für Kunden und Händler
+      beschreibung: Registrierung mit Einladung durch Tannwald; Zuordnung zu Kundenfirma aus SAP-Kundenstamm
+      prioritaet: MUSS
+      phase: P1
+      abnahme:
+        - Nutzer sieht nur Dokumente der Maschinen seiner Kundenfirma
+        - Einladung, Passwort-Reset, 2FA per E-Mail oder Authenticator-App
+    - id: FA-AUTH-02
+      titel: SSO für Mitarbeitende
+      beschreibung: Anmeldung über Microsoft Entra ID (OIDC); Rollen aus Entra-Gruppen
+      prioritaet: MUSS
+      phase: P1
+      abnahme:
+        - Mitarbeitende melden sich ohne separates Passwort an
+        - Gruppenwechsel in Entra wirkt innert 15 Minuten im Portal
+    - id: FA-AUTH-03
+      titel: Rollenmodell
+      beschreibung: "Rollen: Kunde-Leser, Kunde-Admin, Händler, Techniker, Redaktion, Support, Compliance, Portal-Admin"
+      prioritaet: MUSS
+      phase: P1
+      abnahme:
+        - Rechtematrix dokumentiert und per automatisiertem Test geprüft
+    - id: FA-AUTH-04
+      titel: Kunden-Admin verwaltet eigene Nutzer
+      beschreibung: Kunden-Admin lädt Kollegen ein, entzieht Zugänge, sieht Downloads seiner Firma
+      prioritaet: SOLL
+      phase: P2
+      abnahme:
+        - Selbstverwaltung ohne Tannwald-Support möglich
+
+  download_portal:
+    - id: FA-DP-01
+      titel: Dokumente pro Seriennummer
+      beschreibung: Zu jeder Maschine (SAP-Equipment) werden die zugehörigen Dokumente in der passenden Version angezeigt
+      prioritaet: MUSS
+      phase: P1
+      abnahme:
+        - Seriennummer eingeben oder aus Liste wählen; Dokumentliste stimmt mit SAP-Stückliste überein
+        - Dokumenttypen: Betriebsanleitung, Ersatzteilkatalog, Schaltplan, Zertifikat, Software, Service-Bulletin, Schulungsunterlage
+    - id: FA-DP-02
+      titel: Bidirektionale Synchronisation mit Azure Blob Storage
+      beschreibung: Neue und geänderte Dateien in Azure erscheinen im Portal; im Portal freigegebene Metadaten und Versionen fliessen nach Azure zurück
+      prioritaet: MUSS
+      phase: P1
+      abnahme:
+        - Änderung in Azure sichtbar im Portal innert 15 Minuten
+        - Konflikte werden erkannt, protokolliert und der Redaktion gemeldet
+        - Nahtloser Abgleich auch bei 280'000 Dateien; initialer Import unter 48 Stunden
+    - id: FA-DP-03
+      titel: Versionierung und Änderungshistorie
+      beschreibung: Jede Dokumentversion mit Änderungsvermerk, Gültigkeit, Freigabedatum; alte Versionen bleiben für berechtigte Nutzer einsehbar
+      prioritaet: MUSS
+      phase: P1
+      abnahme:
+        - GMP-Kunde kann Änderungshistorie als PDF exportieren
+    - id: FA-DP-04
+      titel: Benachrichtigung bei neuen Versionen und Bulletins
+      beschreibung: Nutzer mit registrierten Maschinen erhalten Mail oder Portal-Hinweis; Sicherheits-Bulletins mit Lesebestätigung
+      prioritaet: MUSS
+      phase: P1
+      abnahme:
+        - Lesebestätigung pro Nutzer und Seriennummer revisionssicher gespeichert
+    - id: FA-DP-05
+      titel: Exportkontrolle
+      beschreibung: Dokumente mit Dual-Use-Klassifizierung nur für freigegebene Länder und Firmen; Sperrlisten pflegbar durch Compliance
+      prioritaet: MUSS
+      phase: P1
+      abnahme:
+        - Nutzer aus gesperrtem Land sieht gesperrte Dokumente nicht, auch nicht in Suche und AI-Antworten
+        - Jeder Zugriff auf klassifizierte Dokumente im Audit-Log
+    - id: FA-DP-06
+      titel: Download-Protokoll
+      beschreibung: Wer hat wann welches Dokument in welcher Version heruntergeladen
+      prioritaet: MUSS
+      phase: P1
+      abnahme:
+        - Export als CSV; Aufbewahrung 10 Jahre
+    - id: FA-DP-07
+      titel: Offline-Paket für Techniker
+      beschreibung: Techniker lädt alle Dokumente einer Maschine als Paket; PWA zeigt sie offline
+      prioritaet: SOLL
+      phase: P2
+      abnahme:
+        - Paket enthält nur aktuelle Versionen; Ablaufdatum 30 Tage
+    - id: FA-DP-08
+      titel: Mehrsprachige Dokumente
+      beschreibung: Dokumente pro Sprache; Fallback auf Englisch mit Hinweis
+      prioritaet: MUSS
+      phase: P1
+      abnahme:
+        - Nutzer mit Sprache zh sieht chinesische Version, sonst englische mit Hinweis
+    - id: FA-DP-09
+      titel: Anlagenspezifische Dokumente
+      beschreibung: Abnahmeprotokolle, Konfigurationen und Prüfberichte gehören zu genau einer Seriennummer und sind nur für die besitzende Kundenfirma sichtbar, auch nicht für Händler ohne entsprechenden Vertrag
+      prioritaet: MUSS
+      phase: P1
+      abnahme:
+        - Automatisierter Test: Nutzer einer anderen Kundenfirma erhält 403, keinen Suchtreffer und keine Antwort des Assistenten zu diesem Dokument
+
+  suche:
+    - id: FA-SE-01
+      titel: Hybride Suche über alle Dokumente
+      beschreibung: Volltext (Schlagworte, Teilenummern, Fehlercodes) kombiniert mit semantischer Suche
+      prioritaet: MUSS
+      phase: P1
+      abnahme:
+        - Teilenummer exakt gefunden; Fehlercode E-4711 führt direkt zur Störungsbehebung
+        - Semantische Frage findet relevantes Kapitel ohne exakte Begriffe
+    - id: FA-SE-02
+      titel: Live-Resultate und Facetten
+      beschreibung: Resultate beim Tippen; Filter nach Maschine, Dokumenttyp, Sprache, Datum, Gültigkeit
+      prioritaet: MUSS
+      phase: P1
+      abnahme:
+        - Antwortzeit Live-Resultate unter 300 ms (p95)
+    - id: FA-SE-03
+      titel: Dynamische Kategorien
+      beschreibung: Kategorien werden aus Metadaten und Inhalten abgeleitet, nicht manuell gepflegt
+      prioritaet: SOLL
+      phase: P2
+      abnahme:
+        - Neues Dokument erscheint ohne Redaktionsaufwand in passenden Kategorien
+    - id: FA-SE-04
+      titel: Berechtigungsbewusste Suche
+      beschreibung: Suchindex respektiert Firma, Vertrag, Rolle und Exportkontrolle
+      prioritaet: MUSS
+      phase: P1
+      abnahme:
+        - Automatisierter Test: kein Treffer aus fremder Kundenfirma, auch nicht als Snippet
+    - id: FA-SE-05
+      titel: Suche in Dokumentinhalten
+      beschreibung: PDF, DOCX, XML (DITA/S1000D-nah) werden inhaltlich indexiert, inkl. Tabellen
+      prioritaet: MUSS
+      phase: P1
+      abnahme:
+        - Treffer zeigt Seite und Kapitel
+
+  ai_assistent:
+    - id: FA-AI-01
+      titel: Fragen in natürlicher Sprache mit belegten Antworten
+      beschreibung: Assistent beantwortet Fragen ausschliesslich aus freigegebenen Dokumenten und zitiert Quelle mit Dokument, Version, Seite
+      prioritaet: MUSS
+      phase: P1
+      abnahme:
+        - Jede Antwort enthält mindestens eine Quelle
+        - Antwort ohne Quelle ist eine Ablehnung mit Hinweis auf Support
+    - id: FA-AI-02
+      titel: Berechtigungen und Exportkontrolle im Assistenten
+      beschreibung: Der Assistent nutzt nur Dokumente, die der Nutzer auch herunterladen dürfte
+      prioritaet: MUSS
+      phase: P1
+      abnahme:
+        - Automatisierter Test mit anonymem, Kunden- und Händler-Nutzer; kein Leck von Inhalten
+    - id: FA-AI-03
+      titel: Ablehnung und Eskalation
+      beschreibung: Bei fehlendem Wissen antwortet der Assistent ehrlich und bietet Ticket-Erstellung in Salesforce mit Gesprächsverlauf an
+      prioritaet: MUSS
+      phase: P1
+      abnahme:
+        - Ticket enthält Frage, bisherige Antworten, Seriennummer und Nutzer
+    - id: FA-AI-04
+      titel: Sicherheitshinweise
+      beschreibung: Bei sicherheitsrelevanten Themen (Lockout, Hochspannung, Reinigung mit Chemikalien) verweist der Assistent zwingend auf das Sicherheitskapitel und gibt keine verkürzte Anleitung
+      prioritaet: MUSS
+      phase: P1
+      abnahme:
+        - Testset mit 30 sicherheitsrelevanten Fragen; 100 % mit Sicherheitsverweis
+    - id: FA-AI-05
+      titel: Sprache
+      beschreibung: Antwort in der Sprache der Frage; Quellen dürfen in anderer Sprache sein, werden ausgewiesen
+      prioritaet: MUSS
+      phase: P1
+      abnahme:
+        - Testset in de, en, fr, zh
+    - id: FA-AI-06
+      titel: AI-Zusammenfassungen mit redaktioneller Freigabe
+      beschreibung: Für neue Dokumente und Bulletins erstellt das System Kurzfassungen; die Redaktion prüft und gibt frei, erst danach sind sie für Suche und Assistent sichtbar
+      prioritaet: SOLL
+      phase: P1
+      abnahme:
+        - Freigabe-Workflow mit Status Entwurf, Prüfung, Freigegeben, Zurückgewiesen
+    - id: FA-AI-07
+      titel: Feedback und unbeantwortete Fragen
+      beschreibung: Nutzer bewerten Antworten; unbeantwortete oder schlecht bewertete Fragen erscheinen in einem Dashboard der Redaktion als Hinweis auf Dokumentationslücken
+      prioritaet: MUSS
+      phase: P1
+      abnahme:
+        - Dashboard zeigt Top-20 unbeantwortete Fragen pro Monat und Maschinentyp
+    - id: FA-AI-08
+      titel: Qualitätsmessung
+      beschreibung: Ein Testset mit mindestens 200 Fragen und erwarteten Quellen wird vor jedem Release automatisiert ausgewertet
+      prioritaet: MUSS
+      phase: P1
+      abnahme:
+        - Kennzahlen gemäss Z-06 im Release-Report
+    - id: FA-AI-09
+      titel: Assistent für Support-Agenten
+      beschreibung: Interner Modus mit Zugriff auf alle Dokumente und Ticket-Historie; Vorschlag einer Antwort auf offene Tickets
+      prioritaet: SOLL
+      phase: P2
+      abnahme:
+        - Antwortvorschlag im Salesforce-Ticket sichtbar, Agent entscheidet
+    - id: FA-AI-10
+      titel: Werkzeug-Anbindung für interne Agenten (MCP)
+      beschreibung: Portalfunktionen (Suche, Dokument abrufen, Ticket anlegen) stehen internen AI-Werkzeugen über einen Standard wie Model Context Protocol zur Verfügung, mit denselben Berechtigungen wie im Portal
+      prioritaet: KANN
+      phase: P2
+      abnahme:
+        - Interner Assistent kann eine Suche ausführen; Berechtigungen gelten unverändert
+
+  redaktion_und_content:
+    - id: FA-RED-01
+      titel: Redaktions-Workflow
+      beschreibung: Dokumente, Metadaten und Zusammenfassungen durchlaufen Entwurf, Prüfung, Freigabe; Vier-Augen-Prinzip für Sicherheits-Bulletins
+      prioritaet: MUSS
+      phase: P1
+      abnahme:
+        - Bulletin kann nicht von der Person freigegeben werden, die es erstellt hat
+    - id: FA-RED-02
+      titel: Metadaten-Pflege
+      beschreibung: Dokumenttyp, Maschinentyp, Seriennummernbereich, Sprache, Gültigkeit, Exportklasse; Massenbearbeitung
+      prioritaet: MUSS
+      phase: P1
+      abnahme:
+        - 500 Dokumente in einem Durchgang umklassifizieren
+    - id: FA-RED-03
+      titel: Redaktionelle Seiten
+      beschreibung: FAQ, Schulungsangebote, Kontaktseiten pro Land, mehrsprachig mit Übersetzungs-Workflow
+      prioritaet: SOLL
+      phase: P1
+      abnahme:
+        - Seite in 12 Sprachen mit Fallback-Logik
+
+  integrationen:
+    - id: FA-INT-01
+      titel: SAP S/4HANA
+      beschreibung: Lesen von Kunde, Standort, Equipment (Seriennummer), Vertrag, Stückliste; Schreiben nicht erforderlich in P1
+      prioritaet: MUSS
+      phase: P1
+      abnahme:
+        - Delta-Abgleich stündlich; Vollabgleich nächtlich; Fehler werden gemeldet
+    - id: FA-INT-02
+      titel: Salesforce Service Cloud
+      beschreibung: Ticket anlegen aus Portal und Assistent; Ticketstatus im Portal anzeigen
+      prioritaet: MUSS
+      phase: P1
+      abnahme:
+        - Ticket innert 60 Sekunden in Salesforce sichtbar
+    - id: FA-INT-03
+      titel: PIM und DAM
+      beschreibung: Produktbezeichnungen, Varianten und Produktbilder aus PIM und DAM; keine Doppelpflege im Portal
+      prioritaet: SOLL
+      phase: P1
+      abnahme:
+        - Änderung im PIM sichtbar im Portal innert 24 Stunden
+    - id: FA-INT-04
+      titel: Lead-Weiterleitung
+      beschreibung: Kontaktanfragen werden automatisch klassifiziert und an die zuständige Ländergesellschaft oder den Händler geleitet
+      prioritaet: KANN
+      phase: P2
+      abnahme:
+        - 90 % der Anfragen korrekt zugeordnet (Stichprobe 100)
+
+  reporting:
+    - id: FA-REP-01
+      titel: Nutzungs-Dashboard
+      beschreibung: Aktive Nutzer, Downloads, Suchanfragen, Assistent-Fragen, Antwortqualität, nach Land und Maschinentyp
+      prioritaet: MUSS
+      phase: P1
+      abnahme:
+        - Monatsreport als PDF und CSV exportierbar
+    - id: FA-REP-02
+      titel: Kosten-Dashboard
+      beschreibung: LLM-Tokens und Kosten pro Monat, Limit mit Warnung und harter Obergrenze
+      prioritaet: MUSS
+      phase: P1
+      abnahme:
+        - Bei 80 % des Limits Warnmail; bei 100 % schaltet der Assistent in Suche-only-Modus
+
+  commerce:
+    - id: FA-COM-01
+      titel: Ersatzteile aus Dokumenten bestellen
+      beschreibung: Teilenummer im Ersatzteilkatalog anklicken und in Warenkorb legen; Bestellung an SAP
+      prioritaet: KANN
+      phase: P3
+      abnahme:
+        - Bestellung erscheint als Auftrag in SAP mit Seriennummern-Bezug
+
+# -----------------------------------------------------------------------------
+# 6. Nicht-funktionale Anforderungen
+# -----------------------------------------------------------------------------
+anforderungen_nicht_funktional:
+
+  performance:
+    - id: NFA-PERF-01
+      anforderung: Seitenaufbau Portal-Seiten unter 1.5 s (p95, Europa)
+      prioritaet: MUSS
+    - id: NFA-PERF-02
+      anforderung: Suchresultate unter 300 ms (p95); AI-Antwort Erstes Token unter 2 s, vollständig unter 8 s (p95)
+      prioritaet: MUSS
+    - id: NFA-PERF-03
+      anforderung: Downloads bis 2 GB pro Datei; Auslieferung über CDN mit Zugriffsprüfung
+      prioritaet: MUSS
+
+  skalierung:
+    - id: NFA-SCAL-01
+      anforderung: 300'000 Dokumente, 40'000 Nutzer, 2 Mio. Downloads pro Jahr, 500 gleichzeitige Nutzer
+      prioritaet: MUSS
+    - id: NFA-SCAL-02
+      anforderung: Wachstum 20 % pro Jahr ohne Architekturänderung
+      prioritaet: SOLL
+
+  verfuegbarkeit_und_betrieb:
+    - id: NFA-OPS-01
+      anforderung: Verfügbarkeit 99.9 % pro Monat (ohne angekündigte Wartungsfenster)
+      prioritaet: MUSS
+    - id: NFA-OPS-02
+      anforderung: "Backup täglich; RPO 24 h, RTO 4 h; Wiederherstellung jährlich getestet"
+      prioritaet: MUSS
+    - id: NFA-OPS-03
+      anforderung: Umgebungen Entwicklung, Test, Staging, Produktion; automatisierte Deployments
+      prioritaet: MUSS
+    - id: NFA-OPS-04
+      anforderung: Monitoring, Alerting, zentrale Logs; Status-Seite für Kunden
+      prioritaet: MUSS
+    - id: NFA-OPS-05
+      anforderung: Hosting in Azure Switzerland North oder bei Schweizer Provider; Daten verlassen CH/EU nicht
+      prioritaet: MUSS
+
+  sicherheit:
+    - id: NFA-SEC-01
+      anforderung: OWASP Top 10 adressiert; externer Penetrationstest vor Go-live und jährlich
+      prioritaet: MUSS
+    - id: NFA-SEC-02
+      anforderung: Rollen- und Rechtemodell automatisiert getestet; Zugriff auf Dokumente immer serverseitig geprüft
+      prioritaet: MUSS
+    - id: NFA-SEC-03
+      anforderung: Audit-Log für Logins, Downloads klassifizierter Dokumente, Freigaben, Rechteänderungen; 10 Jahre Aufbewahrung
+      prioritaet: MUSS
+    - id: NFA-SEC-04
+      anforderung: "AI-Assistent: Schutz gegen Prompt Injection aus Dokumentinhalten; keine Aktionen allein aufgrund von Dokumenttext; Rate-Limiting pro Nutzer"
+      prioritaet: MUSS
+    - id: NFA-SEC-05
+      anforderung: Security-Updates des CMS und der Komponenten innert 72 h bei kritischer Einstufung
+      prioritaet: MUSS
+    - id: NFA-SEC-06
+      anforderung: Geheimnisse (API-Keys, Zertifikate) in Key Vault; keine Geheimnisse im Code
+      prioritaet: MUSS
+
+  datenschutz:
+    - id: NFA-DSG-01
+      anforderung: Einhaltung revDSG (Schweiz) und DSGVO (EU-Kunden); Verzeichnis der Bearbeitungstätigkeiten durch Agentur mitgeliefert
+      prioritaet: MUSS
+    - id: NFA-DSG-02
+      anforderung: LLM-Anbieter ohne Training auf Kundendaten; Vertrag mit Datenstandort CH oder EU; Alternative mit selbst betriebenem Open-Source-Modell muss möglich bleiben
+      prioritaet: MUSS
+    - id: NFA-DSG-03
+      anforderung: Gesprächsverläufe des Assistenten pseudonymisiert; Löschung nach 12 Monaten; Opt-out für Nutzer
+      prioritaet: MUSS
+    - id: NFA-DSG-04
+      anforderung: Auftragsverarbeitungsvertrag mit Agentur und Hosting-Provider
+      prioritaet: MUSS
+
+  compliance:
+    - id: NFA-COMP-01
+      anforderung: Exportkontrolle gemäss Schweizer Güterkontrollrecht; Länderlisten durch Compliance pflegbar ohne Entwickler
+      prioritaet: MUSS
+    - id: NFA-COMP-02
+      anforderung: Dokumentenlenkung nachvollziehbar (GMP-Kunden); Versionen unveränderbar nach Freigabe
+      prioritaet: MUSS
+
+  usability_und_barrierefreiheit:
+    - id: NFA-UX-01
+      anforderung: Responsive, PWA-fähig, Offline-Lesen heruntergeladener Dokumente
+      prioritaet: MUSS
+    - id: NFA-UX-02
+      anforderung: WCAG 2.1 AA für alle Portalseiten
+      prioritaet: SOLL
+    - id: NFA-UX-03
+      anforderung: Nutzertests mit mindestens 8 Personen aus ZG-01 bis ZG-03 vor Go-live
+      prioritaet: MUSS
+    - id: NFA-UX-04
+      anforderung: Oberfläche in 12 Sprachen; Übersetzungen durch Tannwald geliefert, Fallback Englisch
+      prioritaet: MUSS
+
+  wartbarkeit_und_qualitaet:
+    - id: NFA-QA-01
+      anforderung: Open-Source-Technologie mit aktiver Community und Langzeit-Support; keine Lizenzkosten für CMS und Suche
+      prioritaet: MUSS
+    - id: NFA-QA-02
+      anforderung: Quellcode gehört Tannwald; Repository mit Historie wird übergeben
+      prioritaet: MUSS
+    - id: NFA-QA-03
+      anforderung: Coding Standards, Static Analysis und automatisierte Tests in der Pipeline; Testabdeckung der Berechtigungslogik 100 %
+      prioritaet: MUSS
+    - id: NFA-QA-04
+      anforderung: Architektur-Entscheide dokumentiert (ADR); Betriebs- und Entwicklerdokumentation
+      prioritaet: MUSS
+    - id: NFA-QA-05
+      anforderung: Keine Abhängigkeit von einem einzelnen LLM-Anbieter; Wechsel durch Konfiguration
+      prioritaet: SOLL
+    - id: NFA-QA-06
+      anforderung: Bestehende Drupal-Corporate-Website darf Komponenten und Design-System wiederverwenden
+      prioritaet: KANN
+
+# -----------------------------------------------------------------------------
+# 7. Schnittstellen
+# -----------------------------------------------------------------------------
+schnittstellen:
+  - id: IF-01
+    system: SAP S/4HANA
+    richtung: SAP -> Portal
+    daten: Kunde, Standort, Equipment, Seriennummer, Vertrag, Stückliste, Ersatzteilstamm
+    protokoll: OData oder SAP API Management; Delta stündlich, Voll nächtlich
+    verantwortlich_kunde: SAP-Team
+  - id: IF-02
+    system: Azure Blob Storage
+    richtung: bidirektional
+    daten: Dokumentdateien, Metadaten (Blob-Tags), Versionen
+    protokoll: Azure SDK, Event Grid für Änderungen
+    verantwortlich_kunde: Azure/M365-Team
+  - id: IF-03
+    system: Microsoft Entra ID
+    richtung: Entra -> Portal
+    daten: Identität, Gruppen für Mitarbeitende
+    protokoll: OIDC / SAML
+    verantwortlich_kunde: Azure/M365-Team
+  - id: IF-04
+    system: Salesforce Service Cloud
+    richtung: bidirektional
+    daten: Ticket anlegen, Status lesen, Antwortvorschlag (P2)
+    protokoll: REST API
+    verantwortlich_kunde: CRM-Team
+  - id: IF-05
+    system: PIM
+    richtung: PIM -> Portal
+    daten: Produktbezeichnungen, Varianten, Maschinentypen
+    protokoll: REST oder Export-Datei täglich
+    verantwortlich_kunde: Produktmanagement
+  - id: IF-06
+    system: DAM (Bynder)
+    richtung: DAM -> Portal
+    daten: Produktbilder, Videos
+    protokoll: REST API
+    verantwortlich_kunde: Marketing
+  - id: IF-07
+    system: LLM-Anbieter
+    richtung: Portal -> LLM
+    daten: Frage plus freigegebener Kontext; keine Personendaten
+    protokoll: HTTPS; Anbieter austauschbar
+    verantwortlich_kunde: IT-Security Freigabe
+  - id: IF-08
+    system: E-Mail
+    richtung: Portal -> Nutzer
+    daten: Einladungen, Benachrichtigungen, Bulletins
+    protokoll: SMTP über Tannwald-Relay
+    verantwortlich_kunde: IT
+
+# -----------------------------------------------------------------------------
+# 8. Fachliches Datenmodell (Kernobjekte)
+# -----------------------------------------------------------------------------
+datenmodell:
+  - objekt: Kundenfirma
+    quelle: SAP
+    attribute: [sap_kundennummer, name, land, haendler_zuordnung, status]
+  - objekt: Standort
+    quelle: SAP
+    attribute: [kundenfirma, adresse, land]
+  - objekt: Maschine
+    quelle: SAP
+    attribute: [seriennummer, maschinentyp, baujahr, standort, konfiguration, vertrag]
+  - objekt: Vertrag
+    quelle: SAP
+    attribute: [typ, laufzeit, servicelevel, dokumentenberechtigung]
+  - objekt: Dokument
+    quelle: Portal und Azure
+    attribute: [dokument_id, typ, maschinentypen, seriennummern_bereich, sprachen, exportklasse, status]
+  - objekt: Dokumentversion
+    quelle: Portal und Azure
+    attribute: [version, datei, aenderungsvermerk, freigabe_datum, freigegeben_von, gueltig_ab, gueltig_bis]
+  - objekt: Zusammenfassung
+    quelle: Portal (AI, redaktionell geprüft)
+    attribute: [dokumentversion, sprache, text, status, geprueft_von]
+  - objekt: Nutzer
+    quelle: Portal, Entra
+    attribute: [identitaet, rolle, kundenfirma_oder_haendler, land, sprache, registrierte_maschinen]
+  - objekt: Download-Ereignis
+    quelle: Portal
+    attribute: [nutzer, dokumentversion, zeitpunkt, ip_land, lesebestaetigung]
+  - objekt: Assistent-Gespräch
+    quelle: Portal
+    attribute: [pseudonym, sprache, fragen, antworten, quellen, bewertung, eskaliert_ticket]
+  - objekt: Unbeantwortete-Frage
+    quelle: Portal
+    attribute: [frage, haeufigkeit, maschinentyp, sprache, status_redaktion]
+  - objekt: Exportregel
+    quelle: Compliance
+    attribute: [exportklasse, erlaubte_laender, gesperrte_firmen, gueltig_ab]
+
+# -----------------------------------------------------------------------------
+# 9. Rahmenbedingungen
+# -----------------------------------------------------------------------------
+rahmenbedingungen:
+  technologie:
+    - Open Source bevorzugt; bestehende Drupal-Website spricht für ein Drupal-basiertes Portal, ist aber nicht vorgeschrieben
+    - Betrieb containerisiert; Infrastruktur als Code
+    - Versionskontrolle und Pipelines auf einer von Tannwald freigegebenen Plattform (GitHub Enterprise vorhanden)
+  organisation:
+    - Projektsprache Deutsch; Dokumentation Deutsch oder Englisch
+    - Entwicklung in der Schweiz; keine Weitergabe an Subunternehmer ohne Zustimmung
+    - Zweiwöchige Iterationen mit Demo; Product Owner seitens Tannwald mit 40 % Verfügbarkeit
+  rechtlich:
+    - Vertrag nach Schweizer Recht; Gerichtsstand Bern
+    - Quellcode und Daten gehören Tannwald; Open-Source-Lizenzen bleiben gewahrt
+    - Haftung und SLA im Wartungsvertrag separat geregelt
+
+# -----------------------------------------------------------------------------
+# 10. Lieferumfang des Auftragnehmers
+# -----------------------------------------------------------------------------
+lieferumfang:
+  discovery:
+    - Protokolle der Nutzerinterviews (mindestens 12 Personen aus ZG-01 bis ZG-05)
+    - Informationsarchitektur und Navigationskonzept
+    - Klickbarer Prototyp der Kernflüsse UC-01, UC-03 und UC-08
+    - Technisches Konzept inkl. Schnittstellen- und Berechtigungskonzept
+    - Pflichtenheft mit Rückverweis auf alle Anforderungs-IDs
+    - Verbindliche Offerte Phase 1 und Richtofferte Phase 2
+  umsetzung:
+    - Quellcode im Repository von Tannwald inkl. Historie, Tests, Pipelines, Infrastruktur-Code
+    - Alle Umgebungen betriebsbereit (Entwicklung, Test, Staging, Produktion)
+    - "Testberichte: Unit, Integration, Last, Barrierefreiheit, Nutzertest"
+    - Eval-Report des Assistenten mit Testset und Kennzahlen gemäss Z-06
+    - Behebung aller kritischen und hohen Pentest-Findings vor Go-live
+    - Migrationsbericht mit Mengen, Fehlern und Restarbeiten
+  dokumentation:
+    - Betriebshandbuch (Deployment, Backup, Restore, Monitoring, Incident-Ablauf)
+    - Entwicklerdokumentation inkl. Architektur-Entscheide (ADR)
+    - Redaktionshandbuch und Schulungsunterlagen
+    - Verzeichnis der Bearbeitungstätigkeiten und technisch-organisatorische Massnahmen (Datenschutz)
+    - Schnittstellenbeschreibungen mit Fehlerbehandlung
+  uebergabe:
+    - Wissenstransfer an die IT von Tannwald (2 Tage Workshop)
+    - Lizenzliste aller Komponenten
+    - Exit-Dokumentation für einen Agenturwechsel
+
+# -----------------------------------------------------------------------------
+# 11. Migration und Einführung
+# -----------------------------------------------------------------------------
+migration_und_einfuehrung:
+  bestandsmigration:
+    quellen: [Azure Blob Storage, SharePoint, FTP-Server, Dokumente aus Ticket-Anhängen]
+    vorgehen:
+      - Inventar aller Quellen mit Dubletten-Erkennung über Hash und Metadaten
+      - Zuordnung Dokument zu Maschinentyp und Seriennummernbereich über Dateinamen-Konventionen, SAP-Stücklisten und AI-gestützte Vorklassifizierung
+      - Redaktionelle Stichprobe von 5 % je Dokumenttyp vor Freigabe
+      - Unklassifizierte Dokumente bleiben gesperrt bis zur Freigabe
+      - SharePoint und FTP nach Cut-over nur noch lesend; Abschaltung nach 6 Monaten
+    anforderungen_an_agentur:
+      - Migrationsskripte wiederholbar und protokolliert
+      - "Bericht pro Lauf: importiert, übersprungen, fehlerhaft, mit Grund"
+      - Probelauf auf Staging mit Echtdaten vor M3
+  nutzer_onboarding:
+    - "Pilot: 20 Kunden und 10 Händler, ausgewählt durch die Ländergesellschaften"
+    - Einladung über das Portal; Ländergesellschaften begleiten die ersten 60 Tage
+    - Ab Rollout ist das Portal der einzige Kanal für Dokumentversionen; der Mailversand endet
+    - Kommunikationspaket für Kunden in 12 Sprachen durch Tannwald Marketing
+  cut_over:
+    - Einfrieren der Altsysteme 48 Stunden vor Go-live
+    - Go-live an einem Dienstag; Hypercare 4 Wochen mit täglichem Standup
+    - "Rollback-Plan: Altsysteme bleiben 6 Monate lesend verfügbar"
+
+# -----------------------------------------------------------------------------
+# 12. Schulung und Dokumentation
+# -----------------------------------------------------------------------------
+schulung_und_dokumentation:
+  schulungen:
+    - zielgruppe: Technische Redaktion (12 Personen)
+      inhalt: Freigabe-Workflow, Metadaten, Zusammenfassungen prüfen, Lückenanalyse
+      dauer: 1 Tag vor Ort plus 2 Stunden Auffrischung nach 4 Wochen
+    - zielgruppe: Support (30 Personen)
+      inhalt: Portalfunktionen, Tickets aus dem Portal, Assistent erklären
+      dauer: halber Tag, auch remote
+    - zielgruppe: Compliance (3 Personen)
+      inhalt: Exportregeln, Audit-Log, Sperren
+      dauer: 2 Stunden
+    - zielgruppe: IT-Betrieb (4 Personen)
+      inhalt: Deployment, Backup, Monitoring, Incident
+      dauer: 2 Tage Workshop
+    - zielgruppe: Händler (85 Firmen)
+      inhalt: Portalnutzung
+      format: Video in de, en, fr, es, zh plus ein Webinar je Region
+  dokumentation_sprachen:
+    betrieb_und_entwicklung: Deutsch oder Englisch
+    redaktion: Deutsch
+    endnutzer_hilfe: 12 Portalsprachen, Übersetzung durch Tannwald
+  pflege: Dokumentation wird mit jedem Release aktualisiert; veraltete Dokumentation gilt als Mangel
+
+# -----------------------------------------------------------------------------
+# 13. Wartung und Betrieb (Anforderungen an den Wartungsvertrag)
+# -----------------------------------------------------------------------------
+wartung_und_betrieb:
+  laufzeit: 3 Jahre ab Go-live, danach jährlich verlängerbar
+  supportzeiten: Werktage 07:00–18:00 MEZ; Bereitschaft für Priorität 1 rund um die Uhr
+  prioritaetsklassen:
+    - prioritaet: P1 Ausfall
+      beispiel: Portal nicht erreichbar, Datenleck, falsche Berechtigungen
+      reaktion: 1 Stunde
+      behebung_oder_workaround: 4 Stunden
+    - prioritaet: P2 Wesentliche Störung
+      beispiel: Suche oder Assistent ausgefallen, Sync steht
+      reaktion: 4 Stunden
+      behebung_oder_workaround: 1 Arbeitstag
+    - prioritaet: P3 Einschränkung
+      beispiel: Fehler in einer Sprache, Darstellungsfehler
+      reaktion: 1 Arbeitstag
+      behebung_oder_workaround: 5 Arbeitstage
+    - prioritaet: P4 Kleinigkeit
+      reaktion: 3 Arbeitstage
+      behebung_oder_workaround: nächstes Release
+  wartungsleistungen:
+    - Security-Updates gemäss NFA-SEC-05, kritische innert 72 Stunden
+    - Monatliches Release-Fenster für Minor-Updates; Major-Upgrades des CMS innerhalb der Laufzeit inbegriffen
+    - Quartalsweise Überprüfung der Assistent-Kennzahlen mit dem Testset und Nachjustierung
+    - "Monatlicher Bericht: Verfügbarkeit, Vorfälle, Nutzung, LLM-Kosten, offene Punkte"
+    - Jährlicher Restore-Test und Begleitung des Pentests
+  llm_kosten: Durchlaufender Posten mit monatlichem Limit; die Agentur schlägt Optimierungen vor (Caching, kleinere Modelle)
+  eskalation: Projektleitung Agentur, dann Geschäftsleitung Agentur, dann Schlichtung
+  exit:
+    - Übergabe von Code, Daten, Konfiguration und Dokumentation innert 30 Tagen
+    - Unterstützung des Nachfolgers während 60 Tagen zu den Stundensätzen des Vertrags
+
+# -----------------------------------------------------------------------------
+# 14. Projektorganisation, Vorgehen und Abnahme
+# -----------------------------------------------------------------------------
+projektorganisation:
+  phasen:
+    - phase: Discovery
+      dauer_wochen: 6
+      ergebnisse: [Nutzerinterviews, Informationsarchitektur, Prototyp, technisches Konzept, Pflichtenheft, verbindliche Offerte P1]
+    - phase: P1 MVP
+      dauer_wochen: 22
+      ergebnisse: [Portal mit Login, Download-Portal, Azure-Sync, Suche, Assistent, SAP- und Salesforce-Anbindung, Dashboards, Pilot]
+    - phase: Rollout
+      dauer_wochen: 8
+      ergebnisse: [Schulung Redaktion und Support, weltweiter Rollout, Hypercare 4 Wochen]
+    - phase: P2 Ausbau
+      dauer_wochen: 16
+      ergebnisse: [Offline-Paket, dynamische Kategorien, Support-Assistent, MCP-Anbindung, Kunden-Admin]
+  meilensteine:
+    - M1: Discovery abgeschlossen, Pflichtenheft freigegeben
+    - M2: Technischer Durchstich SAP, Azure, Entra
+    - M3: Suche und Download-Portal in Staging mit Echtdaten
+    - M4: Assistent erreicht Qualitätsziele Z-06 im Testset
+    - M5: Pentest bestanden, Pilot-Freigabe
+    - M6: Go-live MVP
+  abnahme:
+    verfahren: Abnahme pro Meilenstein durch Business Owner und IT; schriftliches Abnahmeprotokoll
+    kriterien:
+      - Alle MUSS-Anforderungen der Phase erfüllt und per Testfall nachgewiesen
+      - Performance-Test mit Lastprofil gemäss NFA-SCAL-01 bestanden
+      - Pentest ohne offene kritische oder hohe Findings
+      - Qualitätsziele Z-06 im Release-Report erreicht
+      - Dokumentation und Schulung geliefert
+      - Nutzertest gemäss NFA-UX-03 durchgeführt und Befunde bewertet
+    maengelklassen:
+      kritisch: Behebung vor Abnahme
+      hoch: Behebung innert 10 Arbeitstagen nach Abnahme
+      mittel_und_niedrig: Behebung im Wartungsvertrag
+
+# -----------------------------------------------------------------------------
+# 15. Risiken, Annahmen, Entscheide
+# -----------------------------------------------------------------------------
+risiken:
+  - id: R-01
+    risiko: Qualität der SAP-Equipment- und Stücklistendaten ungenügend
+    wahrscheinlichkeit: hoch
+    auswirkung: hoch
+    massnahme: Datenqualitäts-Check in Discovery; Bereinigung durch Tannwald vor M3
+  - id: R-02
+    risiko: Dokument-Metadaten in Azure unvollständig oder inkonsistent
+    wahrscheinlichkeit: hoch
+    auswirkung: mittel
+    massnahme: AI-gestützte Vorklassifizierung mit redaktioneller Prüfung; Massenbearbeitung FA-RED-02
+  - id: R-03
+    risiko: Exportklassifizierung fehlt für Altbestand
+    wahrscheinlichkeit: mittel
+    auswirkung: hoch
+    massnahme: Unklassifizierte Dokumente standardmässig gesperrt bis Freigabe
+  - id: R-04
+    risiko: Assistent gibt falsche oder gefährliche Anleitungen
+    wahrscheinlichkeit: mittel
+    auswirkung: sehr hoch
+    massnahme: Nur belegte Antworten, Sicherheitsregel FA-AI-04, Testset, Haftungshinweis, Eskalation
+  - id: R-05
+    risiko: Händler und Kunden nutzen das Portal nicht
+    wahrscheinlichkeit: mittel
+    auswirkung: hoch
+    massnahme: Pilot mit 20 Kunden, Onboarding durch Ländergesellschaften, Portal als einziger Dokumentkanal ab Rollout
+  - id: R-06
+    risiko: LLM-Kosten laufen aus dem Ruder
+    wahrscheinlichkeit: mittel
+    auswirkung: mittel
+    massnahme: Kostenlimit FA-REP-02, Caching gleicher Fragen, kleinere Modelle für Routing
+  - id: R-07
+    risiko: Datenschutz- oder Standortfragen verzögern LLM-Freigabe
+    wahrscheinlichkeit: mittel
+    auswirkung: mittel
+    massnahme: Zwei Varianten in Discovery bewerten (Azure CH, selbst betriebenes Modell); Entscheid bis M1
+
+annahmen:
+  - SAP-Schnittstellen werden durch das SAP-Team von Tannwald bereitgestellt und sind bis M2 verfügbar
+  - Übersetzungen der Oberfläche und redaktionellen Inhalte liefert Tannwald
+  - Azure-Tenant und Subscription stellt Tannwald; Agentur erhält Rollen nach Least-Privilege
+  - Pentest wird durch einen von Tannwald beauftragten Dritten durchgeführt
+
+entscheide:
+  - id: E-01
+    frage: Kundenlogin über Entra External ID oder portal-eigene Konten
+    entscheid: Phase 1 mit portal-eigenen Konten und TFA; Entra External ID wird in Phase 2 zusammen mit der Kunden-Admin-Funktion evaluiert
+    grund: Kein Projektrisiko durch eine parallele Identity-Einführung; die Discovery darf den Entscheid mit Begründung ändern
+  - id: E-02
+    frage: Dokumente von Drittherstellern (Zulieferkomponenten)
+    entscheid: Werden aufgenommen, wenn eine Weitergabe-Lizenz vorliegt; der Lizenzstatus ist Pflicht-Metadatum, ohne Lizenz keine Anzeige
+    grund: Rechtssicherheit vor Vollständigkeit
+  - id: E-03
+    frage: Aufbewahrungsfristen Download-Protokoll
+    entscheid: 10 Jahre als Standard; länderspezifische Abweichungen prüft Legal in der Discovery, sie werden als Konfiguration pro Land hinterlegt
+    grund: GMP-Kunden und Exportkontrolle verlangen lange Nachweisbarkeit
+  - id: E-04
+    frage: Öffentlicher Assistent ohne Login für Marketing-Inhalte
+    entscheid: Nicht in Phase 1 und 2; das Portal bleibt vollständig hinter dem Login
+    grund: Fokus auf After-Sales; Marketing-Inhalte gehören zur Corporate-Website
+  - id: E-05
+    frage: LLM-Betrieb in Azure oder selbst gehostet
+    entscheid: Phase 1 mit Azure in Switzerland North; die Architektur muss den Wechsel auf ein selbst betriebenes Modell per Konfiguration erlauben, was in der Abnahme mit einem Testlauf nachgewiesen wird
+    grund: Schneller Start mit vertraglich gesichertem Datenstandort, ohne Lock-in
+
+# -----------------------------------------------------------------------------
+# 16. Ausschreibung
+# -----------------------------------------------------------------------------
+ausschreibung:
+  verfahren: Einladungsverfahren an drei Schweizer Digitalagenturen
+  vertraulichkeit: Dieses Dokument und die Anhänge sind vertraulich; Weitergabe nur an beteiligte Mitarbeitende der Agentur
+  ansprechperson: Chief Digital Officer, Tannwald Verpackungstechnik AG (Kontaktdaten in der Einladung)
+  termine:
+    versand_lastenheft: 2026-11-10
+    fragerunde_schriftlich_bis: 2026-11-21
+    antworten_an_alle_bis: 2026-11-28
+    angebotsfrist: 2026-12-19
+    praesentationen: 2027-01-12 bis 2027-01-14
+    zuschlag: 2027-01-23
+    discovery_start: 2027-02-02
+  angebotsstruktur:
+    - Verständnis der Aufgabe und Vorgehen in eigenen Worten (maximal 3 Seiten)
+    - Lösungsskizze mit Architektur und Begründung der Technologiewahl
+    - Stellungnahme zu jeder MUSS-Anforderung (erfüllt, teilweise, nicht erfüllt) mit Begründung
+    - Team mit Rollen, Verfügbarkeit und Lebensläufen; Teamkontinuität zugesichert
+    - Zwei Referenzen mit Ansprechpersonen, davon eine mit AI-Assistent oder RAG
+    - "Kostenaufstellung: Discovery fix, Phase 1 als Festpreis oder Kostendach, Phase 2 als Richtofferte, Betrieb pro Jahr, LLM-Kosten separat"
+    - Annahmen und Ausschlüsse
+    - Entwurf des Wartungsvertrags mit SLA gemäss Abschnitt 13
+  praesentation:
+    dauer_minuten: 90
+    inhalt: Lösungsskizze, Live-Demo einer vergleichbaren Lösung oder eines Prototyps, Fragen des Bewertungsteams
+    bewertungsteam: CDO, Leiter Customer Service, CIO, Leiterin Technische Dokumentation, Legal
+  bewertungsmatrix:
+    - kriterium: Fachliche Lösung und Verständnis der Aufgabe
+      gewichtung_prozent: 25
+    - kriterium: Technische Qualität, Sicherheit, Wartbarkeit
+      gewichtung_prozent: 20
+    - kriterium: AI-Kompetenz, nachgewiesen durch Referenz oder Demo
+      gewichtung_prozent: 15
+    - kriterium: Team, Erfahrung, Kontinuität
+      gewichtung_prozent: 15
+    - kriterium: Preis und Kostentransparenz
+      gewichtung_prozent: 20
+    - kriterium: Datenstandort, Open Source, Exit-Fähigkeit
+      gewichtung_prozent: 5
+  ausschlusskriterien:
+    - Entwicklung oder Datenhaltung ausserhalb von Schweiz und EU
+    - Keine Festanstellung der Kernentwickler bei der Agentur
+    - Proprietäres CMS mit Lizenzkosten
+
+# -----------------------------------------------------------------------------
+# 17. Anhang: Abnahme-Testfälle und PoC-Abdeckung
+# -----------------------------------------------------------------------------
+anhang:
+  testfaelle_abnahme:
+    - id: TC-01
+      anforderung: FA-DP-01
+      schritte: Login als Kunde mit drei Maschinen, Seriennummer TB200-2021-0417 öffnen
+      erwartet: Dokumentliste entspricht der SAP-Stückliste, nur freigegebene Versionen, in der Sprache des Nutzers
+    - id: TC-02
+      anforderung: FA-DP-09
+      schritte: Login als Nutzer einer anderen Kundenfirma, URL des anlagenspezifischen Dokuments aufrufen, danach suchen und den Assistenten dazu fragen
+      erwartet: 403, kein Suchtreffer, Ablehnung des Assistenten; alle drei Versuche im Audit-Log
+    - id: TC-03
+      anforderung: FA-DP-05
+      schritte: Login als Händler in einem Land ohne Dual-Use-Freigabe, Schaltplan mit Exportklasse aufrufen
+      erwartet: Dokument unsichtbar in Liste, Suche und Assistent; direkter Aufruf 403; Audit-Eintrag
+    - id: TC-04
+      anforderung: FA-DP-02
+      schritte: Datei in Azure Blob ersetzen, 15 Minuten warten
+      erwartet: Neue Version in der Freigabe-Queue; alte Version bleibt bis zur Freigabe sichtbar
+    - id: TC-05
+      anforderung: FA-DP-04
+      schritte: Sicherheits-Bulletin für einen Maschinentyp freigeben
+      erwartet: Alle Nutzer mit betroffenen Seriennummern erhalten eine Mail; Lesebestätigung wird gespeichert; Report zeigt offene Bestätigungen
+    - id: TC-06
+      anforderung: FA-SE-01
+      schritte: Suche nach dem Fehlercode E-4711 und nach der Frage, warum die Folie beim Siegeln reisst
+      erwartet: Der Fehlercode trifft die Störungstabelle; die Frage findet das Kapitel ohne Wortübereinstimmung
+    - id: TC-07
+      anforderung: FA-AI-01
+      schritte: 20 Fragen aus dem Testset stellen
+      erwartet: Jede Antwort mit mindestens einer Quelle inkl. Dokument, Version und Kapitel; Quellen verlinkt und korrekt
+    - id: TC-08
+      anforderung: FA-AI-03
+      schritte: Frage ausserhalb der Dokumentation stellen
+      erwartet: Ablehnung, Button Support-Anfrage, Ticket in Salesforce mit Verlauf und Seriennummer innert 60 Sekunden
+    - id: TC-09
+      anforderung: FA-AI-04
+      schritte: 30 sicherheitsrelevante Fragen aus dem Testset stellen
+      erwartet: 100 % mit Verweis auf das Sicherheitskapitel, keine verkürzte Anleitung
+    - id: TC-10
+      anforderung: FA-AI-06
+      schritte: Zusammenfassung zurückweisen, danach suchen und fragen
+      erwartet: Zurückgewiesene Zusammenfassung in keiner Suche und keiner Antwort
+    - id: TC-11
+      anforderung: FA-AI-08
+      schritte: Eval-Lauf mit dem vollständigen Testset vor dem Release
+      erwartet: Kennzahlen gemäss Z-06 erreicht, Report archiviert
+    - id: TC-12
+      anforderung: FA-REP-02
+      schritte: Monatslimit auf aktuellen Verbrauch plus 1'000 Tokens setzen, Fragen stellen
+      erwartet: Warnmail bei 80 %, Suche-only-Modus bei 100 %, Hinweis im Portal
+    - id: TC-13
+      anforderung: NFA-PERF-02
+      schritte: Lasttest mit 500 gleichzeitigen Nutzern, 20 % davon im Assistenten
+      erwartet: Suche unter 300 ms p95, Assistent erstes Token unter 2 s p95
+    - id: TC-14
+      anforderung: NFA-DSG-02
+      schritte: Provider per Konfiguration auf ein selbst betriebenes Modell umstellen
+      erwartet: Assistent funktioniert ohne Code-Änderung; Testset-Kennzahlen dokumentiert
+    - id: TC-15
+      anforderung: NFA-OPS-02
+      schritte: Restore aus dem Backup auf Staging
+      erwartet: System innert 4 Stunden lauffähig; Datenstand maximal 24 Stunden alt
+    - id: TC-16
+      anforderung: NFA-SEC-04
+      schritte: Dokument mit eingebetteter Anweisung an den Assistenten hochladen und freigeben, danach eine Frage dazu stellen
+      erwartet: Anweisung wird nicht befolgt; Antwort bleibt bei den Inhalten; Vorfall geloggt
+
+  poc_abdeckung:
+    hinweis: Abdeckung durch den 48-Stunden-Proof-of-Concept; dient der Demo und ist kein Teil der Ausschreibung
+    umgesetzt: [FA-AUTH-01, FA-AUTH-03, FA-DP-01, FA-DP-03, FA-DP-04, FA-DP-05, FA-DP-06, FA-DP-08, FA-DP-09, FA-SE-01, FA-SE-02, FA-SE-04, FA-AI-01, FA-AI-02, FA-AI-03, FA-AI-04, FA-AI-05, FA-AI-06, FA-AI-07, FA-AI-08, FA-RED-01, FA-RED-02, FA-REP-01, FA-REP-02, NFA-SEC-02, NFA-SEC-04, NFA-DSG-02, NFA-QA-03, NFA-QA-04, NFA-QA-05]
+    simuliert:
+      - anforderung: FA-INT-01
+        mock: SAP als JSON-Fixtures über dieselbe Migration
+      - anforderung: FA-INT-02
+        mock: Support-Anfrage als Portal-Objekt statt Salesforce-Ticket
+      - anforderung: FA-DP-02
+        mock: Dateien im privaten Dateisystem statt Azure Blob; Sync-Logik über die Queue identisch
+      - anforderung: FA-SE-05
+        mock: Dokumente als strukturiertes HTML statt PDF; keine Textextraktion
+    nicht_im_poc: [FA-AUTH-02, FA-AUTH-04, FA-DP-07, FA-SE-03, FA-AI-09, FA-AI-10, FA-INT-03, FA-INT-04, FA-COM-01, NFA-PERF-01, NFA-PERF-03, NFA-SCAL-01, NFA-OPS-01, NFA-OPS-02, NFA-OPS-05, NFA-UX-02]
+    testfaelle_im_poc: [TC-01, TC-02, TC-03, TC-05, TC-06, TC-07, TC-08, TC-09, TC-10, TC-11, TC-12, TC-14, TC-16]
+
+# -----------------------------------------------------------------------------
+# 18. Glossar
+# -----------------------------------------------------------------------------
+glossar:
+  Equipment: SAP-Begriff für eine einzelne, seriennummerngeführte Maschine
+  Bulletin: Service- oder Sicherheitsmitteilung zu einer Maschinenserie
+  Dual-Use: Güter und Unterlagen mit ziviler und militärischer Nutzbarkeit; exportkontrolliert
+  GMP: Good Manufacturing Practice; Regelwerk der Pharmaproduktion mit Dokumentationspflichten
+  RAG: Retrieval-Augmented Generation; Antworten eines Sprachmodells auf Basis zuvor gefundener Dokumente
+  MCP: Model Context Protocol; Standard, über den AI-Werkzeuge auf Systemfunktionen zugreifen
+  PWA: Progressive Web App; Web-Anwendung mit Offline-Fähigkeit und Installation ohne App-Store
+  revDSG: revidiertes Schweizer Datenschutzgesetz, in Kraft seit September 2023

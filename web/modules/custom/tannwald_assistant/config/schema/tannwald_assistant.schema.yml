@@ -1,0 +1,74 @@
+tannwald_assistant.settings:
+  type: config_object
+  label: 'Tannwald assistant settings'
+  mapping:
+    provider:
+      type: string
+      label: 'AI provider ID (drupal/ai plugin)'
+    chat_model:
+      type: string
+      label: 'Chat model (raw provider name)'
+    embedding_model:
+      type: string
+      label: 'Embedding model (raw provider name)'
+    top_k:
+      type: integer
+      label: 'Number of chunks in the prompt'
+    min_score:
+      type: float
+      label: 'Minimum RRF score'
+    monthly_token_limit:
+      type: integer
+      label: 'Monthly token limit'
+    kosten_pro_1k_chf:
+      type: float
+      label: 'Cost per 1000 tokens in CHF'
+    safety_terms:
+      type: mapping
+      label: 'Safety terms per language'
+      mapping:
+        de:
+          type: sequence
+          label: 'German safety terms'
+          sequence:
+            type: string
+            label: 'Term'
+        en:
+          type: sequence
+          label: 'English safety terms'
+          sequence:
+            type: string
+            label: 'Term'
+        fr:
+          type: sequence
+          label: 'French safety terms'
+          sequence:
+            type: string
+            label: 'Term'
+    assistant_enabled:
+      type: boolean
+      label: 'Assistant enabled'
+
+views.field.tannwald_period:
+  type: views_field
+  label: 'Day or month of a timestamp'
+
+views.field.tannwald_last_date:
+  type: views_field
+  label: 'Latest timestamp of a group'
+
+views.field.tannwald_tokens_total:
+  type: views_field
+  label: 'Sum of prompt and completion tokens'
+
+views.field.tannwald_limit_share:
+  type: views_field
+  label: 'Share of the monthly token limit'
+
+views.filter.tannwald_current_month:
+  type: views_filter
+  label: 'Current month'
+
+views.area.tannwald_answer_stats:
+  type: views_area
+  label: 'Assistant answers per day'

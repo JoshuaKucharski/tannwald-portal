@@ -1,0 +1,27 @@
+uuid: a02632b2-0fdb-4cd4-ba05-c69352498c69
+langcode: de
+status: true
+dependencies:
+  module:
+    - options
+    - taxonomy
+id: taxonomy_term.field_firma_art
+field_name: field_firma_art
+entity_type: taxonomy_term
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: kunde
+      label: Kunde
+    -
+      value: haendler
+      label: Händler
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

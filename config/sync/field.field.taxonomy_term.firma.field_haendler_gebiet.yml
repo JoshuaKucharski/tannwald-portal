@@ -1,0 +1,19 @@
+uuid: 60c1f545-6c0f-4c13-9141-82bf7fa1c8dd
+langcode: de
+status: true
+dependencies:
+  config:
+    - field.storage.taxonomy_term.field_haendler_gebiet
+    - taxonomy.vocabulary.firma
+id: taxonomy_term.firma.field_haendler_gebiet
+field_name: field_haendler_gebiet
+entity_type: taxonomy_term
+bundle: firma
+label: Händler-Gebiet
+description: 'Länderkürzel (ISO-3166 alpha-2), nur für Händler.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

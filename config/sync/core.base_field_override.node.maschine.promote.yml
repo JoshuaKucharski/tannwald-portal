@@ -1,0 +1,22 @@
+uuid: 61f244d9-8cde-4bc3-9fb4-b5fe181ae0de
+langcode: de
+status: true
+dependencies:
+  config:
+    - node.type.maschine
+id: node.maschine.promote
+field_name: promote
+entity_type: node
+bundle: maschine
+label: 'Auf der Startseite anzeigen'
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: An
+  off_label: Aus
+field_type: boolean

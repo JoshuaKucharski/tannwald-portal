@@ -1,0 +1,124 @@
+uuid: dc590adf-607e-4cf2-8ec2-314b52bd041c
+langcode: de
+status: true
+dependencies:
+  config:
+    - field.field.node.dokument.body
+    - field.field.node.dokument.field_aenderungsvermerk
+    - field.field.node.dokument.field_datei
+    - field.field.node.dokument.field_dokumenttyp
+    - field.field.node.dokument.field_exportklasse
+    - field.field.node.dokument.field_freigegeben_am
+    - field.field.node.dokument.field_gueltig_bis
+    - field.field.node.dokument.field_maschinentyp
+    - field.field.node.dokument.field_seriennummer
+    - field.field.node.dokument.field_version
+    - node.type.dokument
+  module:
+    - datetime
+    - file
+    - options
+    - text
+    - user
+id: node.dokument.default
+targetEntityType: node
+bundle: dokument
+mode: default
+content:
+  body:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  content_moderation_control:
+    settings: {  }
+    third_party_settings: {  }
+    weight: -20
+    region: content
+  field_aenderungsvermerk:
+    type: basic_string
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 6
+    region: content
+  field_datei:
+    type: file_default
+    label: inline
+    settings:
+      use_description_as_link_text: true
+    third_party_settings: {  }
+    weight: 9
+    region: content
+  field_dokumenttyp:
+    type: entity_reference_label
+    label: inline
+    settings:
+      link: false
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_exportklasse:
+    type: list_default
+    label: inline
+    settings: {  }
+    third_party_settings: {  }
+    weight: 7
+    region: content
+  field_freigegeben_am:
+    type: datetime_default
+    label: inline
+    settings:
+      timezone_override: ''
+      format_type: tannwald_datum
+    third_party_settings: {  }
+    weight: 8
+    region: content
+  field_gueltig_bis:
+    type: datetime_default
+    label: inline
+    settings:
+      timezone_override: ''
+      format_type: tannwald_datum
+    third_party_settings: {  }
+    weight: 10
+    region: content
+  field_maschinentyp:
+    type: entity_reference_label
+    label: inline
+    settings:
+      link: false
+    third_party_settings: {  }
+    weight: 3
+    region: content
+  field_seriennummer:
+    type: entity_reference_label
+    label: inline
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 4
+    region: content
+  field_version:
+    type: string
+    label: inline
+    settings:
+      link_to_entity: false
+      link_rel: canonical
+    third_party_settings: {  }
+    weight: 5
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+  tannwald_summary:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 5
+    region: content
+hidden:
+  langcode: true

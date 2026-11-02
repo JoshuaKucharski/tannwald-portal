@@ -1,0 +1,17 @@
+tannwald_bulletin.confirm:
+  path: '/bulletin/{node}/bestaetigen'
+  defaults:
+    _controller: '\Drupal\tannwald_bulletin\Controller\ConfirmController::confirm'
+  methods: [POST]
+  requirements:
+    node: \d+
+    _user_is_logged_in: 'TRUE'
+    _entity_access: 'node.view'
+    _custom_access: '\Drupal\tannwald_bulletin\Controller\ConfirmController::access'
+  options:
+    no_cache: TRUE
+    # 403 schreibt Audit zugriff_verweigert (tannwald_access, AccessDeniedSubscriber).
+    _tannwald_audit_denied: TRUE
+    parameters:
+      node:
+        type: 'entity:node'

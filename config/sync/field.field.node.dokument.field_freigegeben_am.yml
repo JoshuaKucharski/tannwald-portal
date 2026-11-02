@@ -1,0 +1,21 @@
+uuid: f7eae46e-0f5c-42ec-bbce-67e9d8c3eca6
+langcode: de
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_freigegeben_am
+    - node.type.dokument
+  module:
+    - datetime
+id: node.dokument.field_freigegeben_am
+field_name: field_freigegeben_am
+entity_type: node
+bundle: dokument
+label: 'Freigegeben am'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: datetime

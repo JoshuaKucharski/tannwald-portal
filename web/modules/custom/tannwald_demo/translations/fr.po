@@ -1,0 +1,12 @@
+# French translation of tannwald_demo (vous; terminologie: voir rapport tannwald-18).
+msgid ""
+msgstr ""
+"Project-Id-Version: tannwald_demo\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Language: fr\n"
+
+msgid "Tannwald document manifest, one row per version"
+msgstr "Manifeste de documents Tannwald, une ligne par version"

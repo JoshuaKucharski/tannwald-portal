@@ -1,0 +1,23 @@
+- | Affected users of the bulletin in the first argument who have not confirmed yet. | web/modules/custom/tannwald_bulletin/src/Hook/BulletinHooks.php:88
+- | Bulletin | web/modules/custom/tannwald_bulletin/src/Entity/Lesebestaetigung.php:58
+- | Bulletin notification | web/modules/custom/tannwald_bulletin/src/Mailer/BulletinMailer.php:30
+- | Confirm as read | web/modules/custom/tannwald_bulletin/src/Form/ConfirmForm.php:55
+- | Confirmed on | web/modules/custom/tannwald_bulletin/src/Entity/Lesebestaetigung.php:72
+- | Country | web/modules/custom/tannwald_bulletin/src/Entity/Lesebestaetigung.php:76
+- | Hello @name, | web/modules/custom/tannwald_bulletin/src/Mailer/BulletinMailer.php:39
+- | Machine | web/modules/custom/tannwald_bulletin/src/Entity/Lesebestaetigung.php:65
+- | Open read confirmations | web/modules/custom/tannwald_bulletin/src/Hook/BulletinHooks.php:87
+- | Open: @count | web/modules/custom/tannwald_bulletin/src/Plugin/views/area/OpenConfirmations.php:95
+- | Please confirm in the portal that you have read it ("Confirm as read"). | web/modules/custom/tannwald_bulletin/src/Mailer/BulletinMailer.php:42
+- | PoC: field_land of the user, no GeoIP. | web/modules/custom/tannwald_bulletin/src/Entity/Lesebestaetigung.php:77
+- | Read bulletin | web/modules/custom/tannwald_bulletin/src/Mailer/BulletinMailer.php:41
+- | Read confirmation | web/modules/custom/tannwald_bulletin/src/Entity/Lesebestaetigung.php:26
+- | Read confirmation saved. | web/modules/custom/tannwald_bulletin/src/Controller/ConfirmController.php:82
+- | Read confirmations | web/modules/custom/tannwald_bulletin/src/Entity/Lesebestaetigung.php:27
+- | Safety bulletin @id: @title — read confirmation required | web/modules/custom/tannwald_bulletin/src/Mailer/BulletinMailer.php:38
+- | Tannwald bulletin notifications | web/modules/custom/tannwald_bulletin/src/Plugin/QueueWorker/NotifyWorker.php:28
+- | Tannwald has released a safety bulletin for the following machines: | web/modules/custom/tannwald_bulletin/src/Mailer/BulletinMailer.php:40
+- | User | web/modules/custom/tannwald_bulletin/src/Entity/Lesebestaetigung.php:54
+- | read confirmation | web/modules/custom/tannwald_bulletin/src/Entity/Lesebestaetigung.php:28
+- | read confirmations | web/modules/custom/tannwald_bulletin/src/Entity/Lesebestaetigung.php:29
+Validation | Unique read confirmation | web/modules/custom/tannwald_bulletin/src/Plugin/Validation/Constraint/UniqueReadConfirmationConstraint.php:17

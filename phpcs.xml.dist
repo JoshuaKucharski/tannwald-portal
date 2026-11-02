@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- PHPCS für tannwald-portal: Drupal und DrupalPractice (drupal/coder) über die eigenen Pfade.
+     Aufruf: ddev exec vendor/bin/phpcs   ·   gezielt: ddev exec vendor/bin/phpcs <dateien> -->
+<ruleset name="tannwald-portal">
+  <description>Coding Standards für eigene Module, das eigene Theme und die Projekt-Tests.</description>
+
+  <file>web/modules/custom</file>
+  <file>web/themes/custom</file>
+  <file>tests</file>
+
+  <arg name="extensions" value="php,module,inc,install,test,profile,theme,css,info,txt,md,yml"/>
+  <arg name="colors"/>
+  <arg value="sp"/>
+
+  <exclude-pattern>*/node_modules/*</exclude-pattern>
+  <exclude-pattern>*/dist/*</exclude-pattern>
+
+  <rule ref="Drupal"/>
+  <rule ref="DrupalPractice"/>
+</ruleset>

@@ -1,0 +1,17 @@
+{#
+/**
+ * @file
+ * SDC tannwald:badge — Props: label, variant, pill, attributes.
+ */
+#}
+{% set colors = {
+  neutral: 'border border-line bg-surface text-muted',
+  accent: 'bg-private-bg text-accent',
+  ok: 'bg-ok-bg text-ok',
+  warn: 'bg-warn-bg text-warn',
+  danger: 'border border-danger bg-danger-bg text-danger',
+  dualuse: 'bg-dualuse-bg text-dualuse',
+  private: 'bg-private-bg text-private',
+} %}
+{% set shape = pill ? 'rounded-pill px-2.5 py-[3px]' : 'rounded px-2 py-[2px]' %}
+<span{{ attributes.addClass('inline-flex items-center whitespace-nowrap text-xs font-semibold', shape, colors[variant|default('neutral')]) }}>{{ label }}</span>

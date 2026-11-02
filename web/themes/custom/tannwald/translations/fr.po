@@ -1,0 +1,654 @@
+# French translation of the theme tannwald (vous). Termes des wireframes: voir rapport tannwald-18.
+msgid ""
+msgstr ""
+"Project-Id-Version: tannwald\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Language: fr\n"
+
+msgid "1 hit"
+msgstr "1 résultat"
+
+msgid "1 new version"
+msgstr "1 nouvelle version"
+
+msgid "@count confirmed"
+msgstr "@count confirmés"
+
+msgid "@count current"
+msgstr "@count à jour"
+
+msgid "@count new versions"
+msgstr "@count nouvelles versions"
+
+msgid "@count open"
+msgstr "@count en attente"
+
+msgid "@count tokens"
+msgstr "@count tokens"
+
+msgid "@count words · target at most @target"
+msgstr "@count mots · objectif maximal @target"
+
+msgid "@language: not available"
+msgstr "@language : non disponible"
+
+msgid "@total hits"
+msgstr "@total résultats"
+
+msgid "About the portal"
+msgstr "À propos du portail"
+
+msgid "Access is logged"
+msgstr "L’accès est consigné"
+
+msgid "Actions"
+msgstr "Actions"
+
+msgid "Add new comment"
+msgstr "Ajouter un commentaire"
+
+msgid "Administrator"
+msgstr "Administrateur"
+
+msgid "After approval: indexing via the queue, about one minute"
+msgstr "Après approbation : indexation via la file d’attente, environ une minute"
+
+msgid "An assistant that answers only from approved documents"
+msgstr "Un assistant qui ne répond qu’à partir de documents approuvés"
+
+msgid "Answer helpful"
+msgstr "Réponse utile"
+
+msgid "Answer is being generated …"
+msgstr "La réponse est en cours de création …"
+
+msgid "Answer not helpful"
+msgstr "Réponse peu utile"
+
+msgid "Answers only from approved documents"
+msgstr "Réponses uniquement à partir de documents approuvés"
+
+msgid "Answers only from approved documents of this machine"
+msgstr "Répond uniquement à partir des documents approuvés de cette machine"
+
+msgid "Answers only from approved documents you are allowed to see"
+msgstr "Répond uniquement à partir des documents approuvés que vous pouvez consulter"
+
+msgid "Approvals"
+msgstr "Approbations"
+
+msgid "Approved"
+msgstr "Approuvé"
+
+msgid "Ask a question about this machine, for example about cleaning intervals or fault codes."
+msgstr "Posez une question sur cette machine, par exemple sur les intervalles de nettoyage ou les codes de défaut."
+
+msgid "Ask a question about your documents, for example about cleaning intervals or fault codes."
+msgstr "Posez une question sur vos documents, par exemple sur les intervalles de nettoyage ou les codes de défaut."
+
+msgid "Ask the assistant"
+msgstr "Question à l’assistant"
+
+msgid "Assistant"
+msgstr "Assistant"
+
+msgid "At most @count words"
+msgstr "Au maximum @count mots"
+
+msgid "Audit log"
+msgstr "Journal d’audit"
+
+msgid "Audit log as CSV"
+msgstr "Journal d’audit en CSV"
+
+msgid "Authenticated"
+msgstr "Connecté"
+
+msgid "Available languages"
+msgstr "Langues disponibles"
+
+msgid "Back to @name"
+msgstr "Retour à @name"
+
+msgid "Breadcrumb"
+msgstr "Fil d’Ariane"
+
+msgid "Bulletins"
+msgstr "Bulletins"
+
+msgid "Bulletins for this machine"
+msgstr "Bulletins pour cette machine"
+
+msgid "Change history"
+msgstr "Historique des modifications"
+
+msgid "Change note: @note"
+msgstr "Note de modification : @note"
+
+msgid "Chap."
+msgstr "Chap."
+
+msgid "Checks"
+msgstr "Points de contrôle"
+
+msgid "Clear input"
+msgstr "Effacer la saisie"
+
+msgid "Close"
+msgstr "Fermer"
+
+msgid "Close message"
+msgstr "Fermer le message"
+
+msgid "Compliance"
+msgstr "Conformité"
+
+msgid "Confirmed"
+msgstr "Confirmé"
+
+msgid "Confirmed on @date"
+msgstr "Confirmé le @date"
+
+msgid "Contents"
+msgstr "Contenu"
+
+msgid "Contract"
+msgstr "Contrat"
+
+msgid "Create document"
+msgstr "Créer un document"
+
+msgid "Create support request"
+msgstr "Créer une demande d’assistance"
+
+msgid "Current page"
+msgstr "Page actuelle"
+
+msgid "Current versions only"
+msgstr "Versions actuelles uniquement"
+
+msgid "Customer portal of Tannwald Verpackungstechnik AG"
+msgstr "Portail client de Tannwald Verpackungstechnik AG"
+
+msgid "Customer reader"
+msgstr "Client (lecture)"
+
+msgid "Dealer"
+msgstr "Revendeur"
+
+msgid "Demo accounts, password demo"
+msgstr "Comptes de démonstration, mot de passe demo"
+
+msgid "Demo mode"
+msgstr "Mode démo"
+
+msgid "Document type"
+msgstr "Type de document"
+
+msgid "Documents"
+msgstr "Documents"
+
+msgid "Documents for this machine"
+msgstr "Documents pour cette machine"
+
+msgid "Documents for your machines"
+msgstr "Documents pour vos machines"
+
+msgid "Draft"
+msgstr "Brouillon"
+
+msgid "Dual-use · export class @n"
+msgstr "Double usage · classe d’exportation @n"
+
+msgid "Editorial"
+msgstr "Rédaction"
+
+msgid "English"
+msgstr "Anglais"
+
+msgid "Enter a search term."
+msgstr "Saisissez un terme de recherche."
+
+msgid "Enter for all hits"
+msgstr "Entrée pour tous les résultats"
+
+msgid "Examples:"
+msgstr "Exemples :"
+
+msgid "Export rules"
+msgstr "Règles d’exportation"
+
+msgid "Fallback @language"
+msgstr "Repli @language"
+
+msgid "Fallback @language: this document is not available in your language."
+msgstr "Repli @language : ce document n’est pas disponible dans votre langue."
+
+msgid "Filter"
+msgstr "Filtre"
+
+msgid "Filter (@count active)"
+msgstr "Filtre (@count actifs)"
+
+msgid "Forgot your password?"
+msgstr "Mot de passe oublié ?"
+
+msgid "Four-eyes principle: the person who created the bulletin must not approve it."
+msgstr "Principe des quatre yeux : l’auteur du bulletin ne peut pas l’approuver."
+
+msgid "French"
+msgstr "Français"
+
+msgid "Full text only"
+msgstr "Texte intégral"
+
+msgid "Generated @date"
+msgstr "Généré le @date"
+
+msgid "Generated @date with @model, approved by the editorial team."
+msgstr "Généré le @date avec @model, approuvé par la rédaction."
+
+msgid "German"
+msgstr "Allemand"
+
+msgid "Go to next page"
+msgstr "Aller à la page suivante"
+
+msgid "Go to page @key"
+msgstr "Aller à la page @key"
+
+msgid "Go to previous page"
+msgstr "Aller à la page précédente"
+
+msgid "History pseudonymised, 12 months"
+msgstr "Historique pseudonymisé, 12 mois"
+
+msgid "Hit by meaning"
+msgstr "Résultat par signification"
+
+msgid "Home"
+msgstr "Accueil"
+
+msgid "Hybrid"
+msgstr "Hybride"
+
+msgid "Information"
+msgstr "Information"
+
+msgid "Language of the document (@language)"
+msgstr "Langue du document (@language)"
+
+msgid "Language: @language"
+msgstr "Langue : @language"
+
+msgid "Live results while typing"
+msgstr "Résultats en direct pendant la saisie"
+
+msgid "Location @location"
+msgstr "Site @location"
+
+msgid "Log in"
+msgstr "Se connecter"
+
+msgid "Log out"
+msgstr "Se déconnecter"
+
+msgid "Machine"
+msgstr "Machine"
+
+msgid "Machine type"
+msgstr "Type de machine"
+
+msgid "Main navigation"
+msgstr "Navigation principale"
+
+msgid "Masquerade as @name"
+msgstr "Se connecter en tant que @name"
+
+msgid "Mode @modus"
+msgstr "Mode @modus"
+
+msgid "Model @model"
+msgstr "Modèle @model"
+
+msgid "Model: @model"
+msgstr "Modèle : @model"
+
+msgid "My machines"
+msgstr "Mes machines"
+
+msgid "New"
+msgstr "Nouveau"
+
+msgid "New version"
+msgstr "Nouvelle version"
+
+msgid "Next page"
+msgstr "Page suivante"
+
+msgid "No approved summary yet."
+msgstr "Pas encore de résumé approuvé."
+
+msgid "No bulletins for this machine. New bulletins appear here as soon as they are released."
+msgstr "Aucun bulletin pour cette machine. Les nouveaux bulletins apparaissent ici dès leur publication."
+
+msgid "No confirmation required"
+msgstr "Aucune confirmation requise"
+
+msgid "No documents are available for this machine. As soon as the editorial team approves one, it appears here."
+msgstr "Aucun document n’est encore disponible pour cette machine. Dès que la rédaction en approuve un, il apparaît ici."
+
+msgid "No hits for “@query”. Try another spelling, switch to Hybrid, or ask the assistant."
+msgstr "Aucun résultat pour « @query ». Essayez une autre orthographe, passez en mode Hybride ou posez la question à l’assistant."
+
+msgid "No machines are assigned to your company yet. Your Tannwald contact links them to your account."
+msgstr "Aucune machine n’est encore associée à votre entreprise. Votre interlocuteur Tannwald les relie à votre compte."
+
+msgid "Not available"
+msgstr "Non disponible"
+
+msgid "Older version"
+msgstr "Version antérieure"
+
+msgid "Only @company"
+msgstr "Uniquement @company"
+
+msgid "Open bulletin"
+msgstr "Ouvrir le bulletin"
+
+msgid "Open chapter"
+msgstr "Ouvrir le chapitre"
+
+msgid "Open machine"
+msgstr "Ouvrir la machine"
+
+msgid "Open safety bulletin"
+msgstr "Bulletin de sécurité en attente"
+
+msgid "Open service bulletin"
+msgstr "Bulletin de service en attente"
+
+msgid "Page"
+msgstr "Page"
+
+msgid "Page {{ items.current }}"
+msgstr "Page {{ items.current }}"
+
+msgid "Pagination"
+msgstr "Pagination"
+
+msgid "Please enter a question."
+msgstr "Veuillez saisir une question."
+
+msgid "Portal admin"
+msgstr "Administrateur du portail"
+
+msgid "Prefer an answer instead of a list of hits? The assistant summarises the matching chapters and cites them."
+msgstr "Vous préférez une réponse à une liste de résultats ? L’assistant résume les chapitres correspondants et les cite."
+
+msgid "Previous page"
+msgstr "Page précédente"
+
+msgid "Primary tabs"
+msgstr "Onglets principaux"
+
+msgid "Published @date"
+msgstr "Publié le @date"
+
+msgid "Question, history and serial number are sent along."
+msgstr "La question, l’historique et le numéro de série sont transmis."
+
+msgid "Queue: @count open"
+msgstr "File d’attente : @count en attente"
+
+msgid "Read bulletin"
+msgstr "Lire le bulletin"
+
+msgid "Read confirmation pending"
+msgstr "Accusé de lecture en attente"
+
+msgid "Read confirmation required"
+msgstr "Accusé de lecture requis"
+
+msgid "Rejected"
+msgstr "Rejeté"
+
+msgid "Reset filters"
+msgstr "Réinitialiser les filtres"
+
+msgid "Role @role"
+msgstr "Rôle @role"
+
+msgid "Safety bulletin"
+msgstr "Bulletin de sécurité"
+
+msgid "Safety bulletins with read confirmation"
+msgstr "Bulletins de sécurité avec accusé de lecture"
+
+msgid "Safety notice"
+msgstr "Avis de sécurité"
+
+msgid "Safety-relevant chapters mentioned"
+msgstr "Chapitres relatifs à la sécurité mentionnés"
+
+msgid "Safety-relevant chapters not mentioned"
+msgstr "Chapitres relatifs à la sécurité non mentionnés"
+
+msgid "Search"
+msgstr "Recherche"
+
+msgid "Search mode"
+msgstr "Mode de recherche"
+
+msgid "Search results"
+msgstr "Résultats de la recherche"
+
+msgid "Search term"
+msgstr "Terme de recherche"
+
+msgid "Search your documents"
+msgstr "Rechercher dans vos documents"
+
+msgid "Secondary tabs"
+msgstr "Onglets secondaires"
+
+msgid "Send question"
+msgstr "Envoyer la question"
+
+msgid "Serial number @serial"
+msgstr "Numéro de série @serial"
+
+msgid "Service bulletin"
+msgstr "Bulletin de service"
+
+msgid "Skip to main content"
+msgstr "Aller au contenu principal"
+
+msgid "Sources"
+msgstr "Sources"
+
+msgid "Summaries become visible on the document, in search and in the assistant only after approval."
+msgstr "Les résumés ne sont visibles sur le document, dans la recherche et dans l’assistant qu’après approbation."
+
+msgid "Support request #@id created."
+msgstr "Demande d’assistance n° @id créée."
+
+msgid "Switch:"
+msgstr "Basculer :"
+
+msgid "Switches back to @name first; choose the account there."
+msgstr "Revient d’abord à @name ; choisissez le compte à cet endroit."
+
+msgid "Table of contents"
+msgstr "Table des matières"
+
+msgid "Tabs"
+msgstr "Onglets"
+
+msgid "Technical editing"
+msgstr "Rédaction technique"
+
+msgid "Technician"
+msgstr "Technicien"
+
+msgid "Text Formats"
+msgstr "Formats de texte"
+
+msgid "Thank you for your feedback."
+msgstr "Merci pour votre retour."
+
+msgid "The assistant is currently not reachable."
+msgstr "L’assistant est actuellement injoignable."
+
+msgid "The assistant is currently unavailable. You can still use the search."
+msgstr "L’assistant est actuellement indisponible. Vous pouvez toujours utiliser la recherche."
+
+msgid "To machine @serial"
+msgstr "Vers la machine @serial"
+
+msgid "To support"
+msgstr "Vers l’assistance"
+
+msgid "Too many questions, please wait a minute."
+msgstr "Trop de questions, veuillez patienter une minute."
+
+msgid "Too many requests, please wait a moment."
+msgstr "Trop de requêtes, veuillez patienter un instant."
+
+msgid "Unanswered questions"
+msgstr "Questions sans réponse"
+
+msgid "Under review"
+msgstr "À vérifier"
+
+msgid "Updated"
+msgstr "Mis à jour"
+
+msgid "Usage and costs"
+msgstr "Utilisation et coûts"
+
+msgid "Username or password do not match. Please check your entry."
+msgstr "Le nom d’utilisateur ou le mot de passe est incorrect. Veuillez vérifier votre saisie."
+
+msgid "Version @version"
+msgstr "Version @version"
+
+msgid "Was this helpful?"
+msgstr "Était-ce utile ?"
+
+msgid "While typing: top @n"
+msgstr "Pendant la saisie : top @n"
+
+msgid "Year built @year"
+msgstr "Année de construction @year"
+
+msgid "You have not created any content types yet. Go to the <a href=\"{{ create_content }}\">content type creation page</a> to add a new content type."
+msgstr "Vous n’avez pas encore créé de type de contenu. Ouvrez la <a href=\"{{ create_content }}\">page de création de types de contenu</a> pour en ajouter un."
+
+msgid "Your question"
+msgstr "Votre question"
+
+msgid "approved @date"
+msgstr "approuvé le @date"
+
+msgid "clean the sealing station"
+msgstr "nettoyer la station de scellage"
+
+msgid "concerns this serial number"
+msgstr "concerne ce numéro de série"
+
+msgid "confirmed on @date by @name"
+msgstr "confirmé le @date par @name"
+
+msgid "e.g. E-4711 or cleaning the sealing station"
+msgstr "p. ex. E-4711 ou nettoyage de la station de scellage"
+
+msgid "e.g. Which film thickness is approved?"
+msgstr "p. ex. Quelle épaisseur de film est autorisée ?"
+
+msgid "in @seconds s"
+msgstr "en @seconds s"
+
+msgid "logged in as"
+msgstr "connecté en tant que"
+
+msgid "new revision by @name"
+msgstr "nouvelle révision par @name"
+
+msgid "only documents you are allowed to see"
+msgstr "uniquement les documents que vous pouvez consulter"
+
+msgid "target at most @target"
+msgstr "objectif maximal @target"
+
+msgid "until @date"
+msgstr "jusqu’au @date"
+
+msgid "valid until @date"
+msgstr "valable jusqu’au @date"
+
+msgid "words"
+msgstr "mots"
+
+msgid "‹‹"
+msgstr "‹‹"
+
+msgid "››"
+msgstr "››"
+
+msgctxt "tannwald"
+msgid "Download"
+msgstr "Télécharger"
+
+msgctxt "tannwald button"
+msgid "Search"
+msgstr "Rechercher"
+
+msgctxt "tannwald facet"
+msgid "Language"
+msgstr "Langue"
+
+msgctxt "tannwald facet"
+msgid "Reset"
+msgstr "Réinitialiser"
+
+msgctxt "tannwald pager"
+msgid "Back"
+msgstr "Précédent"
+
+msgctxt "tannwald pager"
+msgid "Next"
+msgstr "Suivant"
+
+msgctxt "tannwald password"
+msgid "hide"
+msgstr "masquer"
+
+msgctxt "tannwald password"
+msgid "show"
+msgstr "afficher"
+
+msgctxt "tannwald review"
+msgid "Summary"
+msgstr "Résumé"
+
+msgctxt "tannwald search"
+msgid "Document"
+msgstr "Document"
+
+msgctxt "tannwald status"
+msgid "Open"
+msgstr "En attente"
+
+# Tri de /suche (6.1)
+msgid "Sort by"
+msgstr "Trier par"
+
+msgid "Relevance"
+msgstr "Pertinence"
+
+msgid "Date"
+msgstr "Date"

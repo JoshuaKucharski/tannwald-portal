@@ -1,0 +1,9 @@
+# Erzeugt von docs/i18n/config-translate.php (Aufgabe 6.5) — nicht von Hand ändern.
+settings:
+  allowed_values:
+    - value: 'keine'
+      label: 'None'
+    - value: 'klasse_1'
+      label: 'Class 1'
+    - value: 'klasse_2'
+      label: 'Class 2'

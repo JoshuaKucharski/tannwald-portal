@@ -1,0 +1,79 @@
+# French translation of tannwald_bulletin (vous; terminologie: voir rapport tannwald-18).
+msgid ""
+msgstr ""
+"Project-Id-Version: tannwald_bulletin\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Language: fr\n"
+
+msgid "Affected users of the bulletin in the first argument who have not confirmed yet."
+msgstr "Utilisateurs concernés par le bulletin indiqué en premier argument qui n’ont pas encore confirmé."
+
+msgid "Bulletin"
+msgstr "Bulletin"
+
+msgid "Bulletin notification"
+msgstr "Notification de bulletin"
+
+msgid "Confirm as read"
+msgstr "Confirmer la lecture"
+
+msgid "Confirmed on"
+msgstr "Confirmé le"
+
+msgid "Country"
+msgstr "Pays"
+
+msgid "Hello @name,"
+msgstr "Bonjour @name,"
+
+msgid "Machine"
+msgstr "Machine"
+
+msgid "Open read confirmations"
+msgstr "Accusés de lecture en attente"
+
+msgid "Open: @count"
+msgstr "En attente : @count"
+
+msgid "Please confirm in the portal that you have read it (\"Confirm as read\")."
+msgstr "Veuillez confirmer dans le portail que vous l’avez lu (« Confirmer la lecture »)."
+
+msgid "PoC: field_land of the user, no GeoIP."
+msgstr "PoC : field_land de l’utilisateur, pas de GeoIP."
+
+msgid "Read bulletin"
+msgstr "Lire le bulletin"
+
+msgid "Read confirmation"
+msgstr "Accusé de lecture"
+
+msgid "Read confirmation saved."
+msgstr "Accusé de lecture enregistré."
+
+msgid "Read confirmations"
+msgstr "Accusés de lecture"
+
+msgid "Safety bulletin @id: @title — read confirmation required"
+msgstr "Bulletin de sécurité @id : @title — confirmation de lecture requise"
+
+msgid "Tannwald bulletin notifications"
+msgstr "Tannwald : notifications de bulletins"
+
+msgid "Tannwald has released a safety bulletin for the following machines:"
+msgstr "Tannwald a publié un bulletin de sécurité pour les machines suivantes :"
+
+msgid "User"
+msgstr "Utilisateur"
+
+msgid "read confirmation"
+msgstr "accusé de lecture"
+
+msgid "read confirmations"
+msgstr "accusés de lecture"
+
+msgctxt "Validation"
+msgid "Unique read confirmation"
+msgstr "Accusé de lecture unique"

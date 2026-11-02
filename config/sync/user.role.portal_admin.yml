@@ -1,0 +1,61 @@
+uuid: 2111d9e6-3922-49dd-93b3-84928f3c651c
+langcode: de
+status: true
+dependencies:
+  config:
+    - filter.format.dokument_html
+    - node.type.bulletin
+    - node.type.dokument
+    - node.type.zusammenfassung
+    - workflows.workflow.redaktion
+  module:
+    - content_moderation
+    - content_translation
+    - filter
+    - navigation
+    - node
+    - system
+    - tannwald_access
+    - tannwald_assistant
+    - taxonomy
+id: portal_admin
+label: Portal-Admin
+weight: 8
+is_admin: false
+permissions:
+  - 'access administration pages'
+  - 'access content'
+  - 'access content overview'
+  - 'access navigation'
+  - 'administer nodes'
+  - 'administer tannwald assistant'
+  - 'administer taxonomy'
+  - 'administer users'
+  - 'create bulletin content'
+  - 'create content translations'
+  - 'create dokument content'
+  - 'create zusammenfassung content'
+  - 'delete content translations'
+  - 'delete own bulletin content'
+  - 'delete own dokument content'
+  - 'delete own zusammenfassung content'
+  - 'edit any bulletin content'
+  - 'edit any dokument content'
+  - 'edit any zusammenfassung content'
+  - 'revert all revisions'
+  - 'tannwald manage export rules'
+  - 'tannwald view all documents'
+  - 'tannwald view audit log'
+  - 'translate bulletin node'
+  - 'translate dokument node'
+  - 'translate zusammenfassung node'
+  - 'update content translations'
+  - 'use redaktion transition entwurf_speichern'
+  - 'use redaktion transition freigeben'
+  - 'use redaktion transition zur_pruefung_senden'
+  - 'use redaktion transition zurueckweisen'
+  - 'use text format dokument_html'
+  - 'view all revisions'
+  - 'view any unpublished content'
+  - 'view latest version'
+  - 'view the administration theme'

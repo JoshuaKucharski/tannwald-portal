@@ -1,0 +1,354 @@
+<?php
+
+/**
+ * @file
+ * Theme myTannwald: Preprocess-Hooks, Formular-Anpassungen (Aufgabe 5.1).
+ *
+ * Logik in includes/: layout.inc (Demo-Leiste, Kopfzeile, Brotkrumen),
+ * machine.inc (Maschinenseite, Karten der Liste), document.inc (Dokument- und
+ * Bulletinseite mit Kapitel-Ankern), search.inc (Suche 5.2), common.inc.
+ */
+
+declare(strict_types=1);
+
+use Drupal\Component\Serialization\Json;
+use Drupal\Core\Entity\EntityFormInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Markup;
+use Drupal\Core\Url;
+use Drupal\node\NodeInterface;
+
+require_once __DIR__ . '/includes/common.inc';
+require_once __DIR__ . '/includes/layout.inc';
+require_once __DIR__ . '/includes/machine.inc';
+require_once __DIR__ . '/includes/document.inc';
+require_once __DIR__ . '/includes/search.inc';
+
+/**
+ * Implements hook_preprocess_HOOK() for page templates.
+ */
+function tannwald_preprocess_page(array &$variables): void {
+  _tannwald_layout_prepare($variables);
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for node templates.
+ */
+function tannwald_preprocess_node(array &$variables): void {
+  $node = $variables['node'] ?? NULL;
+  if (!$node instanceof NodeInterface || ($variables['view_mode'] ?? '') !== 'full') {
+    return;
+  }
+  switch ($node->bundle()) {
+    case 'maschine':
+      _tannwald_machine_preprocess($variables, $node);
+      break;
+
+    case 'dokument':
+      _tannwald_document_preprocess($variables, $node);
+      break;
+
+    case 'bulletin':
+      _tannwald_bulletin_preprocess($variables, $node);
+      break;
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for status messages.
+ *
+ * Auf Nutzerseiten (Anmelden, Passwort) stehen Meldungen inline über dem
+ * Formular statt als Toast.
+ */
+function tannwald_preprocess_status_messages(array &$variables): void {
+  $variables['inline'] = in_array(\Drupal::routeMatch()->getRouteName(), _tannwald_user_routes(), TRUE);
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for breadcrumb templates.
+ */
+function tannwald_preprocess_breadcrumb(array &$variables): void {
+  _tannwald_breadcrumb_prepare($variables);
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for views table templates.
+ */
+function tannwald_preprocess_views_view_table(array &$variables): void {
+  if (isset($variables['view']) && $variables['view']->id() === 'portal_maschinen') {
+    _tannwald_machine_cards($variables);
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter() for user_login_form.
+ *
+ * Login im Theme: Felder ohne Hilfetexte, Button als Primäraktion.
+ */
+function tannwald_form_user_login_form_alter(array &$form, FormStateInterface $form_state): void {
+  $form['name']['#description'] = '';
+  $form['name']['#attributes']['autocomplete'] = 'username';
+  $form['name']['#attributes']['autofocus'] = 'autofocus';
+  $form['pass']['#description'] = '';
+  $form['pass']['#attributes']['autocomplete'] = 'current-password';
+  // Passwort anzeigen: Textbutton im Feld, Zustand showPassword (Alpine).
+  $form['pass']['#attributes'][':type'] = "showPassword ? 'text' : 'password'";
+  $form['pass']['#field_suffix'] = [
+    '#type' => 'html_tag',
+    '#tag' => 'button',
+    '#value' => t('show', [], ['context' => 'tannwald password']),
+    '#attributes' => [
+      'type' => 'button',
+      // 6.1 (E): 44-px-Trefffläche (Leitplanken §7.2).
+      'class' => ['btn-text', 'text-sm', 'h-11', 'px-2'],
+      '@click' => 'showPassword = !showPassword',
+      'x-text' => 'showPassword ? ' . Json::encode((string) t('hide', [], ['context' => 'tannwald password']))
+      . ' : ' . Json::encode((string) t('show', [], ['context' => 'tannwald password'])),
+      'aria-controls' => 'edit-pass',
+    ],
+  ];
+  $form['actions']['submit']['#attributes']['class'] = ['btn', 'btn-primary', 'w-full'];
+  // Fehlertext, der sagt, was zu tun ist (Leitplanken §5).
+  $form['#validate'][] = '_tannwald_login_error_message';
+}
+
+/**
+ * Ersetzt die Core-Fehlermeldung der Anmeldung durch einen klaren Satz.
+ */
+function _tannwald_login_error_message(array &$form, FormStateInterface $form_state): void {
+  $errors = $form_state->getErrors();
+  if ($errors === [] || !isset($errors['name'])) {
+    return;
+  }
+  $form_state->clearErrors();
+  $form_state->setErrorByName('name', t('Username or password do not match. Please check your entry.'));
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter() for tannwald_bulletin_confirm_form.
+ *
+ * Button „Gelesen bestätigen“ im Bulletin-Banner (Wireframe 01).
+ */
+function tannwald_form_tannwald_bulletin_confirm_form_alter(array &$form, FormStateInterface $form_state): void {
+  $form['actions']['submit']['#attributes']['class'] = ['btn', 'btn-warn'];
+}
+
+/*
+ * Aufgabe 5.3 (A): Assistent und Redaktion. Logik in includes/chat.inc und
+ * includes/redaktion.inc; hier nur die Hook-Funktionen.
+ */
+require_once __DIR__ . '/includes/chat.inc';
+require_once __DIR__ . '/includes/redaktion.inc';
+
+/**
+ * Implements hook_preprocess_HOOK() for node--maschine templates.
+ *
+ * Chat in der Aside der Maschinenseite (Marker 5.3: chat).
+ */
+function tannwald_preprocess_node__maschine(array &$variables): void {
+  if (($variables['view_mode'] ?? '') !== 'full' || empty($variables['maschine_nid'])) {
+    return;
+  }
+  $variables['chat'] = _tannwald_chat_props((int) $variables['maschine_nid'], $variables['machine']['serial'] ?? NULL, 'embedded');
+  $variables['chat_cache'] = _tannwald_chat_cache_bubble();
+}
+
+/**
+ * Implements hook_preprocess().
+ *
+ * Seite: Navigationseintrag „Redaktion“ für die Redaktionsrollen und der Chat
+ * als Sheet auf /suche (Brücke tannwald:ask von 5.2).
+ */
+function tannwald_preprocess(array &$variables, string $hook): void {
+  if ($hook !== 'page') {
+    return;
+  }
+  $account = \Drupal::currentUser();
+  $variables['redaktion_link'] = NULL;
+  $variables['chat'] = NULL;
+  $variables['chat_cache'] = NULL;
+  if ($account->isAuthenticated() && _tannwald_redaktion_visible($account)) {
+    $variables['redaktion_link'] = [
+      'label' => t('Editorial'),
+      'url' => Url::fromUserInput('/redaktion/freigaben')->toString(),
+      'active' => _tannwald_redaktion_is_path(_tannwald_redaktion_current_path()),
+    ];
+  }
+  if ($account->isAuthenticated() && \Drupal::routeMatch()->getRouteName() === 'tannwald_assistant.search') {
+    $variables['chat'] = _tannwald_chat_props(NULL, NULL, 'sheet');
+    $variables['chat_cache'] = _tannwald_chat_cache_bubble();
+  }
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter() for page templates.
+ *
+ * /redaktion/* und /compliance/* bekommen page--redaktion.html.twig (linke
+ * Navigation).
+ */
+function tannwald_theme_suggestions_page_alter(array &$suggestions, array $variables): void {
+  if (_tannwald_redaktion_is_path(_tannwald_redaktion_current_path()) && _tannwald_redaktion_visible(\Drupal::currentUser())) {
+    $suggestions[] = 'page__redaktion';
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for page--redaktion templates.
+ */
+function tannwald_preprocess_page__redaktion(array &$variables): void {
+  _tannwald_redaktion_page_prepare($variables);
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for views-view-table--redaktion-freigaben templates.
+ */
+function tannwald_preprocess_views_view_table__redaktion_freigaben(array &$variables): void {
+  _tannwald_review_cards($variables);
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for views-view-table--redaktion-unbeantwortet templates.
+ */
+function tannwald_preprocess_views_view_table__redaktion_unbeantwortet(array &$variables): void {
+  _tannwald_unanswered_rows($variables);
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter() for tannwald_ingest_review_form.
+ *
+ * D's Buttons gestylt (Freigeben primär, Entwurf speichern sekundär,
+ * Zurückweisen Warnfarbe); Textarea trägt den Wortzähler (SDC review-actions).
+ */
+function tannwald_form_tannwald_ingest_review_form_alter(array &$form, FormStateInterface $form_state): void {
+  $classes = [
+    'freigeben' => ['btn', 'btn-primary'],
+    'entwurf_speichern' => ['btn', 'btn-outline'],
+    'zurueckweisen' => ['btn', 'btn-warn'],
+  ];
+  foreach ($classes as $transition => $class) {
+    if (isset($form['actions'][$transition])) {
+      $form['actions'][$transition]['#attributes']['class'] = $class;
+    }
+  }
+  $form['body']['#attributes']['data-review-body'] = '';
+  $form['body']['#attributes']['class'][] = 'review-textarea';
+  // Die Redaktion sieht Text, nicht HTML: Absätze als Leerzeilen, Listen als
+  // Zeilen mit „– “; reviewActions (src/app.js) baut vor dem Senden wieder
+  // <p>/<ul> auf (D's Route filtert auf p ul ol li strong em).
+  if (isset($form['body']['#default_value'])) {
+    $form['body']['#default_value'] = _tannwald_review_html_to_text((string) $form['body']['#default_value']);
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter() for content_moderation_entity_moderation_form.
+ *
+ * Vier-Augen-Hinweis auf Sicherheits-Bulletins der eigenen Erstellung (C's
+ * Constraint NotOwnBulletinApproval meldet beim Freigeben); Buttons im
+ * Theme-Stil.
+ */
+function tannwald_form_content_moderation_entity_moderation_form_alter(array &$form, FormStateInterface $form_state): void {
+  if (isset($form['submit'])) {
+    $form['submit']['#attributes']['class'] = ['btn', 'btn-primary'];
+  }
+  $entity = $form_state->get('entity');
+  if (!$entity instanceof NodeInterface || $entity->bundle() !== 'bulletin') {
+    return;
+  }
+  $isSafety = $entity->hasField('field_bulletin_art') && (string) $entity->get('field_bulletin_art')->value === 'sicherheit';
+  $uid = (int) \Drupal::currentUser()->id();
+  $own = (int) $entity->getOwnerId() === $uid;
+  if (!$own && $entity->getRevisionUserId() !== NULL) {
+    $own = (int) $entity->getRevisionUserId() === $uid;
+  }
+  if ($isSafety && $own && !$entity->isPublished()) {
+    $form['tannwald_four_eyes'] = [
+      '#type' => 'html_tag',
+      '#tag' => 'p',
+      '#attributes' => ['class' => ['four-eyes-notice'], 'data-four-eyes' => ''],
+      '#value' => t('Four-eyes principle: the person who created the bulletin must not approve it.'),
+      '#weight' => -10,
+    ];
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter() for node_dokument_form.
+ *
+ * „Dokument anlegen“ aus den unbeantworteten Fragen bringt ?title= mit.
+ */
+function tannwald_form_node_dokument_form_alter(array &$form, FormStateInterface $form_state): void {
+  $title = \Drupal::request()->query->get('title');
+  if (is_string($title) && $title !== '' && isset($form['title']['widget'][0]['value']) && empty($form['title']['widget'][0]['value']['#default_value'])) {
+    $form['title']['widget'][0]['value']['#default_value'] = mb_substr($title, 0, 255);
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter() for tannwald_access_export_rules.
+ */
+function tannwald_form_tannwald_access_export_rules_alter(array &$form, FormStateInterface $form_state): void {
+  if (isset($form['actions']['submit'])) {
+    $form['actions']['submit']['#attributes']['class'] = ['btn', 'btn-primary'];
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter() for node_bulletin_edit_form.
+ *
+ * Derselbe Vier-Augen-Hinweis über dem Status-Widget des Bearbeiten-Formulars
+ * (dort wählt die Redaktion „Freigegeben“; C's Constraint meldet den Verstoss).
+ */
+function tannwald_form_node_bulletin_edit_form_alter(array &$form, FormStateInterface $form_state): void {
+  $formObject = $form_state->getFormObject();
+  if (!$formObject instanceof EntityFormInterface || !isset($form['moderation_state'])) {
+    return;
+  }
+  $entity = $formObject->getEntity();
+  if (!$entity instanceof NodeInterface) {
+    return;
+  }
+  $isSafety = $entity->hasField('field_bulletin_art') && (string) $entity->get('field_bulletin_art')->value === 'sicherheit';
+  $uid = (int) \Drupal::currentUser()->id();
+  $own = (int) $entity->getOwnerId() === $uid || (int) $entity->getRevisionUserId() === $uid;
+  if ($isSafety && $own && !$entity->isPublished()) {
+    $form['moderation_state']['#prefix'] = '<p class="four-eyes-notice" data-four-eyes>'
+      . t('Four-eyes principle: the person who created the bulletin must not approve it.') . '</p>';
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for views_view_field.
+ *
+ * 6.1 (E): /bulletins zeigt der Redaktion und Compliance unveröffentlichte
+ * Bulletins (Node-Grants); der Titel bekommt dort den Workflow-Zustand als
+ * Badge, z. B. „Zur Prüfung“.
+ */
+function tannwald_preprocess_views_view_field(array &$variables): void {
+  if ($variables['view']->id() !== 'portal_bulletins' || $variables['field']->field !== 'title') {
+    return;
+  }
+  $node = $variables['row']->_entity ?? NULL;
+  if (!$node instanceof NodeInterface || $node->isPublished() || !$node->hasField('moderation_state')) {
+    return;
+  }
+  $state = (string) $node->get('moderation_state')->value;
+  $workflow = \Drupal::service('content_moderation.moderation_information')->getWorkflowForEntity($node);
+  if ($state === '' || $workflow === NULL || !$workflow->getTypePlugin()->hasState($state)) {
+    return;
+  }
+  $variants = ['zur_pruefung' => 'warn', 'zurueckgewiesen' => 'danger'];
+  $variables['output'] = [
+    'title' => ['#markup' => Markup::create((string) $variables['output'])],
+    'badge' => [
+      '#type' => 'component',
+      '#component' => 'tannwald:badge',
+      '#props' => [
+        'label' => $workflow->getTypePlugin()->getState($state)->label(),
+        'variant' => $variants[$state] ?? 'neutral',
+        'pill' => TRUE,
+      ],
+      '#attributes' => ['class' => ['ml-2']],
+    ],
+  ];
+}

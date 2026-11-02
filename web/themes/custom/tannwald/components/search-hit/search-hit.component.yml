@@ -1,0 +1,67 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: 'Search hit'
+status: stable
+description: 'Ein Treffer der Suche (Wireframe 02). Props 1:1 aus hits[] des Render-Arrays tannwald_search_page (4.2); snippet_html kommt als Slot snippet (Markup mit <mark>).'
+props:
+  type: object
+  required:
+    - nid
+    - titel
+    - heading_path
+    - url_kapitel
+    - url_dokument
+  properties:
+    nid:
+      type: integer
+      title: nid
+    titel:
+      type: string
+      title: Title
+    heading_path:
+      type: string
+      title: 'Heading path'
+    langcode:
+      type: string
+      title: Langcode
+    dokumenttyp:
+      type: [string, 'null']
+      title: 'Document type'
+    maschinentypen:
+      type: array
+      title: 'Machine types'
+      items:
+        type: string
+    version:
+      type: [string, 'null']
+      title: Version
+    freigegeben_am:
+      type: [string, 'null']
+      title: 'Approved on'
+    url_kapitel:
+      type: string
+      title: 'Chapter URL'
+    url_dokument:
+      type: string
+      title: 'Document URL'
+    url_maschine:
+      type: [string, 'null']
+      title: 'Machine URL'
+    maschine_titel:
+      type: [string, 'null']
+      title: 'Machine serial'
+    matched_by:
+      type: string
+      title: 'Matched by'
+      enum: [keyword, vector, both]
+      default: keyword
+      description: 'Pille „Treffer über Bedeutung“ nur bei vector (Entscheid: both = Volltext-Treffer, keine Pille).'
+    bulletin_bestaetigt_am:
+      type: [string, 'null']
+      title: 'Bulletin confirmed on'
+    attributes:
+      type: Drupal\Core\Template\Attribute
+      title: Attributes
+slots:
+  snippet:
+    title: Snippet
+    description: 'snippet_html (Markup mit <mark>, nie escapen).'

@@ -1,0 +1,70 @@
+<?php
+
+/**
+ * @file
+ * Datenhelfer für Theme 5.1 (Komponente bulletin-banner).
+ */
+
+declare(strict_types=1);
+
+use Drupal\Core\Session\AccountInterface;
+use Drupal\node\NodeInterface;
+use Drupal\tannwald_bulletin\BulletinLabel;
+use Drupal\tannwald_bulletin\Form\ConfirmForm;
+
+/**
+ * Daten eines Bulletins für eine Maschine (Vertrag an 5.1).
+ *
+ * @param \Drupal\node\NodeInterface $bulletin
+ *   Das Bulletin.
+ * @param \Drupal\node\NodeInterface $maschine
+ *   Die Maschine, auf deren Seite das Banner steht.
+ * @param \Drupal\Core\Session\AccountInterface $account
+ *   Der betrachtende Nutzer.
+ *
+ * @return array<string, mixed>
+ *   Schlüssel id, nid, titel, art, veroeffentlicht_am (Unix),
+ *   bestaetigung_pflicht, bestaetigt_am (Unix oder NULL),
+ *   bestaetigt_durch_uid (oder NULL), url_bulletin, form (Render-Array oder
+ *   NULL).
+ */
+function tannwald_bulletin_banner_data(NodeInterface $bulletin, NodeInterface $maschine, AccountInterface $account): array {
+  /** @var \Drupal\tannwald_bulletin\ConfirmationService $confirmations */
+  $confirmations = \Drupal::service('tannwald_bulletin.confirmations');
+  $label = BulletinLabel::of($bulletin);
+  $required = $bulletin->hasField('field_bestaetigung_pflicht') && (bool) $bulletin->get('field_bestaetigung_pflicht')->value;
+
+  // Letzte Bestätigung dieser Maschine durch irgendein Konto ("bestätigt am
+  // … durch …", Wireframe 01); der Button erscheint, solange der Nutzer
+  // selbst für diese Maschine nicht bestätigt hat.
+  $storage = \Drupal::entityTypeManager()->getStorage('lesebestaetigung');
+  $ids = $storage->getQuery()
+    ->accessCheck(FALSE)
+    ->condition('bulletin_nid', $bulletin->id())
+    ->condition('maschine_nid', $maschine->id())
+    ->sort('bestaetigt_am', 'DESC')
+    ->range(0, 1)
+    ->execute();
+  /** @var \Drupal\tannwald_bulletin\Entity\LesebestaetigungInterface|null $last */
+  $last = $ids === [] ? NULL : $storage->load(reset($ids));
+  $own = $confirmations->isConfirmed((int) $bulletin->id(), (int) $maschine->id(), (int) $account->id());
+
+  $form = NULL;
+  if ($required && $own === NULL && $account->isAuthenticated() && $confirmations->concerns($bulletin, $maschine)
+    && $bulletin->access('view', $account) && $maschine->access('view', $account)) {
+    $form = \Drupal::formBuilder()->getForm(ConfirmForm::class, $bulletin, $maschine);
+  }
+
+  return [
+    'id' => $label['id'],
+    'nid' => (int) $bulletin->id(),
+    'titel' => $label['titel'],
+    'art' => $bulletin->hasField('field_bulletin_art') ? $bulletin->get('field_bulletin_art')->value : NULL,
+    'veroeffentlicht_am' => (int) $bulletin->getCreatedTime(),
+    'bestaetigung_pflicht' => $required,
+    'bestaetigt_am' => $last?->getConfirmedTime(),
+    'bestaetigt_durch_uid' => $last === NULL ? NULL : (int) $last->getOwnerId(),
+    'url_bulletin' => $bulletin->toUrl()->toString(),
+    'form' => $form,
+  ];
+}

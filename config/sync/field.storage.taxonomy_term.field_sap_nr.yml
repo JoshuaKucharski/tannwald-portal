@@ -1,0 +1,21 @@
+uuid: 1836eb18-a48b-4cad-8ba9-1a7680825818
+langcode: de
+status: true
+dependencies:
+  module:
+    - taxonomy
+id: taxonomy_term.field_sap_nr
+field_name: field_sap_nr
+entity_type: taxonomy_term
+type: string
+settings:
+  max_length: 32
+  case_sensitive: false
+  is_ascii: false
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

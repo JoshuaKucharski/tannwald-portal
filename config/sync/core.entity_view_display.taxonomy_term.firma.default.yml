@@ -1,0 +1,61 @@
+uuid: fdd9423c-1078-44a0-a2ba-e4c8cb8c2090
+langcode: de
+status: true
+dependencies:
+  config:
+    - field.field.taxonomy_term.firma.field_firma_art
+    - field.field.taxonomy_term.firma.field_haendler_gebiet
+    - field.field.taxonomy_term.firma.field_land
+    - field.field.taxonomy_term.firma.field_sap_nr
+    - taxonomy.vocabulary.firma
+  module:
+    - options
+    - text
+id: taxonomy_term.firma.default
+targetEntityType: taxonomy_term
+bundle: firma
+mode: default
+content:
+  description:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_firma_art:
+    type: list_default
+    label: inline
+    settings: {  }
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_haendler_gebiet:
+    type: string
+    label: inline
+    settings:
+      link_to_entity: false
+      link_rel: canonical
+    third_party_settings: {  }
+    weight: 3
+    region: content
+  field_land:
+    type: string
+    label: inline
+    settings:
+      link_to_entity: false
+      link_rel: canonical
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_sap_nr:
+    type: string
+    label: inline
+    settings:
+      link_to_entity: false
+      link_rel: canonical
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  langcode: true

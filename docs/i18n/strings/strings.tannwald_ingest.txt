@@ -1,0 +1,15 @@
+- | Approved AI summary of the current revision. | web/modules/custom/tannwald_ingest/src/Hook/SummaryHooks.php:33
+- | Approved summary | web/modules/custom/tannwald_ingest/src/Hook/SummaryHooks.php:32
+- | Generated @date with @model, approved by the editorial team. | web/modules/custom/tannwald_ingest/templates/tannwald-summary.html.twig:13
+- | Links to the review displays with the number of summaries per moderation state. | web/modules/custom/tannwald_ingest/src/Hook/SummaryHooks.php:72
+- | Tannwald chunk embedding | web/modules/custom/tannwald_ingest/src/Plugin/QueueWorker/EmbedQueueWorker.php:29
+- | Tannwald document summaries | web/modules/custom/tannwald_ingest/src/Plugin/QueueWorker/SummarizeQueueWorker.php:26
+- | Tannwald review tabs with counts | web/modules/custom/tannwald_ingest/src/Hook/SummaryHooks.php:71
+- | The summary has been approved. | web/modules/custom/tannwald_ingest/src/Controller/ReviewController.php:71
+- | The summary has been rejected. | web/modules/custom/tannwald_ingest/src/Controller/ReviewController.php:72
+- | The summary has been saved as draft. | web/modules/custom/tannwald_ingest/src/Controller/ReviewController.php:73
+tannwald review | Approve | web/modules/custom/tannwald_ingest/src/Form/ReviewForm.php:73
+tannwald review | Reject | web/modules/custom/tannwald_ingest/src/Form/ReviewForm.php:75
+tannwald review | Save draft | web/modules/custom/tannwald_ingest/src/Form/ReviewForm.php:74
+tannwald review | Summary | web/modules/custom/tannwald_ingest/templates/tannwald-summary.html.twig:11
+tannwald review | Summary (editable) | web/modules/custom/tannwald_ingest/src/Form/ReviewForm.php:67

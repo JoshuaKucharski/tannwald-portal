@@ -1,0 +1,10 @@
+tannwald_ingest_test.review_form:
+  path: '/tannwald-test/review/{node}'
+  defaults:
+    _controller: '\Drupal\tannwald_ingest_test\Controller\ReviewFormController::form'
+  requirements:
+    _permission: 'access content'
+  options:
+    parameters:
+      node:
+        type: 'entity:node'

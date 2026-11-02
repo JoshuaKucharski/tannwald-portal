@@ -1,0 +1,21 @@
+# Erzeugt von docs/i18n/config-translate.php (Aufgabe 6.5) — nicht von Hand ändern.
+display:
+  default:
+    display_options:
+      title: 'Approval queue · AI summaries'
+      fields:
+        title:
+          label: 'Title'
+        field_dokument:
+          label: 'Document'
+        field_version:
+          label: 'Version'
+        field_generiert_am:
+          label: 'Generated on'
+        field_modell:
+          label: 'Model'
+        moderation_state:
+          label: 'Status'
+      empty:
+        area_text_custom:
+          content: 'No summaries in this status.'

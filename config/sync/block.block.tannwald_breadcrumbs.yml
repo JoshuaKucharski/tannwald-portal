@@ -1,0 +1,20 @@
+uuid: 83fa0002-7ce3-4f4e-bc7c-de532c8230ee
+langcode: de
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - tannwald
+id: tannwald_breadcrumbs
+theme: tannwald
+region: breadcrumb
+weight: 0
+provider: null
+plugin: system_breadcrumb_block
+settings:
+  id: system_breadcrumb_block
+  label: Pfadnavigation
+  label_display: '0'
+  provider: system
+visibility: {  }

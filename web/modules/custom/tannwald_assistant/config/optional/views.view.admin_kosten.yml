@@ -1,0 +1,105 @@
+langcode: de
+status: true
+dependencies:
+  config:
+    - user.role.portal_admin
+  module:
+    - tannwald_assistant
+    - user
+id: admin_kosten
+label: 'Nutzung und Kosten: Kosten'
+module: views
+description: 'Tokens, Kosten (CHF) und Anteil am Monatslimit je Monat aus tannwald_usage (FA-REP-02).'
+tag: tannwald
+base_table: tannwald_usage
+base_field: id
+display:
+  default:
+    id: default
+    display_title: Standard
+    display_plugin: default
+    position: 0
+    display_options:
+      title: 'Nutzung und Kosten: Kosten je Monat'
+      group_by: true
+      fields:
+        period_month:
+          id: period_month
+          table: tannwald_usage
+          field: period_month
+          relationship: none
+          group_type: group
+          plugin_id: tannwald_period
+          label: Monat
+        tokens_total:
+          id: tokens_total
+          table: tannwald_usage
+          field: tokens_total
+          relationship: none
+          group_type: group
+          plugin_id: tannwald_tokens_total
+          label: Tokens
+        kosten_chf:
+          id: kosten_chf
+          table: tannwald_usage
+          field: kosten_chf
+          relationship: none
+          group_type: sum
+          plugin_id: numeric
+          label: 'Kosten (CHF)'
+          set_precision: true
+          precision: 2
+          separator: ’
+        limit_share:
+          id: limit_share
+          table: tannwald_usage
+          field: limit_share
+          relationship: none
+          group_type: group
+          plugin_id: tannwald_limit_share
+          label: 'Anteil am Monatslimit'
+      sorts:
+        created:
+          id: created
+          table: tannwald_usage
+          field: created
+          relationship: none
+          group_type: max
+          plugin_id: date
+          order: DESC
+      pager:
+        type: some
+        options:
+          items_per_page: 24
+          offset: 0
+      empty:
+        area_text_custom:
+          id: area_text_custom
+          table: views
+          field: area_text_custom
+          relationship: none
+          group_type: group
+          plugin_id: text_custom
+          empty: true
+          content: 'Noch keine Kosten.'
+      style:
+        type: table
+      row:
+        type: fields
+      query:
+        type: views_query
+        options: {  }
+      access:
+        type: role
+        options:
+          role:
+            portal_admin: portal_admin
+      cache:
+        type: none
+  page_1:
+    id: page_1
+    display_title: Seite
+    display_plugin: page
+    position: 1
+    display_options:
+      path: admin/tannwald/kosten
