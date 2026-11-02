@@ -35,4 +35,4 @@ node_modules/
 # Geheimnisse der lokalen Umgebung (API-Schluessel) — nie committen
 .ddev/.env
 .DS_Store
-web/sites/example.settings.local Kopie.php
+web/sites/example.settings.local-copy.php
