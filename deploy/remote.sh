@@ -66,6 +66,18 @@ DEPLOY_PATH=${DEPLOY_PATH:-/var/www/mytannwald}; BRANCH=${BRANCH:-dev}; GUEST_US
 case "$DEPLOY_KEY" in "~/"*) DEPLOY_KEY="$HOME/${DEPLOY_KEY#\~/}" ;; esac
 [ -n "$DEPLOY_SSH" ] && [ -n "$DOMAIN" ] || { say "ABBRUCH: DEPLOY_SSH oder DEPLOY_DOMAIN fehlt in $CONF"; exit 1; }
 SERVER_HOST=${DEPLOY_SSH#*@}
+# Öffentliches DNS (1.1.1.1, sonst 8.8.8.8) — nie der Systemresolver des Macs: der hält nach einer Umstellung die alte
+# Adresse bis zum Ablauf der TTL (gemessen 2026-11-03: 167.233.57.14 statt 91.98.229.15).
+pubdns() {
+    local ip
+    ip=$(dig +short A "$1" @1.1.1.1 2>/dev/null | tail -n 1 || true)
+    [ -n "$ip" ] || ip=$(dig +short A "$1" @8.8.8.8 2>/dev/null | tail -n 1 || true)
+    printf '%s' "$ip"
+}
+ip_server="$SERVER_HOST"
+case "$SERVER_HOST" in *[!0-9.]*) ip_server=$(pubdns "$SERVER_HOST") ;; esac
+# Proben vom Mac gehen fest an den Server (curl --resolve), unabhängig vom DNS-Cache des Macs.
+PIN="--resolve $DOMAIN:443:$ip_server --resolve mail.$DOMAIN:443:$ip_server"
 SSH_OPTS="-i $DEPLOY_KEY -o BatchMode=yes -o IdentitiesOnly=yes -o ConnectTimeout=15 -o ServerAliveInterval=30 -o ServerAliveCountMax=6"
 rsh() { ssh $SSH_OPTS "$DEPLOY_SSH" "$@"; }
 
@@ -76,17 +88,17 @@ EXPORT="$TMPD/export"
 # Proben vom Mac (ohne Passwort): /health, robots, Login 401 bzw. 200, X-Robots-Tag, mail. 401, TLS gültig.
 mac_probes() {
     local code issuer
-    code=$(curl -s --max-time 20 -o "$TMPD/h" -w '%{http_code}' "https://$DOMAIN/health" || echo 000)
+    code=$(curl -s --max-time 20 $PIN -o "$TMPD/h" -w '%{http_code}' "https://$DOMAIN/health" || echo 000)
     [ "$code" = 200 ] || die "https://$DOMAIN/health: HTTP $code (TLS ungültig oder Site nicht erreichbar)."
-    issuer=$(curl -sv --max-time 20 -o /dev/null "https://$DOMAIN/health" 2>&1 | sed -n 's/^\*  *issuer: *//p' | head -n 1)
+    issuer=$(curl -sv --max-time 20 $PIN -o /dev/null "https://$DOMAIN/health" 2>&1 | sed -n 's/^\*  *issuer: *//p' | head -n 1)
     ok "TLS gültig (curl ohne -k), Aussteller: ${issuer:-unbekannt}; /health 200"
-    code=$(curl -s --max-time 20 -o "$TMPD/r" -w '%{http_code}' "https://$DOMAIN/robots.txt" || echo 000)
+    code=$(curl -s --max-time 20 $PIN -o "$TMPD/r" -w '%{http_code}' "https://$DOMAIN/robots.txt" || echo 000)
     [ "$code" = 200 ] && grep -q 'Disallow: /' "$TMPD/r" || die "robots.txt: HTTP $code oder ohne „Disallow: /“."
-    code=$(curl -s --max-time 20 -D "$TMPD/lh" -o /dev/null -w '%{http_code}' "https://$DOMAIN/user/login" || echo 000)
+    code=$(curl -s --max-time 20 $PIN -D "$TMPD/lh" -o /dev/null -w '%{http_code}' "https://$DOMAIN/user/login" || echo 000)
     case "$code" in 401|200) ;; *) die "Login-Seite: HTTP $code (erwartet 401 hinter dem Besucher-Passwort)." ;; esac
     grep -qi '^x-robots-tag: noindex' "$TMPD/lh" || die "X-Robots-Tag: noindex fehlt auf /user/login."
     ok "robots.txt „Disallow: /“, /user/login $code ohne Passwort$( [ "$code" = 401 ] && echo ' (Besucher-Passwort aktiv)'), X-Robots-Tag noindex"
-    code=$(curl -s --max-time 20 -o /dev/null -w '%{http_code}' "https://mail.$DOMAIN/" || echo 000)
+    code=$(curl -s --max-time 20 $PIN -o /dev/null -w '%{http_code}' "https://mail.$DOMAIN/" || echo 000)
     [ "$code" = 401 ] || die "https://mail.$DOMAIN/: HTTP $code statt 401."
     ok "mail.$DOMAIN 401 ohne Passwort"
 }
@@ -106,9 +118,9 @@ if [ "$DRY" = 1 ]; then
     say "   2 git fetch origin $BRANCH; Abbruch bei ungepushten Commits; git archive origin/$BRANCH → Export"
     say "   3 curl -s -o /dev/null -w %{http_code} https://<site>/ für: $OTHER_SITES"
     say "   4 rsync -rlptz --delete --exclude-from=deploy/rsync-exclude.txt -e 'ssh …' <export>/ $DEPLOY_SSH:$DEPLOY_PATH/"
-    say "   5 dig +short A $DOMAIN mail.$DOMAIN → beide = $SERVER_HOST? dann: ssh … bash $DEPLOY_PATH/deploy/bootstrap.sh --tls"
+    say "   5 dig +short A $DOMAIN mail.$DOMAIN @1.1.1.1 → beide = $ip_server? dann: ssh … bash $DEPLOY_PATH/deploy/bootstrap.sh --tls"
     say "   6 ssh … bash $DEPLOY_PATH/deploy/deploy.sh"
-    say "   7 curl https://$DOMAIN/health · /robots.txt · /user/login (401) · https://mail.$DOMAIN/ (401); ssh … deploy.sh --status"
+    say "   7 curl --resolve …:$ip_server https://$DOMAIN/health · /robots.txt · /user/login (401) · https://mail.$DOMAIN/ (401); ssh … deploy.sh --status"
     say "   8 andere Sites nachher wie 3 — jede Verschlechterung ist ein Abbruch"
     step "Plan von bootstrap.sh (lokal, --dry)"
     bash "$REPO/deploy/bootstrap.sh" --dry --tls 2>&1 | grep -E '^== |\[dry\]|FERTIG' | sed 's/^/   | /'
@@ -131,9 +143,9 @@ if [ "$MODE" = probe ]; then
     step "Proben mit Besucher-Passwort ($GUEST_USER)"
     if [ -t 0 ]; then printf '   Besucher-Passwort für %s (wird nicht angezeigt): ' "$GUEST_USER"; read -r -s pw; echo
     else read -r pw; fi
-    code=$(printf 'user = "%s:%s"\n' "$GUEST_USER" "$pw" | curl -s --max-time 20 -K - -o "$TMPD/l" -w '%{http_code}' "https://$DOMAIN/user/login" || echo 000)
+    code=$(printf 'user = "%s:%s"\n' "$GUEST_USER" "$pw" | curl -s --max-time 20 $PIN -K - -o "$TMPD/l" -w '%{http_code}' "https://$DOMAIN/user/login" || echo 000)
     [ "$code" = 200 ] && grep -q 'myTannwald' "$TMPD/l" || die "Login-Seite mit Besucher-Passwort: HTTP $code oder ohne „myTannwald“."
-    code=$(printf 'user = "%s:%s"\n' "$GUEST_USER" "$pw" | curl -s --max-time 20 -K - -o /dev/null -w '%{http_code}' "https://mail.$DOMAIN/" || echo 000)
+    code=$(printf 'user = "%s:%s"\n' "$GUEST_USER" "$pw" | curl -s --max-time 20 $PIN -K - -o /dev/null -w '%{http_code}' "https://mail.$DOMAIN/" || echo 000)
     unset pw
     [ "$code" = 200 ] || die "mail.$DOMAIN mit Besucher-Passwort: HTTP $code statt 200."
     ok "Login-Seite 200 mit „myTannwald“, mail.$DOMAIN 200 — mit Besucher-Passwort"
@@ -165,12 +177,11 @@ rsync -rlptz --delete --stats --exclude-from="$EXPORT/deploy/rsync-exclude.txt" 
 ok "übertragen: $(grep -iE 'files transferred|Number of (regular )?files transferred' "$TMPD/rsync.log" | head -n 1 | sed 's/^ *//')"
 
 step "bootstrap.sh auf dem Server"
-tls=""; ip_server="$SERVER_HOST"
-case "$SERVER_HOST" in *[!0-9.]*) ip_server=$(dig +short A "$SERVER_HOST" | tail -n 1) ;; esac
+tls=""
 dns_ok=1
 for h in "$DOMAIN" "mail.$DOMAIN"; do
-    ip=$(dig +short A "$h" @1.1.1.1 2>/dev/null | tail -n 1 || true)
-    say "   DNS $h → ${ip:-fehlt}"
+    ip=$(pubdns "$h")
+    say "   DNS $h → ${ip:-fehlt} (1.1.1.1)"
     [ "$ip" = "$ip_server" ] || dns_ok=0
 done
 if [ "$dns_ok" = 1 ]; then tls="--tls"; else note "A-Record fehlt oder zeigt woanders hin — bootstrap ohne --tls (Fassung http); Betreiber setzt ihn, dann --deploy erneut"; fi

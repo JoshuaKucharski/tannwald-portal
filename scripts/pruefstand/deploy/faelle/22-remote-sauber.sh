@@ -8,3 +8,4 @@ check "rsync mit --exclude-from und ssh-Optionen (BatchMode, ServerAliveInterval
 check "Export auf dem Server angekommen (deploy/ und web/index.php)" '[ -f "$W/server/deploy/deploy.sh" ] && [ -f "$W/server/web/index.php" ]'
 check "TLS-Aussteller und Proben gemeldet" 'has "Aussteller: C=US; O=Let" && has "mail.mytannwald.getleaven.com 401" && has "Chunks eingebettet 120/575"'
 check "andere Sites unverändert" 'has "andere Sites unverändert"'
+check "DNS über 1.1.1.1 (nie Systemresolver), Proben vom Mac fest auf 91.98.229.15 (--resolve)" '[ "$(grep -c "^dig +short A .*getleaven.com @1.1.1.1" "$FAKE_STATE/calls.log")" = 2 ] && [ "$(grep "^dig " "$FAKE_STATE/calls.log" | grep -vc "@")" = 0 ] && grep "^curl .*https://mytannwald.getleaven.com/health" "$FAKE_STATE/calls.log" | grep -q -- "--resolve mytannwald.getleaven.com:443:91.98.229.15"'

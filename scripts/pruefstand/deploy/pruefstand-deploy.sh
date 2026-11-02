@@ -125,6 +125,8 @@ st() { cat "$FAKE_STATE/$1" 2>/dev/null || echo "$2"; }
 w() { [ -n "$out" ] && printf "$1" > "$out"; [ -n "$head" ] && printf 'HTTP/1.1 %s\r\nx-robots-tag: noindex, nofollow\r\n\r\n' "$2" > "$head"; printf '%s' "$2"; }
 [ "$verbose" = 1 ] && echo "*  issuer: C=US; O=Let's Encrypt; CN=R11" >&2
 [ -f "$FAKE_STATE/after_deploy" ] && sfx=.after || sfx=""
+# Demo-Domain ohne --resolve: der DNS-Cache des Macs zeigt noch auf den alten Server (der antwortet 421).
+case "$url" in *getleaven.com*) case " $* " in *" --resolve "*) ;; *) w '' 421; exit 0 ;; esac ;; esac
 case "$url" in
     *ollama.com/install.sh) printf 'mkdir -p "%s" && cp "%s" "%s/ollama"\n' "$FAKE_STATE/bin" "$FAKES_DIR/ollama-fake" "$FAKE_STATE/bin" ;;
     *mailpit-linux-*) echo tar > "$out" ;;
@@ -182,7 +184,9 @@ F
 fake dig <<'F'
 #!/bin/bash
 log-call dig "$@"
-for a in "$@"; do case "$a" in +*|@*|A) ;; *) n=$a ;; esac; done
+srv=""; for a in "$@"; do case "$a" in @*) srv=$a ;; +*|A) ;; *) n=$a ;; esac; done
+# Ohne @Server: Systemresolver mit altem Cache (wie der Mac am 2026-11-03) — die Skripte müssen @1.1.1.1 fragen.
+[ -n "$srv" ] || { echo 167.233.57.14; exit 0; }
 ip=$(cat "$FAKE_STATE/dns_$n" 2>/dev/null || echo 91.98.229.15); [ "$ip" = - ] || echo "$ip"
 F
 fake sudo <<'F'

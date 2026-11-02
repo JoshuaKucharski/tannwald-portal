@@ -393,7 +393,11 @@ if [ "$TLS" = 1 ]; then
         # Beide Namen müssen auf eine Adresse dieser Maschine zeigen, sonst scheitert die Challenge (Rate-Limit schonen).
         mine=" $(hostname -I 2>/dev/null || true) "
         for h in "$DOMAIN" "mail.$DOMAIN"; do
-            ip=$(getent ahostsv4 "$h" 2>/dev/null | awk 'NR==1{print $1}' || true)
+            # Öffentliches DNS (wie Let's Encrypt), nicht der Cache der Maschine; getent nur, wenn dig fehlt.
+            if command -v dig >/dev/null 2>&1; then
+                ip=$(dig +short A "$h" @1.1.1.1 2>/dev/null | tail -n 1 || true)
+                [ -n "$ip" ] || ip=$(dig +short A "$h" @8.8.8.8 2>/dev/null | tail -n 1 || true)
+            else ip=$(getent ahostsv4 "$h" 2>/dev/null | awk 'NR==1{print $1}' || true); fi
             say "   DNS $h → ${ip:-keine Adresse}"
             [ "$DRY" = 1 ] && continue
             case "$mine" in *" ${ip:-none} "*) ;; *)
