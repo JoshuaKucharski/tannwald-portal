@@ -1,0 +1,23 @@
+# myTannwald — Ollama nur für Embeddings (bge-m3, CPU; D11 Variante 2) (deploy/systemd, 4.1). Ersetzt die Unit des
+# offiziellen Install-Skripts (bootstrap.sh installiert Ollama nur, wenn es fehlt). Nur 127.0.0.1:11434.
+# RAM-Budget: bge-m3 geladen ≈ 1.2 GB; nach 5 min Leerlauf entladen (OLLAMA_KEEP_ALIVE=5m, Entscheid Master).
+[Unit]
+Description=Ollama (myTannwald, nur bge-m3)
+After=network-online.target
+
+[Service]
+ExecStart=@OLLAMA_BIN@ serve
+User=ollama
+Group=ollama
+Restart=always
+RestartSec=3
+Environment="PATH=/usr/local/bin:/usr/bin:/bin"
+Environment=OLLAMA_HOST=127.0.0.1:11434
+Environment=OLLAMA_KEEP_ALIVE=5m
+Environment=OLLAMA_NUM_PARALLEL=1
+Environment=OLLAMA_MAX_LOADED_MODELS=1
+MemoryHigh=1600M
+MemoryMax=2G
+
+[Install]
+WantedBy=multi-user.target

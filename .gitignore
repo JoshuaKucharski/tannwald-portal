@@ -36,3 +36,6 @@ node_modules/
 .ddev/.env
 .DS_Store
 web/sites/example.settings.local-copy.php
+
+# Server-Werte (4.1, deploy/): echt nur unter /etc/mytannwald/env auf dem Server; eine Kopie zum Ausfüllen nie committen
+/deploy/.env

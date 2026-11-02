@@ -1,0 +1,18 @@
+# myTannwald — Mailpit als Dienst (deploy/systemd, 4.1). Fängt jede Mail der Demo: SMTP 127.0.0.1:1025 (Drupal
+# über sendmail_path „mailpit sendmail“ und den SMTP-Override in settings.php), Oberfläche 127.0.0.1:8025, nach
+# aussen nur über nginx unter mail.<DOMAIN> hinter Basic-Auth. Binary: /usr/local/bin/mailpit (GitHub-Release,
+# bootstrap.sh). DynamicUser: kein fester Linux-Nutzer, Daten unter /var/lib/mailpit.
+[Unit]
+Description=Mailpit für myTannwald (UI 127.0.0.1:8025, SMTP 127.0.0.1:1025)
+After=network.target
+
+[Service]
+DynamicUser=yes
+StateDirectory=mailpit
+ExecStart=@MAILPIT_BIN@ --listen @MAILPIT_UI@ --smtp @MAILPIT_SMTP@ --database /var/lib/mailpit/mailpit.db --max 1000
+Restart=on-failure
+RestartSec=3
+MemoryMax=256M
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,13 @@
+# myTannwald — alle 5 Minuten tannwald-cron.service (deploy/systemd, 4.1). bootstrap.sh legt die Datei an,
+# deploy.sh schaltet den Timer erst nach dem ersten erfolgreichen Lauf ein und hält ihn während Install und
+# Seeder an (Cron und Seeder dürfen nicht gleichzeitig auf denselben Queues laufen).
+[Unit]
+Description=myTannwald: Cron alle 5 Minuten
+
+[Timer]
+OnCalendar=*:0/5
+AccuracySec=30s
+Unit=tannwald-cron.service
+
+[Install]
+WantedBy=timers.target
