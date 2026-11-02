@@ -65,6 +65,7 @@ function _tannwald_machine_data(NodeInterface $machine, AccountInterface $accoun
 
   $typeTerm = $machine->hasField('field_maschinentyp') ? $machine->get('field_maschinentyp')->entity : NULL;
   $typeTerm = $typeTerm instanceof TermInterface ? $typeTerm : NULL;
+  $hasOwnImage = $machine->hasField('field_bild') && !$machine->get('field_bild')->isEmpty();
   $documents = _tannwald_machine_documents($machine, $typeIds, $account, $langcode);
   $bulletins = _tannwald_machine_bulletins($machine, $typeIds, $account);
 
@@ -85,11 +86,10 @@ function _tannwald_machine_data(NodeInterface $machine, AccountInterface $accoun
       'year' => $machine->hasField('field_baujahr') ? $machine->get('field_baujahr')->value : NULL,
       'contract_label' => _tannwald_list_label($machine, 'field_vertrag'),
       'contract_until' => $machine->hasField('field_vertrag_bis') ? _tannwald_date($machine->get('field_vertrag_bis')->value) : NULL,
-      // 1.2: Seriennummernbild, sonst Typbild, sonst Platzhalter (Fallback-Kette
+      // 1.2: Seriennummernbild, sonst Typbild, sonst Platzhalter (Kette
       // Node → Typ → Platzhalter im Helfer von C, Option fallback).
       'image' => _tannwald_entity_image($machine, 'tw_card_800', $typeTerm, ['loading' => 'eager']),
-      'has_own_image' => $machine->hasField('field_bild')
-        && !$machine->get('field_bild')->isEmpty(),
+      'has_own_image' => $hasOwnImage,
     ],
     'documents' => $documents['rows'],
     'documents_current' => $documents['current'],
@@ -387,7 +387,7 @@ function _tannwald_machine_cards(array &$variables): void {
     $typeTerm = $machine->hasField('field_maschinentyp') ? $machine->get('field_maschinentyp')->entity : NULL;
     $typeTerm = $typeTerm instanceof TermInterface ? $typeTerm : NULL;
     $cards[] = [
-      // 1.2: Typbild der Karte (Maschinenbild, sonst Typbild), erste Karte eager.
+      // 1.2: Bild der Karte (Maschine, sonst Typ), erste Karte eager.
       'image' => _tannwald_entity_image($machine, 'tw_card_800', $typeTerm, [
         'loading' => $index === 0 ? 'eager' : 'lazy',
       ]),
