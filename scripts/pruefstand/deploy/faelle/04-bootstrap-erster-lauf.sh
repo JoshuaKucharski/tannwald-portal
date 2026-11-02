@@ -1,0 +1,21 @@
+# Fall 04: erster Lauf auf frischer Maschine (Alternative php im Modus auto springt bei apt-get auf 8.4).
+write_env
+run_bootstrap
+check "Exit 0 und FERTIG" 'rc_is 0 && has "FERTIG — Server vorbereitet"'
+check "Nutzer tannwald angelegt" '[ "$(calls "useradd --system")" = 1 ]'
+check "apt-get install genau die php8.4-Pakete" 'grep -qx "apt-get install -y --no-install-recommends php8.4-fpm php8.4-cli php8.4-bcmath php8.4-curl php8.4-gd php8.4-intl php8.4-mbstring php8.4-mysql php8.4-opcache php8.4-xml php8.4-zip" "$FAKE_STATE/calls.log"'
+check "/usr/bin/php und phar zurück auf 8.3 (update-alternatives --set)" '[ "$(basename "$(readlink "$W/usr/bin/php")")" = php8.3 ] && [ "$(basename "$(readlink "$W/usr/bin/phar")")" = phar8.3 ] && [ "$(calls "update-alternatives --set php ")" = 1 ]'
+check "Pool geschrieben, Modus 600, mit Socket und Env-Zeilen" 'p="$W/etc/php/8.4/fpm/pool.d/mytannwald.conf"; [ -f "$p" ] && [ -z "$(find "$p" -perm -040)" ] && grep -q "listen = /run/php/php8.4-fpm-mytannwald.sock" "$p" && grep -q "env\[DB_PASSWORD\]" "$p" && grep -q "env\[TANNWALD_DEPLOY\] = 1" "$p"'
+check "Pool www von 8.4 abgeschaltet" '[ -f "$W/etc/php/8.4/fpm/pool.d/www.conf.disabled-by-tannwald" ] && [ ! -f "$W/etc/php/8.4/fpm/pool.d/www.conf" ]'
+check "php-fpm -t vor reload" 'in_order "php-fpm8.4 -t" "systemctl"'
+check "Datenbank angelegt, Passwort nur über stdin" '[ "$(calls "CREATE DATABASE")" = 1 ] && grep -q "$M_DB" "$FAKE_STATE/sql-stdin.log" && ! grep -q "$M_DB" "$FAKE_STATE/calls.log"'
+check "Nutzer für localhost und 127.0.0.1" 'grep -q "@.localhost. IDENTIFIED" "$FAKE_STATE/sql-stdin.log" && grep -q "@.127.0.0.1. IDENTIFIED" "$FAKE_STATE/sql-stdin.log"'
+check "Mailpit geladen, Unit, enable" '[ -x "$W/usr/local/bin/mailpit" ] && [ -f "$W/etc/systemd/system/mailpit.service" ] && [ "$(calls "systemctl enable mailpit")" = 1 ]'
+check "Ollama über Install-Skript, bge-m3 gezogen" '[ "$(calls ollama.com/install.sh)" = 1 ] && [ "$(calls "ollama pull bge-m3")" = 1 ] && grep -q "ExecStart=$FAKE_STATE/bin/ollama serve" "$W/etc/systemd/system/ollama.service"'
+check "Cron-Units geschrieben, Timer NICHT eingeschaltet" '[ -f "$W/etc/systemd/system/tannwald-cron.timer" ] && [ "$(calls "systemctl enable --now tannwald-cron.timer")" = 0 ] && [ "$(calls "systemctl start tannwald-cron.timer")" = 0 ]'
+check "Cron-Unit ruft drush mit PATH auf php8.4" 'grep -q "Environment=PATH=$W/state/bin:" "$W/etc/systemd/system/tannwald-cron.service" && grep -q "ExecStart=$W/app/vendor/bin/drush cron" "$W/etc/systemd/system/tannwald-cron.service"'
+check "php-Shim state/bin/php → php8.4" '[ "$(readlink "$W/state/bin/php")" = "$W/usr/bin/php8.4" ]'
+check "nginx: Fassung http, Link, -t vor reload" 'grep -q "listen 80;" "$W/etc/nginx/sites-available/mytannwald.getleaven.com.conf" && ! grep -q "ssl_certificate" "$W/etc/nginx/sites-available/mytannwald.getleaven.com.conf" && [ -L "$W/etc/nginx/sites-enabled/mytannwald.getleaven.com.conf" ] && in_order "nginx -t" "systemctl reload nginx"'
+check ".htpasswd mit Nutzer und Hash" 'grep -q "^tannwald:\$6\$hashMARKER" "$W/etc/nginx/mytannwald.htpasswd"'
+check "keine Geheimnisse in Ausgabe und Befehlszeilen" 'no_secrets'
+check "keine Sicherungsdateien übrig" '[ -z "$(find "$W/etc" -name "*.tannwald-bak")" ]'
