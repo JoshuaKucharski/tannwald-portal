@@ -25,7 +25,7 @@ RESULTS="$WORK/results"
 M_DB=dbpwMARKER5f1e2d
 M_SALT=saltMARKER9a8b7c
 M_ADMIN=adminMARKER3c4d5e
-M_HASH='$6$hashMARKER7e8f9a'
+M_GUEST=guestMARKER8d7c6b
 M_KEY=sk-keyMARKER0a1b2c
 
 # --- Fälschungen ------------------------------------------------------------------------------------------
@@ -114,21 +114,30 @@ F
 fake curl <<'F'
 #!/bin/bash
 log-call curl "$@"
-out=""; url=""; w=""; prev=""
+out=""; url=""; head=""; auth=0; verbose=0; prev=""
 for a in "$@"; do
-    case "$prev" in -o) out=$a ;; -w) w=$a ;; esac
-    case "$a" in http*) url=$a ;; esac; prev=$a
+    case "$prev" in -o) out=$a ;; -D) head=$a ;; esac
+    case "$a" in http*) url=$a ;; --netrc-file) auth=1 ;; -sv|-v) verbose=1 ;; esac
+    [ "$prev" = -K ] && [ "$a" = - ] && grep -q "user = " && auth=1
+    prev=$a
 done
+st() { cat "$FAKE_STATE/$1" 2>/dev/null || echo "$2"; }
+w() { [ -n "$out" ] && printf "$1" > "$out"; [ -n "$head" ] && printf 'HTTP/1.1 %s\r\nx-robots-tag: noindex, nofollow\r\n\r\n' "$2" > "$head"; printf '%s' "$2"; }
+[ "$verbose" = 1 ] && echo "*  issuer: C=US; O=Let's Encrypt; CN=R11" >&2
+[ -f "$FAKE_STATE/after_deploy" ] && sfx=.after || sfx=""
 case "$url" in
     *ollama.com/install.sh) printf 'mkdir -p "%s" && cp "%s" "%s/ollama"\n' "$FAKE_STATE/bin" "$FAKES_DIR/ollama-fake" "$FAKE_STATE/bin" ;;
     *mailpit-linux-*) echo tar > "$out" ;;
+    */health) w 'ok\n' "$(st health_code 200)" ;;
+    */robots.txt) w 'User-agent: *\nDisallow: /\n' 200 ;;
     */user/login)
-        code=$(cat "$FAKE_STATE/login_code" 2>/dev/null || echo 200)
-        [ -n "$out" ] && { cat "$FAKE_STATE/site.html" 2>/dev/null > "$out" || : > "$out"; }
-        printf '%s' "$code" ;;
-    *mail.*) [ -n "$out" ] && : > "$out"; printf '%s' "$(cat "$FAKE_STATE/mail_code" 2>/dev/null || echo 401)" ;;
+        if [ "$auth" = 1 ]; then code=$(st login_code_auth 200); w "$(cat "$FAKE_STATE/site.html")" "$code"
+        else code=$(st login_code 401); if [ "$code" = 200 ]; then w "$(cat "$FAKE_STATE/site.html")" "$code"; else w '' "$code"; fi; fi ;;
+    *://mail.*) if [ "$auth" = 1 ]; then w 'Mailpit' "$(st mail_code_auth 200)"; else w '' "$(st mail_code 401)"; fi ;;
+    https://*/) s=${url#https://}; s=${s%/}; w '' "$(st "site_$s$sfx" "$(st "site_$s" 200)")" ;;
     *) exit 6 ;;
 esac
+exit 0
 F
 fake ollama-fake <<'F'
 #!/bin/bash
@@ -141,6 +150,8 @@ exit 0
 F
 fake tar <<'F'
 #!/bin/bash
+# nur das Mailpit-Archiv ist gefälscht; jedes andere tar (Export in remote.sh) ist echt.
+case " $* " in *" mailpit "*) ;; *) exec /usr/bin/tar "$@" ;; esac
 log-call tar "$@"
 prev=""; for a in "$@"; do [ "$prev" = -C ] && d=$a; prev=$a; done
 printf '#!/bin/sh\n' > "$d/mailpit"
@@ -160,7 +171,19 @@ esac
 F
 fake getent <<'F'
 #!/bin/bash
-echo "91.98.229.15    STREAM $2"
+f="$FAKE_STATE/dns_$3"; [ -f "$f" ] || f="$FAKE_STATE/dns_$2"
+ip=$(cat "$f" 2>/dev/null || echo 91.98.229.15); [ "$ip" = - ] && exit 2
+echo "$ip    STREAM $2"
+F
+fake hostname <<'F'
+#!/bin/bash
+[ "$1" = -I ] && echo "91.98.229.15 2a01:4f8:c0c:1234::1"
+F
+fake dig <<'F'
+#!/bin/bash
+log-call dig "$@"
+for a in "$@"; do case "$a" in +*|@*|A) ;; *) n=$a ;; esac; done
+ip=$(cat "$FAKE_STATE/dns_$n" 2>/dev/null || echo 91.98.229.15); [ "$ip" = - ] || echo "$ip"
 F
 fake sudo <<'F'
 #!/bin/bash
@@ -198,7 +221,9 @@ case "$1" in
     sql:query) case "$2" in
             *information_schema.TABLES*) cat "$FAKE_STATE/tables" 2>/dev/null || echo 0 ;;
             *"type = 'dokument'"*) cat "$FAKE_STATE/docs" 2>/dev/null || echo 0 ;;
-            *CONCAT*) echo "10 Maschinen, 20 Dokumente, 575 Chunks, 6 Konten" ;;
+            *"embedding IS NOT NULL"*) cat "$FAKE_STATE/embedded" 2>/dev/null || echo 0 ;;
+            *"name='tannwald_embed'"*) echo "tannwald_embed 33 offen, tannwald_summarize 31 offen" ;;
+            *CONCAT*) echo "10 Maschinen, 20 Dokumente, 6 Konten" ;;
         esac ;;
     site:install) [ -f "$FAKE_STATE/si_bad" ] && { echo "SQLSTATE[HY000] (Prüfstand)"; exit 1; }
         touch "$FAKE_STATE/installed"; echo 42 > "$FAKE_STATE/tables" ;;
@@ -210,10 +235,54 @@ case "$1" in
     tannwald:demo-install)
         [ "${TANNWALD_DEMO:-}" = 1 ] || { echo "[error] Demo data only in DDEV …"; exit 1; }
         [ -f "$FAKE_STATE/seed_bad" ] && { echo "Migration tannwald_dokumente: 3 failed (Prüfstand)"; exit 1; }
-        echo 29 > "$FAKE_STATE/docs"; printf '  firmen   7\n  maschinen   10\n  users   6\n  dokumente   20\n  chunks   575\nChanges: 80. Done in 64.8 s.\n' ;;
+        case " $* " in *" --skip-queues "*) echo skip-queues > "$FAKE_STATE/seed_mode" ;; esac
+        echo 29 > "$FAKE_STATE/docs"; printf '  firmen   7\n  maschinen   10\n  users   6\n  dokumente   20\nChanges: 80. Done in 4.1 s.\n' ;;
 esac
 exit 0
 F
+
+# remote.sh: ssh liest Optionen bis zum Host, danach den Befehl; rsync überträgt wirklich, aber in $W/server.
+fake ssh <<'F'
+#!/bin/bash
+while [ $# -gt 0 ]; do case "$1" in -i|-o) shift 2 ;; -*) shift ;; *) break ;; esac; done
+host=$1; shift; cmd="$*"
+log-call ssh "$host" "$cmd"
+[ -f "$FAKE_STATE/ssh_down" ] && { echo "ssh: connect to host 91.98.229.15 port 22: Connection refused" >&2; exit 255; }
+case "$cmd" in
+    *"command -v rsync"*) echo bereit ;;
+    *bootstrap.sh*) cat "$FAKE_STATE/bootstrap.out" 2>/dev/null || echo "FERTIG — Server vorbereitet in 9 s"; exit "$(cat "$FAKE_STATE/bootstrap.rc" 2>/dev/null || echo 0)" ;;
+    *"deploy.sh --status"*) printf '   Zählungen: 7 Firmen, 10 Maschinen, 6 Konten, 20 Dokumente, 0 Zusammenfassungen\n   Chunks eingebettet 120/575 (tannwald_embed 21 offen, tannwald_summarize 31 offen)\n' ;;
+    *deploy.sh*) touch "$FAKE_STATE/after_deploy"; cat "$FAKE_STATE/deploy.out" 2>/dev/null || echo "FERTIG — erstinstalliert in 180 s."; exit "$(cat "$FAKE_STATE/deploy.rc" 2>/dev/null || echo 0)" ;;
+    *) echo "unerwarteter Befehl: $cmd" >&2; exit 99 ;;
+esac
+F
+fake rsync <<'F'
+#!/bin/bash
+log-call rsync "$@"
+args=(); skip=0
+for a in "$@"; do
+    if [ "$skip" = 1 ]; then skip=0; continue; fi
+    case "$a" in -e) skip=1 ;; *:/*) args+=("$W_SERVER/") ;; *) args+=("$a") ;; esac
+done
+mkdir -p "$W_SERVER"
+exec /usr/bin/rsync "${args[@]}"
+F
+new_repo() { # Wegwerf-Repo mit deploy/ (Stand des Arbeitsbaums), Remote origin (bare), Branch dev gepusht
+    git init -q --bare "$W/origin.git"
+    git init -q -b dev "$W/repo"
+    cp -R "$REPO/deploy" "$W/repo/deploy"; rm -f "$W/repo/deploy/.env"
+    echo '{}' > "$W/repo/composer.json"; mkdir -p "$W/repo/web"; echo "<?php" > "$W/repo/web/index.php"
+    (cd "$W/repo" && git add -A && git -c user.name=p -c user.email=p@x commit -qm init && git remote add origin "$W/origin.git" && git push -q origin dev 2>/dev/null)
+    export W_SERVER="$W/server" TW_DEPLOY_CONF="$W/deploy.env"
+    printf 'DEPLOY_SSH=root@91.98.229.15\nDEPLOY_KEY=%s\nDEPLOY_DOMAIN=mytannwald.getleaven.com\nDEPLOY_PATH=/var/www/mytannwald\nDEPLOY_BRANCH=dev\nDEPLOY_GUEST_USER=gast\nDEPLOY_OTHER_SITES="firstbiodent.de myki.de"\n' "$W/key" > "$W/deploy.env"
+    echo schluessel > "$W/key"
+}
+run_remote() { # run_remote [args] [< stdin] → $W/out, $W/rc
+    set +e
+    PATH="$FAKE_STATE/bin:$FAKES:$PATH" "$RUN_BASH" "$W/repo/deploy/remote.sh" "$@" > "$W/out" 2>&1
+    echo $? > "$W/rc"
+    set -e
+}
 
 # --- Welt je Fall -----------------------------------------------------------------------------------------
 new_world() {
@@ -233,7 +302,7 @@ new_world() {
     export TW_APP="$W/app" TW_PRIVATE="$W/private" TW_ETC="$W/etc" TW_BIN="$W/usr/bin" TW_STATE_DIR="$W/state"
     export TW_PHP="$W/usr/bin/php8.4" TW_PHP_FPM="$FAKES/php-fpm8.4" TW_MAILPIT_BIN="$W/usr/local/bin/mailpit"
     export TW_MYSQL="$FAKES/mysql-root" TW_MYSQL_APP="$FAKES/mysql" TW_LE="$W/etc/letsencrypt" TW_LOG_DIR="$W/log"
-    export TW_COMPOSER="$FAKES/composer" TW_WAIT=4 FAKES_DIR="$FAKES" TW_OLLAMA="$FAKE_STATE/bin/ollama"
+    export TW_COMPOSER="$FAKES/composer" TW_WAIT=4 FAKES_DIR="$FAKES" TW_OLLAMA="$FAKE_STATE/bin/ollama" TW_APP_LOG_DIR="$W/log-app" TW_BACKUP_DIR="$W/backups"
     unset TW_ENV_FILE TW_RUN_USER || true
 }
 write_env() { # write_env [NAME=wert …] — vollständige env-Datei mit Markern; Angaben ersetzen/ergänzen Zeilen
@@ -241,7 +310,7 @@ write_env() { # write_env [NAME=wert …] — vollständige env-Datei mit Marker
     mkdir -p "$W/etc/mytannwald"
     cat > "$f" <<EOF
 DOMAIN=mytannwald.getleaven.com
-CERT_STAGING=on
+CERT_STAGING=off
 DB_HOST=127.0.0.1
 DB_PORT=3306
 DB_NAME=mytannwald
@@ -252,9 +321,10 @@ TRUSTED_HOST_PATTERN='^mytannwald\.getleaven\.com\$'
 DASHSCOPE_API_KEY_EU=$M_KEY
 DASHSCOPE_ENDPOINT_EU=https://ws-test.eu-central-1.maas.aliyuncs.com/compatible-mode/v1
 OLLAMA_HOST=http://127.0.0.1:11434
-BASIC_AUTH_USER=tannwald
-BASIC_AUTH_HASH='$M_HASH'
-SITE_AUTH=off
+GUEST_USER=gast
+GUEST_PASSWORD=$M_GUEST
+SITE_AUTH=on
+SITE_MAIL=noreply@mytannwald.getleaven.com
 ADMIN_PASSWORD=$M_ADMIN
 EOF
     for kv in "$@"; do
@@ -288,7 +358,7 @@ in_order() { # in_order <muster…> — Muster erscheinen in calls.log in dieser
     done
 }
 no_secrets() { # keine Marker in Ausgabe und auf Befehlszeilen
-    ! grep -qE "$M_DB|$M_SALT|$M_ADMIN|hashMARKER|$M_KEY" "$W/out" "$FAKE_STATE/calls.log"
+    ! grep -qE "$M_DB|$M_SALT|$M_ADMIN|$M_GUEST|$M_KEY" "$W/out" "$FAKE_STATE/calls.log"
 }
 
 # --- Fälle ausführen (je Datei eine Subshell) -------------------------------------------------------------

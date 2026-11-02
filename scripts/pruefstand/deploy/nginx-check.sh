@@ -17,8 +17,9 @@ DB_NAME=mytannwald
 DB_USER=mytannwald
 DRUPAL_HASH_SALT=pruefwert0123456789abcdef
 TRUSTED_HOST_PATTERN='^mytannwald\.getleaven\.com$'
-BASIC_AUTH_USER=tannwald
-BASIC_AUTH_HASH='$apr1$pruef$0123456789abcdefghijk.'
+GUEST_USER=gast
+GUEST_PASSWORD=pruefwert0123456789
+SITE_MAIL=noreply@mytannwald.getleaven.com
 SITE_AUTH=on
 ADMIN_PASSWORD=pruefwert0123456789
 EOF
