@@ -1,0 +1,60 @@
+# Bilder (fixtures/bilder/manifest.json) → field_bild am Ziel (Aufgabe 2.2).
+# Eine Quellzeile = (datei, ziel); eine Datei kann mehrere Ziele haben
+# (detail-heizpatronen: SB-2026-08 und ek-tb200). zweck:
+#   typ         → Term maschinentyp per Code (TB200)
+#   dokumenttyp → Term dokumenttyp per Slug (betriebsanleitung)
+#   maschine    → Node maschine per Seriennummer
+#   dokument    → Node dokument oder bulletin per Manifest-ID
+#   hero        → kein Entity (Theme-Asset von A), Zeile wird übersprungen
+# Die Datei landet unter public://bilder/<datei> (eine File-Entity je Datei,
+# dauerhaft); das Feld schreibt die file_usage beim Speichern des Ziels.
+id: tannwald_bilder
+label: 'Tannwald: images'
+migration_tags:
+  - tannwald_demo
+source:
+  plugin: url
+  data_fetcher_plugin: file
+  data_parser_plugin: json
+  urls:
+    - bilder/manifest.json
+  item_selector: 0
+  track_changes: true
+  fields:
+    - name: datei
+      label: File
+      selector: datei
+    - name: zweck
+      label: Purpose
+      selector: zweck
+    - name: ziel
+      label: Target
+      selector: ziel
+    - name: alt
+      label: 'Alt texts (de, en, fr)'
+      selector: alt
+  ids:
+    datei:
+      type: string
+    ziel:
+      type: string
+process:
+  purpose:
+    plugin: skip_on_value
+    source: zweck
+    method: row
+    value: hero
+    message: 'Theme asset (no entity).'
+  target: ziel
+  file: datei
+  alt: alt
+destination:
+  plugin: tannwald_image
+  directory: 'public://bilder'
+  fixture_directory: bilder
+  field: field_bild
+migration_dependencies:
+  required:
+    - tannwald_maschinen
+    - tannwald_dokumente
+    - tannwald_bulletins

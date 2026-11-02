@@ -1,0 +1,212 @@
+[
+  {
+    "datei": "typ-tb200.webp",
+    "zweck": "typ",
+    "ziel": "TB200",
+    "alt": {
+      "de": "Blisterlinie TB-200 von der Bedienseite mit Form- und Siegelstation hinter geschlossenen Schutztüren",
+      "en": "TB-200 blister line from the operator side with forming and sealing station behind closed guard doors",
+      "fr": "Ligne blister TB-200 côté opérateur avec stations de formage et de scellage derrière les portes fermées"
+    }
+  },
+  {
+    "datei": "typ-tb400.webp",
+    "zweck": "typ",
+    "ziel": "TB400",
+    "alt": {
+      "de": "Hochleistungs-Blisterlinie TB-400 mit zwei Folienrollen und angeschlossener Kartoniermaschine",
+      "en": "TB-400 high-speed blister line with two foil reels and an inline cartoner",
+      "fr": "Ligne blister haute cadence TB-400 avec deux bobines de film et encartonneuse en ligne"
+    }
+  },
+  {
+    "datei": "typ-kt500.webp",
+    "zweck": "typ",
+    "ziel": "KT500",
+    "alt": {
+      "de": "Horizontale Kartoniermaschine KT-500 mit Faltschachtel-Magazin links und Auslaufband rechts",
+      "en": "KT-500 horizontal cartoning machine with carton magazine on the left and discharge conveyor on the right",
+      "fr": "Encartonneuse horizontale KT-500 avec magasin d’étuis à gauche et convoyeur de sortie à droite"
+    }
+  },
+  {
+    "datei": "hero-login.webp",
+    "zweck": "hero",
+    "ziel": "login",
+    "alt": {
+      "de": "Ruhige Verpackungshalle mit zwei Blisterlinien im Tageslicht",
+      "en": "Quiet packaging hall with two blister lines in daylight",
+      "fr": "Hall de conditionnement calme avec deux lignes blister à la lumière du jour"
+    }
+  },
+  {
+    "datei": "detail-siegelstation.webp",
+    "zweck": "dokument",
+    "ziel": "ba-tb200",
+    "alt": {
+      "de": "Siegelstation einer Blisterlinie mit beheizter Siegelplatte und gespannter Deckfolie",
+      "en": "Sealing station of a blister line with heated sealing plate and tensioned lidding foil",
+      "fr": "Station de scellage d’une ligne blister avec plaque chauffante et film d’operculage tendu"
+    }
+  },
+  {
+    "datei": "detail-heizpatronen.webp",
+    "zweck": "dokument",
+    "ziel": "SB-2026-08",
+    "alt": {
+      "de": "Siegelbacken mit Heizpatronen und Thermoelement-Zuleitungen in Nahaufnahme",
+      "en": "Close-up of sealing jaws with heating cartridges and thermocouple leads",
+      "fr": "Gros plan des mâchoires de scellage avec cartouches chauffantes et câbles de thermocouple"
+    }
+  },
+  {
+    "datei": "detail-heizpatronen.webp",
+    "zweck": "dokument",
+    "ziel": "ek-tb200",
+    "alt": {
+      "de": "Siegelbacken mit Heizpatronen und Thermoelement-Zuleitungen in Nahaufnahme",
+      "en": "Close-up of sealing jaws with heating cartridges and thermocouple leads",
+      "fr": "Gros plan des mâchoires de scellage avec cartouches chauffantes et câbles de thermocouple"
+    }
+  },
+  {
+    "datei": "detail-folienrolle.webp",
+    "zweck": "dokument",
+    "ziel": "SRV-2026-19",
+    "alt": {
+      "de": "Rolle mit transparenter Formfolie auf der Abwickelwelle mit pneumatischer Bremse",
+      "en": "Roll of transparent forming film on the unwind shaft with pneumatic brake",
+      "fr": "Bobine de film de formage transparent sur l’arbre dérouleur avec frein pneumatique"
+    }
+  },
+  {
+    "datei": "detail-schutzhaube.webp",
+    "zweck": "dokument",
+    "ziel": "SB-2026-07",
+    "alt": {
+      "de": "Halb geöffnete Schutzhaube mit Sicherheitsverriegelung am Maschinenrahmen",
+      "en": "Half-open interlocked safety guard with the safety switch on the machine frame",
+      "fr": "Capot de protection entrouvert avec interrupteur de sécurité sur le bâti"
+    }
+  },
+  {
+    "datei": "detail-reinigung.webp",
+    "zweck": "dokument",
+    "ziel": "wp-tb200",
+    "alt": {
+      "de": "Stillstehende Siegelstation bei der Trockenreinigung mit fusselfreiem Tuch und Werkzeugschale",
+      "en": "Stopped sealing station during dry cleaning with a lint-free cloth and a tool tray",
+      "fr": "Station de scellage à l’arrêt pendant le nettoyage à sec avec chiffon non pelucheux et bac à outils"
+    }
+  },
+  {
+    "datei": "detail-stoerungstabelle.webp",
+    "zweck": "dokument",
+    "ziel": "su-tb400",
+    "alt": {
+      "de": "Bedienpanel am Schwenkarm mit Alarmanzeige in Rot und Bernstein",
+      "en": "Operator panel on a swivel arm showing an alarm screen in red and amber",
+      "fr": "Pupitre opérateur sur bras pivotant affichant un écran d’alarme rouge et ambre"
+    }
+  },
+  {
+    "datei": "maschine-tb200-2021-0417.webp",
+    "zweck": "maschine",
+    "ziel": "TB200-2021-0417",
+    "alt": {
+      "de": "Blisterlinie TB-200 im GMP-Raum mit Manometer an der Wand und gelber Bodenmarkierung",
+      "en": "TB-200 blister line in a GMP room with a wall-mounted pressure gauge and yellow floor marking",
+      "fr": "Ligne blister TB-200 en salle GMP avec manomètre mural et marquage jaune au sol"
+    }
+  },
+  {
+    "datei": "maschine-tb400-2023-0088.webp",
+    "zweck": "maschine",
+    "ziel": "TB400-2023-0088",
+    "alt": {
+      "de": "Blisterlinie TB-400 vom Auslauf her mit gestapelten Blistern auf dem Band",
+      "en": "TB-400 blister line seen from the discharge end with stacked blisters on the conveyor",
+      "fr": "Ligne blister TB-400 vue depuis la sortie avec blisters empilés sur le convoyeur"
+    }
+  },
+  {
+    "datei": "maschine-kt500-2022-0152.webp",
+    "zweck": "maschine",
+    "ziel": "KT500-2022-0152",
+    "alt": {
+      "de": "Kartoniermaschine KT-500 im Betrieb mit gefülltem Faltschachtel-Magazin",
+      "en": "KT-500 cartoning machine in operation with a filled carton magazine",
+      "fr": "Encartonneuse KT-500 en fonctionnement avec magasin d’étuis rempli"
+    }
+  },
+  {
+    "datei": "dok-betriebsanleitung.webp",
+    "zweck": "dokumenttyp",
+    "ziel": "betriebsanleitung",
+    "alt": {
+      "de": "Geschlossener Ordner einer Betriebsanleitung auf einem Stahltisch vor einer Maschine",
+      "en": "Closed operating manual binder on a steel table in front of a machine",
+      "fr": "Classeur fermé d’une notice d’utilisation sur une table en acier devant une machine"
+    }
+  },
+  {
+    "datei": "dok-ersatzteilkatalog.webp",
+    "zweck": "dokumenttyp",
+    "ziel": "ersatzteilkatalog",
+    "alt": {
+      "de": "Ersatzteile im Raster auf grauem Schaumstoff: Siegelbacke, Heizpatrone, Führungsrolle, Schrauben",
+      "en": "Spare parts in a grid on grey foam: sealing jaw, heating cartridge, guide roller, screws",
+      "fr": "Pièces de rechange alignées sur mousse grise : mâchoire, cartouche chauffante, rouleau, vis"
+    }
+  },
+  {
+    "datei": "dok-schaltplan.webp",
+    "zweck": "dokumenttyp",
+    "ziel": "schaltplan",
+    "alt": {
+      "de": "Geöffneter Schaltschrank mit gebündelter Verdrahtung, Klemmleisten und Frequenzumrichter",
+      "en": "Open electrical cabinet with bundled wiring, terminal rails and a frequency converter",
+      "fr": "Armoire électrique ouverte avec câblage regroupé, borniers et variateur de fréquence"
+    }
+  },
+  {
+    "datei": "dok-wartungsplan.webp",
+    "zweck": "dokumenttyp",
+    "ziel": "wartungsplan",
+    "alt": {
+      "de": "Werkzeugwagen mit Drehmomentschlüssel und Prüflampe neben einer stillstehenden Maschine",
+      "en": "Tool trolley with torque wrench and inspection lamp next to a stopped machine",
+      "fr": "Servante d’atelier avec clé dynamométrique et lampe d’inspection près d’une machine à l’arrêt"
+    }
+  },
+  {
+    "datei": "dok-zertifikat.webp",
+    "zweck": "dokumenttyp",
+    "ziel": "zertifikat",
+    "alt": {
+      "de": "Zertifikatsblatt mit Prägesiegel auf gebürstetem Stahl",
+      "en": "Certificate sheet with an embossed seal on brushed steel",
+      "fr": "Feuille de certificat avec sceau en relief sur acier brossé"
+    }
+  },
+  {
+    "datei": "dok-schulung.webp",
+    "zweck": "dokumenttyp",
+    "ziel": "schulungsunterlage",
+    "alt": {
+      "de": "Schulungsraum mit Modell einer Blistermaschine und leerem Whiteboard",
+      "en": "Training room with a blister machine model and an empty whiteboard",
+      "fr": "Salle de formation avec maquette de machine blister et tableau blanc vide"
+    }
+  },
+  {
+    "datei": "dok-anlagendoku.webp",
+    "zweck": "dokumenttyp",
+    "ziel": "anlagenspezifisch",
+    "alt": {
+      "de": "Verpackungslinie im Reinraum eines Kunden mit Prüftisch und Durchreiche",
+      "en": "Packaging line in a customer cleanroom with an inspection table and pass-through window",
+      "fr": "Ligne de conditionnement en salle blanche client avec table de contrôle et passe-plat"
+    }
+  }
+]

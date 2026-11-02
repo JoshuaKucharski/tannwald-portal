@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\tannwald_demo;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\migrate\Plugin\MigrationPluginManagerInterface;
 
 /**
@@ -28,6 +29,35 @@ class DemoLookup {
     'dokumenttyp' => 'field_slug',
     'firma' => 'field_sap_nr',
   ];
+
+  /**
+   * Bildzweck (manifest.json "zweck") => [Entity-Typ, Vokabular oder NULL].
+   *
+   * "hero" fehlt bewusst: das Login-Bild ist ein Theme-Asset ohne Entity.
+   */
+  public const IMAGE_PURPOSES = [
+    'typ' => ['taxonomy_term', 'maschinentyp'],
+    'dokumenttyp' => ['taxonomy_term', 'dokumenttyp'],
+    'maschine' => ['node', NULL],
+    'dokument' => ['node', NULL],
+  ];
+
+  /**
+   * Bildfeld an allen Zielen (Aufgabe 2.2).
+   */
+  public const IMAGE_FIELD = 'field_bild';
+
+  /**
+   * Bild-Manifest relativ zu fixtures/.
+   */
+  public const IMAGE_MANIFEST = 'bilder/manifest.json';
+
+  /**
+   * Gelesenes Bild-Manifest (je Request einmal).
+   *
+   * @var array<int, array<string, mixed>>|null
+   */
+  protected ?array $imageManifest = NULL;
 
   public function __construct(
     protected EntityTypeManagerInterface $entityTypeManager,
@@ -87,6 +117,66 @@ class DemoLookup {
       ->range(0, 1)
       ->execute();
     return $uids === [] ? NULL : (int) reset($uids);
+  }
+
+  /**
+   * Ziel-Entity eines Bildes (manifest.json: zweck, ziel).
+   *
+   * Typ → Term maschinentyp per Code, dokumenttyp → Term per Slug,
+   * maschine → Node per Seriennummer, dokument → Node (Dokument oder
+   * Bulletin) per Manifest-ID. NULL für hero und unbekannte Ziele.
+   */
+  public function imageTarget(string $purpose, string $target): ?FieldableEntityInterface {
+    if (!isset(self::IMAGE_PURPOSES[$purpose])) {
+      return NULL;
+    }
+    [$entityTypeId, $vocab] = self::IMAGE_PURPOSES[$purpose];
+    $id = $vocab === NULL ? $this->nidOf($target) : $this->termId($vocab, $target);
+    if ($id === NULL) {
+      return NULL;
+    }
+    $entity = $this->entityTypeManager->getStorage($entityTypeId)->load($id);
+    return $entity instanceof FieldableEntityInterface && $entity->hasField(self::IMAGE_FIELD) ? $entity : NULL;
+  }
+
+  /**
+   * File-ID des Bildes am Ziel ('typ', 'TB200') oder NULL.
+   */
+  public function imageFor(string $purpose, string $target): ?int {
+    $entity = $this->imageTarget($purpose, $target);
+    $fid = $entity?->get(self::IMAGE_FIELD)->target_id;
+    return empty($fid) ? NULL : (int) $fid;
+  }
+
+  /**
+   * Alt-Text einer Bilddatei in einer Sprache aus dem Manifest.
+   *
+   * Das Feld field_bild ist nicht übersetzbar und trägt den deutschen
+   * Alt-Text; en/fr liefert das Manifest (Theme-Helfer tannwald_image()).
+   */
+  public function imageAlt(string $filename, string $langcode): ?string {
+    foreach ($this->imageManifest() as $entry) {
+      if (($entry['datei'] ?? NULL) === basename($filename)) {
+        $alt = $entry['alt'][$langcode] ?? NULL;
+        return is_string($alt) && $alt !== '' ? $alt : NULL;
+      }
+    }
+    return NULL;
+  }
+
+  /**
+   * Einträge aus fixtures/bilder/manifest.json (leer, wenn die Datei fehlt).
+   *
+   * @return array<int, array<string, mixed>>
+   *   Manifest-Zeilen {datei, zweck, ziel, alt: {de, en, fr}}.
+   */
+  public function imageManifest(): array {
+    if ($this->imageManifest === NULL) {
+      $path = FixturePath::resolve(self::IMAGE_MANIFEST);
+      $data = is_readable($path) ? json_decode((string) file_get_contents($path), TRUE) : NULL;
+      $this->imageManifest = is_array($data) ? array_values(array_filter($data, 'is_array')) : [];
+    }
+    return $this->imageManifest;
   }
 
 }

@@ -129,6 +129,15 @@ final class DemoCommands extends DrushCommands {
         $this->logger()->warning($id . ': ' . $message);
       }
     }
+    $images = $report['images'];
+    $this->io()->writeln(dt('Images: @files assigned (@targets targets), @assets theme asset.', [
+      '@files' => $images['files_assigned'],
+      '@targets' => $images['targets'],
+      '@assets' => $images['theme_assets'],
+    ]));
+    foreach ($images['missing'] as $missing) {
+      $this->logger()->warning(dt('Image without target: @missing', ['@missing' => $missing]));
+    }
     $this->io()->writeln(dt('Node access rebuilt in @seconds s.', ['@seconds' => $report['rebuild_seconds']]));
 
     $confirmation = [

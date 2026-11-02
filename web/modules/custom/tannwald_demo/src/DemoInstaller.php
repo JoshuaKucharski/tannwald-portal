@@ -8,6 +8,7 @@ use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\KeyValueStore\KeyValueFactoryInterface;
 use Drupal\Core\Queue\QueueFactory;
@@ -17,6 +18,7 @@ use Drupal\Core\Queue\SuspendQueueException;
 use Drupal\Core\Session\AccountSwitcherInterface;
 use Drupal\Core\Session\AnonymousUserSession;
 use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\migrate\Plugin\MigrateIdMapInterface;
 use Drupal\migrate\Plugin\MigrationInterface;
 use Drupal\migrate\Plugin\MigrationPluginManagerInterface;
 use Drupal\migrate_tools\MigrateExecutable;
@@ -41,6 +43,7 @@ class DemoInstaller {
     'tannwald_users',
     'tannwald_dokumente',
     'tannwald_bulletins',
+    'tannwald_bilder',
   ];
 
   /**
@@ -52,6 +55,8 @@ class DemoInstaller {
     'tannwald_users' => 'user',
     'tannwald_dokumente' => 'node',
     'tannwald_bulletins' => 'node',
+    // Gemischte Ziele (Term oder Node): der Typ steht in der Map-Zeile.
+    'tannwald_bilder' => NULL,
   ];
 
   /**
@@ -153,6 +158,7 @@ class DemoInstaller {
       $report['admin'] = $this->ensureAdmin() ? 'set' : 'unchanged';
       $report['export_rules'] = $this->applyExportRules() ? 'set' : 'unchanged';
       $report['migrations'] = $this->runMigrations();
+      $report['images'] = $this->imageSummary();
       $rebuildStart = microtime(TRUE);
       $this->nodeAccessRebuild->rebuild();
       $this->entityTypeManager->getAccessControlHandler('node')->resetCache();
@@ -194,7 +200,8 @@ class DemoInstaller {
       $deleted['support_anfrage'] = $this->deleteAllEntities('support_anfrage');
       $this->guardUserMap();
       $rolledBack = [];
-      foreach (['tannwald_bulletins', 'tannwald_dokumente'] as $id) {
+      // Bilder zuerst: Rollback leert nur field_bild, Dateien bleiben.
+      foreach (['tannwald_bilder', 'tannwald_bulletins', 'tannwald_dokumente'] as $id) {
         $rolledBack[$id] = $this->rollback($id);
       }
       foreach (['dokument', 'bulletin', 'zusammenfassung'] as $bundle) {
@@ -297,7 +304,41 @@ class DemoInstaller {
   }
 
   /**
-   * Führt die fünf Migrationen aus.
+   * Zuordnung der Bilder laut Manifest, gemessen am Ziel.
+   *
+   * @return array{files_assigned: int, targets: int, theme_assets: int, missing: string[]}
+   *   files_assigned: Dateien, deren Ziele alle das Bild tragen; targets:
+   *   Ziele mit dem Bild; theme_assets: Dateien mit zweck "hero"; missing:
+   *   "datei → ziel" ohne Bild.
+   */
+  public function imageSummary(): array {
+    $files = [];
+    $summary = ['files_assigned' => 0, 'targets' => 0, 'theme_assets' => 0, 'missing' => []];
+    $fileStorage = $this->entityTypeManager->getStorage('file');
+    foreach ($this->lookup->imageManifest() as $entry) {
+      $name = (string) ($entry['datei'] ?? '');
+      $purpose = (string) ($entry['zweck'] ?? '');
+      if ($purpose === 'hero') {
+        $summary['theme_assets']++;
+        continue;
+      }
+      $fid = $this->lookup->imageFor($purpose, (string) ($entry['ziel'] ?? ''));
+      $file = $fid === NULL ? NULL : $fileStorage->load($fid);
+      $ok = $file !== NULL && basename((string) $file->getFileUri()) === $name;
+      $files[$name] = ($files[$name] ?? TRUE) && $ok;
+      if ($ok) {
+        $summary['targets']++;
+      }
+      else {
+        $summary['missing'][] = $name . ' → ' . ($entry['ziel'] ?? '');
+      }
+    }
+    $summary['files_assigned'] = count(array_filter($files));
+    return $summary;
+  }
+
+  /**
+   * Führt die Migrationen aus.
    *
    * @return array<string, array<string, int|string[]>>
    *   Je Migration: source, created, updated, unchanged, failed, repaired,
@@ -435,10 +476,18 @@ class DemoInstaller {
       'zusammenfassungen' => $nodes('zusammenfassung'),
       'zusammenfassungen_zur_pruefung' => $this->countSummariesInReview(),
       'lesebestaetigungen' => 'n/a',
+      'images' => 'n/a',
     ];
     if ($this->database->schema()->tableExists('tannwald_chunk')) {
       $counts['chunks'] = (int) $this->database->query('SELECT COUNT(*) FROM {tannwald_chunk}')->fetchField();
       $counts['chunk_documents'] = (int) $this->database->query('SELECT COUNT(DISTINCT nid, vid, langcode) FROM {tannwald_chunk}')->fetchField();
+    }
+    $imageTables = ['node__' . DemoLookup::IMAGE_FIELD, 'taxonomy_term__' . DemoLookup::IMAGE_FIELD];
+    if (array_filter($imageTables, [$this->database->schema(), 'tableExists']) === $imageTables) {
+      $counts['images'] = 0;
+      foreach ($imageTables as $table) {
+        $counts['images'] += (int) $this->database->query('SELECT COUNT(*) FROM {' . $table . '}')->fetchField();
+      }
     }
     if ($this->entityTypeManager->hasDefinition('lesebestaetigung')) {
       $counts['lesebestaetigungen'] = (int) $this->entityTypeManager->getStorage('lesebestaetigung')->getQuery()->accessCheck(FALSE)->count()->execute();
@@ -516,14 +565,25 @@ class DemoInstaller {
    */
   protected function markMissingForUpdate(MigrationInterface $migration): int {
     $idMap = $migration->getIdMap();
-    $storage = $this->entityTypeManager->getStorage(self::TARGET_TYPES[$migration->id()]);
+    $entityTypeId = self::TARGET_TYPES[$migration->id()];
     $missing = [];
     $idMap->rewind();
     for (; $idMap->valid(); $idMap->next()) {
       $source = $idMap->currentSource();
       $destination = $idMap->currentDestination();
+      if ($entityTypeId === NULL) {
+        // Bilder: übersprungene Zeilen (hero) bleiben übersprungen; fehlt das
+        // Ziel oder ist field_bild leer, wird die Zeile neu übernommen.
+        if ((int) ($idMap->getRowBySource($source)['source_row_status'] ?? 0) === MigrateIdMapInterface::STATUS_IGNORED) {
+          continue;
+        }
+        if ($this->imageTargetMissing(array_values((array) $destination))) {
+          $missing[] = $source;
+        }
+        continue;
+      }
       $target = empty($destination) ? NULL : reset($destination);
-      if (empty($target) || $storage->load($target) === NULL) {
+      if (empty($target) || $this->entityTypeManager->getStorage($entityTypeId)->load($target) === NULL) {
         $missing[] = $source;
       }
     }
@@ -531,6 +591,23 @@ class DemoInstaller {
       $idMap->setUpdate($source);
     }
     return count($missing);
+  }
+
+  /**
+   * TRUE, wenn ein Bild-Ziel [entity_type, entity_id] fehlt oder kein Bild hat.
+   *
+   * @param array<int, mixed> $destination
+   *   Ziel-IDs aus der Map.
+   */
+  protected function imageTargetMissing(array $destination): bool {
+    [$type, $id] = $destination + [NULL, NULL];
+    if (empty($type) || empty($id) || !$this->entityTypeManager->hasDefinition((string) $type)) {
+      return TRUE;
+    }
+    $entity = $this->entityTypeManager->getStorage((string) $type)->load($id);
+    return !$entity instanceof FieldableEntityInterface
+      || !$entity->hasField(DemoLookup::IMAGE_FIELD)
+      || $entity->get(DemoLookup::IMAGE_FIELD)->isEmpty();
   }
 
   /**

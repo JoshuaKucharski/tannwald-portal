@@ -115,3 +115,9 @@ msgstr "Konto admin: Rolle portal_admin und Mail admin@tannwald.example gesetzt.
 
 msgid "Account admin: unchanged."
 msgstr "Konto admin: unverändert."
+
+msgid "Images: @files assigned (@targets targets), @assets theme asset."
+msgstr "Bilder: @files zugeordnet (@targets Ziele), @assets Theme-Asset."
+
+msgid "Image without target: @missing"
+msgstr "Bild ohne Ziel: @missing"

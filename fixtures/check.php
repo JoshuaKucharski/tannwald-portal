@@ -970,16 +970,100 @@ foreach ($questions as $q) {
 $report->check($leakQuestion, 'TC-02-Frage: kunde-b zur Anlagendokumentation ' . LEAK_TEST_SERIAL . ' (ablehnung, keine Quellen)', 'TC-02-Frage fehlt', $evalRel);
 $report->check($exportQuestion, 'TC-03-Frage: haendler zum HF-Schaltplan (ablehnung, keine Quellen)', 'TC-03-Frage fehlt', $evalRel);
 
+// --- 5b. Bilder (Aufgabe 2.2) -----------------------------------------------------
+
+// Manifest fixtures/bilder/manifest.json gegen die Dateien: jede Bilddatei steht
+// im Manifest und umgekehrt, Ziele lösen auf, Alt-Texte de/en/fr, Masse 3:2
+// (Hero 16:9) mit ± 1 %, Grösse <= 400 KB. .DS_Store wird ignoriert.
+$imageDir = "{$fixtures}/bilder";
+$imageManifestPath = "{$imageDir}/manifest.json";
+$imageRel = $rel($imageManifestPath);
+$imageEntries = is_file($imageManifestPath) ? load_json($imageManifestPath) : [];
+$report->check($imageEntries !== [], 'Bild-Manifest: ' . count($imageEntries) . ' Einträge', 'Bild-Manifest fehlt oder ist leer', $imageRel);
+$imageFiles = [];
+foreach (glob("{$imageDir}/*") ?: [] as $path) {
+  $name = basename($path);
+  if ($name !== 'manifest.json' && $name !== '.DS_Store' && is_file($path)) {
+    $imageFiles[$name] = $path;
+  }
+}
+$typeCodes = array_map(static fn(string $t): string => str_replace('-', '', $t), MACHINE_TYPES);
+$bulletinIds = array_map(static fn(array $b): string => (string) ($b['id'] ?? ''), $bulletins);
+$imageTargets = [];
+$imageNames = [];
+$heroCount = 0;
+$imageErrorsBefore = $report->errorCount();
+foreach ($imageEntries as $i => $entry) {
+  $name = (string) ($entry['datei'] ?? '');
+  $purpose = (string) ($entry['zweck'] ?? '');
+  $target = (string) ($entry['ziel'] ?? '');
+  $label = "Bild #{$i} {$name} → {$purpose}:{$target}";
+  $imageNames[$name] = TRUE;
+  $resolved = match ($purpose) {
+    'typ' => in_array($target, $typeCodes, TRUE),
+    'dokumenttyp' => in_array($target, DOCUMENT_TYPES, TRUE),
+    'maschine' => isset($serials[$target]),
+    'dokument' => isset($docById[$target]) || in_array($target, $bulletinIds, TRUE),
+    'hero' => $target === 'login',
+    default => FALSE,
+  };
+  if (!$resolved) {
+    $report->error("{$label}: Ziel löst nicht auf (zweck typ|dokumenttyp|maschine|dokument|hero)", $imageRel);
+  }
+  if ($purpose === 'hero') {
+    $heroCount++;
+  }
+  elseif (isset($imageTargets["{$purpose}:{$target}"])) {
+    $report->error("{$label}: Ziel hat schon ein Bild ({$imageTargets["{$purpose}:{$target}"]})", $imageRel);
+  }
+  else {
+    $imageTargets["{$purpose}:{$target}"] = $name;
+  }
+  foreach (LANGCODES as $langcode) {
+    if (trim((string) ($entry['alt'][$langcode] ?? '')) === '') {
+      $report->error("{$label}: Alt-Text {$langcode} fehlt", $imageRel);
+    }
+  }
+  if (!isset($imageFiles[$name])) {
+    $report->error("{$label}: Datei fehlt in fixtures/bilder", $imageRel);
+    continue;
+  }
+  $size = (int) filesize($imageFiles[$name]);
+  if ($size > 400000) {
+    $report->error("{$label}: {$size} Bytes > 400 KB", $rel($imageFiles[$name]));
+  }
+  $dimensions = @getimagesize($imageFiles[$name]);
+  if ($dimensions === FALSE || $dimensions[1] === 0) {
+    $report->error("{$label}: Masse nicht lesbar", $rel($imageFiles[$name]));
+    continue;
+  }
+  $expectedRatio = $purpose === 'hero' ? 16 / 9 : 3 / 2;
+  $ratio = $dimensions[0] / $dimensions[1];
+  if (abs($ratio / $expectedRatio - 1) > 0.01) {
+    $report->error(sprintf('%s: %dx%d, Seitenverhältnis %.3f statt %.3f (± 1 %%)', $label, $dimensions[0], $dimensions[1], $ratio, $expectedRatio), $rel($imageFiles[$name]));
+  }
+}
+foreach (array_diff_key($imageFiles, $imageNames) as $name => $path) {
+  $report->error("Bilddatei ohne Manifest-Eintrag: {$name}", $rel($path));
+}
+$imageBytes = array_sum(array_map('filesize', $imageFiles));
+$report->check(
+  $report->errorCount() === $imageErrorsBefore && $heroCount === 1,
+  sprintf('Bilder: %d Dateien (%d KB), %d Ziele, %d Theme-Asset, Masse 3:2/16:9 ± 1 %%, je <= 400 KB, Alt de/en/fr', count($imageFiles), intdiv($imageBytes, 1000), count($imageTargets), $heroCount),
+  "Bilder: Befunde oben, Theme-Assets {$heroCount} (Soll 1)",
+  $imageRel
+);
+
 // --- 6. Zusammenfassung ----------------------------------------------------------
 
 $words = array_values($wordCounts);
 sort($words);
 $median = $words === [] ? 0 : $words[intdiv(count($words), 2)];
 $summary = sprintf(
-  'Firmen %d, Maschinen %d, Nutzer %d, Dokumente %d, Dateien %d (de %d, en %d, fr %d), Typen %s, Exportklassen keine %d / klasse_1 %d / klasse_2 %d, Dokumente mit mehreren Versionen %d, Bulletins %d, Fragen %d (antwort %d, ablehnung %d, safety %d), Wörter je Datei min %d / median %d / max %d',
+  'Firmen %d, Maschinen %d, Nutzer %d, Dokumente %d, Dateien %d (de %d, en %d, fr %d), Typen %s, Exportklassen keine %d / klasse_1 %d / klasse_2 %d, Dokumente mit mehreren Versionen %d, Bulletins %d, Bilder %d (Ziele %d, Theme-Asset %d), Fragen %d (antwort %d, ablehnung %d, safety %d), Wörter je Datei min %d / median %d / max %d',
   count($companies), count($machines), count($users), count($documents), $fileCount, $langCounts['de'], $langCounts['en'], $langCounts['fr'],
   implode(' ', array_map(static fn(string $t): string => "{$t} {$typeCounts[$t]}", array_keys($typeCounts))),
-  $exportCounts['keine'], $exportCounts['klasse_1'], $exportCounts['klasse_2'], count($multiVersionDocs), count($bulletins),
+  $exportCounts['keine'], $exportCounts['klasse_1'], $exportCounts['klasse_2'], count($multiVersionDocs), count($bulletins), count($imageFiles), count($imageTargets), $heroCount,
   count($questions), $expectCounts['antwort'], $expectCounts['ablehnung'], $expectCounts['safety'],
   $words === [] ? 0 : $words[0], $median, $words === [] ? 0 : $words[count($words) - 1]
 );
