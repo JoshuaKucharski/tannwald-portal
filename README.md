@@ -163,19 +163,27 @@ gemockte KI-Provider; Ollama ist nur für Hand-Messungen und Evals im Spiel.
 
 Alle Zahlen stammen aus den Ergebnisdateien unter [`docs/evals/`](docs/evals/) und den Messprotokollen der Aufgaben
 (Apple M1, 16 GB, DDEV mit Mutagen, Ollama auf dem Host). Das Eval-Set ([`docs/evals/fragen.yaml`](docs/evals/fragen.yaml))
-hat 60 Fragen: 22 erwarten eine Antwort, 8 eine Ablehnung, 30 sind Sicherheitsfragen; de, en und fr; alle sechs
-Demo-Konten.
+hat 80 Fragen: 42 erwarten eine Antwort (q-061 bis q-080 seit Aufgabe 3.3), 8 eine Ablehnung, 30 sind Sicherheitsfragen;
+de, en und fr; alle sechs Demo-Konten. Die Tabelle vergleicht über die ersten 60 Fragen.
 
-**Assistent (voller LLM-Lauf, `drush tannwald:eval`, `qwen2.5:7b`, `bge-m3`):**
+**Assistent (voller LLM-Lauf, `drush tannwald:eval`, Embeddings `bge-m3` über Ollama; Chat Vorher/Nachher `qwen2.5:7b` über
+Ollama, Qwen API `qwen-plus` über DashScope):**
 
-| Kennzahl | Bedeutung | Vorher (Baseline 21:20) | Nachher (nach Tuning 6.1) | Ziel |
-|---|---|---|---|---|
-| `hit@5` | erwartete Quelle unter den ersten 5 Treffern (52 Fragen mit Quellen) | 0.73 (38/52) | **0.87 (45/52)** | ≥ 0.80 |
-| `zitat_korrekt` | Antwort gegeben **und** jedes Zitat zeigt auf eine erwartete Quelle (22 Fragen) | 0.41 (9/22) | 0.50 (11/22) | ≥ 0.90 |
-| `ablehnung_korrekt` | Ablehnung wo erwartet, Antwort wo erwartet (30 Fragen) | 0.97 (29/30) | **1.00 (30/30)** | ≥ 0.90 |
-| `safety_korrekt` | Sicherheitsvorlage **und** Verweis auf das erwartete Kapitel (30 Fragen) | 0.60 (18/30) | 0.87 (26/30)¹ | = 1.00 |
-| Median-Dauer je Frage | Retrieval plus Antwort (Sicherheitsfragen ohne LLM) | 218 ms | 7'029 ms | — |
-| Tokens | Prompt / Antwort über alle LLM-Antworten | 62'435 / 1'758 | 64'758 / 2'445 | — |
+| Kennzahl | Bedeutung | Vorher (Baseline 21:20) | Nachher (nach Tuning 6.1) | Qwen API (Eval 3)² | Ziel |
+|---|---|---|---|---|---|
+| `hit@5` | erwartete Quelle unter den ersten 5 Treffern (52 Fragen mit Quellen) | 0.73 (38/52) | **0.87 (45/52)** | 0.85 (44/52)² | ≥ 0.80 |
+| `zitat_korrekt` | Antwort gegeben **und** jedes Zitat zeigt auf eine erwartete Quelle (22 Fragen) | 0.41 (9/22) | 0.50 (11/22) | 0.41 (9/22)³ | ≥ 0.90 |
+| `ablehnung_korrekt` | Ablehnung wo erwartet, Antwort wo erwartet (30 Fragen) | 0.97 (29/30) | **1.00 (30/30)** | **0.93 (28/30)** | ≥ 0.90 |
+| `safety_korrekt` | Sicherheitsvorlage **und** Verweis auf das erwartete Kapitel (30 Fragen) | 0.60 (18/30) | 0.87 (26/30)¹ | 0.80 (24/30)² | = 1.00 |
+| Median-Dauer je Frage | Retrieval plus Antwort (Sicherheitsfragen ohne LLM) | 218 ms | 7'029 ms | 1'422 ms (p95 7'295 ms) | — |
+| Tokens | Prompt / Antwort über alle LLM-Antworten | 62'435 / 1'758 | 64'758 / 2'445 | 66'934 / 4'115 | — |
+
+² `docs/evals/ergebnisse-2026-11-02_1628.md` mit `…_1655_teil.md` (acht Fragen nach einem Netzausfall nachgeholt), Kosten
+CHF 0.03 zum Listenpreis. `hit@5` und `safety_korrekt` laufen ohne Chat-Modell: sie zeigen den Datenstand nach dem
+Neuaufbau der Demo-Daten (Aufgabe 2.2), nicht das Modell. Eval 3b über alle 80 Fragen (`…_1713.md`): `zitat_korrekt` 0.48
+(20/42), `ablehnung_korrekt` 0.96 (48/50), `hit@5` 0.86 (62/72), p95 7.3 s.
+³ Die Kennzahl bleibt streng. Zweite Lesart „erwartete Quelle unter den Zitaten“: Vorher 11/22, Nachher 18/22, Qwen API
+19/22 (Eval 3b 37/42). `qwen-plus` zitiert die erwartete Quelle fast immer, nennt aber verwandte Kapitel zusätzlich.
 
 Quellen: Vorher `docs/evals/ergebnisse-2026-11-01_2120.md`, Nachher `docs/evals/ergebnisse-2026-11-01_2244.md` (je Abschnitt
 „Kennzahlen“; beide volle LLM-Läufe über 60 Fragen, Betreiber). Dazwischen lag das Tuning aus Aufgabe 6.1: eine dritte
