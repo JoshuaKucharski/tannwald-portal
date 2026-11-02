@@ -209,8 +209,15 @@ if [ ! -f "$ENV_FILE" ]; then
         ENV_SRC="$DEPLOY_DIR/.env.example"
     else
         mkdir -p "$(dirname "$ENV_FILE")"
-        cp "$DEPLOY_DIR/.env.example" "$ENV_FILE"; chown "root:$RUN_USER" "$ENV_FILE"; chmod 640 "$ENV_FILE"
-        die "$ENV_FILE neu angelegt (aus deploy/.env.example, Modus 640, root:$RUN_USER). Werte setzen (jedes CHANGE_ME ersetzen), dann bootstrap.sh erneut."
+        (umask 077; cp "$DEPLOY_DIR/.env.example" "$ENV_FILE")
+        # Zufallswerte, die niemand kennen muss, setzt bootstrap selbst (auf dem Server erzeugt, nie ausgegeben).
+        # Werte über die Umgebung an perl (nie in den Argumenten — die sieht ps auf dem Server).
+        TW_DBPW="$(openssl rand -hex 24)" TW_SALT="$(openssl rand -hex 32)" perl -pi -e \
+            's/^DB_PASSWORD=CHANGE_ME$/DB_PASSWORD=$ENV{TW_DBPW}/; s/^DRUPAL_HASH_SALT=CHANGE_ME$/DRUPAL_HASH_SALT=$ENV{TW_SALT}/' "$ENV_FILE"
+        chown "root:$RUN_USER" "$ENV_FILE"; chmod 640 "$ENV_FILE"
+        say "   DB_PASSWORD und DRUPAL_HASH_SALT: Zufallswerte gesetzt (nicht gezeigt)."
+        say "   Noch zu setzen: $(grep -E '^[A-Z_]+=(CHANGE_ME|.CHANGE_ME.)?$' "$ENV_FILE" | cut -d= -f1 | tr '\n' ' ')"
+        die "$ENV_FILE neu angelegt (aus deploy/.env.example, Modus 640, root:$RUN_USER). Die genannten Werte setzen, dann erneut."
     fi
 fi
 if env_check; then ok "env-Datei vollständig (nur Namen geprüft, Werte nie gezeigt)"

@@ -11,14 +11,14 @@ PATTERNS=(
     'sk-[A-Za-z0-9]{20,}'
     'DASHSCOPE_API_KEY_EU=[^[:space:]$"'"'"'`<]+'
     "password: '[^']+'"
-    '(DB|ADMIN|GUEST|DB_ROOT)_PASSWORD=[^[:space:]$"'"'"'<]{8,}'
+    '(DB|ADMIN|GUEST|DB_ROOT)_PASSWORD=[^[:space:]$"'"'"'<[]{8,}'
     'DRUPAL_HASH_SALT=[A-Za-z0-9+/=_-]{16,}'
     '-----BEGIN [A-Z ]*PRIVATE KEY-----'
     'BASIC_AUTH_HASH=.?\$(2[aby]|apr1|6)\$'
 )
 found=0
 for p in "${PATTERNS[@]}"; do
-    hits=$(git -C "$REPO" grep -nIE -e "$p" -- . 2>/dev/null | grep -vE "$ALLOW" || true)
+    hits=$(git -C "$REPO" grep -nIE -e "$p" -- . ":(exclude)scripts/pruefstand/deploy/secrets-scan.sh" 2>/dev/null | grep -vE "$ALLOW" || true)
     [ -n "$hits" ] || continue
     while IFS= read -r line; do
         found=$((found + 1))
