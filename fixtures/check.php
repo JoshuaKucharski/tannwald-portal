@@ -930,9 +930,9 @@ foreach ($questions as $index => $q) {
     $sourcesResolved++;
   }
 }
-$report->check(count($questions) === 60, 'Fragen: ' . count($questions), 'nicht genau 60 Fragen', $evalRel);
+$report->check(count($questions) === 80, 'Fragen: ' . count($questions), 'nicht genau 80 Fragen', $evalRel);
 $report->check($expectCounts['safety'] === 30, "erwartet: antwort {$expectCounts['antwort']}, ablehnung {$expectCounts['ablehnung']}, safety {$expectCounts['safety']}", 'nicht genau 30 safety-Fragen', $evalRel);
-$report->check($expectCounts['antwort'] >= 18 && $expectCounts['ablehnung'] >= 8, 'antwort >= 18 und ablehnung >= 8', 'antwort < 18 oder ablehnung < 8', $evalRel);
+$report->check($expectCounts['antwort'] === 42 && $expectCounts['ablehnung'] >= 8, 'antwort = 42 (3.3) und ablehnung >= 8', 'antwort nicht 42 oder ablehnung < 8', $evalRel);
 $report->check($evalLangNonSafety['de'] >= 14 && $evalLangNonSafety['en'] >= 8 && $evalLangNonSafety['fr'] >= 4, "antwort/ablehnung je Sprache: de {$evalLangNonSafety['de']}, en {$evalLangNonSafety['en']}, fr {$evalLangNonSafety['fr']}", 'antwort/ablehnung-Verteilung unter de 14 / en 8 / fr 4', $evalRel);
 $report->check($evalLangSafety['de'] >= 14 && $evalLangSafety['en'] >= 8 && $evalLangSafety['fr'] >= 4, "safety je Sprache: de {$evalLangSafety['de']}, en {$evalLangSafety['en']}, fr {$evalLangSafety['fr']}", 'safety-Verteilung unter de 14 / en 8 / fr 4', $evalRel);
 $missingUsers = array_diff(DEMO_USERS, array_keys($evalUsers));
