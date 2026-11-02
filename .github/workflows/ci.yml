@@ -100,3 +100,14 @@ jobs:
         run: |
           command -v nginx >/dev/null || { sudo apt-get update -q && sudo apt-get install -y -q nginx-core; }
           bash scripts/pruefstand/deploy/nginx-check.sh
+
+  # Keine Geheimnisse im Repo (4.5): git grep nach Mustern echter Schlüssel/Passwörter (DashScope sk-…, *_PASSWORD=,
+  # hash_salt, private Schlüssel, password: in YAML); erlaubt sind nur offensichtliche Testwerte.
+  secrets-scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: secrets-scan
+        run: bash scripts/pruefstand/deploy/secrets-scan.sh
