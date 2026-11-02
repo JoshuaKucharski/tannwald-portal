@@ -862,3 +862,10 @@ msgstr "Pas encore de coûts."
 
 msgid "As soon as the assistant answers, tokens and costs appear here per month."
 msgstr "Dès que l'assistant répond, les jetons et les coûts apparaissent ici par mois."
+
+# Structure de page (1.4)
+msgid "Demo"
+msgstr "Démo"
+
+msgid "Account menu"
+msgstr "Menu du compte"

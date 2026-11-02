@@ -1103,3 +1103,10 @@ msgstr "Noch keine Kosten."
 
 msgid "As soon as the assistant answers, tokens and costs appear here per month."
 msgstr "Sobald der Assistent antwortet, erscheinen Tokens und Kosten hier je Monat."
+
+# Seitengerüst (1.4): Demo-Leiste und Konto-Menü
+msgid "Demo"
+msgstr "Demo"
+
+msgid "Account menu"
+msgstr "Kontomenü"
