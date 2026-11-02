@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\tannwald_ingest\Summary;
 
-use Drupal\ai\OperationType\Chat\ChatInput;
-use Drupal\ai\OperationType\Chat\ChatMessage;
-use Drupal\ai\OperationType\Chat\ChatOutput;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Component\Plugin\PluginManagerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -15,8 +12,12 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\KeyValueStore\KeyValueFactoryInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\ai\OperationType\Chat\ChatInput;
+use Drupal\ai\OperationType\Chat\ChatMessage;
+use Drupal\ai\OperationType\Chat\ChatOutput;
 use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 use Drupal\node\NodeInterface;
+use Drupal\tannwald_assistant\Provider\ProviderResolver;
 use Drupal\tannwald_ingest\Chunker;
 use Drupal\tannwald_ingest\Usage\UsageRecorder;
 
@@ -104,6 +105,7 @@ class SummaryGenerator {
     protected KeyValueFactoryInterface $keyValue,
     protected LockBackendInterface $lock,
     protected Connection $database,
+    protected ?ProviderResolver $providerResolver = NULL,
   ) {}
 
   /**
@@ -370,6 +372,10 @@ class SummaryGenerator {
    *   [provider_id, model].
    */
   protected function providerAndModel(): array {
+    // 3.1: aktiver Chat-Provider (provider_chat, providers.<id>.chat_model).
+    if ($this->providerResolver !== NULL) {
+      return [$this->providerResolver->providerId('chat'), $this->providerResolver->model('chat')];
+    }
     $assistant = $this->configFactory->get('tannwald_assistant.settings');
     $default = $this->configFactory->get('ai.settings')->get('default_providers.chat') ?: [];
     $providerId = (string) ($assistant->get('provider') ?: ($default['provider_id'] ?? ''));
