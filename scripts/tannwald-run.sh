@@ -12,6 +12,7 @@
 #   bash $S/tannwald-run.sh --eval             # voller Eval-Lauf (15–25 min, Ollama exklusiv)
 #   bash $S/tannwald-run.sh --eval sicherheit  # nur die 30 Sicherheitsfragen (Sekunden, ohne Chat)
 #   bash $S/tannwald-run.sh --frisch [branch]  # Klon von GitHub als zweites DDEV-Projekt, immer aufgeräumt
+#   bash $S/tannwald-run.sh --deploy [--init|--probe|--bootstrap|--dry]   # Server (4.2), deploy/remote.sh
 #
 # --vorbereitung: misst brew, Docker-Daemon, ddev, mkcert-Zertifikat, ollama, Ollama-Dienst, beide Modelle;
 #   sagt vorher, was es installieren wird; installiert nur Fehlendes mit den Teilen der D3-Zeile
@@ -47,6 +48,11 @@
 #   tannwald-frisch` und rm -rf des Wegwerf-Verzeichnisses. Die geteilte Instanz tannwald-portal (30000/30001)
 #   bleibt unberührt. Endet mit `FERTIG (frisch): <n> s`. Repo privat: git nutzt das Token im Schlüsselbund
 #   (nur HTTPS, keine Rückfrage — GIT_TERMINAL_PROMPT=0); nach dem Öffentlich-Schalten geht es ohne Token.
+#
+# --deploy (Phase 2, 4.2): Demo-Server 91.98.229.15 — Export von origin/dev per rsync, dann bootstrap.sh und
+#   deploy.sh auf dem Server, Proben vom Mac; --probe liest nur (fragt das Besucher-Passwort ab), --dry zeigt jeden
+#   Schritt, --bootstrap ohne deploy.sh, --init legt ~/.config/tannwald/deploy.env an. Die Logik steht in
+#   deploy/remote.sh des Repos (Prüfstand scripts/pruefstand/deploy/); dieser Modus ruft es nur auf.
 #
 # Regeln (Betreiber): läuft ohne Rückfragen (ausser dem Passwort von mkcert -install); hält beim ersten Fehler
 # an; zeigt nie ein Geheimnis und kein Stück eines Hashes — Rohausgaben von docker, ddev, brew, git, drush und
@@ -95,6 +101,7 @@ DISPLAY_RESAVE_PHP='foreach (["entity_view_display", "entity_form_display"] as $
   foreach (\Drupal::entityTypeManager()->getStorage($t)->loadMultiple() as $d) { $d->save(); }
 }'
 MODES="--vorbereitung, --lokal, --probe, --reset, --eval [sicherheit], --frisch [branch]"
+MODES="$MODES, --deploy [--init|--probe|--bootstrap|--dry]"            # Phase 2, 4.2
 EVAL_PART=""                                             # sicherheit: nur die erwartet-safety-Fragen
 SELF="bash $ROOT/scripts/tannwald-run.sh"                                               #@pfad
 
@@ -106,6 +113,7 @@ case "${1:-}" in
     --probe) MODE=probe ;;
     --eval) MODE=eval ;;
     --frisch) MODE=frisch ;;
+    --deploy) shift; exec bash "$REPO/deploy/remote.sh" "$@" ;;  # Phase 2, 4.2 — Logik im Repo
     *) echo "ABBRUCH: unbekannte Angabe „${1:-}“ — erlaubt: $MODES." >&2; exit 1 ;;
 esac
 if [ "$MODE" = frisch ] && [ $# -eq 2 ]; then
