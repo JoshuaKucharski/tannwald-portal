@@ -1,0 +1,9 @@
+# Styleguide des Themes (Aufgabe 1.1, A): nur mit masquerade (Split dev), statische Seite ohne Daten.
+tannwald_demo.styleguide:
+  path: '/styleguide'
+  defaults:
+    _controller: '\Drupal\tannwald_demo\Controller\StyleguideController::page'
+    _title: 'Styleguide'
+  requirements:
+    _access: 'TRUE'
+    _module_dependencies: 'masquerade'
