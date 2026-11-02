@@ -8,6 +8,8 @@ GPL-2.0-or-later verträglich (MIT, BSD, ISC, Apache-2.0, MPL-2.0 und GPL-2.0-or
 
 Die Schrift Inter wird nur über `font-family` mit Systemschrift-Fallback referenziert; keine Font-Datei liegt im Repo.
 Demo-Dokumente, Bulletins und Stammdaten unter `fixtures/` sind fiktiv und selbst verfasst.
+Die 20 Bilder unter `fixtures/bilder/` (WebP, je ≤ 400 KB) hat der Betreiber am 02.11.2026 mit einem Bildgenerator
+erzeugt; sie zeigen fiktive Maschinen ohne Marken, Texte und Personen. Herkunft und Einbau: `fixtures/bilder/manifest.json`, ADR-009.
 
 ## Composer (PHP), 125 Pakete
 
