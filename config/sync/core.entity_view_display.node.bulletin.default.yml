@@ -5,6 +5,7 @@ dependencies:
   config:
     - field.field.node.bulletin.body
     - field.field.node.bulletin.field_bestaetigung_pflicht
+    - field.field.node.bulletin.field_bild
     - field.field.node.bulletin.field_bulletin_art
     - field.field.node.bulletin.field_maschinentyp
     - field.field.node.bulletin.field_seriennummern
@@ -69,4 +70,5 @@ content:
     weight: 100
     region: content
 hidden:
+  field_bild: true
   langcode: true

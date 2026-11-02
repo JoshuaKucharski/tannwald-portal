@@ -3,6 +3,7 @@ langcode: de
 status: true
 dependencies:
   config:
+    - field.field.taxonomy_term.maschinentyp.field_bild
     - field.field.taxonomy_term.maschinentyp.field_typ_code
     - taxonomy.vocabulary.maschinentyp
   module:
@@ -29,4 +30,5 @@ content:
     weight: 0
     region: content
 hidden:
+  field_bild: true
   langcode: true

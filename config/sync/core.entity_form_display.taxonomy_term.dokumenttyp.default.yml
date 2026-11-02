@@ -3,9 +3,12 @@ langcode: de
 status: true
 dependencies:
   config:
+    - field.field.taxonomy_term.dokumenttyp.field_bild
     - field.field.taxonomy_term.dokumenttyp.field_slug
+    - image.style.tw_thumb_320
     - taxonomy.vocabulary.dokumenttyp
   module:
+    - image
     - path
     - text
 id: taxonomy_term.dokumenttyp.default
@@ -20,6 +23,14 @@ content:
     settings:
       size: 60
       placeholder: ''
+    third_party_settings: {  }
+  field_bild:
+    type: image_image
+    weight: 50
+    region: content
+    settings:
+      progress_indicator: throbber
+      preview_image_style: tw_thumb_320
     third_party_settings: {  }
   field_slug:
     type: string_textfield

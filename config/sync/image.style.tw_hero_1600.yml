@@ -1,0 +1,21 @@
+uuid: b9e73115-f864-4a10-bde2-8a646643c596
+langcode: de
+status: true
+dependencies: {  }
+name: tw_hero_1600
+label: 'Tannwald Hero 1600 (16:9)'
+effects:
+  5b3dcba0-9ee4-4e74-bfa9-579fc59b16c3:
+    uuid: 5b3dcba0-9ee4-4e74-bfa9-579fc59b16c3
+    id: image_scale_and_crop
+    weight: 1
+    data:
+      width: 1600
+      height: 900
+      anchor: center-center
+  d9c2ccb0-67d2-412f-a893-19f1c21c16ca:
+    uuid: d9c2ccb0-67d2-412f-a893-19f1c21c16ca
+    id: image_convert
+    weight: 2
+    data:
+      extension: webp

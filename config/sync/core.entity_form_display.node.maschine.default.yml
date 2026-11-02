@@ -4,15 +4,18 @@ status: true
 dependencies:
   config:
     - field.field.node.maschine.field_baujahr
+    - field.field.node.maschine.field_bild
     - field.field.node.maschine.field_firma
     - field.field.node.maschine.field_maschinentyp
     - field.field.node.maschine.field_standort
     - field.field.node.maschine.field_vertrag
     - field.field.node.maschine.field_vertrag_bis
+    - image.style.tw_thumb_320
     - node.type.maschine
   module:
     - content_moderation
     - datetime
+    - image
     - path
 id: node.maschine.default
 targetEntityType: node
@@ -31,6 +34,14 @@ content:
     region: content
     settings:
       placeholder: ''
+    third_party_settings: {  }
+  field_bild:
+    type: image_image
+    weight: 50
+    region: content
+    settings:
+      progress_indicator: throbber
+      preview_image_style: tw_thumb_320
     third_party_settings: {  }
   field_firma:
     type: options_select

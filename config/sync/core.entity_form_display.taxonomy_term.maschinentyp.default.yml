@@ -3,9 +3,12 @@ langcode: de
 status: true
 dependencies:
   config:
+    - field.field.taxonomy_term.maschinentyp.field_bild
     - field.field.taxonomy_term.maschinentyp.field_typ_code
+    - image.style.tw_thumb_320
     - taxonomy.vocabulary.maschinentyp
   module:
+    - image
     - path
     - text
 id: taxonomy_term.maschinentyp.default
@@ -20,6 +23,14 @@ content:
     settings:
       size: 60
       placeholder: ''
+    third_party_settings: {  }
+  field_bild:
+    type: image_image
+    weight: 50
+    region: content
+    settings:
+      progress_indicator: throbber
+      preview_image_style: tw_thumb_320
     third_party_settings: {  }
   field_typ_code:
     type: string_textfield

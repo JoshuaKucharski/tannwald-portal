@@ -5,6 +5,7 @@ dependencies:
   config:
     - field.field.node.dokument.body
     - field.field.node.dokument.field_aenderungsvermerk
+    - field.field.node.dokument.field_bild
     - field.field.node.dokument.field_datei
     - field.field.node.dokument.field_dokumenttyp
     - field.field.node.dokument.field_exportklasse
@@ -13,12 +14,14 @@ dependencies:
     - field.field.node.dokument.field_maschinentyp
     - field.field.node.dokument.field_seriennummer
     - field.field.node.dokument.field_version
+    - image.style.tw_thumb_320
     - node.type.dokument
     - workflows.workflow.redaktion
   module:
     - content_moderation
     - datetime
     - file
+    - image
     - path
     - text
 id: node.dokument.default
@@ -49,6 +52,14 @@ content:
     settings:
       rows: 3
       placeholder: ''
+    third_party_settings: {  }
+  field_bild:
+    type: image_image
+    weight: 50
+    region: content
+    settings:
+      progress_indicator: throbber
+      preview_image_style: tw_thumb_320
     third_party_settings: {  }
   field_datei:
     type: file_generic
