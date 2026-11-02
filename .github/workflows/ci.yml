@@ -84,3 +84,19 @@ jobs:
             exit 1
           fi
           echo "config:status leer"
+
+  # Server als Code (deploy/, 4.1, ADR-012): ohne Server und ohne Build — Prüfstand für bootstrap.sh/deploy.sh
+  # (gefälschte apt-get, systemctl, nginx, mysql, certbot …) und nginx -t auf beiden gerenderten Vhost-Fassungen.
+  deploy-config:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Prüfstand deploy (bash -n, bootstrap.sh, deploy.sh)
+        run: bash scripts/pruefstand/deploy/pruefstand-deploy.sh
+
+      - name: nginx -t (Vhost http und tls, gerendert mit Testwerten)
+        run: |
+          command -v nginx >/dev/null || { sudo apt-get update -q && sudo apt-get install -y -q nginx-core; }
+          bash scripts/pruefstand/deploy/nginx-check.sh
