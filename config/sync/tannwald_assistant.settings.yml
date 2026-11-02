@@ -1,12 +1,21 @@
 _core:
   default_config_hash: Dw66xNMWEra5Cg5nPUv7UlVMjKxibubUeLbvC5oNgJM
-provider: ollama
-chat_model: 'qwen2.5:7b'
-embedding_model: bge-m3
+provider_chat: ollama
+provider_embeddings: ollama
+providers:
+  ollama:
+    chat_model: 'qwen2.5:7b'
+    embedding_model: bge-m3
+    embedding_dimensions: 1024
+    kosten_pro_1k_chf: 0.0
+  dashscope:
+    chat_model: qwen-plus
+    embedding_model: text-embedding-v3
+    embedding_dimensions: 1024
+    kosten_pro_1k_chf: 0.0
 top_k: 6
 min_score: 0.015
 monthly_token_limit: 2000000
-kosten_pro_1k_chf: 0.0
 safety_terms:
   de:
     - 'überbrück*'

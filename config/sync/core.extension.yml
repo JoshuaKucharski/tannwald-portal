@@ -51,6 +51,7 @@ module:
   tannwald_bulletin: 0
   tannwald_demo: 0
   tannwald_ingest: 0
+  tannwald_qwen: 0
   taxonomy: 0
   text: 0
   update: 0
