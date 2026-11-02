@@ -46,3 +46,4 @@ permissions:
   - 'view all revisions'
   - 'view any unpublished content'
   - 'view latest version'
+  - 'view the administration theme'
