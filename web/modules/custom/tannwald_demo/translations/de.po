@@ -50,8 +50,8 @@ msgstr "Änderungen: @changes. Fertig in @seconds s."
 msgid "@failed migration rows failed; see the messages above."
 msgstr "@failed Migrationszeilen gescheitert; siehe Meldungen oben."
 
-msgid "Demo data only in DDEV (IS_DDEV_PROJECT) or CI (CI); nothing changed."
-msgstr "Demo-Daten nur in DDEV (IS_DDEV_PROJECT) oder CI (CI); nichts geändert."
+msgid "Demo data only in DDEV (IS_DDEV_PROJECT), CI (CI) or on the demo server (TANNWALD_DEMO=1); nothing changed."
+msgstr "Demo-Daten nur in DDEV (IS_DDEV_PROJECT), CI (CI) oder auf dem Demo-Server (TANNWALD_DEMO=1); nichts geändert."
 
 msgid "Migration"
 msgstr "Migration"
