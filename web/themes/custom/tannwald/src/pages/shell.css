@@ -1,0 +1,30 @@
+/* Seitengerüst (1.4): Demo-Leiste, Kopfzeile, Navigation, Konto-Menü. Phone-Kopf ≤ 120 px — Leitplanken v2 §14:
+   Leiste 32 px einzeilig, Wortmarke + Avatar 44 px, Tab-Zeile 40 px. Desktop ab md wie bisher (Leiste + Kopf 64 px). */
+@layer components {
+  .demo-bar { @apply flex h-8 items-center gap-x-2 overflow-hidden whitespace-nowrap bg-bar px-4 text-sm text-white md:h-auto md:flex-wrap md:gap-x-4 md:gap-y-1 md:overflow-visible md:whitespace-normal md:px-8 md:py-2; }
+  .demo-bar-account { @apply truncate; }
+  .demo-bar-role, .demo-bar-switch, .demo-bar-back { @apply hidden md:inline; }
+  .demo-bar-switch { @apply md:ml-auto md:inline-flex md:flex-wrap md:gap-x-4; }
+
+  .site-header-inner { @apply mx-auto grid max-w-page grid-cols-[minmax(0,1fr)_auto] grid-rows-[2.75rem_2.5rem] items-center gap-x-4 px-4 md:flex md:min-h-16 md:flex-wrap md:gap-x-8 md:px-8; }
+  .site-brand { @apply col-start-1 row-start-1 flex h-11 items-center text-lg font-semibold text-accent no-underline hover:text-accent-hover; }
+  /* Navigation: Phone als Tab-Zeile unter der Wortmarke (scrollt horizontal), Desktop inline. */
+  .site-nav { @apply col-span-2 col-start-1 row-start-2 -mx-4 flex h-10 items-stretch gap-x-5 overflow-x-auto px-4 font-medium md:col-auto md:row-auto md:mx-0 md:h-auto md:gap-x-6 md:overflow-visible md:px-0; scrollbar-width: none; }
+  .site-nav::-webkit-scrollbar { display: none; }
+  .site-nav-link { @apply inline-flex shrink-0 items-center border-b-2 border-transparent text-sm text-muted no-underline hover:text-ink md:py-5 md:text-base; transition: color var(--duration-fast) var(--ease-out-soft), border-color var(--duration-fast) var(--ease-out-soft); }
+  .site-nav-link.is-active { @apply border-accent text-ink; }
+  /* Konto: Avatar-Button (44 px) mit Menü; Name und Abmelden inline nur ab md. */
+  .site-account { @apply relative col-start-2 row-start-1 flex items-center gap-3 text-sm md:col-auto md:row-auto md:ml-auto; }
+  .site-account-name { @apply hidden text-muted md:inline; }
+  .site-account-logout { @apply hidden md:inline; }
+  .site-account-logout a { @apply inline-flex min-h-11 items-center rounded-control px-1; }
+  .site-avatar { @apply inline-flex h-11 w-11 items-center justify-center rounded-full bg-private-bg text-sm font-semibold text-accent hover:bg-accent hover:text-white; transition: background-color var(--duration-fast) var(--ease-out-soft), color var(--duration-fast) var(--ease-out-soft); }
+  .site-avatar[aria-expanded="true"] { @apply bg-accent text-white; }
+  .site-menu { @apply absolute right-0 top-full z-40 mt-2 flex w-64 flex-col gap-1 rounded-card border border-line bg-panel p-2 shadow-card; }
+  .site-menu-head { @apply m-0 flex flex-col gap-0.5 px-3 py-2 font-medium; }
+  .site-menu-head .meta { @apply font-normal; }
+  .site-menu-label { @apply m-0 px-3 pt-2 text-sm text-muted; }
+  .site-menu-list { @apply m-0 flex list-none flex-col p-0; }
+  .site-menu-link { @apply flex min-h-11 items-center rounded-control px-3 text-ink no-underline hover:bg-surface; }
+  .site-menu-logout { @apply mt-1 border-t border-line-soft; }
+}

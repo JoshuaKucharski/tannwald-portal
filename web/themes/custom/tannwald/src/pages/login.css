@@ -1,7 +1,7 @@
 /* Anmeldeseite (1.2 Feinschliff): Markenpanel mit Foto im Rahmen (24 px Innenabstand, Radius 8), Demo-Chips als Raster. */
 @layer components {
   .brand-panel { @apply flex flex-col bg-accent text-white lg:min-h-screen lg:w-[46%]; }
-  .brand-panel-text { @apply flex flex-col gap-8 px-4 py-5 lg:gap-12 lg:px-16 lg:pb-10 lg:pt-14; }
+  .brand-panel-text { @apply flex flex-col gap-3 px-4 py-4 lg:gap-12 lg:px-16 lg:pb-10 lg:pt-14; }
   .brand-photo { @apply relative m-0 hidden min-h-[320px] flex-1 overflow-hidden rounded-card lg:mx-6 lg:mb-6 lg:block; }
   .brand-photo img { @apply absolute inset-0 h-full w-full object-cover; }
   .demo-groups { @apply mt-12 flex flex-col gap-5 border-t border-line pt-6; }

@@ -4,7 +4,7 @@
   .machine-grid { @apply grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-3; }
   /* Karte ohne Rahmen auf der Fläche: Bild, Titel 17/500, Meta; Hover nur Rahmen --color-control. */
   .machine-card { @apply rounded-card border border-transparent bg-panel; transition: border-color var(--duration-fast) var(--ease-out-soft); }
-  .machine-card:hover { @apply border-control; }
+  @media (hover: hover) { .machine-card:hover { @apply border-control; } }
   .machine-card:focus-within { @apply border-control; }
   .machine-card-link { @apply flex flex-col gap-3 p-3 text-ink no-underline hover:text-ink; }
   .machine-card-link:focus-visible { outline-offset: 0; }
