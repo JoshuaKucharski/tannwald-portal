@@ -1,0 +1,25 @@
+{#
+/**
+ * @file
+ * Seiten unter /redaktion/* und /compliance/* (Wireframe 03, 1.3): Navigation links (md+) bzw. als Reiter
+ * (Phone), rechts der Inhalt. Die Kopfzeile bleibt page.html.twig (A); hier wird nur die Region content in
+ * das Zwei-Spalten-Raster gelegt. Variablen aus tannwald_preprocess_page__redaktion():
+ * redaktion_nav (Props tannwald:redaktion-nav), redaktion_csv_url (nur /compliance/audit), redaktion_cache.
+ */
+#}
+{% set redaktion_content %}
+  {{ redaktion_cache }}
+  <div class="redaktion-layout" data-redaktion-layout>
+    {{ include('tannwald:redaktion-nav', redaktion_nav, with_context = false) }}
+    <div class="redaktion-main">
+      {{ page.content }}
+      {% if redaktion_csv_url %}
+        <div class="flex">
+          <a href="{{ redaktion_csv_url }}" class="btn btn-secondary">{{ include('tannwald:icon', {name: 'download', size: 20}, with_context = false) }}{{ 'Audit log as CSV'|t }}</a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+{% endset %}
+{# Brotkrumen entfallen hier: die Navigation zeigt den Ort (Leitplanken: eine Zutat weniger). #}
+{% include '@tannwald/layout/page.html.twig' with {page: page|merge({content: redaktion_content, breadcrumb: null})} %}

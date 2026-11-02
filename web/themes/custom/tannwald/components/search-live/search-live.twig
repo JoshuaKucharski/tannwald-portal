@@ -4,14 +4,14 @@
  * SDC tannwald:search-live — Suchfeld mit Live-Resultaten (Alpine searchLive, src/app.js).
  */
 #}
-<div{{ attributes.addClass('relative flex-1 basis-80') }}
+<div{{ attributes.addClass('relative') }}
   x-data="searchLive({ liveUrl: '{{ live_url|e('js') }}', modusInput: '{{ modus_input|default('modus')|e('js') }}', maschineNid: {{ maschine_nid ? maschine_nid : 'null' }}, noticeBusy: '{{ 'Too many requests, please wait a moment.'|t|e('js') }}' })"
   @click.outside="close()">
   <div class="relative">
     <svg class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
     <input id="{{ input_id }}" type="search" name="q" value="{{ query }}" maxlength="1000" autocomplete="off" autofocus
       placeholder="{{ placeholder }}" data-live-url="{{ live_url }}"
-      class="h-11 w-full rounded-control border border-line bg-panel pl-10 pr-10"
+      class="input pl-10 pr-10"
       role="combobox" aria-autocomplete="list" aria-expanded="false" :aria-expanded="open ? 'true' : 'false'" aria-controls="{{ input_id }}-live"
       :aria-activedescendant="index >= 0 ? '{{ input_id }}-opt-' + index : null"
       x-model="query" @input.debounce.200ms="search()" @keydown="onKey($event)" @focus="reopen()">

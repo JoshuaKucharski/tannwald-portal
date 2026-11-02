@@ -1,0 +1,71 @@
+/* Redaktion (1.3, Wireframe 03, Leitplanken v2): Navigation als linke Leiste (md+) bzw. Reiter (Phone),
+   Review-Karten mit Aktionen rechts, Tabelle „Unbeantwortete Fragen“ mit Zeilenraster, Bulletins mit
+   Lese-Quote, Sheet „Zurückweisen“. A's 5.3-Klassen (.redaktion-*, .review-*) bleiben in src/tailwind.css,
+   bis 1.4 aufräumt; hier gelten die neuen Muster, die Templates nutzen nur diese. */
+@layer components {
+  .redaktion-layout { @apply grid grid-cols-[minmax(0,1fr)] items-start gap-6 md:grid-cols-[232px_minmax(0,1fr)] md:gap-8; }
+  .redaktion-main { @apply flex min-w-0 flex-col gap-6; }
+
+  /* Navigation: Leiste ohne Rahmen (Weissraum trennt), Zeilen 44 px, Zähler tabellarisch rechts;
+     auf dem Phone eine horizontale Reiterzeile mit Unterstrich. */
+  .redaktion-nav { @apply flex flex-col gap-0.5 self-start md:sticky md:top-6; }
+  .redaktion-nav-list { @apply -mx-4 flex gap-x-1 overflow-x-auto border-b border-line px-4 md:mx-0 md:flex-col md:gap-0.5 md:overflow-visible md:border-0 md:px-0; scrollbar-width: none; }
+  .redaktion-nav-list::-webkit-scrollbar { display: none; }
+  .redaktion-nav-item { @apply -mb-px inline-flex min-h-11 shrink-0 items-center gap-2 whitespace-nowrap border-b-2 border-transparent px-1 text-muted no-underline hover:text-ink md:mb-0 md:min-h-11 md:rounded-control md:border-0 md:px-3 md:text-ink md:hover:bg-panel; transition: color var(--duration-fast) var(--ease-out-soft), background-color var(--duration-fast) var(--ease-out-soft); }
+  .redaktion-nav-item.is-active { @apply border-accent font-medium text-ink md:bg-private-bg md:text-accent; }
+  .redaktion-nav-count { @apply inline-flex min-w-6 items-center justify-center rounded-pill bg-surface px-2 py-[1px] text-sm text-muted tabular-nums md:ml-auto md:bg-panel; }
+  .redaktion-nav-item.is-active .redaktion-nav-count { @apply md:bg-panel md:text-accent; }
+  .redaktion-queue { @apply mt-4 hidden flex-col gap-0.5 px-3 text-sm text-muted md:flex; }
+
+  /* Reiter der Freigabe-Queue (D's Area tannwald_review_counts). */
+  .tannwald-review-tabs { @apply m-0 flex list-none flex-wrap gap-x-6 gap-y-1 border-b border-line p-0; }
+  .tannwald-review-tabs li a { @apply -mb-px inline-flex min-h-11 items-center border-b-2 border-transparent text-muted no-underline hover:text-ink; }
+  .tannwald-review-tabs li.is-active a { @apply border-accent font-medium text-ink; }
+
+  /* Review-Karte: Kopf (Titel, Status), Meta, Vermerk, Prüfpunkte, Textarea, Aktionen rechts. */
+  .review-card { @apply flex flex-col rounded-card border border-line bg-panel shadow-card; }
+  .review-card-head { @apply flex flex-col gap-2 border-b border-line px-4 py-4 md:px-6; }
+  .review-card-title { @apply m-0 text-xl font-semibold leading-title; }
+  .review-card-title a { @apply text-ink no-underline hover:text-accent; }
+  .review-card-body { @apply flex flex-col gap-4 px-4 py-4 md:px-6; }
+  .review-card-foot { @apply flex flex-col gap-3 border-t border-line-soft px-4 py-4 md:flex-row md:items-center md:px-6; }
+  .review-card-foot .form-actions { @apply m-0 flex flex-wrap gap-3 md:ml-auto md:justify-end; }
+  .review-checks { @apply flex flex-col gap-1; }
+  .review-check { @apply flex min-h-6 items-center gap-2 text-sm; }
+  .review-check[data-ok="1"] .mark { @apply text-ok; }
+  .review-check[data-ok="0"] .mark { @apply text-warn; }
+  .review-textarea { @apply min-h-40 w-full rounded-control border border-control bg-panel px-3 py-2.5 text-base leading-copy hover:border-ink; transition: border-color var(--duration-fast) var(--ease-out-soft); }
+  .review-actions .form-item { @apply mb-0; }
+  .review-actions .form-item label { @apply text-sm font-medium text-ink; }
+  .review-actions .form-actions { @apply mt-0; }
+  .review-counter { @apply text-sm text-muted tabular-nums; }
+  .four-eyes-notice { @apply rounded-control border border-l-4 border-warn-line bg-warn-bg px-4 py-3 text-sm text-warn; }
+
+  /* Sheet „Zurückweisen“: Bestätigung mit Begründungstext (Hinweis), Primär bleibt Freigeben. */
+  .review-sheet { @apply fixed inset-x-0 bottom-0 z-50 flex max-h-[88dvh] flex-col rounded-t-card border-t border-line bg-panel shadow-card md:inset-auto md:bottom-6 md:right-6 md:max-h-[72vh] md:w-[440px] md:rounded-card md:border; }
+  .review-sheet-head { @apply flex items-center gap-3 border-b border-line px-4 py-3; }
+  .review-sheet-body { @apply flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto p-4; }
+  .review-sheet-foot { @apply flex flex-wrap justify-end gap-3 border-t border-line px-4 py-3; }
+
+  /* Tabellen im Redaktionsbereich (Unbeantwortete Fragen, Support-Anfragen, Lesebestätigungen, Audit):
+     Zeilenraster, Kopf gedämpft, Zahlen rechts; Karte ohne Schatten. */
+  .redaktion-table-wrap { @apply w-full overflow-x-auto rounded-card border border-line bg-panel; }
+  .redaktion-main .table-wrap, .redaktion-main .view-content > .overflow-x-auto, .redaktion-main form > .overflow-x-auto { @apply w-full overflow-x-auto rounded-card border border-line bg-panel; }
+  .redaktion-main table { @apply w-full border-collapse text-base; }
+  .redaktion-main th { @apply border-b border-line px-3 py-2 text-left text-sm font-medium text-muted; }
+  .redaktion-main td { @apply border-b border-line-soft px-3 py-3 align-top; }
+  .redaktion-main tr:last-child td { @apply border-b-0; }
+  .redaktion-main tbody tr:hover td { @apply bg-surface; }
+  .redaktion-main td.num, .redaktion-main th.num { @apply text-right tabular-nums; }
+  .redaktion-main caption { @apply px-3 py-2 text-left text-sm font-medium text-muted; }
+  .redaktion-main .view-empty { @apply flex flex-col items-start gap-2 rounded-card border border-dashed border-line px-4 py-8 md:px-6; }
+  .redaktion-main details { @apply rounded-card border border-line bg-panel p-4 md:p-6; }
+  .redaktion-main details > summary { @apply flex min-h-11 cursor-pointer items-center font-semibold; }
+  .redaktion-main details + details { @apply mt-4; }
+  .redaktion-main a[href$="/compliance/audit.csv"]:not(.btn) { @apply hidden; }
+
+  /* Bulletins (1.3): Lese-Quote je Bulletin für die Redaktion. */
+  .bulletin-quota { @apply flex flex-wrap items-center gap-2 text-sm text-muted; }
+  .bulletin-quota-bar { @apply h-1.5 w-24 overflow-hidden rounded-pill bg-line-soft; }
+  .bulletin-quota-fill { @apply h-full rounded-pill bg-ok; }
+}

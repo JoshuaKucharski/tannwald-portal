@@ -1,0 +1,32 @@
+{#
+/**
+ * @file
+ * Tabelle „Nutzung je Tag“ (1.3): Zeilenraster, Zahlen rechtsbündig (Aufrufe, Prompt-Tokens, Antwort-Tokens),
+ * Tausendertrenner ’ kommt aus der View. Spaltenschlüssel: period_day, kontext, operation, id, prompt_tokens,
+ * completion_tokens.
+ */
+#}
+{% set numeric = ['id', 'prompt_tokens', 'completion_tokens'] %}
+<div class="admin-table-wrap">
+<table{{ attributes.addClass('admin-table', 'views-table') }}>
+  {% if caption_needed %}<caption>{{ caption ?: title }}</caption>{% endif %}
+  <thead>
+    <tr>
+      {% for key, column in header %}
+        <th scope="col"{{ column.attributes.removeAttribute('class').addClass(key in numeric ? 'num' : '') }}>{{ column.content }}{{ column.sort_indicator }}</th>
+      {% endfor %}
+    </tr>
+  </thead>
+  <tbody>
+    {% for row in rows %}
+      <tr{{ row.attributes }}>
+        {% for key, column in row.columns %}
+          <td{{ column.attributes.removeAttribute('class').addClass(key in numeric ? 'num' : (key == 'period_day' ? 'whitespace-nowrap' : '')) }}>
+            {%- for content in column.content %}{{ content.separator }}{{ content.field_output }}{% endfor -%}
+          </td>
+        {% endfor %}
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>

@@ -1023,9 +1023,6 @@ msgstr "Beispiele: ein Störungscode, ein Teil, eine Tätigkeit."
 msgid "Or ask the assistant:"
 msgstr "Oder fragen Sie den Assistenten:"
 
-msgid "approved @date"
-msgstr "freigegeben @date"
-
 msgid "How often is the sealing station cleaned?"
 msgstr "Wie oft wird die Siegelstation gereinigt?"
 

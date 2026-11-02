@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Assistent (5.3): Props der SDC tannwald:chat aus Konfiguration und Limit.
+ * Assistent (5.3, 1.3): Props der SDC tannwald:chat aus Konfig und Limit.
  */
 
 declare(strict_types=1);
@@ -10,21 +10,28 @@ declare(strict_types=1);
 use Drupal\Core\Url;
 
 /**
- * Props für tannwald:chat (Vertrag 5.3 a).
+ * Props für tannwald:chat (Vertrag 5.3 a, ergänzt 1.3 um examples und panel).
  *
  * @param int|null $maschineNid
  *   Maschine der Seite, NULL auf /suche.
  * @param string|null $machineLabel
  *   Seriennummer für die Anzeige.
  * @param string $mode
- *   'embedded' (Aside der Maschinenseite) oder 'sheet' (/suche).
+ *   'embedded' (Aside der Maschinenseite), 'panel' (Spalte auf /suche, 1.3)
+ *   oder 'sheet' (nur Launcher und Sheet).
  *
  * @return array
  *   Props: maschine_nid, machine_label, model_label, limit_notice, endpoint,
  *   feedback_endpoint, support_endpoint, token_endpoint, intro, ui_langcode,
- *   language_names, mode.
+ *   language_names, mode, examples. Leer ([]), wenn die Seite den Assistenten
+ *   selbst rendert: seit 1.3 zeigt das Such-Template den Assistenten als
+ *   Panel; der Sheet-Aufruf aus tannwald_preprocess() (page, Hunk 5.3) für
+ *   dieselbe Route liefert darum nichts mehr ({% if chat %} bleibt falsch).
  */
 function _tannwald_chat_props(?int $maschineNid, ?string $machineLabel, string $mode = 'embedded'): array {
+  if ($mode === 'sheet' && \Drupal::routeMatch()->getRouteName() === 'tannwald_assistant.search') {
+    return [];
+  }
   $settings = \Drupal::config('tannwald_assistant.settings');
   $limitNotice = NULL;
   // Abgeschalteter Assistent: derselbe Hinweis, den der Endpunkt als 503
@@ -56,6 +63,23 @@ function _tannwald_chat_props(?int $maschineNid, ?string $machineLabel, string $
     'ui_langcode' => \Drupal::languageManager()->getCurrentLanguage()->getId(),
     'language_names' => $names,
     'mode' => $mode,
+    'examples' => _tannwald_chat_example_questions(),
+  ];
+}
+
+/**
+ * Drei Beispielfragen für den Leer-Zustand (1.3).
+ *
+ * Suche ohne Treffer, Suche ohne Begriff und der Assistent zeigen dieselben.
+ *
+ * @return string[]
+ *   Fragen in der Oberflächensprache.
+ */
+function _tannwald_chat_example_questions(): array {
+  return [
+    (string) t('How often is the sealing station cleaned?'),
+    (string) t('What does fault code E-4711 mean?'),
+    (string) t('Which film thickness is approved?'),
   ];
 }
 

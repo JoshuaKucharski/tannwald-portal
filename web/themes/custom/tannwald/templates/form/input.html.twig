@@ -1,13 +1,14 @@
 {#
 /**
  * @file
- * Theme override for an 'input' #type form element.
- *
- * Available variables:
- * - attributes: A list of HTML attributes for the input element.
- * - children: Optional additional rendered elements.
- *
- * @see \Drupal\Core\Form\FormPreprocess::preprocessInput()
+ * Eingabe (1.3): Textfelder tragen das Feld-Muster input (44 px, Rand control, Fehler danger über
+ * aria-invalid bzw. .error); Buttons, Checkboxen und Radios bleiben, wie das Formular sie liefert.
  */
 #}
+{% set text_types = ['text', 'password', 'email', 'search', 'number', 'url', 'tel', 'date', 'time'] %}
+{% set input_type = attributes.type ~ '' %}
+{% if input_type in text_types %}
+  {% set attributes = attributes.addClass('input') %}
+  {% if attributes.hasClass('error') %}{% set attributes = attributes.setAttribute('aria-invalid', 'true') %}{% endif %}
+{% endif %}
 <input{{ attributes }} />{{ children }}

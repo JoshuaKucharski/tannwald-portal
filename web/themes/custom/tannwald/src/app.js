@@ -276,5 +276,11 @@ Alpine.data('docHistory', docHistory);
 
 /* 1.3: hier anhängen */
 
+// 1.3 (B): Sheet-Helfer, Facetten-Sheet der Suche, Assistent als Panel/Sheet (src/modules/). ES-Importe werden
+// gehoben und laufen vor diesem Modul; sie registrieren nur Alpine.data(), Alpine.start() bleibt unten.
+import './modules/sheet.js';
+import './modules/filters.js';
+import './modules/chat.js';
+
 // Start zuletzt: alle Alpine.data()-Registrierungen (5.1, 5.2 und A's 5.3-Hunk) müssen davor stehen.
 Alpine.start();

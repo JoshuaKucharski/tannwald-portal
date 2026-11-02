@@ -1,17 +1,40 @@
 {#
 /**
  * @file
- * SDC tannwald:review-actions — Wortzähler (Alpine reviewActions) über D's Textarea [data-review-body];
- * die Buttons sind D's Submit-Buttons (formaction auf /redaktion/zusammenfassung/{node}/{transition}).
+ * SDC tannwald:review-actions — Wortzähler (Alpine reviewActions, A) über D's Textarea [data-review-body] und
+ * Sheet „Zurückweisen“ (Alpine reviewReject, 1.3): der Klick auf D's Button „Zurückweisen“ öffnet eine
+ * Bestätigung mit Begründung; „Zurückweisen“ im Sheet sendet D's Formular mit dessen formaction ab.
+ * Die Buttons bleiben D's Submit-Buttons (formaction auf /redaktion/zusammenfassung/{node}/{transition}).
  */
 #}
-<div{{ attributes.addClass('review-actions flex w-full flex-col gap-2') }} x-data="reviewActions({ target: {{ word_count_target|default(120) }}, initial: {{ word_count|default(0) }}, labels: { words: '{{ 'words'|t|e('js') }}', target: '{{ 'target at most @target'|t({'@target': word_count_target|default(120)})|e('js') }}' } })" data-review-actions>
+<div{{ attributes.addClass('review-actions flex w-full flex-col gap-3') }} x-data="reviewActions({ target: {{ word_count_target|default(120) }}, initial: {{ word_count|default(0) }}, labels: { words: '{{ 'words'|t|e('js') }}', target: '{{ 'target at most @target'|t({'@target': word_count_target|default(120)})|e('js') }}' } })" data-review-actions>
   {% if four_eyes_notice %}
     <p class="four-eyes-notice m-0" data-four-eyes>{{ four_eyes_notice }}</p>
   {% endif %}
-  {% block form %}{% endblock %}
-  <div class="-mt-1 flex flex-wrap items-center justify-between gap-2 text-sm text-muted">
-    <span data-word-count x-text="label()">{{ '@count words · target at most @target'|t({'@count': word_count|default(0), '@target': word_count_target|default(120)}) }}</span>
+  <div x-data="reviewReject()" @click="intercept($event)" @keydown.window="onSheetKeydown($event)">
+    {% block form %}{% endblock %}
+    <div class="sheet-scrim" x-show="open" x-cloak @click="closeSheet()" aria-hidden="true"></div>
+    <section class="review-sheet" x-show="open" x-cloak x-ref="sheet" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="{{ 'reject-title-' ~ (summary_nid|default('x')) }}" data-reject-sheet>
+      <div class="review-sheet-head">
+        <span class="font-semibold" id="{{ 'reject-title-' ~ (summary_nid|default('x')) }}">{{ 'Reject summary'|t }}</span>
+        <button type="button" class="btn btn-secondary btn-icon ml-auto" aria-label="{{ 'Close'|t }}" @click="closeSheet()">{{ include('tannwald:icon', {name: 'close', size: 20}, with_context = false) }}</button>
+      </div>
+      <div class="review-sheet-body">
+        <p class="m-0">{{ 'The summary stays invisible on the document, in search and in the assistant. The queue generates no new one; the editorial team edits the text or publishes a new document revision.'|t }}</p>
+        <div class="field mb-0">
+          <label class="field-label" for="{{ 'reject-reason-' ~ (summary_nid|default('x')) }}">{{ 'Reason (for your records)'|t }}</label>
+          <textarea id="{{ 'reject-reason-' ~ (summary_nid|default('x')) }}" class="input input--textarea" rows="3" x-ref="initial" x-model="reason" placeholder="{{ 'e.g. names a chapter that does not exist'|t }}"></textarea>
+          <span class="field-help">{{ 'The reason is not saved; note it in the change note of the next revision.'|t }}</span>
+        </div>
+      </div>
+      <div class="review-sheet-foot">
+        <button type="button" class="btn btn-secondary" @click="closeSheet()">{{ 'Cancel'|t }}</button>
+        <button type="button" class="btn btn-warn" @click="confirm()" data-reject-confirm>{{ 'Reject'|t }}</button>
+      </div>
+    </section>
+  </div>
+  <div class="flex flex-wrap items-center justify-between gap-2 text-sm text-muted">
+    <span class="review-counter" data-word-count x-text="label()">{{ '@count words · target at most @target'|t({'@count': word_count|default(0), '@target': word_count_target|default(120)}) }}</span>
     {% if queue_hint %}<span>{{ queue_hint }}</span>{% endif %}
   </div>
 </div>

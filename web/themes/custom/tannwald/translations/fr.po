@@ -782,9 +782,6 @@ msgstr "Exemples : un code de défaut, une pièce, une activité."
 msgid "Or ask the assistant:"
 msgstr "Ou demandez à l'assistant :"
 
-msgid "approved @date"
-msgstr "validé le @date"
-
 msgid "How often is the sealing station cleaned?"
 msgstr "À quelle fréquence la station de scellage est-elle nettoyée ?"
 

@@ -80,6 +80,16 @@ display:
         options:
           offset: 0
           items_per_page: 200
+      exposed_form:
+        type: basic
+        options:
+          submit_button: Anwenden
+          reset_button: false
+          reset_button_label: Zurücksetzen
+          exposed_sorts_label: 'Sortieren nach'
+          expose_sort_order: true
+          sort_asc_label: Aufsteigend
+          sort_desc_label: Absteigend
       access:
         type: role
         options:
@@ -116,8 +126,29 @@ display:
           plugin_id: date
           operator: '>='
           value:
+            min: ''
+            max: ''
             value: '-30 days'
             type: offset
+          exposed: true
+          expose:
+            operator_id: created_op
+            label: Zeitraum
+            description: ''
+            use_operator: false
+            operator: created_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: zeitraum
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            min_placeholder: ''
+            max_placeholder: ''
+            placeholder: ''
+          is_grouped: false
       style:
         type: table
         options:
@@ -148,6 +179,7 @@ display:
       max-age: -1
       contexts:
         - 'languages:language_interface'
+        - url
         - user.roles
       tags: {  }
   page_1:
@@ -162,5 +194,21 @@ display:
       max-age: -1
       contexts:
         - 'languages:language_interface'
+        - url
+        - user.roles
+      tags: {  }
+  page_portal:
+    id: page_portal
+    display_title: 'Seite (Portal)'
+    display_plugin: page
+    position: 2
+    display_options:
+      display_extenders: {  }
+      path: redaktion/nutzung
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_interface'
+        - url
         - user.roles
       tags: {  }

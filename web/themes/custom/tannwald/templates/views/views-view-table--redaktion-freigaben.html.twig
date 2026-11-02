@@ -1,7 +1,7 @@
 {#
 /**
  * @file
- * Zeilen der Freigabe-Queue als Review-Karten (tannwald:review-card, F) mit D's Daten und Formular:
+ * Zeilen der Freigabe-Queue als Review-Karten (tannwald:review-card) mit D's Daten und Formular:
  * cards[] aus tannwald_preprocess_views_view_table__redaktion_freigaben() (includes/redaktion.inc).
  */
 #}
@@ -15,11 +15,14 @@
     created_by: item.card.created_by,
     change_note: item.card.change_note,
     safety_mentioned: item.card.safety_mentioned,
+    document_type: item.document_type,
+    machine_types: item.machine_types,
+    language: item.language_label,
     attributes: create_attribute({'data-summary-nid': item.nid, 'data-langcode': item.language_label}),
     item: item,
   } only %}
     {% block body %}
-      <div class="flex flex-col gap-2" data-review-checks>
+      <div class="review-checks" data-review-checks>
         <span class="text-sm font-medium text-muted">{{ 'Checks'|t }}</span>
         {% for check in item.checks %}
           <span class="review-check" data-ok="{{ check.ok ? '1' : '0' }}">
@@ -35,6 +38,7 @@
         word_count_target: item.word_target,
         four_eyes_notice: null,
         queue_hint: 'After approval: indexing via the queue, about one minute'|t,
+        summary_nid: item.nid,
         item: item,
       } only %}
         {% block form %}{{ item.form }}{% endblock %}

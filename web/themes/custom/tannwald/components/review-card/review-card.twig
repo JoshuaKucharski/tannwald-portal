@@ -1,7 +1,10 @@
 {#
 /**
  * @file
- * SDC tannwald:review-card — Hülle der Review-Karte; Slots body und actions.
+ * SDC tannwald:review-card — Review-Karte (1.3, Wireframe 03): Kopf mit Titel, Typ, Version, Sprache und
+ * Status-Pille; Meta (generiert, Modell, Tokens mit ’, Autor der Revision); Änderungsvermerk; Slot body
+ * (Prüfpunkte und Textarea); Slot actions (Aktionen rechts: Freigeben primär, Entwurf speichern und
+ * Zurückweisen sekundär — Freigeben je Karte bleibt, Befund 21/D7).
  */
 #}
 {% set status_labels = {
@@ -11,30 +14,35 @@
   draft: 'Draft'|t,
 } %}
 {% set status_variants = {zur_pruefung: 'warn', published: 'ok', zurueckgewiesen: 'danger', draft: 'neutral'} %}
-<article{{ attributes.addClass('card flex flex-col') }} data-status="{{ status|default('zur_pruefung') }}">
-  <header class="flex flex-col gap-1.5 border-b border-line px-6 py-4">
+{% set state = status|default('zur_pruefung') %}
+<article{{ attributes.addClass('review-card') }} data-status="{{ state }}">
+  <header class="review-card-head">
     <div class="flex flex-wrap items-center gap-3">
-      <h3 class="card-title">
-        <a href="{{ document.url }}" class="text-ink no-underline hover:text-accent">{{ document.title }}</a>
-        <span class="font-normal text-muted">{{ 'Version @version'|t({'@version': document.version}) }}</span>
+      <h3 class="review-card-title">
+        <a href="{{ document.url }}">{{ document.title }}</a>
       </h3>
-      {{ include('tannwald:badge', {label: status_labels[status|default('zur_pruefung')], variant: status_variants[status|default('zur_pruefung')], pill: true}, with_context = false) }}
+      {{ include('tannwald:badge', {label: status_labels[state], variant: status_variants[state], pill: true}, with_context = false) }}
     </div>
-    <span class="meta">
+    <div class="flex flex-wrap items-center gap-2">
+      {% if document_type %}{{ include('tannwald:badge', {label: document_type, variant: 'neutral', pill: true}, with_context = false) }}{% endif %}
+      {% for typ in machine_types|default([]) %}<span class="pill border-line text-muted">{{ typ }}</span>{% endfor %}
+      {% if document.version %}<span class="pill border-line text-muted">{{ 'Version @version'|t({'@version': document.version}) }}</span>{% endif %}
+      {% if language %}<span class="pill border-line text-muted">{{ language }}</span>{% endif %}
+    </div>
+    <p class="meta m-0">
       {{ 'Generated @date'|t({'@date': generated_at}) }}
       {%- if model %} · {{ 'Model @model'|t({'@model': model}) }}{% endif %}
       {%- if tokens is not null %} · {{ '@count tokens'|t({'@count': tokens|number_format(0, '.', '’')}) }}{% endif %}
       {%- if created_by %} · {{ 'new revision by @name'|t({'@name': created_by}) }}{% endif %}
-    </span>
+    </p>
     {% if change_note %}
-      <span class="meta">{{ 'Change note: @note'|t({'@note': change_note}) }}</span>
+      <p class="m-0 text-base"><span class="font-medium">{{ 'Change note'|t }}:</span> {{ change_note }}</p>
     {% endif %}
-    {# 6.1 (E): Sicherheitszeile nur noch in den Prüfpunkten (redaktion.inc), nicht doppelt im Kopf. #}
   </header>
-  <div class="prose-doc px-6 py-4">
+  <div class="review-card-body">
     {% block body %}{% endblock %}
   </div>
-  <footer class="flex flex-wrap items-center gap-3 border-t border-line px-6 py-4 empty:hidden">
+  <footer class="review-card-foot empty:hidden">
     {% block actions %}{% endblock %}
   </footer>
 </article>
