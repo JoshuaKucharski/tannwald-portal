@@ -31,3 +31,8 @@
 /.phpunit.cache/
 node_modules/
 .DS_Store
+
+# Geheimnisse der lokalen Umgebung (API-Schluessel) — nie committen
+.ddev/.env
+.DS_Store
+web/sites/example.settings.local Kopie.php
