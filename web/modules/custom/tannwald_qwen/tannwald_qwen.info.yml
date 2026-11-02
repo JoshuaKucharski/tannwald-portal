@@ -1,0 +1,11 @@
+name: 'Tannwald Qwen (DashScope)'
+type: module
+description: 'Alibaba Cloud Model Studio (DashScope) as an OpenAI-compatible AI provider: Qwen chat and embeddings. Key and endpoint come from the environment.'
+package: Tannwald
+core_version_requirement: ^11
+configure: tannwald_qwen.settings_form
+dependencies:
+  - ai:ai
+  - key:key
+'interface translation project': tannwald_qwen
+'interface translation server pattern': modules/custom/tannwald_qwen/translations/%language.po

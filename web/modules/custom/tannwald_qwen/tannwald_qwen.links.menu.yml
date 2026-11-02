@@ -1,0 +1,5 @@
+tannwald_qwen.settings_menu:
+  title: 'DashScope (Qwen)'
+  description: 'Alibaba Cloud Model Studio: key and endpoint from the environment.'
+  route_name: tannwald_qwen.settings_form
+  parent: ai.admin_providers
