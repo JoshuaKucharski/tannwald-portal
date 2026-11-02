@@ -8,7 +8,7 @@
   .admin-table th { @apply whitespace-nowrap border-b border-line px-3 py-2 text-left text-sm font-medium text-muted; }
   .admin-table td { @apply border-b border-line-soft px-3 py-3 align-top; }
   .admin-table tr:last-child td { @apply border-b-0; }
-  .admin-table tbody tr:hover td { @apply bg-surface; }
+  @media (hover: hover) { .admin-table tbody tr:hover td { @apply bg-surface; } }
   .admin-table th.num, .admin-table td.num { @apply text-right tabular-nums; }
   .admin-table caption { @apply px-3 py-3 text-left text-sm font-medium text-muted; }
   .admin-stats .admin-table-wrap { @apply mt-0; }

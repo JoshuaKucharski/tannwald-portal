@@ -169,6 +169,8 @@
   :focus-visible, [data-state="focus"] { outline: var(--focus-ring-width) solid var(--color-accent); outline-offset: var(--focus-ring-offset); }
   h1, h2, h3, h4 { @apply font-semibold text-ink; text-wrap: balance; }
   ::placeholder { @apply text-muted; opacity: 1; }
+  /* 1.4: kein Browser-eigenes Lösch-Kreuz im Suchfeld (das Theme hat seinen eigenen Button). */
+  input[type="search"]::-webkit-search-cancel-button, input[type="search"]::-webkit-search-decoration { -webkit-appearance: none; appearance: none; }
   ::selection { @apply bg-private-bg text-ink; }
   /* Ersatz für Core system/base (im Theme abgeschaltet, tannwald.info.yml): visually-hidden, js-hide. */
   .visually-hidden { position: absolute !important; overflow: hidden; clip: rect(1px, 1px, 1px, 1px); width: 1px; height: 1px; word-wrap: normal; }

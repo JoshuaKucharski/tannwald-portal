@@ -185,7 +185,8 @@
       <label for="{{ input_id }}" class="field-label">{{ 'Your question'|t }}</label>
       <div class="chat-form-row">
         <textarea id="{{ input_id }}" class="chat-input" rows="2" maxlength="1000" x-model="input" x-ref="input" :disabled="disabled()" @keydown.enter="onEnter($event)" placeholder="{{ 'e.g. Which film thickness is approved?'|t }}"></textarea>
-        <button type="submit" class="btn btn-primary shrink-0" :disabled="disabled() || !input.trim()">{{ 'Ask the assistant'|t }}</button>
+        {# 1.4 (A): ein Primär je Seite — eingebettet (Maschinenseite) ist der Assistent der Primär, als Panel/Sheet neben „Suchen“ sekundär. #}
+        <button type="submit" class="btn {{ mode == 'embedded' ? 'btn-primary' : 'btn-secondary' }} shrink-0" :disabled="disabled() || !input.trim()">{{ 'Ask the assistant'|t }}</button>
       </div>
       <span class="chat-count" x-text="input.length + ' / 1000'"></span>
     </form>

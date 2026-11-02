@@ -55,7 +55,7 @@
   .redaktion-main th { @apply border-b border-line px-3 py-2 text-left text-sm font-medium text-muted; }
   .redaktion-main td { @apply border-b border-line-soft px-3 py-3 align-top; }
   .redaktion-main tr:last-child td { @apply border-b-0; }
-  .redaktion-main tbody tr:hover td { @apply bg-surface; }
+  @media (hover: hover) { .redaktion-main tbody tr:hover td { @apply bg-surface; } }
   .redaktion-main td.num, .redaktion-main th.num { @apply text-right tabular-nums; }
   .redaktion-main caption { @apply px-3 py-2 text-left text-sm font-medium text-muted; }
   .redaktion-main .view-empty { @apply flex flex-col items-start gap-2 rounded-card border border-dashed border-line px-4 py-8 md:px-6; }
