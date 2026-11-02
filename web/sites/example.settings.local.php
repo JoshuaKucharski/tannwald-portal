@@ -150,3 +150,11 @@ $settings['skip_permissions_hardening'] = TRUE;
  * the language or field module.
  */
 # $settings['config_exclude_modules'] = ['devel', 'stage_file_proxy'];
+
+/**
+ * myTannwald (4.2): Chat lokal wieder über Ollama statt DashScope.
+ *
+ * config/sync steht seit 4.2 auf provider_chat: dashscope (≈ 0.1 Rp je Frage, Schlüssel aus .ddev/.env). Wer lokal
+ * ohne Kosten mit qwen2.5:7b chatten will, kopiert diese Zeile in settings.local.php (nie committen):
+ */
+# $config['tannwald_assistant.settings']['provider_chat'] = 'ollama';

@@ -953,6 +953,10 @@ if (getenv('TANNWALD_DEPLOY') === '1') {
   $config['mailer_transport.mailer_transport.sendmail']['configuration']['host'] = '127.0.0.1';
   $config['mailer_transport.mailer_transport.sendmail']['configuration']['port'] = getenv('MAILPIT_SMTP_PORT') ?: '1025';
   $config['system.logging']['error_level'] = 'hide';
+  // Absender der Demo (4.2): SITE_MAIL aus der env-Datei statt admin@example.com aus config/sync.
+  if (getenv('SITE_MAIL')) {
+    $config['system.site']['mail'] = (string) getenv('SITE_MAIL');
+  }
 }
 
 // Automatically generated include for settings managed by ddev.
