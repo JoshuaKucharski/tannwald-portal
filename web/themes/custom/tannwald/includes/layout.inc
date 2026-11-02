@@ -253,12 +253,11 @@ function _tannwald_breadcrumb_prepare(array &$variables): void {
   $machines = ['text' => t('My machines'), 'url' => Url::fromUserInput('/meine-maschinen')->toString()];
   $bulletins = ['text' => t('Bulletins'), 'url' => Url::fromUserInput('/bulletins')->toString()];
 
-  if ($route === 'view.portal_maschinen.page_1') {
-    $variables['breadcrumb'] = [['text' => t('My machines'), 'url' => '']];
-    return;
-  }
-  if ($route === 'view.portal_bulletins.page_1') {
-    $variables['breadcrumb'] = [['text' => t('Bulletins'), 'url' => '']];
+  // 1.2: Wurzelseiten (Meine Maschinen, Bulletins) ohne Brotkrumen — der
+  // einzige Eintrag wäre der Seitentitel (Leitplanken v2 §11.1, kein Titel
+  // doppelt).
+  if (in_array($route, ['view.portal_maschinen.page_1', 'view.portal_bulletins.page_1'], TRUE)) {
+    $variables['breadcrumb'] = [];
     return;
   }
   $node = $routeMatch->getParameter('node');
