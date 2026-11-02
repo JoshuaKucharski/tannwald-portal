@@ -332,3 +332,66 @@ msgstr "Relevanz"
 
 msgid "Date"
 msgstr "Datum"
+
+# 3.1 Provider je Operation (AssistantSettingsForm)
+msgid "Ollama (local)"
+msgstr "Ollama (lokal)"
+
+msgid "DashScope (Qwen, API)"
+msgstr "DashScope (Qwen, API)"
+
+msgid "Provider status"
+msgstr "Status der Provider"
+
+msgid "Active for chat: @provider"
+msgstr "Aktiv für den Chat: @provider"
+
+msgid "Active for embeddings: @provider"
+msgstr "Aktiv für Embeddings: @provider"
+
+msgid "DashScope endpoint (DASHSCOPE_ENDPOINT_EU): @value"
+msgstr "DashScope-Endpoint (DASHSCOPE_ENDPOINT_EU): @value"
+
+msgid "DashScope API key (DASHSCOPE_API_KEY_EU): @value"
+msgstr "DashScope-API-Schlüssel (DASHSCOPE_API_KEY_EU): @value"
+
+msgctxt "tannwald_status"
+msgid "set"
+msgstr "gesetzt"
+
+msgctxt "tannwald_status"
+msgid "empty"
+msgstr "leer"
+
+msgid "Provider for chat"
+msgstr "Provider für den Chat"
+
+msgid "Provider for embeddings"
+msgstr "Provider für Embeddings"
+
+msgid "Changing the embedding provider or model requires <code>drush tannwald:reindex</code> and <code>drush tannwald:queue-run</code>: stored vectors belong to the old model, and search silently returns poor hits until then."
+msgstr "Ein Wechsel des Embedding-Providers oder -Modells verlangt <code>drush tannwald:reindex</code> und <code>drush tannwald:queue-run</code>: Die gespeicherten Vektoren gehören zum alten Modell, und die Suche liefert bis dahin ohne Fehlermeldung schlechte Treffer."
+
+msgid "Raw model name of the provider, e.g. qwen2.5:7b or qwen-plus."
+msgstr "Modellname beim Provider, z. B. qwen2.5:7b oder qwen-plus."
+
+msgid "A change requires a reindex (see above)."
+msgstr "Ein Wechsel verlangt einen Reindex (siehe oben)."
+
+msgid "Embedding dimensions"
+msgstr "Embedding-Dimensionen"
+
+msgid "Fixed by the chunk store."
+msgstr "Vom Chunk-Speicher vorgegeben."
+
+msgid "Chat tokens of this provider; embeddings are recorded without cost."
+msgstr "Chat-Tokens dieses Providers; Embeddings werden ohne Kosten erfasst."
+
+msgid "Unknown provider."
+msgstr "Unbekannter Provider."
+
+msgid "DashScope cannot be selected: the API key or the endpoint is empty (DASHSCOPE_API_KEY_EU, DASHSCOPE_ENDPOINT_EU)."
+msgstr "DashScope ist nicht wählbar: Der API-Schlüssel oder der Endpoint ist leer (DASHSCOPE_API_KEY_EU, DASHSCOPE_ENDPOINT_EU)."
+
+msgid "The embedding provider or model has changed. Run <code>drush tannwald:reindex</code> and <code>drush tannwald:queue-run</code>; until then search results are unreliable."
+msgstr "Der Embedding-Provider oder das Embedding-Modell wurde geändert. Führen Sie <code>drush tannwald:reindex</code> und <code>drush tannwald:queue-run</code> aus; bis dahin sind die Suchergebnisse unzuverlässig."

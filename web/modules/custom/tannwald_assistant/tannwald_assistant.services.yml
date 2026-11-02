@@ -58,9 +58,16 @@ services:
     class: Drupal\tannwald_assistant\Ticket\LocalTicketSink
   Drupal\tannwald_assistant\Ticket\TicketSinkInterface: '@tannwald_assistant.ticket_sink'
 
+  # 3.1: Provider und Modell je Operation (chat|embeddings), führend sind
+  # provider_chat/provider_embeddings in tannwald_assistant.settings.
+  tannwald_assistant.provider_resolver:
+    class: Drupal\tannwald_assistant\Provider\ProviderResolver
+    arguments: ['@config.factory', '@ai.provider']
+  Drupal\tannwald_assistant\Provider\ProviderResolver: '@tannwald_assistant.provider_resolver'
+
   tannwald_assistant.usage_tracker:
     class: Drupal\tannwald_assistant\Usage\UsageTracker
-    arguments: ['@tannwald_ingest.usage', '@config.factory', '@request_stack', '@cache_tags.invalidator']
+    arguments: ['@tannwald_ingest.usage', '@tannwald_assistant.provider_resolver', '@request_stack', '@cache_tags.invalidator']
     tags:
       - { name: event_subscriber }
 
@@ -100,7 +107,7 @@ services:
       - '@entity_type.manager'
       - '@account_switcher'
       - '@request_stack'
-      - '@config.factory'
+      - '@tannwald_assistant.provider_resolver'
       - '@datetime.time'
   Drupal\tannwald_assistant\Eval\EvalRunner: '@tannwald_assistant.eval_runner'
 
@@ -114,7 +121,7 @@ services:
       - '@tannwald_assistant.output_filter'
       - '@tannwald_assistant.language_detector'
       - '@tannwald_assistant.injection_heuristic'
-      - '@ai.provider'
+      - '@tannwald_assistant.provider_resolver'
       - '@tannwald_assistant.limit_check'
       - '@database'
       - '@config.factory'

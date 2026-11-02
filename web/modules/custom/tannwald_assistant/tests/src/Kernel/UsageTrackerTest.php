@@ -46,7 +46,7 @@ final class UsageTrackerTest extends AssistantKernelTestBase {
    * Eine Antwort → genau ein record() mit Modell, Tokens, Kontext, Kosten.
    */
   public function testExactlyOneRowPerAnswer(): void {
-    $this->config('tannwald_assistant.settings')->set('kosten_pro_1k_chf', 0.5)->save();
+    $this->config('tannwald_assistant.settings')->set('providers.ollama.kosten_pro_1k_chf', 0.5)->save();
     $this->dispatchingChat('Täglich trocken [1].');
     $this->usage->expects($this->once())->method('record')
       ->with('qwen2.5:7b', 'chat', 812, 64, 'assistent', 0.438);

@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Drupal\tannwald_assistant\Usage;
 
 use Drupal\Core\Cache\CacheTagsInvalidatorInterface;
-use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\ai\Event\PostGenerateResponseEvent;
 use Drupal\ai\OperationType\Chat\ChatOutput;
 use Drupal\tannwald_assistant\AnswerService;
 use Drupal\tannwald_assistant\Limit\LimitService;
+use Drupal\tannwald_assistant\Provider\ProviderResolver;
 use Drupal\tannwald_ingest\Usage\UsageRecorder;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -32,7 +32,7 @@ final class UsageTracker implements EventSubscriberInterface {
 
   public function __construct(
     private readonly UsageRecorder $usageRecorder,
-    private readonly ConfigFactoryInterface $configFactory,
+    private readonly ProviderResolver $providerResolver,
     private readonly RequestStack $requestStack,
     private readonly CacheTagsInvalidatorInterface $cacheTagsInvalidator,
   ) {}
@@ -56,7 +56,8 @@ final class UsageTracker implements EventSubscriberInterface {
       return;
     }
     $tokens = AnswerService::tokens($output);
-    $costPer1k = (float) ($this->configFactory->get('tannwald_assistant.settings')->get('kosten_pro_1k_chf') ?? 0);
+    // Kosten des antwortenden Providers (providers.<id>.kosten_pro_1k_chf).
+    $costPer1k = $this->providerResolver->costPer1k($event->getProviderId());
     $this->usageRecorder->record(
       $event->getModelId(),
       'chat',

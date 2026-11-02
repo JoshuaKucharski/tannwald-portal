@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Drupal\tannwald_assistant\Eval;
 
 use Drupal\Component\Datetime\TimeInterface;
-use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountSwitcherInterface;
 use Drupal\tannwald_assistant\AnswerService;
 use Drupal\tannwald_assistant\PromptBuilder;
+use Drupal\tannwald_assistant\Provider\ProviderResolver;
 use Drupal\tannwald_assistant\Result\AnswerResult;
 use Drupal\tannwald_assistant\Result\RetrievalResult;
 use Drupal\tannwald_assistant\Retriever;
@@ -36,7 +36,7 @@ final class EvalRunner {
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly AccountSwitcherInterface $accountSwitcher,
     private readonly RequestStack $requestStack,
-    private readonly ConfigFactoryInterface $configFactory,
+    private readonly ProviderResolver $providerResolver,
     private readonly TimeInterface $time,
   ) {}
 
@@ -58,7 +58,7 @@ final class EvalRunner {
   public function run(array $questions, bool $dry, ?string $as = NULL, string $setPath = ''): EvalReport {
     $sources = $this->sourceResolver->resolveAll($questions);
     $accounts = $this->accounts($questions, $as);
-    $settings = $this->configFactory->get('tannwald_assistant.settings');
+    $summary = $this->providerResolver->summary();
     $start = hrtime(TRUE);
     $request = $this->requestStack->getCurrentRequest();
     $previousKontext = $request->attributes->get(UsageTracker::KONTEXT_ATTRIBUTE);
@@ -87,9 +87,9 @@ final class EvalRunner {
     }
     return new EvalReport($rows, $dry, [
       'datum' => date('Y-m-d H:i', $this->time->getRequestTime()),
-      'provider' => (string) $settings->get('provider'),
-      'chat_model' => (string) $settings->get('chat_model'),
-      'embedding_model' => (string) $settings->get('embedding_model'),
+      'provider' => $summary['provider'],
+      'chat_model' => $summary['chat_model'],
+      'embedding_model' => $summary['embedding_model'],
       'set' => $setPath,
       'as' => $as,
       'dauer_s' => round((hrtime(TRUE) - $start) / 1e9, 1),

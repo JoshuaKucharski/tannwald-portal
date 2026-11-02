@@ -197,3 +197,35 @@ function tannwald_assistant_update_10005(): string {
   }
   return sprintf('frage_normalisiert filled for %d log rows.', count($rows));
 }
+
+/**
+ * Setzt Provider je Operation und Modelle/Kosten je Provider (3.1).
+ *
+ * Flach provider/chat_model/embedding_model/kosten_pro_1k_chf → provider_chat,
+ * provider_embeddings, providers.<id>.*; bestehende Werte bleiben beim
+ * bisherigen Provider, DashScope bekommt die Vorgaben aus config/install.
+ */
+function tannwald_assistant_update_10006(): string {
+  $config = \Drupal::configFactory()->getEditable('tannwald_assistant.settings');
+  if ($config->get('providers') !== NULL) {
+    return 'tannwald_assistant.settings already has providers.';
+  }
+  $install = (new FileStorage(__DIR__ . '/config/install'))->read('tannwald_assistant.settings');
+  $providers = $install['providers'];
+  $current = (string) ($config->get('provider') ?: 'ollama');
+  if (isset($providers[$current])) {
+    $providers[$current]['chat_model'] = (string) ($config->get('chat_model') ?: $providers[$current]['chat_model']);
+    $providers[$current]['embedding_model'] = (string) ($config->get('embedding_model') ?: $providers[$current]['embedding_model']);
+    $providers[$current]['kosten_pro_1k_chf'] = (float) ($config->get('kosten_pro_1k_chf') ?? 0.0);
+  }
+  $config
+    ->set('provider_chat', isset($providers[$current]) ? $current : 'ollama')
+    ->set('provider_embeddings', isset($providers[$current]) ? $current : 'ollama')
+    ->set('providers', $providers)
+    ->clear('provider')
+    ->clear('chat_model')
+    ->clear('embedding_model')
+    ->clear('kosten_pro_1k_chf')
+    ->save();
+  return sprintf('Providers per operation set (chat and embeddings: %s).', $config->get('provider_chat'));
+}
