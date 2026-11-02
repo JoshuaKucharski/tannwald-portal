@@ -134,6 +134,23 @@ final class ProviderResolverTest extends UnitTestCase {
   }
 
   /**
+   * Prozesslokaler Override (tannwald:eval --chat-provider/--chat-model).
+   */
+  public function testProcessOverride(): void {
+    $settings = self::SETTINGS;
+    $settings['provider_chat'] = 'ollama';
+    $resolver = $this->resolver($settings);
+    $resolver->overrideForProcess('chat', 'dashscope');
+    $this->assertSame(['dashscope', 'qwen-plus'], [$resolver->providerId('chat'), $resolver->model('chat')]);
+    $this->assertSame('ollama', $resolver->providerId('embeddings'));
+    $resolver->overrideForProcess('chat', 'dashscope', 'qwen3-max');
+    $this->assertSame('qwen3-max', $resolver->chat()->model);
+    $this->assertSame('qwen2.5:7b', $resolver->model('chat', 'ollama'), 'Override model only for the overridden provider.');
+    $this->expectException(\InvalidArgumentException::class);
+    $resolver->overrideForProcess('chat', 'openai');
+  }
+
+  /**
    * Unbekannter Provider, unbekannte Operation, fehlendes Modell.
    */
   public function testInvalidValuesThrow(): void {

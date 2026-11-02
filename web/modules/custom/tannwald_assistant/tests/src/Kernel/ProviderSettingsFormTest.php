@@ -102,4 +102,58 @@ final class ProviderSettingsFormTest extends AssistantKernelTestBase {
     $this->assertStringContainsString('tannwald:reindex', $warnings[0]);
   }
 
+  /**
+   * D11: DashScope nutzbar, aber ohne Embedding-Modell am Endpoint.
+   *
+   * Chat ist wählbar, Embeddings nicht; der Status zeigt Host und „set“.
+   */
+  public function testDashscopeEmbeddingsBlockedWithoutModel(): void {
+    $double = new class() {
+
+      /**
+       * Endpoint wie aus dem Override.
+       */
+      public function getConfiguredEndpoint(): string {
+        return 'https://ws-test.eu-central-1.example/compatible-mode/v1';
+      }
+
+      /**
+       * Schlüssel gesetzt.
+       */
+      public function hasKeyValue(): bool {
+        return TRUE;
+      }
+
+      /**
+       * Nutzbar.
+       */
+      public function isUsable(): bool {
+        return TRUE;
+      }
+
+      /**
+       * Wie der EU-Endpoint: Chat-Modelle, keine Embedding-Modelle.
+       */
+      public function getConfiguredModels(?string $operation = NULL): array {
+        return $operation === 'embeddings' ? [] : ['qwen-plus' => 'qwen-plus'];
+      }
+
+    };
+    $this->aiProvider->method('hasDefinition')->willReturn(TRUE);
+    $this->aiProvider->method('createInstance')->willReturn($double);
+
+    $form = $this->container->get('form_builder')->getForm(AssistantSettingsForm::class);
+    $items = array_map('strval', $form['provider_status']['#items']);
+    $this->assertSame('DashScope endpoint (DASHSCOPE_ENDPOINT_EU): ws-test.eu-central-1.example', $items[2]);
+    $this->assertSame('DashScope API key (DASHSCOPE_API_KEY_EU): set', $items[3]);
+
+    $state = $this->submit($this->values(['provider_chat' => 'dashscope', 'provider_embeddings' => 'dashscope']));
+    $this->assertSame(['provider_embeddings'], array_keys($state->getErrors()));
+    $this->assertStringContainsString('does not offer an embedding model', (string) $state->getErrors()['provider_embeddings']);
+
+    $state = $this->submit($this->values(['provider_chat' => 'dashscope']));
+    $this->assertSame([], $state->getErrors());
+    $this->assertSame('dashscope', $this->config('tannwald_assistant.settings')->get('provider_chat'));
+  }
+
 }

@@ -51,6 +51,13 @@ final class ProviderResolver {
    */
   public const DEFAULT_DIMENSIONS = 1024;
 
+  /**
+   * Prozesslokale Überschreibung je Operation, nie gespeichert.
+   *
+   * @var array<string, array{0: string, 1: string|null}>
+   */
+  private array $overrides = [];
+
   public function __construct(
     private readonly ConfigFactoryInterface $configFactory,
     private readonly PluginManagerInterface $aiProvider,
@@ -66,6 +73,9 @@ final class ProviderResolver {
    */
   public function providerId(string $operation): string {
     self::assertOperation($operation);
+    if (isset($this->overrides[$operation])) {
+      return $this->overrides[$operation][0];
+    }
     $settings = $this->settings();
     // Vor update 10006 (flache Settings): der eine Schlüssel provider.
     $id = (string) ($settings->get(self::SETTING_KEYS[$operation]) ?? $settings->get('provider') ?? '');
@@ -111,6 +121,10 @@ final class ProviderResolver {
     self::assertOperation($operation);
     $settings = $this->providerSettings($providerId);
     $model = $operation === 'chat' ? $settings['chat_model'] : $settings['embedding_model'];
+    [$overrideProvider, $overrideModel] = $this->overrides[$operation] ?? [NULL, NULL];
+    if ($overrideProvider === $providerId && $overrideModel !== NULL) {
+      $model = $overrideModel;
+    }
     if ($model === '') {
       throw new \UnexpectedValueException(sprintf('No %s model configured for provider %s.', $operation, $providerId));
     }
@@ -145,6 +159,27 @@ final class ProviderResolver {
       $provider->setConfiguration(['dimensions' => $settings['embedding_dimensions']]);
     }
     return new ResolvedProvider($providerId, $operation, $model, $provider, $settings['embedding_dimensions'], $settings['kosten_pro_1k_chf']);
+  }
+
+  /**
+   * Überschreibt Provider (und Modell) einer Operation nur für diesen Prozess.
+   *
+   * Für Eval-Läufe gegen einen anderen Provider, ohne die geteilte
+   * Konfiguration zu ändern (`tannwald:eval --chat-provider`). Nie gespeichert.
+   *
+   * @param string $operation
+   *   Die Operation: chat oder embeddings.
+   * @param string $providerId
+   *   Provider aus PROVIDERS.
+   * @param string|null $model
+   *   Rohname des Modells; NULL = Modell aus providers.<id>.
+   */
+  public function overrideForProcess(string $operation, string $providerId, ?string $model = NULL): void {
+    self::assertOperation($operation);
+    if (!in_array($providerId, self::PROVIDERS, TRUE)) {
+      throw new \InvalidArgumentException(sprintf('Unknown provider "%s" (allowed: %s).', $providerId, implode('|', self::PROVIDERS)));
+    }
+    $this->overrides[$operation] = [$providerId, $model !== NULL && $model !== '' ? $model : NULL];
   }
 
   /**

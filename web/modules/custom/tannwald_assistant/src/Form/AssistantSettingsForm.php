@@ -129,7 +129,9 @@ final class AssistantSettingsForm extends ConfigFormBase {
       $form['providers'][$id]['kosten_pro_1k_chf'] = [
         '#type' => 'number',
         '#title' => $this->t('Cost per 1,000 tokens (CHF)'),
-        '#description' => $this->t('Chat tokens of this provider; embeddings are recorded without cost.'),
+        '#description' => $id === 'dashscope'
+          ? $this->t('Chat tokens of this provider; embeddings are recorded without cost. Placeholder 0.0008: Alibaba Model Studio list price for qwen-plus (Germany/Frankfurt, EU, read 02.11.2026: input USD 0.40, output USD 1.20 per million tokens), weighted input to output 1:3, at 0.8196 CHF per USD (ECB, 02.11.2026). With the measured token mix (about 40:1) the actual cost is about 2.3 times lower. The operator confirms the value.')
+          : $this->t('Chat tokens of this provider; embeddings are recorded without cost.'),
         '#min' => 0,
         '#step' => 0.0001,
         '#default_value' => $values['kosten_pro_1k_chf'],
@@ -191,6 +193,10 @@ final class AssistantSettingsForm extends ConfigFormBase {
       }
       elseif ($provider === 'dashscope' && !$status['usable']) {
         $form_state->setErrorByName($key, $this->t('DashScope cannot be selected: the API key or the endpoint is empty (DASHSCOPE_API_KEY_EU, DASHSCOPE_ENDPOINT_EU).'));
+      }
+      elseif ($provider === 'dashscope' && $key === 'provider_embeddings' && $this->dashscopeEmbeddingModels() === []) {
+        // D11: der EU-Endpoint meldet kein Embedding-Modell (GET /models).
+        $form_state->setErrorByName($key, $this->t('DashScope cannot be selected for embeddings: the endpoint does not offer an embedding model (GET /models).'));
       }
     }
     foreach (ProviderResolver::PROVIDERS as $id) {
@@ -270,6 +276,21 @@ final class AssistantSettingsForm extends ConfigFormBase {
       // Plugin nicht ladbar: nicht nutzbar.
     }
     return $status;
+  }
+
+  /**
+   * Embedding-Modelle, die der DashScope-Endpoint meldet (GET /models, Cache).
+   *
+   * @return string[]
+   *   Modell-IDs; leer ohne Plugin oder ohne Embedding-Modell.
+   */
+  private function dashscopeEmbeddingModels(): array {
+    try {
+      return array_keys((array) $this->aiProvider->createInstance('dashscope')->getConfiguredModels('embeddings'));
+    }
+    catch (\Throwable) {
+      return [];
+    }
   }
 
   /**

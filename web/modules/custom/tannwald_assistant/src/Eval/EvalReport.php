@@ -130,6 +130,18 @@ final class EvalReport {
   }
 
   /**
+   * Dauer je Frage in ms, 95. Perzentil (nächstgelegener Rang).
+   */
+  public function p95Ms(): int {
+    $values = array_map('intval', array_column($this->rows, 'dauer_ms'));
+    if ($values === []) {
+      return 0;
+    }
+    sort($values);
+    return $values[(int) ceil(0.95 * count($values)) - 1];
+  }
+
+  /**
    * Summe der Tokens {prompt, completion}.
    *
    * @return array{prompt: int, completion: int}
@@ -168,6 +180,7 @@ final class EvalReport {
     }
     $tokens = $this->tokens();
     $rows[] = ['Median-Dauer', $this->medianMs() . ' ms', 'alle Fragen', '–', ''];
+    $rows[] = ['p95-Dauer', $this->p95Ms() . ' ms', 'alle Fragen', '–', ''];
     $tokenText = $this->dry ? '–' : sprintf('prompt %d / completion %d', $tokens['prompt'], $tokens['completion']);
     $rows[] = ['Tokens', $tokenText, 'LLM-Antworten', '–', ''];
     $rows[] = ['Fehler (Provider)', $this->dry ? '–' : (string) $this->errors(), 'LLM-Antworten', '0', ''];
