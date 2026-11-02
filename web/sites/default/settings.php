@@ -909,6 +909,11 @@ $config['ai_provider_ollama.settings']['host_name'] = ($tannwald_ollama['scheme'
 $config['ai_provider_ollama.settings']['port'] = (int) ($tannwald_ollama['port'] ?? 11434);
 unset($tannwald_ollama);
 
+// DashScope (Qwen über API, 3.1): Endpoint aus DASHSCOPE_ENDPOINT_EU; der Schlüssel kommt über die Key-Entity
+// dashscope_api_key (Provider env, DASHSCOPE_API_KEY_EU). Nie Werte hier oder in config/sync. Leer → Provider
+// nicht nutzbar (Formular und Assistent melden es). DDEV: .ddev/.env; Server: .env neben compose.yml.
+$config['tannwald_qwen.settings']['endpoint'] = rtrim((string) getenv('DASHSCOPE_ENDPOINT_EU'), '/');
+
 // Automatically generated include for settings managed by ddev.
 if (getenv('IS_DDEV_PROJECT') == 'true' && file_exists(__DIR__ . '/settings.ddev.php')) {
   include __DIR__ . '/settings.ddev.php';
