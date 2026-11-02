@@ -1,7 +1,7 @@
 # myTannwald — Cron (deploy/systemd, 4.1): drush cron, danach die Queues tannwald_embed und tannwald_summarize.
 # Ausgelöst von tannwald-cron.timer alle 5 Minuten; läuft nie doppelt (oneshot). Ist Drupal nicht installiert,
 # überspringt ExecCondition den Lauf ohne Fehler. bootstrap.sh legt die Datei nach /etc/systemd/system/.
-# Log: journalctl -u tannwald-cron
+# Log: /var/log/mytannwald/cron.log (und journalctl -u tannwald-cron für Start/Ende)
 [Unit]
 Description=myTannwald: drush cron und Queues
 After=network-online.target mysql.service ollama.service mailpit.service
@@ -21,5 +21,8 @@ ExecCondition=/bin/sh -c 'vendor/bin/drush status --field=bootstrap 2>/dev/null 
 ExecStart=@APP@/vendor/bin/drush cron
 ExecStart=-@APP@/vendor/bin/drush queue:run tannwald_embed --time-limit=120
 ExecStart=-@APP@/vendor/bin/drush queue:run tannwald_summarize --time-limit=120
+# Log (4.3): /var/log/mytannwald/cron.log, gedreht von /etc/logrotate.d/mytannwald.
+StandardOutput=append:@APP_LOG_DIR@/cron.log
+StandardError=append:@APP_LOG_DIR@/cron.log
 TimeoutStartSec=600
 Nice=10

@@ -1,0 +1,29 @@
+# myTannwald — rsync-Excludes für tannwald-run.sh --deploy (deploy/remote.sh, 4.2). Übertragen wird ein Export von
+# origin/dev (git archive); diese Muster schützen zusätzlich, was nur auf dem Server lebt: rsync --delete löscht
+# ausgeschlossene Pfade dort nicht (kein --delete-excluded). Prüfstand-Fall 23: .env, vendor/, files/ überleben.
+# Werkzeuge und lokale Umgebung
+/.git/
+/.ddev/
+/.github/
+/.phpunit.cache/
+node_modules/
+.DS_Store
+# Von Composer auf dem Server gebaut (composer install --no-dev in deploy.sh)
+/vendor/
+/web/core/
+/web/modules/contrib/
+/web/themes/contrib/
+/web/profiles/contrib/
+/web/libraries/
+/recipes/
+/drush/Commands/contrib/
+# Site-Dateien, lokale Einstellungen, Geheimnisse
+/web/sites/default/files/
+/web/sites/default/settings.local.php
+/web/sites/default/settings.ddev.php
+/web/sites/simpletest/
+/private/
+.env
+/deploy/.env
+# Berichte gehören nicht auf den Server
+/docs/reports/

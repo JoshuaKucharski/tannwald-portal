@@ -91,8 +91,8 @@ dbpw=$(openssl rand -hex 24)
     echo "DRUPAL_HASH_SALT=$(openssl rand -hex 32)"; echo "TRUSTED_HOST_PATTERN='^localhost\$'"
     echo "DASHSCOPE_API_KEY_EU="; echo "DASHSCOPE_ENDPOINT_EU="; echo "OLLAMA_HOST=http://127.0.0.1:11434"
     # macOS-crypt kennt $6$ nicht — die Probe nimmt apr1 (nginx eigen); der Server nimmt openssl passwd -6.
-    echo "BASIC_AUTH_USER=probe"; echo "BASIC_AUTH_HASH='$(openssl passwd -apr1 -stdin < "$BASE/secret/basic")'"
-    echo "SITE_AUTH=off"; echo "ADMIN_PASSWORD=$(cat "$BASE/secret/admin")"
+    echo "GUEST_USER=gast"; echo "GUEST_PASSWORD=$(cat "$BASE/secret/basic")"; echo "SITE_MAIL=noreply@mytannwald.getleaven.com"
+    echo "SITE_AUTH=on"; echo "ADMIN_PASSWORD=$(cat "$BASE/secret/admin")"
 } > "$TW_ENV_FILE"
 umask 022
 docker run -d --name "$NAME" --label tannwald-prod-probe=1 -p "127.0.0.1:$DB_PORT:3306" --env-file "$BASE/secret/mysql.env" \
@@ -173,14 +173,21 @@ ok "php-fpm -t grün (Pool mytannwald), nginx -t grün (Fassungen http und tls),
 
 step "deploy.sh — erster Lauf (TW_RUN_USER=-: aktueller Nutzer statt tannwald, kein systemd)"
 t=$(date +%s)
-TW_RUN_USER=- bash "$TW_APP/deploy/deploy.sh" 2>&1 | tee "$BASE/deploy1.log" | sed 's/^/   | /'
-[ "${PIPESTATUS[0]}" = 0 ] || die "deploy.sh (1. Lauf) rot."
+TW_RUN_USER=- bash "$TW_APP/deploy/deploy.sh" 2>&1 | tee "$BASE/deploy1.log" | sed 's/^/   | /' \
+    || die "deploy.sh (1. Lauf) rot."
 RUN1=$(( $(date +%s) - t )); ok "erster Lauf in $RUN1 s"
 
 drush() { (cd "$TW_APP" && env TANNWALD_DEPLOY=1 PRIVATE_PATH="$TW_PRIVATE" PHP_INI_SCAN_DIR=":$TW_CLI_INI_DIR" PATH="$TW_STATE_DIR/bin:$PATH" bash -c 'set -a; . "$0"; set +a; exec vendor/bin/drush "$@"' "$TW_ENV_FILE" "$@"); }
 
 step "Proben (Login, Maschinenliste, Bild, Sperren, admin, Mail, Mailpit, Cron, FULLTEXT)"
-c() { curl -sk --max-time 30 "$@"; }
+# Besucher-Passwort (SITE_AUTH=on) über netrc; n() ohne Passwort.
+printf 'machine localhost login gast password %s\nmachine mail.localhost login gast password %s\n' "$(cat "$BASE/secret/basic")" "$(cat "$BASE/secret/basic")" > "$BASE/secret/netrc"; chmod 600 "$BASE/secret/netrc"
+c() { curl -sk --max-time 30 --netrc-file "$BASE/secret/netrc" "$@"; }
+n() { curl -sk --max-time 30 "$@"; }
+code=$(n -o /dev/null -w '%{http_code}' "$URL/user/login"); [ "$code" = 401 ] || die "Login-Seite ohne Besucher-Passwort: HTTP $code statt 401."
+code=$(n -o "$BASE/robots.txt" -w '%{http_code}' "$URL/robots.txt"); grep -q "Disallow: /" "$BASE/robots.txt" || die "robots.txt ohne Disallow."
+[ "$(n -o /dev/null -w '%{http_code}' "$URL/health")" = 200 ] || die "/health nicht 200."
+ok "ohne Besucher-Passwort: /user/login 401, /health 200, /robots.txt „Disallow: /“; X-Robots-Tag: $(n -o /dev/null -D - "$URL/health" | tr -d '\r' | grep -i '^x-robots-tag' | cut -d' ' -f2-)"
 form_id_of() { grep -o 'name="form_build_id" value="[^"]*"' | head -n 1 | sed 's/.*value="//; s/"$//'; }
 jar="$BASE/kunde.jar"
 fb=$(c -c "$jar" "$URL/user/login" | form_id_of)
@@ -224,10 +231,10 @@ sleep 1
 mails=$(ls "$BASE/mail"/*.eml 2>/dev/null | wc -l | tr -d ' ')
 [ "$mails" -ge 1 ] || die "keine Mail über sendmail_path angekommen."
 ok "Passwort-Mail kunde-a über php_mail → sendmail_path: $(cat "$BASE"/mail/*.args | head -n 1) ($mails Mail)"
-code1=$(c -o /dev/null -w '%{http_code}' --resolve "mail.localhost:$HTTPS_PORT:127.0.0.1" "https://mail.localhost:$HTTPS_PORT/")
-code2=$(c -o /dev/null -w '%{http_code}' --resolve "mail.localhost:$HTTPS_PORT:127.0.0.1" -u "probe:$(cat "$BASE/secret/basic")" "https://mail.localhost:$HTTPS_PORT/")
+code1=$(n -o /dev/null -w '%{http_code}' --resolve "mail.localhost:$HTTPS_PORT:127.0.0.1" "https://mail.localhost:$HTTPS_PORT/")
+code2=$(c -o /dev/null -w '%{http_code}' --resolve "mail.localhost:$HTTPS_PORT:127.0.0.1" "https://mail.localhost:$HTTPS_PORT/")
 [ "$code1" = 401 ] && [ "$code2" = 200 ] || die "Mailpit: ohne $code1 / mit $code2 (erwartet 401/200)."
-ok "mail.localhost: 401 ohne, 200 mit Basic-Auth"
+ok "mail.localhost: 401 ohne, 200 mit Besucher-Passwort (gleiches Paar wie die Site)"
 cron_t=$(date +%s)
 grep -E '^(ExecCondition|ExecStart)=' "$BASE/rendered/tannwald-cron.service" | while IFS= read -r line; do
     cmd=${line#*=}; cmd=${cmd#-}
@@ -239,11 +246,20 @@ ok "Cron-Unit-Zeilen in $(( $(date +%s) - cron_t )) s; system.cron_last $(drush 
 ft=$(drush sql:query "SELECT COUNT(*) FROM information_schema.STATISTICS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='tannwald_chunk' AND INDEX_TYPE='FULLTEXT'" 2>/dev/null | tr -d '[:space:]')
 hits=$(drush php:eval '$k = \Drupal::database()->query("SELECT access_keys FROM {tannwald_chunk} LIMIT 1")->fetchField(); $keys = json_decode($k, TRUE) ?: array_filter(preg_split("/[\s,]+/", (string) $k)); echo count(\Drupal::service("tannwald_ingest.chunk_store")->keyword("Siegeltemperatur", $keys, 5));' 2>&1 | tail -n 1)
 ok "FULLTEXT auf MySQL 8.0: $ft Index-Spalten in tannwald_chunk (ALTER TABLE aus hook_install), keyword(\"Siegeltemperatur\") → $hits Treffer"
+# Backup (deploy/backup.sh) gegen den MySQL-8-Container: mysqldump über eine Hülle (root-Passwort bleibt im Container).
+printf '#!/bin/sh\nexec docker exec -i %s sh -c '"'"'exec mysqldump -uroot -p"$MYSQL_ROOT_PASSWORD" "$@" 2>/dev/null'"'"' _ "$@"\n' "$NAME" > "$BASE/bin/mysqldump-probe"
+chmod 755 "$BASE/bin/mysqldump-probe"
+bline=$(APP="$TW_APP" PRIVATE="$TW_PRIVATE" ENV_FILE="$TW_ENV_FILE" BACKUP_DIR="$BASE/backups" TW_MYSQLDUMP="$BASE/bin/mysqldump-probe" \
+    bash "$TW_APP/deploy/backup.sh") || die "backup.sh rot."
+gzip -t "$BASE"/backups/db-*.sql.gz || die "Backup-Dump defekt."
+# grep -c liest bis zum Ende (grep -q bräche gzip mit SIGPIPE ab — unter pipefail rot).
+[ "$(gzip -dc "$BASE"/backups/db-*.sql.gz | grep -c 'CREATE TABLE `tannwald_chunk`')" = 1 ] || die "Backup-Dump ohne tannwald_chunk."
+ok "backup.sh: ${bline#* Backup }"
 
 step "deploy.sh — zweiter Lauf (idempotent)"
 t=$(date +%s)
-TW_RUN_USER=- bash "$TW_APP/deploy/deploy.sh" 2>&1 | tee "$BASE/deploy2.log" | sed 's/^/   | /'
-[ "${PIPESTATUS[0]}" = 0 ] || die "deploy.sh (2. Lauf) rot."
+TW_RUN_USER=- bash "$TW_APP/deploy/deploy.sh" 2>&1 | tee "$BASE/deploy2.log" | sed 's/^/   | /' \
+    || die "deploy.sh (2. Lauf) rot."
 RUN2=$(( $(date +%s) - t ))
 grep -q 'nichts zu tun' "$BASE/deploy2.log" || die "zweiter Lauf nicht „nichts zu tun“."
 ok "zweiter Lauf in $RUN2 s, „nichts zu tun“"

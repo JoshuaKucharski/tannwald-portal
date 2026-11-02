@@ -42,7 +42,7 @@ env_get() {
 }
 
 # Prüft die Pflichtnamen; meldet fehlende/Platzhalter-Namen (nie Werte). Rückgabe 1, wenn etwas fehlt.
-REQUIRED_VARS="DOMAIN DB_NAME DB_USER DB_PASSWORD DRUPAL_HASH_SALT TRUSTED_HOST_PATTERN BASIC_AUTH_USER BASIC_AUTH_HASH SITE_AUTH ADMIN_PASSWORD"
+REQUIRED_VARS="DOMAIN DB_NAME DB_USER DB_PASSWORD DRUPAL_HASH_SALT TRUSTED_HOST_PATTERN GUEST_USER GUEST_PASSWORD SITE_AUTH ADMIN_PASSWORD"
 env_check() {
     local name v bad=""
     for name in $REQUIRED_VARS; do
@@ -56,10 +56,13 @@ env_check() {
     for name in DB_NAME DB_USER; do
         v=$(env_get "$name"); case "$v" in *[!A-Za-z0-9_]*) say "   ${name}: nur Buchstaben, Ziffern, _"; return 1 ;; esac
     done
+    v=$(env_get GUEST_USER); case "$v" in *[!A-Za-z0-9_.-]*) say "   GUEST_USER: nur Buchstaben, Ziffern, _ . -"; return 1 ;; esac
+    v=$(env_get GUEST_PASSWORD); case "$v" in *[[:space:]]*|*\"*|*\'*) say "   GUEST_PASSWORD: ohne Leerzeichen und Anführungszeichen"; return 1 ;; esac
+    v=$(env_get SITE_MAIL); case "$v" in ''|*?@?*.*) ;; *) say "   SITE_MAIL: keine Mail-Adresse"; return 1 ;; esac
     v=$(env_get DB_PASSWORD)
     case "$v" in *[!A-Za-z0-9_.,:@%+=-]*) say "   DB_PASSWORD: keine Anführungszeichen, \\, \$ oder Leerzeichen"; return 1 ;; esac
     # Werte, die in den Pool (php-fpm-INI, "…") gehen: kein " und kein \${.
-    for name in DB_HOST DB_PORT DRUPAL_HASH_SALT TRUSTED_HOST_PATTERN OLLAMA_HOST DASHSCOPE_API_KEY_EU DASHSCOPE_ENDPOINT_EU; do
+    for name in DB_HOST DB_PORT DRUPAL_HASH_SALT TRUSTED_HOST_PATTERN OLLAMA_HOST DASHSCOPE_API_KEY_EU DASHSCOPE_ENDPOINT_EU SITE_MAIL; do
         v=$(env_get "$name")
         case "$v" in *\"*|*'${'*) say "   ${name}: kein \" und kein \${ (php-fpm-Pool)"; return 1 ;; esac
     done

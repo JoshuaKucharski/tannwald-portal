@@ -1,0 +1,11 @@
+# myTannwald — Logs unter @APP_LOG_DIR@ (cron.log, backup.log) wöchentlich drehen, 4 Wochen (deploy/logrotate, 4.3).
+# bootstrap.sh legt die Datei nach /etc/logrotate.d/mytannwald.
+@APP_LOG_DIR@/*.log {
+    weekly
+    rotate 4
+    compress
+    delaycompress
+    missingok
+    notifempty
+    copytruncate
+}

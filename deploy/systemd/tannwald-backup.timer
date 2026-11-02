@@ -1,0 +1,12 @@
+# myTannwald — Backup jede Nacht um 03:30 (deploy/systemd, 4.3); Persistent holt einen verpassten Lauf nach dem
+# Start nach. deploy.sh schaltet den Timer nach dem ersten erfolgreichen Lauf ein.
+[Unit]
+Description=myTannwald: Backup um 03:30
+
+[Timer]
+OnCalendar=*-*-* 03:30:00
+Persistent=true
+Unit=tannwald-backup.service
+
+[Install]
+WantedBy=timers.target

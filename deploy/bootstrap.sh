@@ -6,9 +6,10 @@
 # MySQL-root-Passwort (root über den Socket). /usr/bin/php bleibt 8.3: verschiebt die Installation von php8.4-cli
 # die Alternative, stellt das Skript genau den vorherigen Zielpfad wieder her (update-alternatives --set).
 # Schritte: 1 Vorbedingungen · 2 Nutzer und Ordner · 3 env-Datei · 4 PHP 8.4 · 5 Pool · 6 MySQL · 7 Mailpit ·
-#   8 Ollama + bge-m3 · 9 Cron-Units · 10 nginx (mit --tls zusätzlich certbot certonly, Staging zuerst)
+#   8 Ollama + bge-m3 · 9 Cron-/Backup-Units, Logs · 10 nginx (mit --tls: DNS-Prüfung, certbot --dry-run gegen die
+#   Test-CA, dann certonly echt)
 # --dry       druckt jeden Schritt, ändert nichts (fehlt die env-Datei, rechnet er mit deploy/.env.example)
-# --tls       Zertifikat für DOMAIN und mail.DOMAIN holen (CERT_STAGING=on → Staging; off → echtes, ersetzt Staging)
+# --tls       Zertifikat für DOMAIN und mail.DOMAIN (Test-CA zuerst; CERT_STAGING=on → nur Test-Zertifikat)
 # --render=D  schreibt nur die fertigen Dateien nach D (Pool und .htpasswd enthalten Werte — D danach löschen)
 # Konfiguration wird erst nach `php-fpm8.4 -t` bzw. `nginx -t` aktiv (reload, nie restart); ein roter Test stellt
 # die vorherige Datei wieder her. Ende: „FERTIG — Server vorbereitet …“; Abbruch: „ABBRUCH (…)“, Exit 1.
@@ -48,6 +49,8 @@ CLI_INI_DIR="$ETC/mytannwald/php"
 NGINX_DIR="$ETC/nginx"
 LE="${TW_LE:-$ETC/letsencrypt}"
 LOG_DIR="${TW_LOG_DIR:-/var/log/nginx}"
+APP_LOG_DIR="${TW_APP_LOG_DIR:-/var/log/mytannwald}"
+BACKUP_DIR="${TW_BACKUP_DIR:-/var/backups/mytannwald}"
 UNIT_DIR="$ETC/systemd/system"
 MAILPIT_BIN="${TW_MAILPIT_BIN:-/usr/local/bin/mailpit}"
 OLLAMA="${TW_OLLAMA:-ollama}"
@@ -114,7 +117,7 @@ render_all() {
     export R_OPEN_BASEDIR="${TW_OPEN_BASEDIR:-$APP:$PRIVATE:/tmp}"
     export R_SENDMAIL="$MAILPIT_BIN sendmail -t --smtp-addr $MAILPIT_SMTP"
     for k in DB_HOST DB_PORT DB_NAME DB_USER DB_PASSWORD DRUPAL_HASH_SALT TRUSTED_HOST_PATTERN OLLAMA_HOST \
-             DASHSCOPE_API_KEY_EU DASHSCOPE_ENDPOINT_EU; do
+             DASHSCOPE_API_KEY_EU DASHSCOPE_ENDPOINT_EU SITE_MAIL; do
         v=$(env_get "$k")
         case "$k" in DB_HOST) v=${v:-127.0.0.1} ;; DB_PORT) v=${v:-3306} ;; OLLAMA_HOST) v=${v:-http://127.0.0.1:11434} ;; esac
         [ -n "$v" ] || continue
@@ -127,7 +130,7 @@ render_all() {
     export R_SNIPPET="$NGINX_DIR/snippets/mytannwald-drupal.conf" R_HTPASSWD="$NGINX_DIR/mytannwald.htpasswd"
     export R_LISTEN_HTTP="$LISTEN_HTTP" R_LISTEN_HTTPS="$LISTEN_HTTPS"
     if [ "$(env_get SITE_AUTH)" = on ]; then
-        export R_SITE_AUTH="auth_basic \"myTannwald\";
+        export R_SITE_AUTH="auth_basic \"myTannwald Demo\";
     auth_basic_user_file $NGINX_DIR/mytannwald.htpasswd;"
     else
         export R_SITE_AUTH="# SITE_AUTH=off (D9): keine Basic-Auth vor der Site"
@@ -139,11 +142,27 @@ render_all() {
     render "$DEPLOY_DIR/nginx/mytannwald-drupal.conf" "$out/mytannwald-drupal.conf"
     render "$DEPLOY_DIR/nginx/mytannwald-http.conf" "$out/vhost-http.conf"
     render "$DEPLOY_DIR/nginx/mytannwald.getleaven.com.conf" "$out/vhost-tls.conf"
-    for k in tannwald-cron.service tannwald-cron.timer mailpit.service ollama.service; do
+    export R_APP_LOG_DIR="$APP_LOG_DIR" R_BACKUP_DIR="$BACKUP_DIR"
+    for k in tannwald-cron.service tannwald-cron.timer tannwald-backup.service tannwald-backup.timer mailpit.service ollama.service; do
         render "$DEPLOY_DIR/systemd/$k" "$out/$k"
     done
-    printf '%s:%s\n' "$(env_get BASIC_AUTH_USER)" "$(env_get BASIC_AUTH_HASH)" > "$out/mytannwald.htpasswd"
+    render "$DEPLOY_DIR/logrotate/mytannwald" "$out/logrotate-mytannwald"
+    htpasswd_line > "$out/mytannwald.htpasswd"
     chmod 600 "$out/mytannwald.conf" "$out/mytannwald.htpasswd"
+}
+
+# .htpasswd aus GUEST_USER/GUEST_PASSWORD (apr1, Passwort über stdin). Stimmt das Passwort mit dem vorhandenen Hash
+# überein, bleibt die Zeile gleich (gleiches Salz) — sonst würde jeder Lauf nginx neu laden.
+htpasswd_line() {
+    local user pw cur salt
+    user=$(env_get GUEST_USER); pw=$(env_get GUEST_PASSWORD)
+    cur=$(sed -n "s/^$user://p" "$NGINX_DIR/mytannwald.htpasswd" 2>/dev/null | head -n 1 || true)
+    salt=""; case "$cur" in '$apr1$'*) salt=$(printf '%s' "$cur" | cut -d'$' -f3) ;; esac
+    if [ -n "$salt" ] && [ "$(printf '%s' "$pw" | openssl passwd -apr1 -salt "$salt" -stdin)" = "$cur" ]; then
+        printf '%s:%s\n' "$user" "$cur"
+    else
+        printf '%s:%s\n' "$user" "$(printf '%s' "$pw" | openssl passwd -apr1 -stdin)"
+    fi
 }
 
 pkg_installed() {
@@ -326,9 +345,16 @@ else
     else OLLAMA_HOST=127.0.0.1:11434 "$OLLAMA" pull bge-m3 >/dev/null && ok "bge-m3 gezogen (≈ 1.2 GB)"; fi
 fi
 
-step "Cron-Units (Timer schaltet deploy.sh ein)"
-install_file "$TMPD/tannwald-cron.service" "$UNIT_DIR/tannwald-cron.service" 644
-install_file "$TMPD/tannwald-cron.timer" "$UNIT_DIR/tannwald-cron.timer" 644
+step "Cron- und Backup-Units, Logs (Timer schaltet deploy.sh ein)"
+for d in "$APP_LOG_DIR" "$BACKUP_DIR"; do
+    if [ -d "$d" ]; then ok "$d vorhanden"; else run mkdir -p "$d"; fi
+done
+run chown "$RUN_USER:$RUN_USER" "$APP_LOG_DIR"
+run chmod 700 "$BACKUP_DIR"
+for k in tannwald-cron.service tannwald-cron.timer tannwald-backup.service tannwald-backup.timer; do
+    install_file "$TMPD/$k" "$UNIT_DIR/$k" 644
+done
+install_file "$TMPD/logrotate-mytannwald" "$ETC/logrotate.d/mytannwald" 644
 if [ "$CHANGED" = 1 ]; then svc daemon-reload; [ "$DRY" = 1 ] || commit; fi
 CHANGED=0
 
@@ -352,17 +378,33 @@ cert="$LE/live/$DOMAIN/fullchain.pem"
 if [ -f "$cert" ]; then nginx_apply tls; else nginx_apply http; note "noch kein Zertifikat — Fassung http (für certbot); weiter mit --tls"; fi
 
 if [ "$TLS" = 1 ]; then
-    need=""; extra=""
-    if [ ! -f "$cert" ]; then need="neu"
-    elif [ "$CERT_STAGING" = off ] && grep -q 'acme-staging' "$LE/renewal/$DOMAIN.conf" 2>/dev/null; then need="Staging → Produktion"; extra="--force-renewal"; fi
-    if [ -z "$need" ]; then ok "Zertifikat vorhanden ($( grep -q 'acme-staging' "$LE/renewal/$DOMAIN.conf" 2>/dev/null && echo Staging || echo Produktion))"
+    want=Produktion; [ "$CERT_STAGING" = on ] && want=Staging
+    have=""
+    if [ -f "$cert" ]; then grep -q 'acme-staging' "$LE/renewal/$DOMAIN.conf" 2>/dev/null && have=Staging || have=Produktion; fi
+    if [ "$have" = "$want" ] || [ "$have" = Produktion ]; then ok "Zertifikat vorhanden ($have)"
     else
-        for h in "$DOMAIN" "mail.$DOMAIN"; do say "   DNS $h → $(getent ahostsv4 "$h" 2>/dev/null | awk 'NR==1{print $1}')"; done
-        staging=""; [ "$CERT_STAGING" = on ] && staging="--test-cert"
-        run certbot certonly --nginx --non-interactive --agree-tos --register-unsafely-without-email $staging $extra \
-            -d "$DOMAIN" -d "mail.$DOMAIN" --deploy-hook "systemctl reload nginx" \
-            || die "certbot rot ($need) — DNS für $DOMAIN und mail.$DOMAIN auf diese Maschine? Fassung http bleibt aktiv."
-        ok "Zertifikat geholt ($need, $( [ "$CERT_STAGING" = on ] && echo Staging || echo Produktion))"
+        # Beide Namen müssen auf eine Adresse dieser Maschine zeigen, sonst scheitert die Challenge (Rate-Limit schonen).
+        mine=" $(hostname -I 2>/dev/null || true) "
+        for h in "$DOMAIN" "mail.$DOMAIN"; do
+            ip=$(getent ahostsv4 "$h" 2>/dev/null | awk 'NR==1{print $1}' || true)
+            say "   DNS $h → ${ip:-keine Adresse}"
+            [ "$DRY" = 1 ] && continue
+            case "$mine" in *" ${ip:-none} "*) ;; *)
+                die "A-Record für $h zeigt nicht auf diese Maschine (${ip:-fehlt}) — Betreiber setzt ihn; die Fassung http bleibt aktiv." ;;
+            esac
+        done
+        base="certonly --nginx --non-interactive --agree-tos --register-unsafely-without-email -d $DOMAIN -d mail.$DOMAIN"
+        if [ "$want" = Staging ]; then
+            run certbot $base --test-cert --deploy-hook "systemctl reload nginx" \
+                || die "certbot (Test-CA) rot — Fassung http bleibt aktiv."
+        else
+            # Zuerst gegen die Test-CA (--dry-run speichert nichts, kein Rate-Limit), dann echt.
+            run certbot $base --dry-run || die "certbot --dry-run gegen die Test-CA rot — kein echter Versuch; Fassung http bleibt aktiv."
+            extra=""; [ "$have" = Staging ] && extra="--force-renewal"
+            run certbot $base $extra --deploy-hook "systemctl reload nginx" \
+                || die "certbot rot (echtes Zertifikat) — Fassung http bleibt aktiv."
+        fi
+        ok "Zertifikat geholt ($want, $DOMAIN und mail.$DOMAIN)"
         if [ -f "$cert" ] || [ "$DRY" = 1 ]; then nginx_apply tls; fi
     fi
 fi
