@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Styleguide (/styleguide, nur Split dev, Aufgabe 1.1): Tokens, Kontrast, Icons.
+ * Styleguide (/styleguide, nur Split dev, 1.1): Tokens, Kontrast, Icons.
  *
  * Die Route liefert C's Controller in tannwald_demo (#theme
  * tannwald_styleguide);

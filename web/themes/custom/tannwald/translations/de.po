@@ -731,3 +731,172 @@ msgstr "Relevanz"
 
 msgid "Date"
 msgstr "Datum"
+
+# Design-System v2 (1.1): Anmeldeseite, Bildrahmen, Styleguide (nur Split dev)
+msgid "Packaging hall with two blister lines"
+msgstr "Verpackungshalle mit zwei Blisterlinien"
+
+msgid "No image available"
+msgstr "Kein Bild vorhanden"
+
+msgid "Styleguide"
+msgstr "Styleguide"
+
+msgid "Design system v2 · Inter self-hosted · tokens, components and states · only in the dev split"
+msgstr "Design-System v2 · Inter selbst gehostet · Tokens, Komponenten und Zustände · nur im Split dev"
+
+msgid "Contrast table"
+msgstr "Kontrasttabelle"
+
+msgid "Components"
+msgstr "Komponenten"
+
+msgid "Type scale"
+msgstr "Typo-Skala"
+
+msgid "Class"
+msgstr "Klasse"
+
+msgid "Sample"
+msgstr "Beispiel"
+
+msgid "Use"
+msgstr "Verwendung"
+
+msgid "Hero (login brand panel only)"
+msgstr "Hero (nur Markenpanel der Anmeldung)"
+
+msgid "Display: one page title per page"
+msgstr "Display: ein Seitentitel je Seite"
+
+msgid "Title: cards, sections"
+msgstr "Titel: Karten, Abschnitte"
+
+msgid "Lead: document body, intro lines"
+msgstr "Lead: Dokumenttext, Einleitungszeilen"
+
+msgid "Text: interface, forms, tables"
+msgstr "Text: Oberfläche, Formulare, Tabellen"
+
+msgid "Meta: dates, versions, badges, help"
+msgstr "Meta: Daten, Versionen, Badges, Hilfe"
+
+msgid "Three weights (400, 500, 600), six sizes, sentence case, line length up to 80 characters, numbers with ’ as thousands separator (2’141 Tokens), dates as TT.MM.JJJJ."
+msgstr "Drei Gewichte (400, 500, 600), sechs Grössen, Satzschreibung, Zeilenlänge bis 80 Zeichen, Zahlen mit ’ als Tausendertrenner (2’141 Tokens), Datum als TT.MM.JJJJ."
+
+msgid "Grid and spacing"
+msgstr "Raster und Abstände"
+
+msgid "12 columns on 1376 px, gutter 24 px (phone 16 px); 8-pt base, 4-pt fine grid."
+msgstr "12 Spalten auf 1376 px, Gutter 24 px (Phone 16 px); 8-pt-Basis, 4-pt-Feinraster."
+
+msgid "Spacing steps --space-*"
+msgstr "Abstandsstufen --space-*"
+
+msgid "Colour as signal"
+msgstr "Farbe als Signal"
+
+msgid "Contrast measurement"
+msgstr "Kontrastmessung"
+
+msgid "Failed: @n"
+msgstr "Nicht erfüllt: @n"
+
+msgid "All pairs pass"
+msgstr "Alle Paare erfüllt"
+
+msgid "Foreground"
+msgstr "Vordergrund"
+
+msgid "Background"
+msgstr "Hintergrund"
+
+msgid "Ratio"
+msgstr "Verhältnis"
+
+msgid "Minimum"
+msgstr "Mindestwert"
+
+msgid "Result"
+msgstr "Ergebnis"
+
+msgid "ok"
+msgstr "erfüllt"
+
+msgid "too low"
+msgstr "zu niedrig"
+
+msgid "Components and states"
+msgstr "Komponenten und Zustände"
+
+msgid "Rest"
+msgstr "Ruhe"
+
+msgid "Hover"
+msgstr "Hover"
+
+msgid "Focus"
+msgstr "Fokus"
+
+msgid "Active"
+msgstr "Aktiv"
+
+msgid "Disabled"
+msgstr "Deaktiviert"
+
+msgid "hover"
+msgstr "Hover"
+
+msgid "focus"
+msgstr "Fokus"
+
+msgid "Buttons"
+msgstr "Buttons"
+
+msgid "Fields"
+msgstr "Felder"
+
+msgid "Pills and badges"
+msgstr "Pillen und Badges"
+
+msgid "Card with border"
+msgstr "Karte mit Rahmen"
+
+msgid "Card without border"
+msgstr "Karte ohne Rahmen"
+
+msgid "Where the panel surface is enough: lists inside a card, side panels, the login form."
+msgstr "Wo die Panel-Fläche genügt: Listen in einer Karte, Seitenleisten, das Anmeldeformular."
+
+msgid "Table with row grid"
+msgstr "Tabelle mit Zeilenraster"
+
+msgid "Toast and notice"
+msgstr "Toast und Hinweis"
+
+msgid "Sheet"
+msgstr "Sheet"
+
+msgid "Empty state"
+msgstr "Leer-Zustand"
+
+msgid "Page head"
+msgstr "Seitenkopf"
+
+msgid "Image frames"
+msgstr "Bildrahmen"
+
+msgid "Images carry the page: 3:2 for cards and detail pages, 16:9 for the hero, fixed frame before loading, placeholder with the brand mark where a field is empty, alt text names what is visible."
+msgstr "Bilder tragen die Seite: 3:2 für Karten und Detailseiten, 16:9 für den Hero, fester Rahmen vor dem Laden, Platzhalter mit Bildmarke, wo ein Feld leer ist, Alt-Text nennt, was zu sehen ist."
+
+msgid "Icons"
+msgstr "Icons"
+
+msgid "Motion"
+msgstr "Bewegung"
+
+msgid "Transitions only as a response to an action (hover, open, close), never on page load; prefers-reduced-motion switches them off."
+msgstr "Übergänge nur als Antwort auf eine Handlung (Hover, Öffnen, Schliessen), nie beim Laden; prefers-reduced-motion schaltet sie ab."
+
+msgid "Microcopy"
+msgstr "Mikrotexte"

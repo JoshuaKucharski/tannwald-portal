@@ -652,3 +652,10 @@ msgstr "Pertinence"
 
 msgid "Date"
 msgstr "Date"
+
+# Design-System v2 (1.1): page de connexion, cadre d'image
+msgid "Packaging hall with two blister lines"
+msgstr "Hall de conditionnement avec deux lignes de blisters"
+
+msgid "No image available"
+msgstr "Aucune image disponible"
