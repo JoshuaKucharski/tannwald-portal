@@ -50,6 +50,14 @@ Alpine.data('chatPanel', (config) => ({
     if (trigger) this.opener = trigger;
   },
   close() { this.closeSheet(); this.$store.chat.abort(); },
+  // Nachtrag 5 (f): Klick ausserhalb des nicht-modalen Desktop-Panels schliesst es (Zustand closed wie bei Esc); der
+  // Launcher ist ausgenommen (toggle), und der Fokus bleibt beim Klickziel (kein Rücksprung, opener = null).
+  onOutside(event) {
+    if (this.mode !== 'sheet' || !this.open || this.sheetActive()) return;
+    if (event.target.closest && event.target.closest('.chat-launcher')) return;
+    this.opener = null;
+    this.closeSheet();
+  },
   // Nachtrag 4 (a): beim Öffnen per Klick sofort ins Fragefeld (nicht beim automatischen Öffnen, das openSheet() nicht
   // durchläuft); ist das Feld gesperrt (Limit), bleibt der Fokus auf dem Schliessen-Button aus dem Mixin.
   onOpened() {

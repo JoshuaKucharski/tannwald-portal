@@ -50,7 +50,7 @@
 
   {# Launcher (Nachtrag 3 tw2-11): runder Akzent-Button unten rechts, 56 px (Phone 52), Label „Assistent“ ab lg als Pille;
      im Modus sheet bleibt er beim offenen Desktop-Panel sichtbar und klappt zu (Icon close); als Spalte sichtbar entfällt er (CSS). #}
-  <button type="button" class="chat-launcher" x-show="!open || mode === 'sheet'" x-cloak @click="toggle($el)" aria-controls="{{ input_id }}-panel" :aria-expanded="open ? 'true' : 'false'" aria-label="{{ 'Assistant'|t }}">
+  <button type="button" class="chat-launcher" x-show="!open || (mode === 'sheet' && !sheetActive())" x-cloak @click="toggle($el)" aria-controls="{{ input_id }}-panel" :aria-expanded="open ? 'true' : 'false'" aria-label="{{ 'Assistant'|t }}">
     <span x-show="!open">{{ include('tannwald:icon', {name: 'chat', size: 24}, with_context = false) }}</span>
     <span x-show="open" x-cloak>{{ include('tannwald:icon', {name: 'close', size: 24}, with_context = false) }}</span>
     <span class="chat-launcher-label">{{ 'Assistant'|t }}</span>
@@ -59,7 +59,7 @@
   {# Scrim nur, wenn das Panel als Sheet erscheint (Phone); das Desktop-Panel (sheet-Modus ab md) ist nicht modal. #}
   <div class="sheet-scrim" x-show="open && !inline() && sheetActive()" x-cloak @click="close()" aria-hidden="true"></div>
 
-  <section id="{{ input_id }}-panel" class="chat-panel" :class="{ 'is-open': open }" x-ref="sheet" tabindex="-1" :role="open && !inline() ? 'dialog' : 'region'" :aria-modal="open && !inline() && sheetActive() ? 'true' : null" aria-label="{{ 'Assistant'|t }}" x-cloak data-chat-panel>
+  <section id="{{ input_id }}-panel" class="chat-panel" :class="{ 'is-open': open }" x-ref="sheet" tabindex="-1" @click.outside="onOutside($event)" :role="open && !inline() ? 'dialog' : 'region'" :aria-modal="open && !inline() && sheetActive() ? 'true' : null" aria-label="{{ 'Assistant'|t }}" x-cloak data-chat-panel>
     <div class="chat-head">
       <div class="flex min-w-0 flex-col gap-0.5">
         <span class="font-semibold">{{ 'Assistant'|t }}</span>
