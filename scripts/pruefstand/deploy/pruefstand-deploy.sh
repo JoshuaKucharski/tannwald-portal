@@ -85,6 +85,7 @@ fake systemctl <<'F'
 log-call systemctl "$@"
 if [ "$1" = is-active ]; then for a in "$@"; do u=$a; done; [ -f "$FAKE_STATE/active/$u" ]; exit $?; fi
 if [ "$1" = stop ]; then rm -f "$FAKE_STATE/active/$2"; fi
+if [ "$1" = show ]; then cat "$FAKE_STATE/memorypeak" 2>/dev/null || echo 65536000; exit 0; fi
 if [ "$1" = enable ] && [ "$2" = --now ]; then mkdir -p "$FAKE_STATE/active"; touch "$FAKE_STATE/active/$3"; fi
 exit 0
 F

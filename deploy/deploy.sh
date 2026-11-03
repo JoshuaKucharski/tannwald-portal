@@ -11,7 +11,8 @@
 # meldet das Skript mit dem Aufräum-Befehl, statt darüber zu installieren. Zeigt nie Werte aus der env-Datei; das
 # Besucher-Passwort geht nur über eine netrc-Datei (600) an curl, nie auf eine Befehlszeile.
 # --dry     druckt jeden Schritt (Plan eines ersten Laufs), ändert nichts
-# --status  liest nur: SITE_AUTH, Zählungen (Zusammenfassungen: Fassungen und Sprachfassungen), „Chunks eingebettet x/575“, Queues, Usage, Dienste, Timer, Zertifikat, RAM
+# --status  liest nur: SITE_AUTH, Zählungen (Zusammenfassungen als Fassungen und Sprachfassungen), „Chunks eingebettet
+#           x/575“, Queues, Usage, Dienste, Timer, Zertifikat, RAM, RAM-Spitze des Crons
 # Ende: „FERTIG — … in <n> s“ mit Zählungen; Abbruch: „ABBRUCH (…)“, Exit 1.
 set -euo pipefail
 umask 022
@@ -26,7 +27,7 @@ for arg in "$@"; do
     case "$arg" in
         --dry) DRY=1 ;;
         --status) STATUS=1 ;;
-        -h|--help) sed -n '2,15p' "$0"; exit 0 ;;
+        -h|--help) sed -n '2,16p' "$0"; exit 0 ;;
         *) say "Unbekannte Angabe: $arg (erlaubt: --dry, --status)"; exit 1 ;;
     esac
 done
@@ -126,6 +127,15 @@ if [ "$STATUS" = 1 ]; then
     [ -f "$APP_LOG_DIR/backup.log" ] && say "   Letztes Backup: $(tail -n 1 "$APP_LOG_DIR/backup.log")"
     [ -f "$APP_LOG_DIR/cron.log" ] && say "   Cron-Log: $(wc -l < "$APP_LOG_DIR/cron.log" | tr -d ' ') Zeilen, letzte: $(tail -n 1 "$APP_LOG_DIR/cron.log" | cut -c1-120)"
     say "   RAM: $(free -m 2>/dev/null | awk '/^Mem:/{print $3" MB belegt, "$7" MB verfügbar von "$2" MB"}')"
+    # Spitze des Crons (F9): systemd führt sie selbst. Ist die Unit inaktiv und liefert MemoryPeak keine Zahl, gilt der
+    # letzte Wert „memory peak“ aus dem Journal (systemd schreibt ihn beim Ende jedes Laufs); sonst „unbekannt“.
+    mp=$(systemctl show -p MemoryPeak --value tannwald-cron.service 2>/dev/null || true)
+    case "$mp" in
+        ''|*[!0-9]*)
+            mp=$(journalctl -u tannwald-cron.service -o cat -n 500 2>/dev/null | grep -oE '[0-9.]+[KMG] memory peak' | tail -n 1 | sed 's/ memory peak//' || true)
+            say "   RAM-Spitze Cron: ${mp:-unbekannt}$( [ -n "$mp" ] && echo ' (letzter Lauf laut Journal)')" ;;
+        *) say "   RAM-Spitze Cron: $(LC_ALL=C awk -v b="$mp" 'BEGIN { printf "%.1f MB", b / 1048576 }') (systemd MemoryPeak tannwald-cron.service)" ;;
+    esac
     say "   Ollama geladen: $(OLLAMA_HOST=127.0.0.1:11434 ollama ps 2>/dev/null | awk 'NR>1{print $1" "$3$4}' | tr '\n' ' ')"
     exit 0
 fi
