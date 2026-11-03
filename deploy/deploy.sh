@@ -7,6 +7,8 @@
 #   --skip-queues (reiht die Embeddings nur ein; der Cron-Timer holt sie in 10–20 min nach) → Cron- und Backup-Timer
 #   an, erstes Backup → Proben (Health, robots, Login mit/ohne Besucher-Passwort, Mailpit). Weitere Läufe: dasselbe
 #   ohne Install und Seeder; ist nichts zu tun (keine Updates, Konfiguration gleich, Code gleich): „nichts zu tun“.
+# Läufe mit geändertem Code oder Konfiguration zeigen von composer bis vor den Proben die Wartungsseite (503) statt eines Fehlers
+# (F18); ein Abbruch schaltet sie wieder aus.
 # Hält beim ersten Fehler; der Cron bleibt dann aus, wenn die Erstinstallation nicht fertig ist; ein halbes Install
 # meldet das Skript mit dem Aufräum-Befehl, statt darüber zu installieren. Zeigt nie Werte aus der env-Datei; das
 # Besucher-Passwort geht nur über eine netrc-Datei (600) an curl, nie auf eine Befehlszeile.
@@ -27,7 +29,7 @@ for arg in "$@"; do
     case "$arg" in
         --dry) DRY=1 ;;
         --status) STATUS=1 ;;
-        -h|--help) sed -n '2,16p' "$0"; exit 0 ;;
+        -h|--help) sed -n '2,18p' "$0"; exit 0 ;;
         *) say "Unbekannte Angabe: $arg (erlaubt: --dry, --status)"; exit 1 ;;
     esac
 done
@@ -89,8 +91,18 @@ TMPD="$(mktemp -d "${TMPDIR:-/tmp}/tannwald-deploy.XXXXXX")"
 chmod 700 "$TMPD"
 TIMER_STOPPED=0
 WAS_INSTALLED=0
+MAINT=0
 on_exit() {
     rc=$?
+    # F18: bricht der Lauf ab, während die Wartungsseite aktiv ist, wieder ausschalten (best effort, mit Hinweis).
+    if [ "$rc" -ne 0 ] && [ "$MAINT" = 1 ]; then
+        if drush state:set system.maintenance_mode 0 --input-format=integer >/dev/null 2>&1; then
+            drush cache:rebuild >/dev/null 2>&1 || true
+            say "   Wartungsmodus wieder aus (Abbruch)"
+        else
+            say "   ACHTUNG: Wartungsmodus bleibt an — von Hand: drush state:set system.maintenance_mode 0 --input-format=integer && drush cr"
+        fi
+    fi
     if [ "$rc" -ne 0 ] && [ "$TIMER_STOPPED" = 1 ]; then
         if [ "$WAS_INSTALLED" = 1 ]; then
             say "   Cron wieder an (die Site war vorher installiert)"; systemctl start tannwald-cron.timer || true
@@ -165,6 +177,20 @@ if [ "$DRY" != 1 ]; then
 fi
 
 step "Abhängigkeiten (composer install --no-dev, als $RUN_USER)"
+# F18: Der neue Code liegt seit dem rsync auf dem Server, der Container-Cache ist bis zum drush deploy noch alt — Besucher sahen
+# „unerwarteter Fehler“. Darum: war die Site schon einmal fertig deployt (Fingerabdruck vorhanden) und hat sich Code oder
+# Konfiguration geändert, gilt bis zum Ende des Laufs die Wartungsseite (503) statt eines Fehlers. „Nichts zu tun“ bleibt ohne.
+if [ "$DRY" = 1 ]; then
+    say "   [dry] bei geändertem Fingerabdruck: drush state:set system.maintenance_mode 1 --input-format=integer; drush cache:rebuild"
+elif [ -f "$FINGERPRINT_FILE" ] && [ "$(fingerprint)" != "$(cat "$FINGERPRINT_FILE")" ]; then
+    if drush_quiet state:set system.maintenance_mode 1 --input-format=integer; then
+        MAINT=1; MAINT_T0=$(date +%s)
+        drush_quiet cache:rebuild || note "drush cache:rebuild rot — die Wartungsseite gilt trotzdem"
+        ok "Wartungsmodus an (Code oder Konfiguration geändert): Besucher sehen bis zum Ende des Laufs die Wartungsseite"
+    else
+        note "Wartungsmodus nicht gesetzt (drush rot) — weiter ohne"
+    fi
+fi
 if [ "$DRY" = 1 ]; then say "   [dry] $PHP_BIN $COMPOSER install --no-dev --optimize-autoloader --no-interaction (als $RUN_USER)"
 else
     as_app env COMPOSER_NO_INTERACTION=1 PHP_INI_SCAN_DIR=":$CLI_INI_DIR" PATH="$PHP_DIR:$PATH" "$PHP_BIN" "$COMPOSER" --working-dir="$APP" \
@@ -269,6 +295,14 @@ elif [ "$RUN_USER" != "-" ]; then
         ok "erstes Backup: $(tail -n 1 "$APP_LOG_DIR/backup.log" 2>/dev/null | cut -d' ' -f3-)"
     fi
 else TIMER_STOPPED=0; note "Generalprobe: kein systemd — Timer und Backup nicht geschaltet"; fi
+# F18: Wartungsseite aus, bevor die Proben die Login-Seite erwarten.
+if [ "$DRY" = 1 ]; then say "   [dry] falls an: drush state:set system.maintenance_mode 0 --input-format=integer; drush cache:rebuild"
+elif [ "$MAINT" = 1 ]; then
+    drush_quiet state:set system.maintenance_mode 0 --input-format=integer || die "Wartungsmodus nicht ausgeschaltet — von Hand: drush state:set system.maintenance_mode 0 --input-format=integer"
+    MAINT=0
+    drush_quiet cache:rebuild || die "drush cache:rebuild rot nach dem Wartungsmodus."
+    ok "Wartungsmodus aus — $(( $(date +%s) - MAINT_T0 )) s Wartungsseite statt Fehler"
+fi
 scheme=http; [ -f "$LE/live/$DOMAIN/fullchain.pem" ] && scheme=https
 url="${TW_PROBE_URL:-$scheme://$DOMAIN}"
 host=${url#*://}; host=${host%%/*}; hostname=${host%%:*}; port=${host##*:}
