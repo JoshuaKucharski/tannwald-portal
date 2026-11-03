@@ -227,6 +227,12 @@ else
     drush_quiet locale:check || die "locale:check rot."
     drush_quiet locale:update || die "locale:update rot."
     drush_quiet deploy -y || die "drush deploy (config:import, cr) rot."
+    # F15: Ergebnisse der Deploy-Hooks zeigen (z. B. „Demo accounts: created portal-admin …“) — drush_quiet behält die Ausgabe
+    # sonst für sich. Höchstens 10 Zeilen; Zeilen mit einem Wert hinter password=/password: fallen weg.
+    if [ "$DRY" != 1 ]; then
+        grep -E 'Demo accounts:|[Dd]eploy hook' "$TMPD/drush.log" 2>/dev/null | grep -vE 'password[^ ]*[=:]' \
+            | sed 's/^ *//' | head -n 10 | sed 's/^/   Hook: /' || true
+    fi
     if [ "$DRY" != 1 ]; then
         cfg=$(drush config:status --format=list 2>/dev/null | tr '\n' ' ' | sed 's/ *$//')
         [ -z "$cfg" ] || die "config:status nicht leer nach drush deploy: $cfg"
