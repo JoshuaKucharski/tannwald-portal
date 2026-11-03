@@ -10,3 +10,7 @@ msgstr ""
 
 msgid "Tannwald document manifest, one row per version"
 msgstr "Manifeste de documents Tannwald, une ligne par version"
+
+# tw2-12: Sperre des Nutzerformulars für Demo-Konten
+msgid "Demo account: the e-mail address and the password (demo) are fixed and cannot be changed here."
+msgstr "Compte de démonstration : l'adresse e-mail et le mot de passe (demo) sont fixes et ne peuvent pas être modifiés ici."

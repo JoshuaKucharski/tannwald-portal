@@ -121,3 +121,7 @@ msgstr "Bilder: @files zugeordnet (@targets Ziele), @assets Theme-Asset."
 
 msgid "Image without target: @missing"
 msgstr "Bild ohne Ziel: @missing"
+
+# tw2-12: Sperre des Nutzerformulars für Demo-Konten
+msgid "Demo account: the e-mail address and the password (demo) are fixed and cannot be changed here."
+msgstr "Demo-Konto: E-Mail-Adresse und Passwort (demo) sind fest und lassen sich hier nicht ändern."
