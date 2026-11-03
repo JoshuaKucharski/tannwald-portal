@@ -6,7 +6,7 @@ Pakete; optionale Plattform-Binärpakete anderer Betriebssysteme sind nicht inst
 Das Repo selbst steht unter GPL-2.0-or-later (`LICENSE.txt`), wie Drupal. Alle gelisteten Lizenzen sind mit
 GPL-2.0-or-later verträglich (MIT, BSD, ISC, Apache-2.0, MPL-2.0 und GPL-2.0-or-later selbst).
 
-Die Schrift Inter wird nur über `font-family` mit Systemschrift-Fallback referenziert; keine Font-Datei liegt im Repo.
+- Schrift **Inter** (SIL Open Font License 1.1): liegt selbst gehostet im Theme (`web/themes/custom/tannwald/fonts/`, Lizenztext `fonts/LICENSE-Inter.txt`, gebaut nach `dist/fonts/`); kein Request an einen Font-Dienst (seit 1.1, Phase 2).
 Demo-Dokumente, Bulletins und Stammdaten unter `fixtures/` sind fiktiv und selbst verfasst.
 Die 20 Bilder unter `fixtures/bilder/` (WebP, je ≤ 400 KB) hat der Betreiber am 02.11.2026 mit einem Bildgenerator
 erzeugt; sie zeigen fiktive Maschinen ohne Marken, Texte und Personen. Herkunft und Einbau: `fixtures/bilder/manifest.json`, ADR-009.
