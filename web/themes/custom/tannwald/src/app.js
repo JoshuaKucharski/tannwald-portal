@@ -75,10 +75,21 @@ const chatSession = () => {
   return id;
 };
 
+// Verlauf je Browser-Sitzung (Nachtrag 3 tw2-11): abgeschlossene Einträge, höchstens 20, damit das globale
+// Panel beim Seitenwechsel denselben Verlauf zeigt.
+const HISTORY_KEY = 'tannwald_chat_history';
+const loadHistory = () => {
+  try { const raw = window.sessionStorage.getItem(HISTORY_KEY); return raw ? JSON.parse(raw) : []; } catch { return []; }
+};
+
 Alpine.store('chat', {
   config: null,
   session: chatSession(),
-  history: [],
+  history: loadHistory(),
+  persist() {
+    const done = this.history.filter((e) => e.status !== 'pending').slice(-20).map((e) => ({ ...e, supporting: false }));
+    try { window.sessionStorage.setItem(HISTORY_KEY, JSON.stringify(done)); } catch { /* voller Speicher: still */ }
+  },
   busy: false,
   elapsed: 0,
   limitNotice: null,

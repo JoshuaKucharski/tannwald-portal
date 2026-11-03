@@ -5,8 +5,12 @@
 import Alpine from 'alpinejs';
 import { sheetMixin } from './sheet.js';
 
+// Zustand des globalen Panels (Nachtrag 3 tw2-11): 'open' | 'closed' je Browser-Sitzung.
+const STATE_KEY = 'tannwald_chat_open';
+
 Alpine.data('chatPanel', (config) => ({
-  ...sheetMixin({ sheetQuery: config.mode === 'panel' ? '(max-width: 1279px)' : config.mode === 'embedded' ? '(max-width: 767px)' : null }),
+  // sheet (Nachtrag 3 tw2-11): bis md ein Sheet (modal), ab md ein Panel über dem Launcher (nicht modal).
+  ...sheetMixin({ sheetQuery: config.mode === 'panel' ? '(max-width: 1279px)' : config.mode === 'embedded' ? '(max-width: 767px)' : '(max-width: 767px)' }),
   input: '',
   mode: config.mode || 'panel',
   labels: config.labels,
@@ -14,6 +18,18 @@ Alpine.data('chatPanel', (config) => ({
   init() {
     this.$store.chat.configure(config);
     this.$watch('$store.chat.history.length', () => this.scrollDown());
+    // Verlauf bleibt beim Seitenwechsel (sessionStorage, Nachtrag 3 (c)).
+    this.$watch('$store.chat.history', () => this.$store.chat.persist());
+    // Zustand des globalen Panels (Nachtrag 3 (c)): beim ersten Besuch in der Sitzung einmal offen, danach gemerkt;
+    // nur am Desktop (das Phone-Sheet ist modal und öffnet nie von selbst).
+    if (config.mode === 'sheet' && !this.sheetActive()) {
+      const stored = window.sessionStorage.getItem(STATE_KEY);
+      if (stored === null || stored === 'open') {
+        this.open = true;
+        window.sessionStorage.setItem(STATE_KEY, 'open');
+        this.$nextTick(() => this.scrollDown());
+      }
+    }
     // Breiter als der Sheet-Bereich: das offene Sheet wird zur Spalte.
     if (config.mode === 'panel' || config.mode === 'embedded') {
       const media = window.matchMedia(config.mode === 'panel' ? '(min-width: 1280px)' : '(min-width: 768px)');
@@ -28,7 +44,8 @@ Alpine.data('chatPanel', (config) => ({
   disabled() { return this.$store.chat.busy || !!this.$store.chat.limitNotice; },
   toggle() { this.open ? this.closeSheet() : this.openSheet(); },
   close() { this.closeSheet(); this.$store.chat.abort(); },
-  onOpened() { this.scrollDown(); },
+  onOpened() { this.scrollDown(); if (this.mode === 'sheet') window.sessionStorage.setItem(STATE_KEY, 'open'); },
+  onClosed() { if (this.mode === 'sheet') window.sessionStorage.setItem(STATE_KEY, 'closed'); },
   // Brücke von /suche (5.2): $dispatch('tannwald:ask', {frage}) öffnet das Sheet (falls nötig) und fragt.
   onAsk(detail) {
     const frage = detail && detail.frage ? String(detail.frage) : '';
