@@ -60,7 +60,8 @@ function _tannwald_layout_prepare(array &$variables): void {
   $hasMasquerade = \Drupal::moduleHandler()->moduleExists('masquerade');
   $variables['site_name'] = (string) (\Drupal::config('system.site')->get('name') ?: 'myTannwald');
   $variables['nav'] = _tannwald_navigation();
-  // tw2-12: Sprachwechsler DE · EN · FR (die Bildmarke ist das SDC tannwald:logo).
+  // tw2-12: Sprachwechsler DE · EN · FR; die Bildmarke ist das SDC
+  // tannwald:logo.
   $variables['language_switcher'] = _tannwald_language_switcher();
   $variables['account'] = NULL;
   $variables['demo'] = NULL;
@@ -90,12 +91,6 @@ function _tannwald_layout_prepare(array &$variables): void {
       'display_name' => $display,
       'company' => $company,
       'initials' => _tannwald_initials($display),
-      'logout' => [
-        '#type' => 'link',
-        '#title' => t('Log out'),
-        '#url' => Url::fromRoute('user.logout'),
-        '#attributes' => ['class' => ['text-sm']],
-      ],
     ];
     if ($hasMasquerade && $user instanceof UserInterface) {
       $variables['demo'] = _tannwald_demo_bar($user, $company);

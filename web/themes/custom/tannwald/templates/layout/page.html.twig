@@ -66,7 +66,9 @@
           <div class="site-account" x-data="{ open: false }" @keydown.escape.window="open = false" @click.outside="open = false">
             <span class="site-account-name">{{ account.display_name }}{% if account.company %} · {{ account.company }}{% endif %}</span>
             <button type="button" class="site-avatar" :aria-expanded="open ? 'true' : 'false'" aria-controls="account-menu" aria-label="{{ 'Account menu'|t }}" @click="open = !open">{{ account.initials }}</button>
-            <span class="site-account-logout">{{ account.logout }}</span>
+            {# Nachtrag 7: Abmelden nur als Icon (44 px), damit die rechte Kopfzeile beim Sprachwechsel nicht springt; im Menü bleibt der
+               Text. Inline-SVG (Tür mit Pfeil, 24er-Raster, 1.5 px) statt tannwald:icon, weil A das Icon-Set gerade offen hat. #}
+            <a href="{{ path('user.logout') }}" class="site-logout" aria-label="{{ 'Log out'|t }}" title="{{ 'Log out'|t }}"><svg class="icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4m7 14 5-5-5-5m5 5H9"/></svg></a>
             <div id="account-menu" class="site-menu" x-show="open" x-cloak x-transition.opacity.duration.180ms>
               <p class="site-menu-head">{{ account.display_name }}{% if account.company %}<span class="meta">{{ account.company }}</span>{% endif %}{% if demo %}<span class="meta">{{ 'Role @role'|t({'@role': demo.role_label}) }}</span>{% endif %}</p>
               {% if language_switcher %}
