@@ -411,6 +411,19 @@ if [ "$TLS" = 1 ]; then
                 die "A-Record für $h zeigt nicht auf diese Maschine (${ip:-fehlt}) — Betreiber setzt ihn; die Fassung http bleibt aktiv." ;;
             esac
         done
+        # certbot hält eine Sperre: läuft gerade die Erneuerung der anderen Zertifikate der Maschine (certbot.timer)
+        # oder ein anderer Aufruf, meldet er „Another instance of Certbot is already running" und bricht ab (Fund
+        # erster Server-Lauf 2026-11-03). Bis 120 s warten; bleibt er belegt, mit dem fremden Prozess abbrechen.
+        if [ "$DRY" != 1 ]; then
+            i=0
+            while pgrep -f '(^|/)certbot( |$)' >/dev/null 2>&1; do
+                if [ "$i" = 0 ]; then say "   certbot ist belegt (anderer Prozess) — warte bis 120 s"; fi
+                i=$((i + 1))
+                if [ "$i" -gt 120 ]; then die "certbot bleibt belegt: $(pgrep -af '(^|/)certbot( |$)' | head -n 3 | tr '\n' ';') — später erneut."; fi
+                sleep 1
+            done
+            if [ "$i" != 0 ]; then say "   certbot frei nach $i s"; fi
+        fi
         base="certonly --nginx --non-interactive --agree-tos --register-unsafely-without-email -d $DOMAIN -d mail.$DOMAIN"
         if [ "$want" = Staging ]; then
             run certbot $base --test-cert --deploy-hook "systemctl reload nginx" \
