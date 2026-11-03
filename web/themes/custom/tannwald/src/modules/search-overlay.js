@@ -20,6 +20,14 @@ Alpine.data('searchOverlay', (config) => ({
     const opener = event?.detail?.opener || document.querySelector('.site-search');
     this.openSheet();
     if (opener) this.opener = opener;
+    // Nachtrag 3: inertOutside() setzt inert auch auf den Scrim (Geschwister des Dialogs); inert ist für Klicks
+    // durchsichtig, darum fing der Scrim keinen Klick. Den Scrim wieder klickbar machen; releaseInert() bleibt gültig.
+    this.$nextTick(() => this.$root.querySelector('.search-overlay-scrim')?.removeAttribute('inert'));
+  },
+  // Klick ausserhalb des Dialogs (Kopfzeile, Seitenrand, Scrim) schliesst wie Esc; der öffnende Klick auf die Lupe nicht.
+  onOutside(event) {
+    if (!this.open || (event.target instanceof Element && event.target.closest('.site-search'))) return;
+    this.closeSheet();
   },
   onKeydown(event) {
     if (this.open) { this.onSheetKeydown(event); return; }
