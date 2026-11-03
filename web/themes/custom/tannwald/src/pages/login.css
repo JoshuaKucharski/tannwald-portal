@@ -5,7 +5,7 @@
   .brand-photo { @apply relative m-0 hidden min-h-[320px] flex-1 overflow-hidden rounded-card lg:mx-6 lg:mb-6 lg:block; }
   .brand-photo img { @apply absolute inset-0 h-full w-full object-cover; }
   /* mt-8 statt mt-12 (tw2-11): mit den zweizeiligen Chips passt die Formularspalte so in 900 px (vorher 916). */
-  .demo-groups { @apply mt-8 flex flex-col gap-5 border-t border-line pt-6; }
+  .demo-groups { @apply mt-8 flex flex-col gap-5 border-t border-line pb-[72px] pt-6 sm:pb-0; }
   .demo-group { @apply flex flex-col gap-2; }
   /* Nachtrag 1 (a), 2026-11-03: Chips zweizeilig statt abgeschnitten — Kontoname 15/600, Firma oder Rolle 13 in muted,
      Radius 12, ruhiger 1-px-Rand in line (Hover ink, Aktiv surface, Fokus globaler Ring); Phone eine Spalte, Zeilen gleich hoch (Grid). */
@@ -15,13 +15,15 @@
   .demo-chip-label { @apply text-sm leading-copy text-muted; }
 }
 
+/* Nachtrag 5 (d): unter sm liegt der fixe GitHub-Button über der Chip-Liste, darum dort 72 px Innenabstand unten. */
 /* tw2-11 Demo-Hinweis: „?“-Button (48 px, Phone 44, Akzent gefüllt), natives <dialog> mit Radius 24 (Phone 20),
    Breite max. 560 px, Einblenden 150 ms (unter prefers-reduced-motion 0 s über die globale Regel), GitHub-Button
    unten rechts (Phone: statisch unter dem Formular). Schriftgrössen des Modals sind Auftragsvorgabe (28/19 px). */
 @layer components {
   .demo-help { @apply absolute right-4 top-4 inline-flex h-11 w-11 items-center justify-center rounded-full bg-accent font-semibold leading-none text-white hover:bg-accent-hover active:bg-accent-active lg:right-6 lg:top-6 lg:h-12 lg:w-12; font-size: 24px; transition: background-color var(--duration-fast) var(--ease-out-soft); }
   @media (min-width: 64rem) { .demo-help { font-size: 26px; } }
-  .demo-github { @apply mt-10 lg:absolute lg:bottom-6 lg:right-6 lg:mt-0; }
+  /* Nachtrag 5 (d): GitHub-Button fixed unten rechts, immer sichtbar; Phone 16 px plus safe-area, ab md 24 px; ein Schattenlevel. */
+  .demo-github { @apply fixed right-4 z-30 shadow-card md:bottom-6 md:right-6; bottom: calc(1rem + env(safe-area-inset-bottom, 0px)); }
   .demo-intro { @apply m-auto w-[calc(100%-32px)] max-w-[560px] rounded-[20px] border-0 bg-panel p-0 text-ink shadow-card lg:rounded-[24px]; opacity: 0; transition: opacity 150ms var(--ease-out-soft), overlay 150ms allow-discrete, display 150ms allow-discrete; }
   .demo-intro[open] { opacity: 1; @starting-style { opacity: 0; } }
   .demo-intro::backdrop { background: rgba(28, 32, 36, 0.5); opacity: 0; transition: opacity 150ms var(--ease-out-soft), overlay 150ms allow-discrete, display 150ms allow-discrete; }
