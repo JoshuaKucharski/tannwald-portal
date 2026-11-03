@@ -963,6 +963,8 @@ if (getenv('TANNWALD_DEPLOY') === '1') {
   // Formular würde den Assistenten für alle abschalten. Embeddings bleiben bge-m3 über Ollama (D11 Variante 2).
   $config['tannwald_assistant.settings']['provider_chat'] = 'dashscope';
   $config['tannwald_assistant.settings']['provider_embeddings'] = 'ollama';
+  $config['tannwald_assistant.settings']['providers']['dashscope']['chat_model'] = 'qwen-plus';
+  $config['tannwald_assistant.settings']['providers']['ollama']['embedding_model'] = 'bge-m3';
   // Absender der Demo (4.2): SITE_MAIL aus der env-Datei statt admin@example.com aus config/sync.
   if (getenv('SITE_MAIL')) {
     $config['system.site']['mail'] = (string) getenv('SITE_MAIL');
