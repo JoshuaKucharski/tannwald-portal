@@ -50,7 +50,7 @@
 
   {# Launcher (Nachtrag 3 tw2-11): runder Akzent-Button unten rechts, 56 px (Phone 52), Label „Assistent“ ab lg als Pille;
      im Modus sheet bleibt er beim offenen Desktop-Panel sichtbar und klappt zu (Icon close); als Spalte sichtbar entfällt er (CSS). #}
-  <button type="button" class="chat-launcher" x-show="!open || mode === 'sheet'" x-cloak @click="toggle()" aria-controls="{{ input_id }}-panel" :aria-expanded="open ? 'true' : 'false'" aria-label="{{ 'Assistant'|t }}">
+  <button type="button" class="chat-launcher" x-show="!open || mode === 'sheet'" x-cloak @click="toggle($el)" aria-controls="{{ input_id }}-panel" :aria-expanded="open ? 'true' : 'false'" aria-label="{{ 'Assistant'|t }}">
     <span x-show="!open">{{ include('tannwald:icon', {name: 'chat', size: 24}, with_context = false) }}</span>
     <span x-show="open" x-cloak>{{ include('tannwald:icon', {name: 'close', size: 24}, with_context = false) }}</span>
     <span class="chat-launcher-label">{{ 'Assistant'|t }}</span>

@@ -42,7 +42,13 @@ Alpine.data('chatPanel', (config) => ({
       || (this.mode === 'embedded' && window.matchMedia('(min-width: 768px)').matches);
   },
   disabled() { return this.$store.chat.busy || !!this.$store.chat.limitNotice; },
-  toggle() { this.open ? this.closeSheet() : this.openSheet(); },
+  // Nachtrag 4 (a): der Launcher ist der Auslöser, auch wenn der Browser Buttons beim Klick nicht fokussiert (Safari);
+  // so kehrt der Fokus nach Esc oder Schliessen zu ihm zurück.
+  toggle(trigger) {
+    if (this.open) { this.closeSheet(); return; }
+    this.openSheet();
+    if (trigger) this.opener = trigger;
+  },
   close() { this.closeSheet(); this.$store.chat.abort(); },
   // Nachtrag 4 (a): beim Öffnen per Klick sofort ins Fragefeld (nicht beim automatischen Öffnen, das openSheet() nicht
   // durchläuft); ist das Feld gesperrt (Limit), bleibt der Fokus auf dem Schliessen-Button aus dem Mixin.
