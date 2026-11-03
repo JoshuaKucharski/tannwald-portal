@@ -255,6 +255,12 @@ msgstr "Essayez la recherche et l’assistant"
 msgid "Understood"
 msgstr "Compris"
 
+msgid "Show password"
+msgstr "Afficher le mot de passe"
+
+msgid "Hide password"
+msgstr "Masquer le mot de passe"
+
 msgid "Source code on GitHub, opens in a new tab"
 msgstr "Code source sur GitHub, s’ouvre dans un nouvel onglet"
 
@@ -644,14 +650,6 @@ msgstr "Précédent"
 msgctxt "tannwald pager"
 msgid "Next"
 msgstr "Suivant"
-
-msgctxt "tannwald password"
-msgid "hide"
-msgstr "masquer"
-
-msgctxt "tannwald password"
-msgid "show"
-msgstr "afficher"
 
 msgctxt "tannwald review"
 msgid "Summary"

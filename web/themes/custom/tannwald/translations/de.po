@@ -472,13 +472,12 @@ msgstr "Verstanden"
 msgid "Source code on GitHub, opens in a new tab"
 msgstr "Quellcode auf GitHub, öffnet in neuem Tab"
 
-msgctxt "tannwald password"
-msgid "show"
-msgstr "anzeigen"
+# Nachtrag 5 (e): Icon-Schalter im Passwortfeld
+msgid "Show password"
+msgstr "Passwort anzeigen"
 
-msgctxt "tannwald password"
-msgid "hide"
-msgstr "verbergen"
+msgid "Hide password"
+msgstr "Passwort verbergen"
 
 msgid "Username or password do not match. Please check your entry."
 msgstr "Benutzername oder Passwort stimmen nicht. Bitte prüfen Sie die Eingabe."

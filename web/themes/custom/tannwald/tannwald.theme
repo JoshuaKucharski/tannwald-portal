@@ -91,19 +91,34 @@ function tannwald_form_user_login_form_alter(array &$form, FormStateInterface $f
   $form['name']['#attributes']['autofocus'] = 'autofocus';
   $form['pass']['#description'] = '';
   $form['pass']['#attributes']['autocomplete'] = 'current-password';
-  // Passwort anzeigen: Textbutton im Feld, Zustand showPassword (Alpine).
+  // Passwort anzeigen (tw2-11 Nachtrag 5 (e)): Icon-Schalter Auge / durch-
+  // gestrichenes Auge rechts im Feld, 44-px-Ziel, aria-pressed, Zustand
+  // showPassword (Alpine); das Feld bekommt rechts Platz für den Schalter.
   $form['pass']['#attributes'][':type'] = "showPassword ? 'text' : 'password'";
+  $form['pass']['#attributes']['class'][] = 'pr-12';
+  $renderer = \Drupal::service('renderer');
+  $icon = static fn (string $name, array $attributes): array => [
+    '#type' => 'component',
+    '#component' => 'tannwald:icon',
+    '#props' => ['name' => $name, 'size' => 20],
+    '#attributes' => $attributes,
+  ];
+  $icons = (string) $renderer->renderInIsolation($icon('eye', ['x-show' => '!showPassword']))
+    . (string) $renderer->renderInIsolation($icon('eye-off', ['x-show' => 'showPassword', 'x-cloak' => '']));
   $form['pass']['#field_suffix'] = [
     '#type' => 'html_tag',
     '#tag' => 'button',
-    '#value' => t('show', [], ['context' => 'tannwald password']),
+    '#value' => Markup::create($icons),
     '#attributes' => [
       'type' => 'button',
-      // 6.1 (E): 44-px-Trefffläche (Leitplanken §7.2).
-      'class' => ['btn-text', 'text-sm', 'h-11', 'px-2'],
+      'class' => ['login-pass-toggle'],
       '@click' => 'showPassword = !showPassword',
-      'x-text' => 'showPassword ? ' . Json::encode((string) t('hide', [], ['context' => 'tannwald password']))
-      . ' : ' . Json::encode((string) t('show', [], ['context' => 'tannwald password'])),
+      'aria-label' => t('Show password'),
+      ':aria-label' => 'showPassword ? ' . Json::encode((string) t('Hide password'))
+      . ' : ' . Json::encode((string) t('Show password')),
+      'aria-pressed' => 'false',
+      ':aria-pressed' => "showPassword ? 'true' : 'false'",
+      ':class' => "{ 'is-on': showPassword }",
       'aria-controls' => 'edit-pass',
     ],
   ];

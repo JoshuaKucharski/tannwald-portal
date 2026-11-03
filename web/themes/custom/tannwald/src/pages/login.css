@@ -20,6 +20,9 @@
    Breite max. 560 px, Einblenden 150 ms (unter prefers-reduced-motion 0 s über die globale Regel), GitHub-Button
    unten rechts (Phone: statisch unter dem Formular). Schriftgrössen des Modals sind Auftragsvorgabe (28/19 px). */
 @layer components {
+  /* Nachtrag 5 (e): Passwort-Schalter als Icon-Button im Feld (Suffix absolut rechts, siehe .form-type-password .field-suffix). */
+  .login-pass-toggle { @apply inline-flex h-11 w-11 items-center justify-center rounded-control bg-transparent text-muted hover:text-ink; transition: color var(--duration-fast) var(--ease-out-soft); }
+  .login-pass-toggle.is-on { @apply text-accent; }
   .demo-help { @apply absolute right-4 top-4 inline-flex h-11 w-11 items-center justify-center rounded-full bg-accent font-semibold leading-none text-white hover:bg-accent-hover active:bg-accent-active lg:right-6 lg:top-6 lg:h-12 lg:w-12; font-size: 24px; transition: background-color var(--duration-fast) var(--ease-out-soft); }
   @media (min-width: 64rem) { .demo-help { font-size: 26px; } }
   /* Nachtrag 5 (d): GitHub-Button fixed unten rechts, immer sichtbar; Phone 16 px plus safe-area, ab md 24 px; ein Schattenlevel. */
