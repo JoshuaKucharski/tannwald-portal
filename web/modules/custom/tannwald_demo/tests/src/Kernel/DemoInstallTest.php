@@ -221,7 +221,8 @@ class DemoInstallTest extends KernelTestBase {
     $this->assertSame(2, $reset['deleted']['lesebestaetigung']);
     $this->assertSame(1, $reset['deleted']['maschine'], 'The hand-made machine; the ten seeded ones go with the rollback.');
     $this->assertSame(10, $reset['deleted']['rolled_back']['tannwald_maschinen']);
-    $this->assertSame(6, $reset['deleted']['rolled_back']['tannwald_users']);
+    // Sieben Demo-Konten seit f1deba5 (portal-admin).
+    $this->assertSame(7, $reset['deleted']['rolled_back']['tannwald_users']);
     $this->assertSame($first, $reset['counts']);
     $this->assertSame('unchanged', $reset['admin'], 'demo-reset leaves admin alone.');
     $this->assertNotNull($lookup->uidOf('admin'));
