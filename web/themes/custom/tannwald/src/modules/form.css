@@ -24,7 +24,7 @@
 
   /* Aktionen: Primärbutton „Speichern“, weitere Buttons sekundär, Abstand 12 px. */
   .form-actions { @apply mt-6 flex flex-wrap items-center gap-3; }
-  .form-actions .form-submit { @apply inline-flex h-11 cursor-pointer select-none items-center justify-center gap-2 whitespace-nowrap rounded-control border border-control bg-panel px-4 font-medium text-ink no-underline hover:border-ink; transition: background-color var(--duration-base) var(--ease-out-soft), border-color var(--duration-base) var(--ease-out-soft), color var(--duration-base) var(--ease-out-soft); }
+  .form-actions .form-submit:not(.btn) { @apply inline-flex h-11 cursor-pointer select-none items-center justify-center gap-2 whitespace-nowrap rounded-control border border-control bg-panel px-4 font-medium text-ink no-underline hover:border-ink; transition: background-color var(--duration-base) var(--ease-out-soft), border-color var(--duration-base) var(--ease-out-soft), color var(--duration-base) var(--ease-out-soft); }
   .form-actions .form-submit:not(.btn).button--primary { @apply border-accent bg-accent font-semibold text-white hover:border-accent-hover hover:bg-accent-hover hover:text-white active:bg-accent-active; }
   .form-actions .form-submit:not(.btn).button--danger { @apply border-danger text-danger hover:border-danger; }
   .form-submit:disabled { @apply cursor-not-allowed opacity-45; }
