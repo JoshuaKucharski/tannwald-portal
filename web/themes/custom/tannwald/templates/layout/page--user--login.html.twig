@@ -5,9 +5,10 @@
  * Akzentblock (Bildmarke, Wortmarke, Satz, drei Nutzen-Zeilen) und dem Hero-Bild hero-login.webp (Theme-Asset,
  * 16:9, füllt den Rest der Höhe); rechts das Formular (ein Titel, 44-px-Felder, Passwort anzeigen, Primärbutton,
  * Textlink „Passwort vergessen?“). Phone: eine Spalte, Markenpanel als schmaler Kopf ohne Bild (Formular zuerst).
- * Demo-Konten als Chips in zwei Gruppen (nur Split dev), Klick füllt Benutzername und Passwort „demo“ aus.
+ * Demo-Konten als Chips in zwei Gruppen (Split dev oder $settings['tannwald_demo_login'], Demo-Server), Klick füllt
+ * Benutzername und Passwort „demo“ aus.
  *
- * Variablen: site_name, demo_accounts[] {name, label} (leer ausserhalb von dev), directory (Theme-Pfad),
+ * Variablen: site_name, demo_accounts[] {name, label} (leer ohne masquerade und ohne Schalter), directory (Theme-Pfad),
  * cache_bubble; page.content enthält Meldungen (inline) und das Formular; Reiter und Seitentitel-Block sind
  * auf Nutzerseiten ausgeblendet (layout.inc).
  */

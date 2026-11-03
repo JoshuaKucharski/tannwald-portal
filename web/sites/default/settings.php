@@ -939,6 +939,9 @@ if (getenv('TANNWALD_DEPLOY') === '1') {
   $settings['file_private_path'] = getenv('PRIVATE_PATH') ?: '/var/www/mytannwald-private';
   // Split „dev“ (masquerade, queue_ui) aus; einen Split „prod“ gibt es nicht (config/split: ci, dev).
   $config['config_split.config_split.dev']['status'] = FALSE;
+  // Demo-Server (D9, 2026-11-03: Site offen): die Konten-Chips der Anmeldeseite (Theme, includes/layout.inc) auch
+  // ohne masquerade — ein Klick füllt kunde-a … compliance mit dem Passwort demo aus.
+  $settings['tannwald_demo_login'] = TRUE;
   // nginx spricht FastCGI direkt mit dem Pool: REMOTE_ADDR ist die Adresse des Clients, HTTPS kommt aus
   // fastcgi_params. Ein reverse_proxy würde nur X-Forwarded-For vom Client glauben (Bericht 4.1, §3 (c)).
   $settings['reverse_proxy'] = FALSE;

@@ -7,6 +7,7 @@
 
 declare(strict_types=1);
 
+use Drupal\Core\Site\Settings;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use Drupal\user\Entity\User;
@@ -52,7 +53,11 @@ function _tannwald_layout_prepare(array &$variables): void {
   $variables['account'] = NULL;
   $variables['demo'] = NULL;
   $variables['demo_hint'] = $hasMasquerade;
-  $variables['demo_accounts'] = $hasMasquerade ? _tannwald_demo_account_chips() : [];
+  // Konten-Chips auf der Anmeldeseite: lokal mit masquerade (Split dev), auf dem Demo-Server über
+  // $settings['tannwald_demo_login'] (settings.php, Block TANNWALD_DEPLOY) — D9 2026-11-03: Site offen, die
+  // Demo-Konten mit Passwort demo sind der Zugang für Besucher.
+  $showChips = $hasMasquerade || (bool) Settings::get('tannwald_demo_login', FALSE);
+  $variables['demo_accounts'] = $showChips ? _tannwald_demo_account_chips() : [];
   // Kopfzeile und Demo-Leiste hängen am Konto und an der Sitzung (masquerade).
   $variables['cache_bubble'] = _tannwald_cache_bubble(['user', 'session', 'url.path', 'languages:language_interface'], ['config:system.site']);
 
