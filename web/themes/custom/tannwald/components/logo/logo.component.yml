@@ -1,0 +1,19 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Logo
+status: stable
+description: 'Bildmarke myTannwald (tw2-12, Nachtrag 3): Tanne aus drei gestapelten Stufen (Dreieck, zwei Trapeze) mit runden Ecken, nachgebaut als inline-SVG in currentColor nach fixtures/logo/mark-blue-512.png. Dekorativ (aria-hidden) ohne label; mit label als role=img.'
+props:
+  type: object
+  properties:
+    size:
+      type: integer
+      title: Size
+      default: 28
+      description: 'Kantenlänge in px (Kopfzeile 28, Phone 24, Anmeldeseite 36).'
+    label:
+      type: string
+      title: Label
+      description: 'Zugänglicher Name, wenn die Marke allein steht (sonst leer: dekorativ).'
+    attributes:
+      type: Drupal\Core\Template\Attribute
+      title: Attributes

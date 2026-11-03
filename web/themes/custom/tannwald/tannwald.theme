@@ -418,3 +418,27 @@ function tannwald_form_user_pass_alter(array &$form, FormStateInterface $form_st
   $form['name']['#attributes']['autocomplete'] = 'username';
   $form['actions']['submit']['#attributes']['class'] = ['btn', 'btn-primary', 'w-full'];
 }
+
+/**
+ * Implements hook_page_attachments_alter().
+ *
+ * Favicon der Bildmarke (tw2-12, Nachtrag 3): favicon.svg, favicon-32.png und
+ * apple-touch-icon-180.png aus dem Theme statt des Core-Favicons. Gilt für
+ * Seiten im Theme tannwald; Claro behält das Core-Favicon.
+ */
+function tannwald_page_attachments_alter(array &$attachments): void {
+  $base = base_path() . \Drupal::service('extension.list.theme')->getPath('tannwald') . '/images/';
+  foreach ($attachments['#attached']['html_head_link'] ?? [] as $key => $link) {
+    if (($link[0]['rel'] ?? '') === 'icon') {
+      unset($attachments['#attached']['html_head_link'][$key]);
+    }
+  }
+  $icons = [
+    ['rel' => 'icon', 'href' => $base . 'favicon.svg', 'type' => 'image/svg+xml'],
+    ['rel' => 'icon', 'href' => $base . 'favicon-32.png', 'type' => 'image/png', 'sizes' => '32x32'],
+    ['rel' => 'apple-touch-icon', 'href' => $base . 'apple-touch-icon-180.png', 'sizes' => '180x180'],
+  ];
+  foreach ($icons as $icon) {
+    $attachments['#attached']['html_head_link'][] = [$icon];
+  }
+}

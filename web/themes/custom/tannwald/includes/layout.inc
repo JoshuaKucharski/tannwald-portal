@@ -53,16 +53,14 @@ function _tannwald_role_labels(): array {
 /**
  * Variablen für page.html.twig.
  *
- * Schlüssel: site_name, brand_mark, nav, language_switcher, account, demo,
- * cache_bubble.
+ * Schlüssel: site_name, nav, language_switcher, account, demo, cache_bubble.
  */
 function _tannwald_layout_prepare(array &$variables): void {
   $current = \Drupal::currentUser();
   $hasMasquerade = \Drupal::moduleHandler()->moduleExists('masquerade');
   $variables['site_name'] = (string) (\Drupal::config('system.site')->get('name') ?: 'myTannwald');
   $variables['nav'] = _tannwald_navigation();
-  // tw2-12: Bildmarke (Platz für das kommende Logo) und Sprachwechsler.
-  $variables['brand_mark'] = _tannwald_brand_mark();
+  // tw2-12: Sprachwechsler DE · EN · FR (die Bildmarke ist das SDC tannwald:logo).
   $variables['language_switcher'] = _tannwald_language_switcher();
   $variables['account'] = NULL;
   $variables['demo'] = NULL;
@@ -187,27 +185,6 @@ function _tannwald_navigation(): array {
       'active' => str_starts_with($alias, '/suche'),
     ],
   ];
-}
-
-/**
- * Bildmarke der Kopfzeile (tw2-12): Platz für das kommende Logo.
- *
- * Liegt images/logo.svg oder images/logo.png im Theme, wird es als Bild
- * gezeigt; sonst zeichnet page.html.twig die Blister-Marke der Anmeldeseite
- * als Platzhalter (inline-SVG, currentColor).
- *
- * @return array{src: ?string}
- *   Bildquelle oder NULL für den Platzhalter.
- */
-function _tannwald_brand_mark(): array {
-  $theme = \Drupal::service('extension.list.theme')->getPath('tannwald');
-  foreach (['logo.svg', 'logo.png'] as $file) {
-    $path = $theme . '/images/' . $file;
-    if (is_file(DRUPAL_ROOT . '/' . $path)) {
-      return ['src' => base_path() . $path];
-    }
-  }
-  return ['src' => NULL];
 }
 
 /**

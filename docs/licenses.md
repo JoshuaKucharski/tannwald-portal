@@ -11,6 +11,9 @@ Demo-Dokumente, Bulletins und Stammdaten unter `fixtures/` sind fiktiv und selbs
 Die 20 Bilder unter `fixtures/bilder/` (WebP, je ≤ 400 KB) hat der Betreiber am 02.11.2026 mit einem Bildgenerator
 erzeugt; sie zeigen fiktive Maschinen ohne Marken, Texte und Personen. Herkunft und Einbau: `fixtures/bilder/manifest.json`, ADR-009.
 
+Logo-Bildmarke: Betreiber, erzeugt mit Nano Banana am 2026-11-03, als SVG nachgebaut (`components/logo`, `images/favicon.svg`;
+Referenz `fixtures/logo/mark-blue-512.png`).
+
 ## Composer (PHP), 125 Pakete
 
 | Lizenz | Pakete |
