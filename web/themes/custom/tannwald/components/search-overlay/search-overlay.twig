@@ -1,0 +1,98 @@
+{#
+/**
+ * @file
+ * SDC tannwald:search-overlay — Props: live_url, search_url, chat_event, document_types, machine_types, languages,
+ * examples, questions, attributes. Mechanik wie A's Launcher und die Sheets (sheetMixin): x-ref sheet/initial,
+ * Fokusfalle, inert, Scroll-Lock, Fokus zurück zum Auslöser. Live-Resultate liegen hier unter den Chips (nicht als
+ * Dropdown der Komponente search-live), darum eigene Liste; gleicher Endpunkt, gleiche Tasten (Pfeile, Enter, Esc).
+ */
+#}
+<div{{ attributes.addClass('search-overlay-root') }}
+  x-data="searchOverlay({ liveUrl: '{{ live_url|e('js') }}', chatEvent: '{{ chat_event|default('tannwald:chat-open')|e('js') }}', noticeBusy: '{{ 'Too many requests, please wait a moment.'|t|e('js') }}', noticeEmpty: '{{ 'No hits while typing. Enter searches everything.'|t|e('js') }}', labelTop: '{{ 'While typing: top @n'|t({'@n': '6'})|e('js') }}' })"
+  @tannwald:search-open.window="openFrom($event)" @keydown.window="onKeydown($event)" data-search-overlay>
+  <div class="sheet-scrim search-overlay-scrim" x-show="open" x-cloak x-transition.opacity.duration.150ms @click="closeSheet()" aria-hidden="true"></div>
+  <section id="search-overlay" class="search-overlay" x-show="open" x-cloak
+    x-transition:enter="search-overlay-motion" x-transition:enter-start="search-overlay-hidden" x-transition:enter-end="search-overlay-shown"
+    x-transition:leave="search-overlay-motion" x-transition:leave-start="search-overlay-shown" x-transition:leave-end="search-overlay-hidden"
+    x-ref="sheet" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="search-overlay-title" @click.outside="onOutside($event)">
+    <form action="{{ search_url }}" method="get" role="search" class="search-overlay-form" @submit="onSubmit($event)">
+      <h2 id="search-overlay-title" class="visually-hidden">{{ 'Search your documents'|t }}</h2>
+      <div class="search-overlay-head">
+        <div class="search-overlay-field">
+          {{ include('tannwald:icon', {name: 'search', size: 22, attributes: create_attribute({'class': ['search-overlay-field-icon']})}, with_context = false) }}
+          <label for="search-overlay-q" class="visually-hidden">{{ 'Search term'|t }}</label>
+          <input id="search-overlay-q" type="search" name="q" maxlength="1000" autocomplete="off" class="search-overlay-input"
+            placeholder="{{ 'e.g. E-4711 or cleaning the sealing station'|t }}" x-ref="initial" x-model="query"
+            role="combobox" aria-autocomplete="list" :aria-expanded="results.length ? 'true' : 'false'" aria-controls="search-overlay-results"
+            :aria-activedescendant="index >= 0 ? 'search-overlay-opt-' + index : null"
+            @input.debounce.200ms="search()" @keydown="onInputKey($event)">
+          <button type="button" class="search-overlay-clear" aria-label="{{ 'Clear input'|t }}" x-show="query.length > 0" x-cloak @click="clear()">
+            {{ include('tannwald:icon', {name: 'close', size: 18}, with_context = false) }}
+          </button>
+        </div>
+        <button type="button" class="btn btn-secondary btn-icon shrink-0" aria-label="{{ 'Close'|t }}" @click="closeSheet()">
+          {{ include('tannwald:icon', {name: 'close', size: 20}, with_context = false) }}
+        </button>
+      </div>
+      <input type="hidden" name="modus" :value="modus" value="hybrid">
+      <div class="search-overlay-tools">
+        {# Segment-Schalter: zwei Buttons als Radiogruppe (Pfeiltasten wechseln), aktiv gefüllt. #}
+        <div role="radiogroup" aria-label="{{ 'Search mode'|t }}" class="segment" @keydown="onSegmentKey($event)" data-search-modes>
+          <button type="button" role="radio" class="segment-item" :aria-checked="modus === 'hybrid' ? 'true' : 'false'" :tabindex="modus === 'hybrid' ? 0 : -1" @click="setModus('hybrid')" data-modus="hybrid">{{ 'Hybrid'|t }}</button>
+          <button type="button" role="radio" class="segment-item" :aria-checked="modus === 'volltext' ? 'true' : 'false'" :tabindex="modus === 'volltext' ? 0 : -1" @click="setModus('volltext')" data-modus="volltext">{{ 'Full text only'|t }}</button>
+        </div>
+        {# Filter als Chips (Checkboxen im Formular); sie gelten für die Ergebnisseite (Enter), die Live-Liste zeigt Top-Treffer ohne Filter. #}
+        <div class="search-overlay-chips" role="group" aria-label="{{ 'Filter'|t }}" data-search-chips>
+          <label class="chip chip--check"><input type="checkbox" name="aktuell" value="1" class="visually-hidden"><span>{{ 'Current versions only'|t }}</span></label>
+          {% for type in document_types %}
+            <label class="chip chip--check"><input type="checkbox" name="dokumenttyp[]" value="{{ type.id }}" class="visually-hidden"><span>{{ type.label }}</span></label>
+          {% endfor %}
+          {% for type in machine_types %}
+            <label class="chip chip--check"><input type="checkbox" name="maschinentyp[]" value="{{ type.id }}" class="visually-hidden"><span>{{ type.label }}</span></label>
+          {% endfor %}
+          {% for language in languages %}
+            <label class="chip chip--check"><input type="checkbox" name="sprache[]" value="{{ language.code }}" class="visually-hidden"><span lang="{{ language.code }}">{{ language.label }}</span></label>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="search-overlay-body">
+        <div x-show="results.length > 0 || notice !== ''" x-cloak class="search-overlay-live" aria-label="{{ 'Live results while typing'|t }}">
+          <div class="search-overlay-live-head">
+            <span x-text="results.length ? labelTop() + ' · ' + (duration / 1000).toFixed(2) + ' s' : notice"></span>
+            <span>{{ 'Enter for all hits'|t }}</span>
+          </div>
+          <ul id="search-overlay-results" role="listbox" class="search-overlay-results">
+            <template x-for="(r, i) in results" :key="r.url">
+              <li role="option" :id="'search-overlay-opt-' + i" :aria-selected="i === index ? 'true' : 'false'">
+                <a :href="r.url" class="search-overlay-hit" :class="i === index ? 'is-active' : ''" @mouseenter="index = i">
+                  <span class="min-w-0 flex-1 basis-64"><span class="font-medium" x-text="r.titel"></span> <span class="text-muted">›</span> <span x-text="r.heading_path"></span></span>
+                  <span class="flex items-center gap-1.5 text-sm text-muted"><span class="pill border-line uppercase" x-text="r.langcode"></span><span x-text="r.dokumenttyp"></span></span>
+                </a>
+              </li>
+            </template>
+          </ul>
+        </div>
+        <div x-show="results.length === 0 && notice === ''" class="search-overlay-empty" data-search-overlay-empty>
+          <p class="m-0 text-sm text-muted">{{ 'Examples: a fault code, a part, an activity.'|t }}</p>
+          <div class="search-examples">
+            {% for example in examples %}<a href="{{ example.url }}" class="chip">{{ example.label }}</a>{% endfor %}
+          </div>
+          <p class="m-0 mt-2 text-sm text-muted">{{ 'Or ask the assistant:'|t }}</p>
+          <div class="search-examples">
+            {% for question in questions %}
+              <button type="button" class="chip" @click="ask({{ question|json_encode }})">{{ question }}</button>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      <div class="search-overlay-foot">
+        <span class="text-sm text-muted">{{ 'Enter shows all hits · Esc closes'|t }}</span>
+        {# Nachtrag 2: „Frage an den Assistenten“ sekundär mit Sprechblase links neben „Suchen“. #}
+        <div class="search-overlay-foot-actions">
+          <button type="button" class="btn btn-secondary" @click="ask()" data-search-ask>{{ include('tannwald:icon', {name: 'chat', size: 20}, with_context = false) }}{{ 'Ask the assistant'|t }}</button>
+          <button type="submit" class="btn btn-primary">{{ 'Search'|t({}, {'context': 'tannwald button'}) }}</button>
+        </div>
+      </div>
+    </form>
+  </section>
+</div>

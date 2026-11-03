@@ -5,7 +5,7 @@
  * Brotkrumen, Inhalt, Seitenleiste, Fusszeile. 1.4: Phone-Kopf ≤ 120 px (Klassen in src/pages/shell.css).
  *
  * Variablen aus tannwald_preprocess_page(): site_name, nav {home_url, items[] {label, url, active},
- * search {url, active}}, language_switcher[] {code, label, url, current},
+ * search {url, active}}, language_switcher[] {code, label, url, current}, search_overlay (tw2-13) oder null,
  * account {display_name, company, initials, logout} oder null, demo {account_name, company, role_label,
  * switch_links[] {label, url}, back_url, back_name} oder null, error_page {code, title, text, back_url, back_label} oder null
  * (1.2), cache_bubble.
@@ -54,7 +54,8 @@
       </nav>
       {{ page.primary_menu }}
       <div class="site-tools">
-        <a href="{{ nav.search.url }}" class="site-search{{ nav.search.active ? ' is-active' : '' }}" aria-label="{{ 'Search'|t }}"{% if nav.search.active %} aria-current="page"{% endif %}>{{ include('tannwald:icon', {name: 'search', size: 22}, with_context = false) }}</a>
+        {# tw2-13: die Lupe öffnet das Such-Overlay (Ereignis tannwald:search-open); ohne JS bleibt der Link auf /suche. #}
+        <a href="{{ nav.search.url }}" class="site-search{{ nav.search.active ? ' is-active' : '' }}" aria-label="{{ 'Search'|t }}" title="{{ 'Search (Ctrl+K or ⌘K)'|t }}"{% if nav.search.active %} aria-current="page"{% endif %}{% if search_overlay %} x-data @click.prevent="$dispatch('tannwald:search-open', { opener: $el })" aria-haspopup="dialog" aria-controls="search-overlay"{% endif %}>{{ include('tannwald:icon', {name: 'search', size: 22}, with_context = false) }}</a>
         {% if language_switcher %}
           <nav aria-label="{{ 'Language'|t }}" class="site-lang{{ account ? '' : ' site-lang--bare' }}">
             {% for language in language_switcher %}
@@ -120,5 +121,7 @@
   {# 5.3: hier anhängen #}
   {{ chat_cache }}
   {% if chat %}{{ include('tannwald:chat', chat, with_context = false) }}{% endif %}
+  {# tw2-13: Such-Overlay (nur angemeldet; Daten aus _tannwald_search_overlay()). #}
+  {% if search_overlay %}{{ include('tannwald:search-overlay', search_overlay, with_context = false) }}{% endif %}
   {# 1.3: hier anhängen #}
 </div>

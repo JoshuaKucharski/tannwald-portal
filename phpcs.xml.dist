@@ -14,6 +14,8 @@
 
   <exclude-pattern>*/node_modules/*</exclude-pattern>
   <exclude-pattern>*/dist/*</exclude-pattern>
+  <!-- Tailwind-Quellen (@apply-Zeilen über 300 Zeichen): der CSS-Tokenizer hält sie für minifiziert. -->
+  <exclude-pattern>*/tannwald/src/*.css</exclude-pattern>
   <!-- Lizenztext des Webfonts (1.1), wörtlich, keine Zeilenlängen. -->
   <exclude-pattern>*/tannwald/fonts/*</exclude-pattern>
 

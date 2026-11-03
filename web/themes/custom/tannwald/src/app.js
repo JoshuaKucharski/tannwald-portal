@@ -28,7 +28,8 @@ Alpine.data('searchLive', (config) => ({
     this.query = this.$root.querySelector('input[type="search"]').value || '';
   },
   modus() {
-    const checked = document.querySelector(`input[name="${config.modusInput}"]:checked`);
+    // tw2-13: Radios (:checked) oder das versteckte Feld des Segment-Schalters.
+    const checked = document.querySelector(`input[name="${config.modusInput}"]:checked`) || document.querySelector(`input[type="hidden"][name="${config.modusInput}"]`);
     return checked ? checked.value : 'hybrid';
   },
   async search() {

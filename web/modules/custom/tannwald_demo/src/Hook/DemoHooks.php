@@ -13,6 +13,7 @@ use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Core\Theme\ThemeManagerInterface;
 use Drupal\tannwald_demo\DemoInstaller;
 use Drupal\tannwald_demo\DisplayNames;
 use Drupal\tannwald_demo\FixturePath;
@@ -27,7 +28,21 @@ final class DemoHooks {
 
   public function __construct(
     private readonly AccountProxyInterface $currentUser,
+    private readonly ThemeManagerInterface $themeManager,
   ) {}
+
+  /**
+   * Implements hook_page_attachments().
+   *
+   * Nachtrag 8 von tw2-11: Claro-Korrekturen (Library claro-tweaks) nur, wenn
+   * Claro das aktive Theme ist — kein eigenes Admin-Theme, keine Config.
+   */
+  #[Hook('page_attachments')]
+  public function pageAttachments(array &$attachments): void {
+    if ($this->themeManager->getActiveTheme()->getName() === 'claro') {
+      $attachments['#attached']['library'][] = 'tannwald_demo/claro-tweaks';
+    }
+  }
 
   /**
    * Implements hook_migration_plugins_alter().
@@ -82,6 +97,45 @@ final class DemoHooks {
       '#markup' => $this->t('Demo account: the e-mail address and the password (demo) are fixed and cannot be changed here.'),
       '#weight' => -20,
     ];
+  }
+
+  /**
+   * Implements hook_form_FORM_ID_alter() for user_pass.
+   *
+   * Nachtrag 9 (tw2-12, Sicherheit): Mailpit zeigt auf dem Demo-Server alle
+   * Mails. Für uid 1 und Konten mit der Rolle administrator darf „Passwort
+   * vergessen?“ darum keine Mail mit dem One-Time-Login auslösen. Der
+   * vorgeschaltete Submit-Handler löscht das aufgelöste Konto, Core zeigt
+   * danach dieselbe neutrale Meldung wie bei unbekannten Konten.
+   */
+  #[Hook('form_user_pass_alter')]
+  public function formUserPassAlter(array &$form, FormStateInterface $form_state): void {
+    $form['#submit'] = $form['#submit'] ?? [];
+    array_unshift($form['#submit'], [static::class, 'guardPasswordReset']);
+  }
+
+  /**
+   * Submit-Handler vor UserPasswordForm::submitForm(): geschützte Konten.
+   *
+   * @param array<string, mixed> $form
+   *   Formular.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Formularzustand.
+   */
+  public static function guardPasswordReset(array &$form, FormStateInterface $form_state): void {
+    $account = $form_state->getValue('account');
+    if ($account instanceof UserInterface && self::isResetProtected($account)) {
+      // Kein Logger-Aufruf (statischer Handler, kein Container): Core loggt
+      // danach „unknown or inactive account“, das genügt als Spur.
+      $form_state->setValue('account', FALSE);
+    }
+  }
+
+  /**
+   * Ob ein Konto keinen Passwort-Reset per Mail bekommt (uid 1, administrator).
+   */
+  public static function isResetProtected(UserInterface $account): bool {
+    return (int) $account->id() === 1 || $account->hasRole('administrator');
   }
 
   /**

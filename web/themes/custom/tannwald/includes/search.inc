@@ -88,7 +88,9 @@ function tannwald_preprocess_tannwald_search_page(array &$variables): void {
       'url' => _tannwald_search_url(['q' => $example, 'modus' => $modus]),
     ],
   ];
-  $variables['questions'] = _tannwald_chat_example_questions();
+  // Nachtrag 9 (tw2-11): Beispiele nach Kontext (Maschine aus der Suche
+  // oder erster Typ des Kontos).
+  $variables['questions'] = _tannwald_chat_example_questions(_tannwald_chat_type_code($maschineNid));
 
   // Thumbs je Treffer (1.3): Dokument-Bild, sonst Typbild des Dokumenttyps,
   // sonst Platzhalter (tannwald_image, C). Nodes einmal laden; die Treffer sind

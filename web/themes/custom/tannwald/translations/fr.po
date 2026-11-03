@@ -597,9 +597,6 @@ msgstr "confirmé le @date par @name"
 msgid "e.g. E-4711 or cleaning the sealing station"
 msgstr "p. ex. E-4711 ou nettoyage de la station de scellage"
 
-msgid "e.g. Which film thickness is approved?"
-msgstr "p. ex. Quelle épaisseur de film est autorisée ?"
-
 msgid "in @seconds s"
 msgstr "en @seconds s"
 
@@ -811,14 +808,6 @@ msgstr "Ouvrir l’assistant"
 msgid "Or ask the assistant:"
 msgstr "Ou demandez à l'assistant :"
 
-msgid "How often is the sealing station cleaned?"
-msgstr "À quelle fréquence la station de scellage est-elle nettoyée ?"
-
-msgid "What does fault code E-4711 mean?"
-msgstr "Que signifie le code de défaut E-4711 ?"
-
-msgid "Which film thickness is approved?"
-msgstr "Quelle épaisseur de film est autorisée ?"
 
 msgid "Answers come only from approved documents you are allowed to see. Please check the cited chapters before acting."
 msgstr "Les réponses proviennent uniquement de documents validés que vous pouvez consulter. Vérifiez les chapitres cités avant d'agir."
@@ -895,3 +884,44 @@ msgstr "Démo"
 
 msgid "Account menu"
 msgstr "Menu du compte"
+
+# tw2-13: Such-Overlay aus der Kopfzeile
+msgid "Search (Ctrl+K or ⌘K)"
+msgstr "Recherche (Ctrl+K ou ⌘K)"
+
+msgid "No hits while typing. Enter searches everything."
+msgstr "Pas encore de résultats pendant la saisie. Entrée lance la recherche complète."
+
+msgid "Enter shows all hits · Esc closes"
+msgstr "Entrée affiche tous les résultats · Échap ferme"
+
+# Nachtrag 9 (tw2-11) : questions d’exemple par type de machine (docs/evals/fragen.yaml)
+msgid "e.g. @question"
+msgstr "p. ex. @question"
+
+msgid "How often must the sealing station be cleaned?"
+msgstr "À quelle fréquence la station de scellage de la TB-200 doit-elle être nettoyée ?"
+
+msgid "What does E-4711 mean?"
+msgstr "Que signifie E-4711 ?"
+
+msgid "Which cleaning agents are approved for the TB-200?"
+msgstr "Quels produits de nettoyage sont homologués pour la TB-200 ?"
+
+msgid "How many cycles per minute does the TB-400 achieve per web?"
+msgstr "Combien de cycles par minute la TB-400 atteint-elle par bande ?"
+
+msgid "What has to be checked monthly on the TB-400?"
+msgstr "Que faut-il contrôler chaque mois sur la TB-400 ?"
+
+msgid "What must be set after a roll change on one web of the TB-400?"
+msgstr "Que faut-il régler après un changement de rouleau sur une bande de la TB-400 ?"
+
+msgid "How often must the carton detection cell of the KT-500 be calibrated?"
+msgstr "À quelle fréquence la cellule de détection des cartons de la KT-500 doit-elle être calibrée ?"
+
+msgid "Which cleaning agents are approved for the KT-500?"
+msgstr "Quels produits de nettoyage sont homologués pour la KT-500 ?"
+
+msgid "Why does the closure of a carton on the KT-500 not hold?"
+msgstr "Pourquoi la fermeture d’une boîte ne tient-elle pas sur la KT-500 ?"

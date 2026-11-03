@@ -66,26 +66,82 @@ function _tannwald_chat_props(?int $maschineNid, ?string $machineLabel, string $
     'ui_langcode' => \Drupal::languageManager()->getCurrentLanguage()->getId(),
     'language_names' => $names,
     'mode' => $mode,
-    'examples' => _tannwald_chat_example_questions(),
+    'examples' => _tannwald_chat_example_questions(_tannwald_chat_type_code($maschineNid)),
     // Nachtrag 7 (tw2-11): Zustand und Verlauf im Browser je Konto.
     'uid' => (int) \Drupal::currentUser()->id(),
   ];
 }
 
 /**
- * Drei Beispielfragen für den Leer-Zustand (1.3).
+ * Drei Beispielfragen für den Leer-Zustand (1.3, Nachtrag 9 tw2-11).
  *
- * Suche ohne Treffer, Suche ohne Begriff und der Assistent zeigen dieselben.
+ * Suche ohne Treffer, Suche ohne Begriff, Such-Overlay und der Assistent
+ * zeigen dieselben. Alle Fragen stammen aus docs/evals/fragen.yaml mit
+ * erwartet: antwort — je Maschinentyp drei (TB-200: q-001, q-003, q-015;
+ * TB-400: q-061, q-063, q-076; KT-500: q-021, q-022, q-065). Die erste ist
+ * zugleich der Platzhalter des Fragefelds.
+ *
+ * @param string|null $typeCode
+ *   Typ-Code (TB200, TB400, KT500); NULL oder unbekannt = erster Typ des
+ *   Kontos, siehe _tannwald_chat_type_code().
  *
  * @return string[]
  *   Fragen in der Oberflächensprache.
  */
-function _tannwald_chat_example_questions(): array {
-  return [
-    (string) t('How often is the sealing station cleaned?'),
-    (string) t('What does fault code E-4711 mean?'),
-    (string) t('Which film thickness is approved?'),
+function _tannwald_chat_example_questions(?string $typeCode = NULL): array {
+  $sets = [
+    'TB200' => [
+      (string) t('How often must the sealing station be cleaned?'),
+      (string) t('What does E-4711 mean?'),
+      (string) t('Which cleaning agents are approved for the TB-200?'),
+    ],
+    'TB400' => [
+      (string) t('How many cycles per minute does the TB-400 achieve per web?'),
+      (string) t('What has to be checked monthly on the TB-400?'),
+      (string) t('What must be set after a roll change on one web of the TB-400?'),
+    ],
+    'KT500' => [
+      (string) t('How often must the carton detection cell of the KT-500 be calibrated?'),
+      (string) t('Which cleaning agents are approved for the KT-500?'),
+      (string) t('Why does the closure of a carton on the KT-500 not hold?'),
+    ],
   ];
+  $typeCode ??= _tannwald_chat_type_code(NULL);
+  return $sets[$typeCode] ?? $sets['TB200'];
+}
+
+/**
+ * Typ-Code für die Beispielfragen (Nachtrag 9 tw2-11).
+ *
+ * Maschinenseite: Typ der Maschine (field_maschinentyp → field_typ_code);
+ * sonst der erste Typ des Kontos aus den Entitlement-Keys (type:<code>,
+ * Reihenfolge wie getRealmsForAccount(); kunde-b hat kein TB-200). Intern
+ * (role:intern, keine type-Keys) und anonym: TB-200.
+ *
+ * @param int|null $maschineNid
+ *   Maschine der Seite oder NULL.
+ *
+ * @return string
+ *   TB200, TB400 oder KT500.
+ */
+function _tannwald_chat_type_code(?int $maschineNid): string {
+  if ($maschineNid !== NULL) {
+    $machine = \Drupal::entityTypeManager()->getStorage('node')->load($maschineNid);
+    if ($machine instanceof NodeInterface && $machine->hasField('field_maschinentyp')) {
+      $term = $machine->get('field_maschinentyp')->entity;
+      if ($term && $term->hasField('field_typ_code') && ($code = (string) $term->get('field_typ_code')->value) !== '') {
+        return $code;
+      }
+    }
+  }
+  if (\Drupal::hasService('tannwald_access.entitlement')) {
+    foreach (\Drupal::service('tannwald_access.entitlement')->getRealmsForAccount(\Drupal::currentUser()) as $realm) {
+      if (preg_match('/^type:([A-Z0-9]+)/', (string) $realm, $match)) {
+        return $match[1];
+      }
+    }
+  }
+  return 'TB200';
 }
 
 /**

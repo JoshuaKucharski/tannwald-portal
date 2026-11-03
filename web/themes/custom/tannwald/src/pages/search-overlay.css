@@ -1,0 +1,35 @@
+/* Such-Overlay (tw2-13, Leitplanken „Overlay/Command-Palette“): Fläche 80 % der Fensterhöhe, max. 880 px zentriert,
+   Abstand oben 48 px / 6vh (Nachtrag 1), Ecken 24 px wie das Modal der Anmeldeseite, ein Schattenlevel; Phone volle
+   Breite und Höhe. Bewegung 150 ms Fade + 8 px (reduced motion: 0 s über die globale Regel). */
+@layer components {
+  .search-overlay-scrim { @apply z-50; }
+  .search-overlay { @apply fixed inset-x-0 top-0 z-[60] mx-auto flex h-full w-full flex-col overflow-hidden bg-panel shadow-card md:top-[max(48px,6vh)] md:h-[80vh] md:max-h-[calc(100vh-max(48px,6vh)-24px)] md:max-w-[880px] md:rounded-[24px] md:border md:border-line; }
+  .search-overlay-motion { transition: opacity 150ms var(--ease-out-soft), transform 150ms var(--ease-out-soft); }
+  .search-overlay-hidden { opacity: 0; transform: translateY(-8px); }
+  .search-overlay-shown { opacity: 1; transform: translateY(0); }
+  .search-overlay-form { @apply flex min-h-0 flex-1 flex-col; }
+  .search-overlay-head { @apply flex items-center gap-3 border-b border-line px-4 py-3 md:px-6; }
+  .search-overlay-field { @apply relative min-w-0 flex-1; }
+  .search-overlay-field-icon { @apply pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted; }
+  /* Grosses Suchfeld 48 px, Rand nur bei Fokus als Ring. */
+  .search-overlay-input { @apply h-12 w-full rounded-control border border-control bg-panel pl-11 pr-11 text-lg text-ink hover:border-ink; transition: border-color var(--duration-fast) var(--ease-out-soft); }
+  .search-overlay-clear { @apply absolute right-0 top-1/2 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-control text-muted hover:text-ink; }
+  .search-overlay-tools { @apply flex flex-col gap-3 border-b border-line-soft px-4 py-3 md:px-6; }
+  /* Segment-Schalter: zwei Buttons in einer Pille, aktiv gefüllt (Akzent, Weiss ≥ 8:1). */
+  .segment { @apply inline-flex w-fit rounded-pill border border-control bg-panel p-0.5; }
+  .segment-item { @apply inline-flex h-10 cursor-pointer items-center rounded-pill px-4 text-sm font-medium text-ink hover:bg-surface; transition: background-color var(--duration-fast) var(--ease-out-soft), color var(--duration-fast) var(--ease-out-soft); }
+  .segment-item[aria-checked="true"] { @apply bg-accent text-white hover:bg-accent; }
+  /* Filter-Chips als Checkboxen (visually-hidden), gewählt wie chip.is-selected, Ring über :has(:focus-visible). */
+  .search-overlay-chips { @apply flex flex-wrap gap-2; }
+  .chip--check { @apply cursor-pointer select-none; }
+  .chip--check:has(input:checked) { @apply border-accent bg-private-bg font-medium text-accent; }
+  .chip--check:has(input:focus-visible) { outline: var(--focus-ring-width) solid var(--color-accent); outline-offset: var(--focus-ring-offset); }
+  .search-overlay-body { @apply min-h-0 flex-1 overflow-y-auto px-4 py-4 md:px-6; }
+  .search-overlay-live-head { @apply flex flex-wrap items-center justify-between gap-2 pb-2 text-sm text-muted; }
+  .search-overlay-results { @apply m-0 flex list-none flex-col p-0; }
+  .search-overlay-hit { @apply flex flex-wrap items-center justify-between gap-2 rounded-control px-3 py-2.5 text-base text-ink no-underline hover:bg-surface; }
+  .search-overlay-hit.is-active { @apply bg-surface; }
+  .search-overlay-empty { @apply flex flex-col gap-3; }
+  .search-overlay-foot { @apply flex flex-wrap items-center justify-between gap-3 border-t border-line px-4 py-3 md:px-6; }
+  .search-overlay-foot-actions { @apply ml-auto flex items-center gap-3; }
+}

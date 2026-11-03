@@ -243,7 +243,8 @@ case "$1" in
     updatedb:status) [ -f "$FAKE_STATE/pending" ] && echo "tannwald_assistant 10007" || echo " [success] No database updates required." ;;
     updatedb) rm -f "$FAKE_STATE/pending" ;;
     config:status) cat "$FAKE_STATE/cfg_diff" 2>/dev/null || true ;;
-    deploy) [ -f "$FAKE_STATE/cfg_stuck" ] || rm -f "$FAKE_STATE/cfg_diff" ;;
+    deploy) [ -f "$FAKE_STATE/cfg_stuck" ] || rm -f "$FAKE_STATE/cfg_diff"
+        if [ -f "$FAKE_STATE/hook_out" ]; then cat "$FAKE_STATE/hook_out"; else printf " [notice] Deploy hook started: tannwald_demo_deploy_demo_accounts\n [notice] Demo accounts: created portal-admin (password demo).\n [success] Finished performing deploy hooks.\n"; fi ;;
     tannwald:demo-install)
         [ "${TANNWALD_DEMO:-}" = 1 ] || { echo "[error] Demo data only in DDEV …"; exit 1; }
         [ -f "$FAKE_STATE/seed_bad" ] && { echo "Migration tannwald_dokumente: 3 failed (Prüfstand)"; exit 1; }
