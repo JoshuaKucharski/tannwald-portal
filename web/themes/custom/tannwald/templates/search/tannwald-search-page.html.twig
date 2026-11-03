@@ -1,10 +1,10 @@
 {#
 /**
  * @file
- * Suche (1.3, Wireframe 02, Leitplanken v2): Seitenkopf, Suchfeld mit Live-Resultaten und Modus-Reitern
- * „Hybrid“ / „Nur Volltext“, Facetten als ruhige Seitenleiste (lg+) bzw. Sheet „Filter (n)“ (darunter),
- * Trefferzeile mit Sortierung als Chip-Paar, Trefferkarten mit Thumb, Leer-Zustände mit Beispielen,
- * Assistent als Panel (xl+) bzw. Sheet. Überschreibt das Fallback-Template von tannwald_assistant.
+ * Suche (1.3, Wireframe 02, Leitplanken v2; tw2-13): Seitenkopf, Suchfeld mit Live-Resultaten, Segment-Schalter
+ * „Hybrid“ / „Nur Volltext“ und Filter-Chips wie im Such-Overlay (keine Seitenleiste, kein Sheet), Trefferzeile mit
+ * Sortierung als Chip-Paar, Trefferkarten mit Thumb über die volle Breite, Leer-Zustände mit Beispielen; der Assistent
+ * ist der globale Launcher (A, tw2-11 Nachtrag 6). Überschreibt das Fallback-Template von tannwald_assistant.
  *
  * Variablen aus 4.2/6.1 (query, modus, aktuell, filters, hits, facets, total, dauer_ms, pager, live_url, sort,
  * sort_urls) und aus tannwald_preprocess_tannwald_search_page() (includes/search.inc): form_id, modus_label,
@@ -13,7 +13,7 @@
  */
 #}
 {{ chat_cache }}
-<div class="tannwald-search search-page" data-search-page x-data="searchFilters({ active: {{ active_filters }}, label: {{ 'Filter'|t|json_encode }}, labelActive: {{ 'Filter (@count)'|t({'@count': '@count'})|json_encode }} })" @keydown.window="onSheetKeydown($event)">
+<div class="tannwald-search search-page" data-search-page>
   <header class="page-head">
     <div>
       <h1 class="page-title">{{ 'Search your documents'|t }}</h1>
@@ -21,7 +21,8 @@
     </div>
   </header>
 
-  <form id="{{ form_id }}" action="{{ search_url }}" method="get" role="search" class="search-form">
+  {# tw2-13: Ergebnisseite mit demselben Segment-Schalter und denselben Chips wie das Overlay; keine Seitenleiste mehr. #}
+  <form id="{{ form_id }}" action="{{ search_url }}" method="get" role="search" class="search-form" x-data="{ modus: '{{ modus|e('js') }}', filtersOpen: {{ active_filters ? 'true' : 'false' }} }">
     <label for="tannwald-search-q" class="visually-hidden">{{ 'Search term'|t }}</label>
     <div class="search-form-row">
       {{ include('tannwald:search-live', {
@@ -35,47 +36,49 @@
       }, with_context = false) }}
       <button type="submit" class="btn btn-primary">{{ 'Search'|t({}, {'context': 'tannwald button'}) }}</button>
     </div>
-    <div role="radiogroup" aria-label="{{ 'Search mode'|t }}" class="search-modes">
-      <label class="search-mode">
-        <input type="radio" name="modus" value="hybrid" class="visually-hidden"{{ modus != 'volltext' ? ' checked' }} @change="$el.form.requestSubmit()">
-        <span>{{ 'Hybrid'|t }}</span>
+    <input type="hidden" name="modus" value="{{ modus }}" :value="modus">
+    <div class="search-tools-row">
+      <div role="radiogroup" aria-label="{{ 'Search mode'|t }}" class="segment" data-search-modes
+        @keydown.arrow-left.prevent="modus = modus === 'hybrid' ? 'volltext' : 'hybrid'; $nextTick(() => $el.form.requestSubmit())"
+        @keydown.arrow-right.prevent="modus = modus === 'hybrid' ? 'volltext' : 'hybrid'; $nextTick(() => $el.form.requestSubmit())">
+        <button type="button" role="radio" class="segment-item" :aria-checked="modus === 'hybrid' ? 'true' : 'false'" :tabindex="modus === 'hybrid' ? 0 : -1" @click="modus = 'hybrid'; $nextTick(() => $el.form.requestSubmit())" data-modus="hybrid">{{ 'Hybrid'|t }}</button>
+        <button type="button" role="radio" class="segment-item" :aria-checked="modus === 'volltext' ? 'true' : 'false'" :tabindex="modus === 'volltext' ? 0 : -1" @click="modus = 'volltext'; $nextTick(() => $el.form.requestSubmit())" data-modus="volltext">{{ 'Full text only'|t }}</button>
+      </div>
+      {# Phone: Chips hinter „Filter (n)“ (gemessen 308 px für 14 Chips bei 390); ab md immer sichtbar. #}
+      <button type="button" class="btn btn-secondary md:hidden" aria-controls="search-chips" :aria-expanded="filtersOpen ? 'true' : 'false'" @click="filtersOpen = !filtersOpen" data-filters-toggle>
+        {{ include('tannwald:icon', {name: 'filter', size: 20}, with_context = false) }}
+        <span>{{ active_filters ? 'Filter (@count)'|t({'@count': active_filters}) : 'Filter'|t }}</span>
+      </button>
+      {% if active_filters and reset_all_url %}
+        <a href="{{ reset_all_url }}" class="btn-text text-sm" data-reset-all>{{ 'Reset all'|t }}</a>
+      {% endif %}
+    </div>
+    {# Filter als Chips (Checkboxen senden das Formular ab); Zähler je Facette aus dem Controller, nur mit Suchbegriff. #}
+    <div id="search-chips" class="search-chips" :class="{ 'is-open': filtersOpen }" role="group" aria-label="{{ 'Filter'|t }}" data-search-chips>
+      <label class="chip chip--check">
+        <input type="checkbox" name="aktuell" value="1" class="visually-hidden"{{ aktuell ? ' checked' }} @change="$el.form.requestSubmit()">
+        <span>{{ 'Current versions only'|t }}</span>
       </label>
-      <label class="search-mode">
-        <input type="radio" name="modus" value="volltext" class="visually-hidden"{{ modus == 'volltext' ? ' checked' }} @change="$el.form.requestSubmit()">
-        <span>{{ 'Full text only'|t }}</span>
-      </label>
+      {% for group in facet_groups %}
+        {% if group.items %}
+          <fieldset class="search-chip-group" data-facet="{{ group.name }}">
+            <legend class="visually-hidden">{{ group.label }}</legend>
+            {% for item in group.items %}
+              <label class="chip chip--check" title="{{ group.label }}">
+                <input type="checkbox" name="{{ group.param }}" value="{{ item.id }}" class="visually-hidden"{{ item.active ? ' checked' }} @change="$el.form.requestSubmit()">
+                <span>{{ item.label }}</span>
+                <span class="count num text-muted">{{ item.count }}</span>
+              </label>
+            {% endfor %}
+          </fieldset>
+        {% endif %}
+      {% endfor %}
     </div>
     {% if maschine_nid %}<input type="hidden" name="maschine_nid" value="{{ maschine_nid }}">{% endif %}
     {% if sort == 'datum' %}<input type="hidden" name="sort" value="datum">{% endif %}
   </form>
 
   <div class="search-layout">
-    <div class="search-scrim" x-show="open" x-cloak @click="closeSheet()" aria-hidden="true"></div>
-    <aside id="search-facets" class="search-facets" :class="{ 'is-open': open }" x-ref="sheet" tabindex="-1" aria-label="{{ 'Filter'|t }}" :role="open && sheetActive() ? 'dialog' : null" :aria-modal="open && sheetActive() ? 'true' : null">
-      <div class="sheet-handle" aria-hidden="true"></div>
-      <div class="search-facets-head">
-        <span class="font-medium" x-text="label()">{{ active_filters ? 'Filter (@count)'|t({'@count': active_filters}) : 'Filter'|t }}</span>
-        {% if active_filters %}
-          <a href="{{ reset_all_url }}" class="btn-text ml-auto text-sm" data-reset-all>{{ 'Reset all'|t }}</a>
-        {% endif %}
-        <button type="button" class="btn btn-secondary btn-icon lg:hidden{{ active_filters ? '' : ' ml-auto' }}" aria-label="{{ 'Close'|t }}" @click="closeSheet()">
-          {{ include('tannwald:icon', {name: 'close', size: 20}, with_context = false) }}
-        </button>
-      </div>
-      <div class="search-facets-body">
-        <label class="facet-row">
-          <input type="checkbox" name="aktuell" value="1" form="{{ form_id }}"{{ aktuell ? ' checked' }} @change="$el.form.requestSubmit()">
-          <span class="min-w-0 flex-1">{{ 'Current versions only'|t }}</span>
-        </label>
-        {% for group in facet_groups %}
-          {{ include('tannwald:facet-group', group|merge({form_id: form_id}), with_context = false) }}
-        {% endfor %}
-      </div>
-      <div class="search-facets-foot">
-        <button type="button" class="btn btn-secondary flex-1" @click="closeSheet()">{{ 'Show hits'|t }}</button>
-      </div>
-    </aside>
-
     <section aria-label="{{ 'Search results'|t }}" class="search-results">
       {% if has_query %}
         <div class="search-results-head">
@@ -84,13 +87,9 @@
             {{ 'in @seconds s'|t({'@seconds': duration_text}) }} · {{ 'Mode @modus'|t({'@modus': modus_label}) }}
           </p>
           <div class="search-tools">
-            <button type="button" class="btn btn-secondary lg:hidden" @click="openSheet()" aria-controls="search-facets" :aria-expanded="open ? 'true' : 'false'">
-              {{ include('tannwald:icon', {name: 'filter', size: 20}, with_context = false) }}
-              <span x-text="label()">{{ active_filters ? 'Filter (@count)'|t({'@count': active_filters}) : 'Filter'|t }}</span>
-            </button>
             {# 6.1 (E): Sortierung Relevanz/Datum (Wireframe 02), Links aus dem Controller; 1.3: Chip-Paar. #}
             {% if sort_urls %}
-              <nav class="search-sort" aria-label="{{ 'Sort by'|t }}" data-search-sort>
+              <nav class="search-sort tannwald-search__sort" aria-label="{{ 'Sort by'|t }}" data-search-sort>
                 <span class="text-sm text-muted">{{ 'Sort by'|t }}</span>
                 <a href="{{ sort_urls.relevanz }}" class="chip{{ sort == 'relevanz' ? ' is-selected' : '' }}"{{ sort == 'relevanz' ? ' aria-current="true"' }}>{{ 'Relevance'|t }}</a>
                 <a href="{{ sort_urls.datum }}" class="chip{{ sort == 'datum' ? ' is-selected' : '' }}"{{ sort == 'datum' ? ' aria-current="true"' }}>{{ 'Date'|t }}</a>
