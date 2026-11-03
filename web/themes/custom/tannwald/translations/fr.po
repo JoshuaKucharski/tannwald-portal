@@ -802,6 +802,15 @@ msgstr "Exemples : un code de défaut, une pièce, une activité."
 msgid "Asks about: @serial"
 msgstr "Concerne : @serial"
 
+msgid "Affected machines in your fleet"
+msgstr "Machines concernées de votre parc"
+
+msgid "confirmed on @date"
+msgstr "confirmé le @date"
+
+msgid "The confirmation could not be saved. Please try again."
+msgstr "La confirmation n’a pas pu être enregistrée. Veuillez réessayer."
+
 msgid "Open the assistant"
 msgstr "Ouvrir l’assistant"
 

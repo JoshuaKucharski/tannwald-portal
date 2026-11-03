@@ -4,7 +4,10 @@
  * Bulletinseite (1.2 auf das Design-System gehoben): Kopf mit Art, Datum und Bild (Bulletin, sonst Platzhalter),
  * Inhaltsverzeichnis haftend, Lesespalte mit Kapitel-Ankern (Zitate des Assistenten springen hierher).
  * Variablen aus tannwald_preprocess_node() (includes/document.inc): kind_label, published, requires_confirmation,
- * toc[], body, image, cache_bubble.
+ * toc[], body, image, cache_bubble; Nachtrag 10 (tw2-11): affected[] {nid, serial, url, location, confirmed_at,
+ * can_confirm}, confirm_endpoint, token_endpoint — Block „Betroffene Maschinen Ihres Bestands“ mit „Gelesen bestätigen“
+ * je Zeile (Alpine bulletinConfirm, src/modules/bulletin.js: JSON-POST mit CSRF, Update ohne Reload); bei genau einer
+ * betroffenen Maschine steht der Primärbutton direkt unter dem Meta-Satz und der Hinweissatz entfällt.
  */
 #}
 {{ cache_bubble }}
@@ -20,7 +23,18 @@
         {{ 'Published @date'|t({'@date': published}) }}
         {%- if requires_confirmation %} · {{ 'Read confirmation required'|t }}{% endif -%}
       </p>
-      {% if requires_confirmation %}
+      {% set confirm_config = {endpoint: confirm_endpoint, tokenEndpoint: token_endpoint, done: affected|map(m => {nid: m.nid, date: m.confirmed_at}), labels: {pending: 'Read confirmation pending'|t, confirmed: 'confirmed on @date'|t, error: 'The confirmation could not be saved. Please try again.'|t}} %}
+      {% if requires_confirmation and affected|length == 1 %}
+        {# Nachtrag 10: genau eine betroffene Maschine — Status und Primärbutton direkt unter dem Meta-Satz. #}
+        {% set m = affected|first %}
+        <div class="flex flex-wrap items-center gap-x-4 gap-y-2" x-data="bulletinConfirm({{ confirm_config|json_encode }})" data-affected-machine="{{ m.nid }}">
+          <span class="meta"><a href="{{ m.url }}" class="font-medium">{{ m.serial }}</a>{% if m.location %} · {{ m.location }}{% endif %} · <span x-text="status({{ m.nid }})">{{ m.confirmed_at ? 'confirmed on @date'|t({'@date': m.confirmed_at}) : 'Read confirmation pending'|t }}</span></span>
+          {% if m.can_confirm %}
+            <button type="button" class="btn btn-primary" x-show="!done[{{ m.nid }}]" :disabled="busy === {{ m.nid }}" @click="confirm({{ m.nid }})" data-confirm-button>{{ 'Confirm as read'|t }}</button>
+          {% endif %}
+          <span class="text-sm text-danger" x-show="error" x-cloak x-text="error" role="alert"></span>
+        </div>
+      {% elseif requires_confirmation and affected is empty %}
         <p class="m-0 max-w-prose text-muted">{{ 'Confirm the reading on the page of the affected machine (button “Gelesen bestätigen”).'|t }}</p>
       {% endif %}
     </div>
@@ -28,6 +42,26 @@
       {% block image %}{{ image }}{% endblock %}
     {% endembed %}
   </header>
+  {% if affected|length > 1 %}
+    {# Nachtrag 10: mehrere betroffene Maschinen des Kontos — je Zeile Serie · Standort · Status und „Gelesen bestätigen“. #}
+    <section class="card" aria-labelledby="affected-title" x-data="bulletinConfirm({{ confirm_config|json_encode }})" data-affected-machines>
+      <div class="card-head"><h2 id="affected-title" class="card-title">{{ 'Affected machines in your fleet'|t }}</h2></div>
+      <ul class="m-0 list-none divide-y divide-line-soft p-0">
+        {% for m in affected %}
+          <li class="flex flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3 md:px-6" data-affected-machine="{{ m.nid }}">
+            <div class="flex min-w-0 flex-1 basis-64 flex-col gap-0.5">
+              <a href="{{ m.url }}" class="font-medium">{{ m.serial }}</a>
+              <span class="meta">{% if m.location %}{{ m.location }} · {% endif %}<span x-text="status({{ m.nid }})">{{ m.confirmed_at ? 'confirmed on @date'|t({'@date': m.confirmed_at}) : (requires_confirmation ? 'Read confirmation pending'|t : 'No confirmation required'|t) }}</span></span>
+            </div>
+            {% if m.can_confirm %}
+              <button type="button" class="btn btn-secondary" x-show="!done[{{ m.nid }}]" :disabled="busy === {{ m.nid }}" @click="confirm({{ m.nid }})" data-confirm-button>{{ 'Confirm as read'|t }}</button>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+      <p class="m-0 px-4 pb-3 text-sm text-danger md:px-6" x-show="error" x-cloak x-text="error" role="alert"></p>
+    </section>
+  {% endif %}
   {# 6.1 (E): Moderations-Formular (Freigeben/Zurückweisen) auf /latest für redaktion und compliance. #}
   {% if content.content_moderation_control|render|trim %}
     <div class="card card-body">{{ content.content_moderation_control }}</div>
