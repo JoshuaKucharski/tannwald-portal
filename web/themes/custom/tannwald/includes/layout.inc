@@ -7,6 +7,7 @@
 
 declare(strict_types=1);
 
+use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Site\Settings;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
@@ -43,13 +44,19 @@ function _tannwald_role_labels(): array {
 }
 
 /**
- * Variablen für page.html.twig (site_name, nav, account, demo, cache_bubble).
+ * Variablen für page.html.twig.
+ *
+ * Schlüssel: site_name, brand_mark, nav, language_switcher, account, demo,
+ * cache_bubble.
  */
 function _tannwald_layout_prepare(array &$variables): void {
   $current = \Drupal::currentUser();
   $hasMasquerade = \Drupal::moduleHandler()->moduleExists('masquerade');
   $variables['site_name'] = (string) (\Drupal::config('system.site')->get('name') ?: 'myTannwald');
   $variables['nav'] = _tannwald_navigation();
+  // tw2-12: Bildmarke (Platz für das kommende Logo) und Sprachwechsler.
+  $variables['brand_mark'] = _tannwald_brand_mark();
+  $variables['language_switcher'] = _tannwald_language_switcher();
   $variables['account'] = NULL;
   $variables['demo'] = NULL;
   $variables['demo_hint'] = $hasMasquerade;
@@ -59,8 +66,12 @@ function _tannwald_layout_prepare(array &$variables): void {
   // mit Passwort demo sind der Zugang für Besucher.
   $showChips = $hasMasquerade || (bool) Settings::get('tannwald_demo_login', FALSE);
   $variables['demo_accounts'] = $showChips ? _tannwald_demo_account_chips() : [];
-  // Kopfzeile und Demo-Leiste hängen am Konto und an der Sitzung (masquerade).
-  $variables['cache_bubble'] = _tannwald_cache_bubble(['user', 'session', 'url.path', 'languages:language_interface'], ['config:system.site']);
+  // Kopfzeile und Demo-Leiste hängen am Konto und an der Sitzung (masquerade);
+  // der Sprachwechsler trägt die Abfrage-Parameter weiter (url.query_args).
+  $variables['cache_bubble'] = _tannwald_cache_bubble(
+    ['user', 'session', 'url.path', 'url.query_args', 'languages:language_interface'],
+    ['config:system.site']
+  );
 
   if ($current->isAuthenticated()) {
     $user = User::load($current->id());
@@ -131,9 +142,12 @@ function _tannwald_initials(string $name): string {
 }
 
 /**
- * Hauptnavigation: Meine Maschinen, Suche, Bulletins (5.3 hängt Redaktion an).
+ * Hauptnavigation: Meine Maschinen, Bulletins (5.3 hängt Redaktion an).
  *
- * @return array{home_url: string, items: array<int, array{label: mixed, url: string, active: bool}>}
+ * Seit tw2-12 ist die Suche kein Navigationspunkt mehr, sondern das
+ * Lupen-Icon rechts in der Kopfzeile (Schlüssel search).
+ *
+ * @return array{home_url: string, items: array<int, array{label: mixed, url: string, active: bool}>, search: array{url: string, active: bool}}
  *   Navigation.
  */
 function _tannwald_navigation(): array {
@@ -149,11 +163,6 @@ function _tannwald_navigation(): array {
       'active' => str_starts_with($alias, '/meine-maschinen') || in_array($bundle, ['maschine', 'dokument'], TRUE),
     ],
     [
-      'label' => t('Search'),
-      'url' => '/suche',
-      'active' => str_starts_with($alias, '/suche'),
-    ],
-    [
       'label' => t('Bulletins'),
       'url' => '/bulletins',
       'active' => str_starts_with($alias, '/bulletins') || $bundle === 'bulletin',
@@ -166,7 +175,92 @@ function _tannwald_navigation(): array {
   return [
     'home_url' => Url::fromUserInput('/meine-maschinen')->toString(),
     'items' => $items,
+    'search' => [
+      'url' => Url::fromUserInput('/suche')->toString(),
+      'active' => str_starts_with($alias, '/suche'),
+    ],
   ];
+}
+
+/**
+ * Bildmarke der Kopfzeile (tw2-12): Platz für das kommende Logo.
+ *
+ * Liegt images/logo.svg oder images/logo.png im Theme, wird es als Bild
+ * gezeigt; sonst zeichnet page.html.twig die Blister-Marke der Anmeldeseite
+ * als Platzhalter (inline-SVG, currentColor).
+ *
+ * @return array{src: ?string}
+ *   Bildquelle oder NULL für den Platzhalter.
+ */
+function _tannwald_brand_mark(): array {
+  $theme = \Drupal::service('extension.list.theme')->getPath('tannwald');
+  foreach (['logo.svg', 'logo.png'] as $file) {
+    $path = $theme . '/images/' . $file;
+    if (is_file(DRUPAL_ROOT . '/' . $path)) {
+      return ['src' => base_path() . $path];
+    }
+  }
+  return ['src' => NULL];
+}
+
+/**
+ * Sprachwechsler der Oberfläche (tw2-12): DE · EN · FR über den URL-Präfix.
+ *
+ * Links aus language_manager->getLanguageSwitchLinks() für die aktuelle Route
+ * (Url::fromRouteMatch wie der Core-Block; Drupal 11 filtert die Links nach
+ * $url->access(), die Route <current> besteht diese Prüfung nie). Auf den
+ * Fehlerseiten 403/404 zeigt die Route auf system.40x, darum dort der Pfad
+ * der Hauptanfrage ohne Sprachpräfix als unroutete base:-URL mit
+ * path_processing (sonst bleibt der Präfix weg). Abfrage-Parameter bleiben.
+ * Die Nutzer-Spracheinstellung (preferred_langcode) bleibt die Vorgabe; der
+ * Wechsler setzt nur die URL.
+ *
+ * @return array<int, array{code: string, label: string, url: string, current: bool}>
+ *   Sprachen in Reihenfolge der Konfiguration; leer bei nur einer Sprache.
+ */
+function _tannwald_language_switcher(): array {
+  $languageManager = \Drupal::languageManager();
+  if (!$languageManager->isMultilingual()) {
+    return [];
+  }
+  $routeMatch = \Drupal::routeMatch();
+  if (in_array($routeMatch->getRouteName(), ['system.403', 'system.404'], TRUE)) {
+    $main = \Drupal::requestStack()->getMainRequest();
+    $path = trim($main ? $main->getPathInfo() : '/', '/');
+    $prefixes = (array) \Drupal::config('language.negotiation')->get('url.prefixes');
+    foreach ($prefixes as $prefix) {
+      if ($prefix !== '' && ($path === $prefix || str_starts_with($path, $prefix . '/'))) {
+        $path = substr($path, strlen($prefix) + 1);
+        break;
+      }
+    }
+    $url = Url::fromUri('base:/' . $path, ['path_processing' => TRUE]);
+  }
+  else {
+    $url = Url::fromRouteMatch($routeMatch);
+  }
+  $links = $languageManager->getLanguageSwitchLinks(LanguageInterface::TYPE_INTERFACE, $url);
+  if ($links === NULL || empty($links->links)) {
+    return [];
+  }
+  $current = $languageManager->getCurrentLanguage()->getId();
+  // Eigennamen der Sprachen (die Konfigurationslabels sind englisch: „French“).
+  $native = ['de' => 'Deutsch', 'en' => 'English', 'fr' => 'Français'];
+  $switcher = [];
+  foreach ($links->links as $code => $link) {
+    $target = $link['url'] instanceof Url ? clone $link['url'] : clone $url;
+    $target->setOption('language', $link['language']);
+    if (!empty($link['query'])) {
+      $target->setOption('query', $link['query']);
+    }
+    $switcher[] = [
+      'code' => (string) $code,
+      'label' => $native[$code] ?? (string) $link['title'],
+      'url' => $target->toString(),
+      'current' => $code === $current,
+    ];
+  }
+  return $switcher;
 }
 
 /**

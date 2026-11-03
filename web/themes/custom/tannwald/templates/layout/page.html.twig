@@ -4,7 +4,8 @@
  * Seitenlayout (Wireframe 01 oben): Demo-Leiste, Kopfzeile mit Wortmarke, Hauptnavigation und Konto,
  * Brotkrumen, Inhalt, Seitenleiste, Fusszeile. 1.4: Phone-Kopf ≤ 120 px (Klassen in src/pages/shell.css).
  *
- * Variablen aus tannwald_preprocess_page(): site_name, nav {home_url, items[] {label, url, active}},
+ * Variablen aus tannwald_preprocess_page(): site_name, brand_mark {src}, nav {home_url, items[] {label, url, active},
+ * search {url, active}}, language_switcher[] {code, label, url, current},
  * account {display_name, company, initials, logout} oder null, demo {account_name, company, role_label,
  * switch_links[] {label, url}, back_url, back_name} oder null, error_page {code, title, text, back_url, back_label} oder null
  * (1.2), cache_bubble.
@@ -33,9 +34,19 @@
   {% endif %}
   {{ page.demo_bar }}
 
+  {# tw2-12: Kopfzeile — Bildmarke + Wortmarke · Navigation · rechts Lupe, Sprachwechsler DE · EN · FR, Name, Avatar, Abmelden.
+     Tab-Weg: Wortmarke → Navigation → Lupe → Sprache → Avatar → Abmelden. Phone: Lupe und Avatar in Zeile 1, Sprache im Avatar-Menü. #}
   <header class="site-header border-b border-line bg-panel">
     <div class="site-header-inner">
-      <a href="{{ nav.home_url }}" class="site-brand">{{ site_name }}</a>
+      <a href="{{ nav.home_url }}" class="site-brand">
+        {# Platz für das Logo (28 px, Phone 24): images/logo.svg oder logo.png im Theme; bis dahin die Blister-Marke der Anmeldeseite. #}
+        {% if brand_mark.src %}
+          <img src="{{ brand_mark.src }}" alt="" width="28" height="28" class="site-brand-mark" decoding="async">
+        {% else %}
+          <svg class="site-brand-mark" viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="4" y="20" width="28" height="10" rx="2.5"/><rect x="7" y="13" width="22" height="10" rx="2.5" fill="currentColor"/><rect x="10" y="6" width="16" height="10" rx="2.5" fill="currentColor"/></svg>
+        {% endif %}
+        <span class="site-brand-name">{{ site_name }}</span>
+      </a>
       <nav aria-label="{{ 'Main navigation'|t }}" class="site-nav">
         {% for item in nav.items %}
           <a href="{{ item.url }}" class="site-nav-link{{ item.active ? ' is-active' : '' }}"{% if item.active %} aria-current="page"{% endif %}>{{ item.label }}</a>
@@ -46,24 +57,43 @@
         {% endif %}
       </nav>
       {{ page.primary_menu }}
-      {% if account %}
-        <div class="site-account" x-data="{ open: false }" @keydown.escape.window="open = false" @click.outside="open = false">
-          <span class="site-account-name">{{ account.display_name }}{% if account.company %} · {{ account.company }}{% endif %}</span>
-          <button type="button" class="site-avatar" :aria-expanded="open ? 'true' : 'false'" aria-controls="account-menu" aria-label="{{ 'Account menu'|t }}" @click="open = !open">{{ account.initials }}</button>
-          <span class="site-account-logout">{{ account.logout }}</span>
-          <div id="account-menu" class="site-menu" x-show="open" x-cloak x-transition.opacity.duration.180ms>
-            <p class="site-menu-head">{{ account.display_name }}{% if account.company %}<span class="meta">{{ account.company }}</span>{% endif %}{% if demo %}<span class="meta">{{ 'Role @role'|t({'@role': demo.role_label}) }}</span>{% endif %}</p>
-            {% if demo and demo.switch_links %}
-              <p class="site-menu-label">{{ 'Switch:'|t }}</p>
-              <ul class="site-menu-list">
-                {% for link in demo.switch_links %}<li><a href="{{ link.url }}" class="site-menu-link" title="{{ link.title }}">{{ link.label }}</a></li>{% endfor %}
-              </ul>
-            {% endif %}
-            {% if demo and demo.back_url %}<a href="{{ demo.back_url }}" class="site-menu-link">{{ 'Back to @name'|t({'@name': demo.back_name}) }}</a>{% endif %}
-            <a href="{{ path('user.logout') }}" class="site-menu-link site-menu-logout">{{ 'Log out'|t }}</a>
+      <div class="site-tools">
+        <a href="{{ nav.search.url }}" class="site-search{{ nav.search.active ? ' is-active' : '' }}" aria-label="{{ 'Search'|t }}"{% if nav.search.active %} aria-current="page"{% endif %}>{{ include('tannwald:icon', {name: 'search', size: 22}, with_context = false) }}</a>
+        {% if language_switcher %}
+          <nav aria-label="{{ 'Language'|t }}" class="site-lang{{ account ? '' : ' site-lang--bare' }}">
+            {% for language in language_switcher %}
+              <a href="{{ language.url }}" class="site-lang-link{{ language.current ? ' is-active' : '' }}" lang="{{ language.code }}" hreflang="{{ language.code }}" aria-label="{{ language.label }}" title="{{ language.label }}"{% if language.current %} aria-current="true"{% endif %}>{{ language.code|upper }}</a>
+            {% endfor %}
+          </nav>
+        {% endif %}
+        {% if account %}
+          <div class="site-account" x-data="{ open: false }" @keydown.escape.window="open = false" @click.outside="open = false">
+            <span class="site-account-name">{{ account.display_name }}{% if account.company %} · {{ account.company }}{% endif %}</span>
+            <button type="button" class="site-avatar" :aria-expanded="open ? 'true' : 'false'" aria-controls="account-menu" aria-label="{{ 'Account menu'|t }}" @click="open = !open">{{ account.initials }}</button>
+            <span class="site-account-logout">{{ account.logout }}</span>
+            <div id="account-menu" class="site-menu" x-show="open" x-cloak x-transition.opacity.duration.180ms>
+              <p class="site-menu-head">{{ account.display_name }}{% if account.company %}<span class="meta">{{ account.company }}</span>{% endif %}{% if demo %}<span class="meta">{{ 'Role @role'|t({'@role': demo.role_label}) }}</span>{% endif %}</p>
+              {% if language_switcher %}
+                {# Phone: Sprachwechsler im Avatar-Menü (Kopf bleibt ≤ 120 px); ab md steht er inline in der Kopfzeile. #}
+                <p class="site-menu-label md:hidden">{{ 'Language'|t }}</p>
+                <nav aria-label="{{ 'Language'|t }}" class="site-menu-lang md:hidden">
+                  {% for language in language_switcher %}
+                    <a href="{{ language.url }}" class="site-lang-link{{ language.current ? ' is-active' : '' }}" lang="{{ language.code }}" hreflang="{{ language.code }}" aria-label="{{ language.label }}" title="{{ language.label }}"{% if language.current %} aria-current="true"{% endif %}>{{ language.code|upper }}</a>
+                  {% endfor %}
+                </nav>
+              {% endif %}
+              {% if demo and demo.switch_links %}
+                <p class="site-menu-label">{{ 'Switch:'|t }}</p>
+                <ul class="site-menu-list">
+                  {% for link in demo.switch_links %}<li><a href="{{ link.url }}" class="site-menu-link" title="{{ link.title }}">{{ link.label }}</a></li>{% endfor %}
+                </ul>
+              {% endif %}
+              {% if demo and demo.back_url %}<a href="{{ demo.back_url }}" class="site-menu-link">{{ 'Back to @name'|t({'@name': demo.back_name}) }}</a>{% endif %}
+              <a href="{{ path('user.logout') }}" class="site-menu-link site-menu-logout">{{ 'Log out'|t }}</a>
+            </div>
           </div>
-        </div>
-      {% endif %}
+        {% endif %}
+      </div>
       {{ page.header }}
     </div>
   </header>
