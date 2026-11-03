@@ -227,16 +227,23 @@ function tannwald_preprocess_views_view_table__redaktion_unbeantwortet(array &$v
  * Zurückweisen Warnfarbe); Textarea trägt den Wortzähler (SDC review-actions).
  */
 function tannwald_form_tannwald_ingest_review_form_alter(array &$form, FormStateInterface $form_state): void {
-  $classes = [
-    'freigeben' => ['btn', 'btn-primary'],
-    'entwurf_speichern' => ['btn', 'btn-secondary'],
-    'zurueckweisen' => ['btn', 'btn-warn'],
+  // Nachtrag 5 (tw2-12): Sichtreihenfolge links nach rechts Zurückweisen ·
+  // Entwurf speichern · Freigeben; Freigeben ganz rechts als Primär der Karte
+  // (je Karte ein Formular, Leitplanken-Ausnahme „Listen aus Formular-Karten“),
+  // die anderen sekundär. DOM-Reihenfolge = Sichtreihenfolge über #weight,
+  // kein CSS order; das Sheet „Zurückweisen“ behält seinen Warn-Button.
+  $buttons = [
+    'zurueckweisen' => [0, ['btn', 'btn-secondary']],
+    'entwurf_speichern' => [1, ['btn', 'btn-secondary']],
+    'freigeben' => [2, ['btn', 'btn-primary']],
   ];
-  foreach ($classes as $transition => $class) {
+  foreach ($buttons as $transition => [$weight, $class]) {
     if (isset($form['actions'][$transition])) {
       $form['actions'][$transition]['#attributes']['class'] = $class;
+      $form['actions'][$transition]['#weight'] = $weight;
     }
   }
+  $form['actions']['#attributes']['class'][] = 'review-buttons';
   $form['body']['#attributes']['data-review-body'] = '';
   $form['body']['#attributes']['class'][] = 'review-textarea';
   // Die Redaktion sieht Text, nicht HTML: Absätze als Leerzeilen, Listen als

@@ -29,6 +29,9 @@
   .form-actions .form-submit.button--danger { @apply border-danger text-danger hover:border-danger; }
   .form-submit:disabled { @apply cursor-not-allowed opacity-45; }
 
+  /* Textfelder als Block: inline-block liesse unter dem Feld eine 7-px-Grundlinienlücke (gemessen, Review-Karte Nachtrag 5). */
+  textarea.input, .form-textarea-wrapper textarea { @apply block; }
+
   /* Hilfetexte ohne Label (item-Elemente wie der Demo-Hinweis) und Core-Beschreibungen als Meta. */
   .form-item .description, .form-no-label > .form-item-content { @apply text-sm text-muted; }
   .form-type-item .form-item-content:not(.meta) { @apply text-base text-ink; }
