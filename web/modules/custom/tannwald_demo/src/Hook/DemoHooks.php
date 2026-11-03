@@ -13,6 +13,7 @@ use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Core\Theme\ThemeManagerInterface;
 use Drupal\tannwald_demo\DemoInstaller;
 use Drupal\tannwald_demo\DisplayNames;
 use Drupal\tannwald_demo\FixturePath;
@@ -27,7 +28,21 @@ final class DemoHooks {
 
   public function __construct(
     private readonly AccountProxyInterface $currentUser,
+    private readonly ThemeManagerInterface $themeManager,
   ) {}
+
+  /**
+   * Implements hook_page_attachments().
+   *
+   * Nachtrag 8 von tw2-11: Claro-Korrekturen (Library claro-tweaks) nur, wenn
+   * Claro das aktive Theme ist — kein eigenes Admin-Theme, keine Config.
+   */
+  #[Hook('page_attachments')]
+  public function pageAttachments(array &$attachments): void {
+    if ($this->themeManager->getActiveTheme()->getName() === 'claro') {
+      $attachments['#attached']['library'][] = 'tannwald_demo/claro-tweaks';
+    }
+  }
 
   /**
    * Implements hook_migration_plugins_alter().

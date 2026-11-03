@@ -1,0 +1,54 @@
+/* Claro-Korrekturen (tw2-11 Nachtrag 8, Betreiber-Wunsch): „Inhalt hinzufügen“ auf /admin/content oben rechts,
+   „Speichern“ und „Speichern unter“ auf Node-Formularen unten rechts; unter 48 rem wieder gestapelt wie in Claro.
+   Kein eigenes Theme, keine Konfiguration — nur diese Library, angehängt wenn Claro aktiv ist. */
+.local-actions,
+.block-local-actions-block .local-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.form-actions,
+.node-form .form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+@media (max-width: 47.99rem) {
+  .local-actions,
+  .block-local-actions-block .local-actions {
+    justify-content: flex-start;
+  }
+
+  .form-actions,
+  .node-form .form-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+/* Fusszeile des Node-Formulars (Claro: .layout-region--footer > .layout-region__content hält moderation_state
+   „Speichern unter“ und .form-actions nebeneinander): beides rechtsbündig in einer Zeile, Phone untereinander. */
+.layout-region--footer .layout-region__content {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem 1.5rem;
+}
+
+.layout-region--footer .form-actions,
+.layout-region--footer .entity-content-form-footer {
+  margin: 0;
+}
+
+@media (max-width: 47.99rem) {
+  .layout-region--footer .layout-region__content {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

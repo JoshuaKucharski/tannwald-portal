@@ -1,0 +1,6 @@
+# tw2-11 Nachtrag 8: kleine Korrekturen für Claro (nur angehängt, wenn Claro das aktive Theme ist — DemoHooks::pageAttachments).
+claro-tweaks:
+  version: 1.0.0
+  css:
+    theme:
+      css/claro-tweaks.css: { weight: 10 }
