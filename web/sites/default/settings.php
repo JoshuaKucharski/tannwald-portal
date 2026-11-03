@@ -959,6 +959,10 @@ if (getenv('TANNWALD_DEPLOY') === '1') {
   // Kostendeckel fest (F14, 2026-11-03): die offene Demo hat ein Konto mit „administer tannwald assistant“; über die Umgebung
   // gesetzt kann das Formular das Monatslimit nicht anheben. 2'000'000 Tokens × CHF 0.0008/1k = höchstens CHF 1.60 im Monat.
   $config['tannwald_assistant.settings']['monthly_token_limit'] = 2000000;
+  // Provider ebenfalls fest (F14-Restrisiko): auf dem Server gibt es kein Chat-Modell in Ollama — ein Umschalten im
+  // Formular würde den Assistenten für alle abschalten. Embeddings bleiben bge-m3 über Ollama (D11 Variante 2).
+  $config['tannwald_assistant.settings']['provider_chat'] = 'dashscope';
+  $config['tannwald_assistant.settings']['provider_embeddings'] = 'ollama';
   // Absender der Demo (4.2): SITE_MAIL aus der env-Datei statt admin@example.com aus config/sync.
   if (getenv('SITE_MAIL')) {
     $config['system.site']['mail'] = (string) getenv('SITE_MAIL');
