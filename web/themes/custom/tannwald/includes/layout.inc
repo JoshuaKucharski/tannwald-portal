@@ -53,9 +53,10 @@ function _tannwald_layout_prepare(array &$variables): void {
   $variables['account'] = NULL;
   $variables['demo'] = NULL;
   $variables['demo_hint'] = $hasMasquerade;
-  // Konten-Chips auf der Anmeldeseite: lokal mit masquerade (Split dev), auf dem Demo-Server über
-  // $settings['tannwald_demo_login'] (settings.php, Block TANNWALD_DEPLOY) — D9 2026-11-03: Site offen, die
-  // Demo-Konten mit Passwort demo sind der Zugang für Besucher.
+  // Konten-Chips auf der Anmeldeseite: lokal mit masquerade (Split dev), auf
+  // dem Demo-Server über $settings['tannwald_demo_login'] (settings.php,
+  // Block TANNWALD_DEPLOY). D9 vom 2026-11-03: Site offen, die Demo-Konten
+  // mit Passwort demo sind der Zugang für Besucher.
   $showChips = $hasMasquerade || (bool) Settings::get('tannwald_demo_login', FALSE);
   $variables['demo_accounts'] = $showChips ? _tannwald_demo_account_chips() : [];
   // Kopfzeile und Demo-Leiste hängen am Konto und an der Sitzung (masquerade).
