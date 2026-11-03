@@ -1,5 +1,7 @@
 /* tw2-12 (B), Nachtrag 4: Formular-Grundstil für Core-Formulare im Theme (Details, Datei-Widget, Aktionen, Reiter). */
 @import "../modules/form.css";
+/* tw2-13 (B): Such-Overlay aus der Kopfzeile. */
+@import "./search-overlay.css";
 
 /* Seitengerüst (1.4): Demo-Leiste, Kopfzeile, Navigation, Konto-Menü. Phone-Kopf ≤ 120 px — Leitplanken v2 §14:
    Leiste 32 px einzeilig, Wortmarke + Avatar 44 px, Tab-Zeile 40 px. Desktop ab md wie bisher (Leiste + Kopf 64 px). */

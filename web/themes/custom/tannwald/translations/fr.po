@@ -895,3 +895,13 @@ msgstr "Démo"
 
 msgid "Account menu"
 msgstr "Menu du compte"
+
+# tw2-13: Such-Overlay aus der Kopfzeile
+msgid "Search (Ctrl+K or ⌘K)"
+msgstr "Recherche (Ctrl+K ou ⌘K)"
+
+msgid "No hits while typing. Enter searches everything."
+msgstr "Pas encore de résultats pendant la saisie. Entrée lance la recherche complète."
+
+msgid "Enter shows all hits · Esc closes"
+msgstr "Entrée affiche tous les résultats · Échap ferme"

@@ -1,0 +1,62 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: 'Search overlay'
+status: stable
+description: 'Such-Overlay aus der Kopfzeile (tw2-13): Fläche 80 % der Fensterhöhe, max. 880 px, Fade 150 ms + 8 px von oben; Fokus im Suchfeld, Fokusfalle, Esc/Scrim schliessen, ⌘K/Ctrl+K und „/“ öffnen (Alpine searchOverlay, src/modules/search-overlay.js). Segment-Schalter Hybrid/Nur Volltext, Filter als Chips, Live-Resultate aus live_url ab 2 Zeichen, Enter → search_url mit Modus und Filtern.'
+props:
+  type: object
+  required:
+    - live_url
+    - search_url
+  properties:
+    live_url:
+      type: string
+      title: 'Live URL'
+    search_url:
+      type: string
+      title: 'Search URL'
+      description: '/suche ohne Query (Formular-Action).'
+    chat_event:
+      type: string
+      title: 'Chat event'
+      default: 'tannwald:chat-open'
+      description: 'Window-Ereignis, das A’s Launcher öffnet (Detail optional {frage}).'
+    document_types:
+      type: array
+      title: 'Document types'
+      items:
+        type: object
+        properties:
+          id: { type: integer }
+          label: { type: string }
+    machine_types:
+      type: array
+      title: 'Machine types'
+      items:
+        type: object
+        properties:
+          id: { type: integer }
+          label: { type: string }
+    languages:
+      type: array
+      title: Languages
+      items:
+        type: object
+        properties:
+          code: { type: string }
+          label: { type: string }
+    examples:
+      type: array
+      title: Examples
+      items:
+        type: object
+        properties:
+          label: { type: string }
+          url: { type: string }
+    questions:
+      type: array
+      title: 'Example questions'
+      items:
+        type: string
+    attributes:
+      type: Drupal\Core\Template\Attribute
+      title: Attributes

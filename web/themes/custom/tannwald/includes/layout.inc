@@ -61,8 +61,9 @@ function _tannwald_layout_prepare(array &$variables): void {
   $variables['site_name'] = (string) (\Drupal::config('system.site')->get('name') ?: 'myTannwald');
   $variables['nav'] = _tannwald_navigation();
   // tw2-12: Sprachwechsler DE · EN · FR; die Bildmarke ist das SDC
-  // tannwald:logo.
+  // tannwald:logo. tw2-13: Such-Overlay (nur angemeldet).
   $variables['language_switcher'] = _tannwald_language_switcher();
+  $variables['search_overlay'] = $current->isAuthenticated() ? _tannwald_search_overlay() : NULL;
   $variables['account'] = NULL;
   $variables['demo'] = NULL;
   $variables['demo_hint'] = $hasMasquerade;
@@ -76,7 +77,7 @@ function _tannwald_layout_prepare(array &$variables): void {
   // der Sprachwechsler trägt die Abfrage-Parameter weiter (url.query_args).
   $variables['cache_bubble'] = _tannwald_cache_bubble(
     ['user', 'session', 'url.path', 'url.query_args', 'languages:language_interface'],
-    ['config:system.site']
+    ['config:system.site', 'taxonomy_term_list:dokumenttyp', 'taxonomy_term_list:maschinentyp']
   );
 
   if ($current->isAuthenticated()) {
@@ -183,6 +184,60 @@ function _tannwald_navigation(): array {
 }
 
 /**
+ * Eigennamen der Sprachen (die Konfigurationslabels sind englisch: „French“).
+ *
+ * @return array<string, string>
+ *   Sprachcode → Eigenname.
+ */
+function _tannwald_native_language_names(): array {
+  return ['de' => 'Deutsch', 'en' => 'English', 'fr' => 'Français'];
+}
+
+/**
+ * Such-Overlay der Kopfzeile (tw2-13): Daten für das SDC tannwald:search-overlay.
+ *
+ * Filter-Chips aus den Vokabularen dokumenttyp und maschinentyp (Labels in
+ * der Oberflächensprache) und den Sprachen; Beispiele und Fragen wie auf
+ * /suche. Die Live-URL ist der Endpunkt von 4.2.
+ *
+ * @return array<string, mixed>
+ *   Props des SDC.
+ */
+function _tannwald_search_overlay(): array {
+  $storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
+  $repository = \Drupal::service('entity.repository');
+  $terms = static function (string $vid) use ($storage, $repository): array {
+    $items = [];
+    $ids = $storage->getQuery()->accessCheck(TRUE)->condition('vid', $vid)->sort('weight')->sort('name')->execute();
+    foreach ($storage->loadMultiple($ids) as $term) {
+      $term = $repository->getTranslationFromContext($term);
+      $items[] = ['id' => (int) $term->id(), 'label' => (string) $term->label()];
+    }
+    return $items;
+  };
+  $languages = [];
+  foreach (array_keys(_tannwald_native_language_names()) as $code) {
+    if (\Drupal::languageManager()->getLanguage($code) !== NULL) {
+      $languages[] = ['code' => $code, 'label' => _tannwald_native_language_names()[$code]];
+    }
+  }
+  $example = (string) t('clean the sealing station');
+  return [
+    'live_url' => Url::fromRoute('tannwald_assistant.api_live')->toString(),
+    'search_url' => _tannwald_search_url([]),
+    'chat_event' => 'tannwald:chat-open',
+    'document_types' => $terms('dokumenttyp'),
+    'machine_types' => $terms('maschinentyp'),
+    'languages' => $languages,
+    'examples' => [
+      ['label' => 'E-4711', 'url' => _tannwald_search_url(['q' => 'E-4711'])],
+      ['label' => $example, 'url' => _tannwald_search_url(['q' => $example])],
+    ],
+    'questions' => _tannwald_chat_example_questions(),
+  ];
+}
+
+/**
  * Sprachwechsler der Oberfläche (tw2-12): DE · EN · FR über den URL-Präfix.
  *
  * Links aus language_manager->getLanguageSwitchLinks() für die aktuelle Route
@@ -223,8 +278,7 @@ function _tannwald_language_switcher(): array {
     return [];
   }
   $current = $languageManager->getCurrentLanguage()->getId();
-  // Eigennamen der Sprachen (die Konfigurationslabels sind englisch: „French“).
-  $native = ['de' => 'Deutsch', 'en' => 'English', 'fr' => 'Français'];
+  $native = _tannwald_native_language_names();
   $switcher = [];
   foreach ($links->links as $code => $link) {
     $target = $link['url'] instanceof Url ? clone $link['url'] : clone $url;
