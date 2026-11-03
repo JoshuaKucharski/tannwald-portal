@@ -71,8 +71,14 @@ exit 0
 F
 fake update-alternatives <<'F'
 #!/bin/bash
+# --query: Value = Ziel des Links (eine Ebene, wie /etc/alternatives); --set nur auf registrierte Pfade
+# ($TW_BIN/php8.x, phar8.x, phar.phar8.x) — der Pfad hinter phar8.3 (phar8.3.phar) ist nicht registriert (Fund 1. Lauf).
 log-call update-alternatives "$@"
-[ "$1" = --set ] && ln -sfn "$3" "$TW_BIN/$2"
+case "$1" in
+    --query) t=$(readlink "$TW_BIN/$2" 2>/dev/null) || exit 2; printf 'Name: %s\nStatus: auto\nValue: %s\n' "$2" "$t" ;;
+    --set) case "$3" in "$TW_BIN"/php8.[34]|"$TW_BIN"/phar8.[34]|"$TW_BIN"/phar.phar8.[34]) ln -sfn "$3" "$TW_BIN/$2" ;;
+        *) echo "update-alternatives: error: alternative $3 for $2 not registered; not setting" >&2; exit 2 ;; esac ;;
+esac
 F
 fake systemctl <<'F'
 #!/bin/bash
@@ -296,7 +302,9 @@ new_world() {
     printf 'ID=ubuntu\nVERSION_ID="24.04"\n' > "$W/etc/os-release"
     : > "$W/etc/apt/sources.list.d/ondrej-ubuntu-php-noble.list"
     : > "$FAKE_STATE/calls.log"
-    for b in php8.3 php8.4 phar8.3 phar8.4; do cp "$FAKES/php-fake" "$W/usr/bin/$b"; done
+    for b in php8.3 php8.4 phar8.3.phar phar8.4.phar; do cp "$FAKES/php-fake" "$W/usr/bin/$b"; done
+    # wie Debian: phar8.3 und phar.phar8.3 sind Links auf die Datei phar8.3.phar; registriert sind nur die Links
+    for v in 8.3 8.4; do ln -s "$W/usr/bin/phar$v.phar" "$W/usr/bin/phar$v"; ln -s "$W/usr/bin/phar$v.phar" "$W/usr/bin/phar.phar$v"; done
     ln -s "$W/usr/bin/php8.3" "$W/usr/bin/php"; ln -s "$W/usr/bin/phar8.3" "$W/usr/bin/phar"
     cp -R "$REPO/deploy" "$W/app/deploy"; rm -f "$W/app/deploy/.env" "$W/app/deploy/.env.probe"
     echo '{}' > "$W/app/composer.json"; echo '{}' > "$W/app/composer.lock"

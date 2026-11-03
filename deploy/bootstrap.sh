@@ -169,7 +169,14 @@ pkg_installed() {
     command -v dpkg-query >/dev/null 2>&1 || return 1
     [ "$(dpkg-query -W -f='${Status}' "$1" 2>/dev/null)" = "install ok installed" ]
 }
-alt_links() { local n; for n in php phar phar.phar; do printf '%s=%s ' "$n" "$(readlink -f "$BIN/$n" 2>/dev/null || echo -)"; done; }
+# Registrierter Pfad einer Alternative (update-alternatives --query, Zeile Value:). Nicht readlink -f: der löst die
+# Kette bis zur Datei auf (/usr/bin/phar8.3 → phar8.3.phar), und diesen Pfad kennt update-alternatives --set nicht
+# (Fund erster Server-Lauf 2026-11-03). Ohne --query (Generalprobe ohne Alternativen): Ziel des Links.
+alt_target() {
+    local v; v=$(update-alternatives --query "$1" 2>/dev/null | sed -n 's/^Value: //p' | head -n 1)
+    if [ -n "$v" ]; then printf '%s' "$v"; else readlink -f "$BIN/$1" 2>/dev/null || echo -; fi
+}
+alt_links() { local n; for n in php phar phar.phar; do printf '%s=%s ' "$n" "$(alt_target "$n")"; done; }
 
 # ------------------------------------------------------------------------------------------------------------
 say "myTannwald bootstrap.sh — $(date '+%Y-%m-%d %H:%M')$( [ "$DRY" = 1 ] && echo ' (Trockenlauf)')$( [ -n "$RENDER_DIR" ] && echo " (nur Dateien nach $RENDER_DIR)")"
@@ -257,7 +264,7 @@ else
         for pair in $alt_before; do
             n=${pair%%=*}; target=${pair#*=}
             [ "$target" = - ] && continue
-            [ "$(readlink -f "$BIN/$n" 2>/dev/null || echo -)" = "$target" ] && continue
+            [ "$(alt_target "$n")" = "$target" ] && continue
             update-alternatives --set "$n" "$target" >/dev/null
             note "Alternative $n zurück auf $target (die Installation hatte sie verschoben)"
         done
