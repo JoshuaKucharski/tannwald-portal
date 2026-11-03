@@ -541,9 +541,6 @@ msgstr "Stellen Sie eine Frage zu dieser Maschine, zum Beispiel zu Reinigungsint
 msgid "Your question"
 msgstr "Ihre Frage"
 
-msgid "e.g. Which film thickness is approved?"
-msgstr "z. B. Welche Folienstärke ist zugelassen?"
-
 msgid "Send question"
 msgstr "Frage senden"
 
@@ -1054,14 +1051,6 @@ msgstr "Beispiele: ein Störungscode, ein Teil, eine Tätigkeit."
 msgid "Or ask the assistant:"
 msgstr "Oder fragen Sie den Assistenten:"
 
-msgid "How often is the sealing station cleaned?"
-msgstr "Wie oft wird die Siegelstation gereinigt?"
-
-msgid "What does fault code E-4711 mean?"
-msgstr "Was bedeutet der Störungscode E-4711?"
-
-msgid "Which film thickness is approved?"
-msgstr "Welche Folienstärke ist zugelassen?"
 
 msgid "Answers come only from approved documents you are allowed to see. Please check the cited chapters before acting."
 msgstr "Antworten stammen nur aus freigegebenen Dokumenten, die Sie sehen dürfen. Prüfen Sie die zitierten Kapitel, bevor Sie handeln."
@@ -1148,3 +1137,34 @@ msgstr "Noch keine Treffer beim Tippen. Enter durchsucht alles."
 
 msgid "Enter shows all hits · Esc closes"
 msgstr "Enter zeigt alle Treffer · Esc schliesst"
+
+# Nachtrag 9 (tw2-11): Beispielfragen je Maschinentyp aus docs/evals/fragen.yaml (erwartet: antwort)
+msgid "e.g. @question"
+msgstr "z. B. @question"
+
+msgid "How often must the sealing station be cleaned?"
+msgstr "Wie oft muss die Siegelstation gereinigt werden?"
+
+msgid "What does E-4711 mean?"
+msgstr "Was bedeutet E-4711?"
+
+msgid "Which cleaning agents are approved for the TB-200?"
+msgstr "Welche Reinigungsmittel sind für die TB-200 freigegeben?"
+
+msgid "How many cycles per minute does the TB-400 achieve per web?"
+msgstr "Wie viele Takte pro Minute schafft die TB-400 je Bahn?"
+
+msgid "What has to be checked monthly on the TB-400?"
+msgstr "Was ist an der TB-400 monatlich zu prüfen?"
+
+msgid "What must be set after a roll change on one web of the TB-400?"
+msgstr "Was muss nach einem Rollenwechsel an einer Bahn der TB-400 eingestellt werden?"
+
+msgid "How often must the carton detection cell of the KT-500 be calibrated?"
+msgstr "Wie oft muss die Erkennungszelle der KT-500 kalibriert werden?"
+
+msgid "Which cleaning agents are approved for the KT-500?"
+msgstr "Welche Reinigungsmittel sind für die KT-500 freigegeben?"
+
+msgid "Why does the closure of a carton on the KT-500 not hold?"
+msgstr "Warum hält der Verschluss einer Schachtel an der KT-500 nicht?"
