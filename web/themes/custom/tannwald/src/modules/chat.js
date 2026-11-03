@@ -5,8 +5,10 @@
 import Alpine from 'alpinejs';
 import { sheetMixin } from './sheet.js';
 
-// Zustand des globalen Panels (Nachtrag 3 tw2-11): 'open' | 'closed' je Browser-Sitzung.
-const STATE_KEY = 'tannwald_chat_open';
+// Zustand des globalen Panels (Nachtrag 3 tw2-11): 'open' | 'closed' je Browser-Sitzung — und je Konto (Nachtrag 7:
+// sessionStorage überlebt Ab- und Anmelden im selben Tab, darum tannwald.chat.<uid>; der Erstbesuch-Marker entsteht nur
+// auf Seiten mit Launcher, weil nur dort diese Komponente läuft).
+const stateKey = (config) => `tannwald.chat.${Number(config.uid) || 0}`;
 
 Alpine.data('chatPanel', (config) => ({
   // sheet (Nachtrag 3 tw2-11): bis md ein Sheet (modal), ab md ein Panel über dem Launcher (nicht modal).
@@ -23,10 +25,10 @@ Alpine.data('chatPanel', (config) => ({
     // Zustand des globalen Panels (Nachtrag 3 (c)): beim ersten Besuch in der Sitzung einmal offen, danach gemerkt;
     // nur am Desktop (das Phone-Sheet ist modal und öffnet nie von selbst).
     if (config.mode === 'sheet' && !this.sheetActive()) {
-      const stored = window.sessionStorage.getItem(STATE_KEY);
+      const stored = window.sessionStorage.getItem(stateKey(config));
       if (stored === null || stored === 'open') {
         this.open = true;
-        window.sessionStorage.setItem(STATE_KEY, 'open');
+        window.sessionStorage.setItem(stateKey(config), 'open');
         this.$nextTick(() => this.scrollDown());
       }
     }
@@ -62,11 +64,11 @@ Alpine.data('chatPanel', (config) => ({
   // durchläuft); ist das Feld gesperrt (Limit), bleibt der Fokus auf dem Schliessen-Button aus dem Mixin.
   onOpened() {
     this.scrollDown();
-    if (this.mode === 'sheet') window.sessionStorage.setItem(STATE_KEY, 'open');
+    if (this.mode === 'sheet') window.sessionStorage.setItem(stateKey(config), 'open');
     const input = this.$refs.input;
     if (input && !input.disabled) input.focus({ preventScroll: true });
   },
-  onClosed() { if (this.mode === 'sheet') window.sessionStorage.setItem(STATE_KEY, 'closed'); },
+  onClosed() { if (this.mode === 'sheet') window.sessionStorage.setItem(stateKey(config), 'closed'); },
   // Brücke von /suche (5.2): $dispatch('tannwald:ask', {frage}) öffnet das Sheet (falls nötig) und fragt.
   // Nachtrag 6 (tw2-11): dasselbe für das window-Ereignis „tannwald:chat-open“ (Detail optional {frage}) — für B's
   // Such-Overlay (tw2-13) und den Satz im Leerzustand der Suche; ohne frage nur öffnen und das Feld fokussieren.

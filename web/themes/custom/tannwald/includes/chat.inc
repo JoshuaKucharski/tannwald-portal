@@ -67,6 +67,8 @@ function _tannwald_chat_props(?int $maschineNid, ?string $machineLabel, string $
     'language_names' => $names,
     'mode' => $mode,
     'examples' => _tannwald_chat_example_questions(),
+    // Nachtrag 7 (tw2-11): Zustand und Verlauf im Browser je Konto.
+    'uid' => (int) \Drupal::currentUser()->id(),
   ];
 }
 

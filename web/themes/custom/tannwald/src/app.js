@@ -77,18 +77,20 @@ const chatSession = () => {
 
 // Verlauf je Browser-Sitzung (Nachtrag 3 tw2-11): abgeschlossene Einträge, höchstens 20, damit das globale
 // Panel beim Seitenwechsel denselben Verlauf zeigt.
-const HISTORY_KEY = 'tannwald_chat_history';
-const loadHistory = () => {
-  try { const raw = window.sessionStorage.getItem(HISTORY_KEY); return raw ? JSON.parse(raw) : []; } catch { return []; }
+// Nachtrag 7: je Konto (tannwald.chat.history.<uid>), geladen in configure(), damit ein anderes Konto im selben Tab
+// nicht den fremden Verlauf sieht.
+const historyKey = (config) => `tannwald.chat.history.${Number(config && config.uid) || 0}`;
+const loadHistory = (config) => {
+  try { const raw = window.sessionStorage.getItem(historyKey(config)); return raw ? JSON.parse(raw) : []; } catch { return []; }
 };
 
 Alpine.store('chat', {
   config: null,
   session: chatSession(),
-  history: loadHistory(),
+  history: [],
   persist() {
     const done = this.history.filter((e) => e.status !== 'pending').slice(-20).map((e) => ({ ...e, supporting: false }));
-    try { window.sessionStorage.setItem(HISTORY_KEY, JSON.stringify(done)); } catch { /* voller Speicher: still */ }
+    try { window.sessionStorage.setItem(historyKey(this.config), JSON.stringify(done)); } catch { /* voller Speicher: still */ }
   },
   busy: false,
   elapsed: 0,
@@ -98,6 +100,7 @@ Alpine.store('chat', {
   timer: null,
   configure(config) {
     this.config = config;
+    this.history = loadHistory(config);
     if (config.limitNotice) this.limitNotice = config.limitNotice;
   },
   async csrfToken(renew = false) {
@@ -292,6 +295,7 @@ Alpine.data('docHistory', docHistory);
 import './modules/sheet.js';
 import './modules/filters.js';
 import './modules/chat.js';
+import './modules/search-overlay.js';
 
 // Start zuletzt: alle Alpine.data()-Registrierungen (5.1, 5.2 und A's 5.3-Hunk) müssen davor stehen.
 Alpine.start();
