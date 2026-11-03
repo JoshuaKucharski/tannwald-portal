@@ -176,8 +176,7 @@ Seiten und die Vorher/Nachher-Paare in [`docs/design/vergleichsblaetter.md`](doc
 | ![Maschine TB200-2021-0417: Typenschild links, Seriennummernbild rechts, offenes Bulletin, Dokumenten-Tabelle mit Thumbs](docs/screens/13-maschine-1440.webp) | ![Dokument Betriebsanleitung TB-200: Typenschild mit Titelbild, Download als Primär, haftendes Inhaltsverzeichnis, Lesespalte](docs/screens/14-dokument-1440.webp) |
 | ![Bulletin SB-2026-07: Sicherheits-Bulletin mit Bild, Datum und Hinweis zur Lesebestätigung, Kapitel mit Ankern](docs/screens/15-bulletin-1440.webp) | ![Styleguide: Typo-Skala, Farben mit Kontrasttabelle, Komponenten in allen Zuständen](docs/screens/16-styleguide-1440.webp) |
 
-Screens: 1440 px breit, sichtbarer Bereich oben (1440 × 900), WebP; Stand 2./3. November 2026 (Anmelden und Meine
-Maschinen mit Markenfarbe und Bildmarke vom 3. November, die übrigen vom 2. November vor dem Farbwechsel).
+Screens: 1440 px breit, sichtbarer Bereich oben (1440 × 900), WebP; Stand 3. November 2026.
 
 ## Architektur
 
