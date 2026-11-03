@@ -236,6 +236,28 @@ msgstr "Filtre (@count actifs)"
 msgid "Forgot your password?"
 msgstr "Mot de passe oublié ?"
 
+# tw2-11 Demo-Hinweis („?“-Modal) et bouton GitHub (Nachtrag 5)
+msgid "What this demo shows"
+msgstr "Ce que montre cette démo"
+
+msgid "For Helga as a demo, Felix & David"
+msgstr "Pour Helga, en démo, Felix & David"
+
+msgid "myTannwald is a customer portal for a fictional Swiss machine builder. Customers see only the documents of their own machines. An assistant answers exclusively from approved documents and names its source. Editorial and compliance approve. Drupal 11, hybrid search, Qwen via API — built as a proof of concept."
+msgstr "myTannwald est un portail client pour un constructeur de machines suisse fictif. Les clients ne voient que les documents de leurs propres machines. Un assistant répond exclusivement à partir de documents approuvés et cite sa source. La rédaction et la conformité approuvent. Drupal 11, recherche hybride, Qwen via API — réalisé comme preuve de concept."
+
+msgid "Log in with a demo account below, password demo"
+msgstr "Connectez-vous avec un compte de démo ci-dessous, mot de passe demo"
+
+msgid "Try the search and the assistant"
+msgstr "Essayez la recherche et l’assistant"
+
+msgid "Understood"
+msgstr "Compris"
+
+msgid "Source code on GitHub, opens in a new tab"
+msgstr "Code source sur GitHub, s’ouvre dans un nouvel onglet"
+
 msgid "Four-eyes principle: the person who created the bulletin must not approve it."
 msgstr "Principe des quatre yeux : l’auteur du bulletin ne peut pas l’approuver."
 

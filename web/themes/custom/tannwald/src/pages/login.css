@@ -34,6 +34,9 @@
   .demo-intro-list { @apply m-0 flex list-none flex-col gap-3 p-0 leading-copy; font-size: 19px; }
   .demo-intro-list li { @apply flex items-start gap-3; }
   .demo-intro-check { @apply mt-1 shrink-0 text-accent; }
+  /* Nachtrag 5: Fusszeile des Modals — Desktop GitHub links, Verstanden rechts; Phone volle Breite, Verstanden oben. */
+  .demo-intro-actions { @apply flex flex-col-reverse gap-3 sm:flex-row sm:justify-end; }
+  .demo-intro-actions .btn { @apply w-full sm:w-auto; }
 }
 /* ::backdrop liegt ausserhalb von *, *::before, *::after — darum eigene Reduced-Motion-Regel. */
 @media (prefers-reduced-motion: reduce) { .demo-intro::backdrop { transition-duration: 0s !important; } }

@@ -466,9 +466,6 @@ msgstr "Anmelden mit einem Demo-Konto unten, Passwort demo"
 msgid "Try the search and the assistant"
 msgstr "Suche und Assistent probieren"
 
-msgid "Code on GitHub, button at the bottom right"
-msgstr "Code auf GitHub, Button unten rechts"
-
 msgid "Understood"
 msgstr "Verstanden"
 
