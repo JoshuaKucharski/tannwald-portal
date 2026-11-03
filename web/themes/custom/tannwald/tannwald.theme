@@ -103,8 +103,10 @@ function tannwald_form_user_login_form_alter(array &$form, FormStateInterface $f
     '#props' => ['name' => $name, 'size' => 20],
     '#attributes' => $attributes,
   ];
-  $icons = (string) $renderer->renderInIsolation($icon('eye', ['x-show' => '!showPassword']))
-    . (string) $renderer->renderInIsolation($icon('eye-off', ['x-show' => 'showPassword', 'x-cloak' => '']));
+  // renderInIsolation() nimmt das Array per Referenz: erst in Variablen.
+  $eye = $icon('eye', ['x-show' => '!showPassword']);
+  $eyeOff = $icon('eye-off', ['x-show' => 'showPassword', 'x-cloak' => '']);
+  $icons = (string) $renderer->renderInIsolation($eye) . (string) $renderer->renderInIsolation($eyeOff);
   $form['pass']['#field_suffix'] = [
     '#type' => 'html_tag',
     '#tag' => 'button',
