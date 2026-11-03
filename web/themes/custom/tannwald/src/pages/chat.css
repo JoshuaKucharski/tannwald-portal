@@ -57,8 +57,11 @@
   @keyframes chat-pulse { 0%, 100% { opacity: 0.25; } 50% { opacity: 1; } }
   .chat-notice { @apply mx-4 mb-3 text-sm; }
   .chat-form { @apply flex flex-col gap-2 border-t border-line px-4 py-3; }
-  .chat-form-row { @apply flex items-end gap-2; }
-  .chat-input { @apply h-auto min-h-11 w-full min-w-0 max-w-full resize-none rounded-control border border-control bg-panel px-3 py-2.5 text-base text-ink hover:border-ink; transition: border-color var(--duration-fast) var(--ease-out-soft); }
-  .chat-count { @apply self-end text-sm text-muted tabular-nums; }
+  /* Nachtrag 2 (a), 2026-11-03: Zeile unter dem Feld — Zähler links, Button rechts (Phone: Button volle Breite, Zähler darüber). */
+  .chat-form-row { @apply flex flex-wrap items-center justify-between gap-2; }
+  .chat-send { @apply w-full sm:w-auto; }
+  /* Feld volle Breite, drei Zeilen, wächst bis acht Zeilen (8 × 22.5 px + 20 px Innenabstand + 2 px Rand = 202 px), danach scrollt es. */
+  .chat-input { @apply h-auto min-h-11 w-full min-w-0 max-w-full resize-none overflow-y-auto rounded-control border border-control bg-panel px-3 py-2.5 text-base leading-copy text-ink hover:border-ink; max-height: 202px; transition: border-color var(--duration-fast) var(--ease-out-soft); }
+  .chat-count { @apply text-sm text-muted tabular-nums; }
   .chat-footer { @apply border-t border-line px-4 py-2.5 text-sm text-muted; }
 }

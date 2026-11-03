@@ -37,6 +37,13 @@ Alpine.data('chatPanel', (config) => ({
     else this.$nextTick(() => this.$refs.input?.focus());
   },
   ask(frage) { this.onAsk({ frage }); },
+  // Nachtrag 2 (a): Feld wächst mit dem Text (bis max-height aus dem CSS, 8 Zeilen), schrumpft nach dem Senden zurück.
+  grow() {
+    const el = this.$refs.input;
+    if (!el) return;
+    el.style.height = 'auto';
+    el.style.height = `${el.scrollHeight}px`;
+  },
   onEnter(event) {
     if (event.shiftKey) return;
     event.preventDefault();
@@ -46,6 +53,7 @@ Alpine.data('chatPanel', (config) => ({
     const frage = this.input.trim();
     if (!frage || this.disabled()) return;
     this.input = '';
+    this.$nextTick(() => this.grow());
     await this.$store.chat.ask(frage);
     this.scrollDown();
   },

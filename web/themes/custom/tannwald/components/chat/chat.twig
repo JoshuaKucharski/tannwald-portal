@@ -61,7 +61,8 @@
     <div class="chat-head">
       <div class="flex min-w-0 flex-col gap-0.5">
         <span class="font-semibold">{{ 'Assistant'|t }}</span>
-        {% if intro %}<span class="meta truncate">{{ intro }}</span>{% endif %}
+        {# Nachtrag 2 (b): zwei Zeilen statt abschneiden, voller Satz als title. #}
+        {% if intro %}<span class="meta line-clamp-2" title="{{ intro }}">{{ intro }}</span>{% endif %}
       </div>
       <button type="button" class="chat-head-close btn btn-secondary btn-icon" :class="{ 'xl:hidden': mode === 'panel' }" aria-label="{{ 'Close'|t }}" @click="close()">
         {{ include('tannwald:icon', {name: 'close', size: 20}, with_context = false) }}
@@ -183,12 +184,14 @@
 
     <form class="chat-form" @submit.prevent="send()">
       <label for="{{ input_id }}" class="field-label">{{ 'Your question'|t }}</label>
+      {# Nachtrag 2 (a): Feld volle Breite, drei Zeilen, wächst mit dem Text bis acht Zeilen (grow() in chat.js, max-height im CSS);
+         Button darunter rechts (Phone volle Breite), Zähler links in derselben Zeile. Enter sendet, Shift-Enter bricht um (onEnter). #}
+      <textarea id="{{ input_id }}" class="chat-input" rows="3" maxlength="1000" x-model="input" x-ref="input" :disabled="disabled()" @input="grow()" @keydown.enter="onEnter($event)" placeholder="{{ 'e.g. Which film thickness is approved?'|t }}"></textarea>
       <div class="chat-form-row">
-        <textarea id="{{ input_id }}" class="chat-input" rows="2" maxlength="1000" x-model="input" x-ref="input" :disabled="disabled()" @keydown.enter="onEnter($event)" placeholder="{{ 'e.g. Which film thickness is approved?'|t }}"></textarea>
+        <span class="chat-count" x-text="input.length + ' / 1000'"></span>
         {# 1.4 (A): ein Primär je Seite — eingebettet (Maschinenseite) ist der Assistent der Primär, als Panel/Sheet neben „Suchen“ sekundär. #}
-        <button type="submit" class="btn {{ mode == 'embedded' ? 'btn-primary' : 'btn-secondary' }} shrink-0" :disabled="disabled() || !input.trim()">{{ 'Ask the assistant'|t }}</button>
+        <button type="submit" class="btn {{ mode == 'embedded' ? 'btn-primary' : 'btn-secondary' }} chat-send" :disabled="disabled() || !input.trim()">{{ 'Ask the assistant'|t }}</button>
       </div>
-      <span class="chat-count" x-text="input.length + ' / 1000'"></span>
     </form>
 
     <div class="chat-footer">
