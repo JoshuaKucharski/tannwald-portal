@@ -33,7 +33,7 @@ class DemoInstallTest extends KernelTestBase {
    * {@inheritdoc}
    */
   protected static $modules = [
-    'system', 'user', 'field', 'filter', 'text', 'options', 'file', 'datetime', 'node', 'taxonomy', 'language',
+    'system', 'user', 'field', 'filter', 'text', 'options', 'file', 'image', 'datetime', 'node', 'taxonomy', 'language',
     'content_translation', 'workflows', 'content_moderation', 'views', 'mailer_transport', 'symfony_mailer', 'key', 'ai',
     'migrate', 'migrate_plus', 'migrate_tools', 'tannwald_access', 'tannwald_ingest', 'tannwald_bulletin', 'tannwald_demo',
   ];
@@ -57,13 +57,14 @@ class DemoInstallTest extends KernelTestBase {
   protected const EXPECTED = [
     'firmen' => 7,
     'maschinen' => 10,
-    'users' => 6,
+    'users' => 7,
     'dokumente' => 20,
     'revisionen' => 22,
     'revision_translations' => 31,
     'uebersetzungen' => 9,
     'bulletins' => 3,
     'lesebestaetigungen' => 1,
+    'images' => 20,
   ];
 
   /**
@@ -150,6 +151,7 @@ class DemoInstallTest extends KernelTestBase {
     $this->assertDocuments();
     $this->assertBulletinsAndAccounts();
     $this->assertVisibility();
+    $this->assertImages($report);
 
     // Zweiter Lauf: nichts ändert sich.
     $second = $this->installer->install(['summaries' => FALSE]);
@@ -171,6 +173,27 @@ class DemoInstallTest extends KernelTestBase {
     $repaired = $this->installer->install(['summaries' => FALSE]);
     $this->assertSame(2, $repaired['migrations']['tannwald_dokumente']['repaired']);
     $this->assertSame($first, $repaired['counts']);
+
+    // Von Hand geleerte Bilder (Typbild TB-200, Titelbild ba-tb200) trägt
+    // demo-install nach, ohne neue Embed-Jobs einzureihen.
+    $lookup->imageTarget('typ', 'TB200')->set('field_bild', NULL)->save();
+    // Ohne neue Revision (content_moderation erzwingt sonst eine, deren
+    // ältere Revision die Usage behält).
+    /** @var \Drupal\node\NodeInterface $document */
+    $document = $lookup->imageTarget('dokument', 'ba-tb200');
+    $document->set('field_bild', NULL)->setNewRevision(FALSE);
+    $document->setSyncing(TRUE);
+    $document->save();
+    $this->assertNull($lookup->imageFor('typ', 'TB200'));
+    $embedQueue = $this->container->get('queue')->get('tannwald_embed');
+    $jobsBefore = $embedQueue->numberOfItems();
+    $refilled = $this->installer->install(['summaries' => FALSE, 'queues' => FALSE]);
+    $this->assertSame(2, $refilled['migrations']['tannwald_bilder']['repaired']);
+    $this->assertSame(2, $refilled['migrations']['tannwald_bilder']['updated']);
+    $this->assertSame($jobsBefore, $embedQueue->numberOfItems(), 'Image saves queue no embed jobs.');
+    $this->assertImages($refilled);
+    $refilled = $this->installer->install(['summaries' => FALSE]);
+    $this->assertSame($first, $refilled['counts']);
 
     // Reset nach Hand-Änderungen: Dokument weg, Lesebestätigung mehr, fremder
     // Inhalt dazu; admin und ein Nicht-Demo-Konto bleiben.
@@ -204,8 +227,53 @@ class DemoInstallTest extends KernelTestBase {
     $this->assertNotNull($lookup->uidOf('admin'));
     $this->assertNotNull($lookup->uidOf('gast'));
     $this->assertSame([], $storage->loadByProperties(['title' => 'HAND-0001']));
+    $this->assertGreaterThanOrEqual(20, $reset['deleted']['rolled_back']['tannwald_bilder']);
     $this->assertDocuments();
     $this->assertVisibility();
+    $this->assertImages($reset);
+  }
+
+  /**
+   * Bilder: Zuordnung laut Manifest, Dateien, Usage, Alt-Texte, keine Revision.
+   *
+   * @param array<string, mixed> $report
+   *   Bericht von install() oder reset().
+   */
+  protected function assertImages(array $report): void {
+    $this->assertSame(['files_assigned' => 19, 'targets' => 20, 'theme_assets' => 1, 'missing' => []], $report['images']);
+    $lookup = $this->container->get('tannwald_demo.lookup');
+    $fileStorage = $this->container->get('entity_type.manager')->getStorage('file');
+    $usage = $this->container->get('file.usage');
+    $expected = [
+      ['typ', 'TB200', 'typ-tb200.webp', 'taxonomy_term'],
+      ['dokumenttyp', 'betriebsanleitung', 'dok-betriebsanleitung.webp', 'taxonomy_term'],
+      ['maschine', 'TB200-2021-0417', 'maschine-tb200-2021-0417.webp', 'node'],
+      ['dokument', 'ba-tb200', 'detail-siegelstation.webp', 'node'],
+      ['dokument', 'su-tb400', 'detail-stoerungstabelle.webp', 'node'],
+      ['dokument', 'SB-2026-08', 'detail-heizpatronen.webp', 'node'],
+      ['dokument', 'ek-tb200', 'detail-heizpatronen.webp', 'node'],
+    ];
+    foreach ($expected as [$purpose, $target, $name, $type]) {
+      $fid = $lookup->imageFor($purpose, $target);
+      $this->assertNotNull($fid, $target);
+      $file = $fileStorage->load($fid);
+      $this->assertInstanceOf(FileInterface::class, $file);
+      $this->assertSame('public://bilder/' . $name, $file->getFileUri(), $target);
+      $this->assertTrue($file->isPermanent(), $name);
+      $this->assertFileExists($file->getFileUri());
+      $entity = $lookup->imageTarget($purpose, $target);
+      $this->assertSame(1, (int) ($usage->listUsage($file)['file'][$type][$entity->id()] ?? 0), $target . ': one usage');
+      $this->assertNotSame('', (string) $entity->get('field_bild')->alt, $target . ': alt (de)');
+    }
+    // Eine Datei, zwei Ziele: dieselbe File-Entity.
+    $this->assertSame($lookup->imageFor('dokument', 'SB-2026-08'), $lookup->imageFor('dokument', 'ek-tb200'));
+    $this->assertNull($lookup->imageFor('hero', 'login'), 'hero-login is a theme asset.');
+    $this->assertNull($lookup->imageFor('maschine', 'TB200-2019-0233'), 'Machines without own image stay empty.');
+    $this->assertStringStartsWith('Siegelstation', (string) $lookup->imageAlt('detail-siegelstation.webp', 'de'));
+    $this->assertStringStartsWith('Station de scellage', (string) $lookup->imageAlt('detail-siegelstation.webp', 'fr'));
+    $this->assertStringStartsWith('Sealing station', (string) $lookup->imageAlt('detail-siegelstation.webp', 'en'));
+    // Bilder erzeugen keine Revision.
+    $this->assertCount(2, $this->revisionIds((int) $lookup->nidOf('ba-tb200')));
   }
 
   /**
@@ -283,7 +351,12 @@ class DemoInstallTest extends KernelTestBase {
     $this->assertSame('en', $this->account('kunde-b')->getPreferredLangcode());
     $this->assertTrue($this->account('techniker')->get('field_firma')->isEmpty());
     $this->assertSame((int) $kundeA->id(), (int) $this->container->get('user.auth')->authenticateAccount($kundeA, 'demo') ? (int) $kundeA->id() : 0);
-    $this->assertCount(7, $userStorage->loadMultiple(), 'Six demo accounts and admin.');
+    // tw2-12: siebtes Konto portal-admin (Rolle portal_admin, ohne Firma).
+    $portalAdmin = $this->account('portal-admin');
+    $this->assertSame(['authenticated', 'portal_admin'], $portalAdmin->getRoles());
+    $this->assertTrue($portalAdmin->get('field_firma')->isEmpty());
+    $this->assertSame('Jonas Widmer', $portalAdmin->getDisplayName());
+    $this->assertCount(8, $userStorage->loadMultiple(), 'Seven demo accounts and admin.');
     $territory = array_column($this->container->get('entity_type.manager')->getStorage('taxonomy_term')
       ->load($lookup->termId('firma', '200031'))->get('field_haendler_gebiet')->getValue(), 'value');
     $this->assertSame(['BR', 'MX', 'AR', 'CL'], $territory);

@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\tannwald_ingest\Summary;
 
-use Drupal\ai\OperationType\Chat\ChatInput;
-use Drupal\ai\OperationType\Chat\ChatMessage;
-use Drupal\ai\OperationType\Chat\ChatOutput;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Component\Plugin\PluginManagerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -15,8 +12,12 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\KeyValueStore\KeyValueFactoryInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\ai\OperationType\Chat\ChatInput;
+use Drupal\ai\OperationType\Chat\ChatMessage;
+use Drupal\ai\OperationType\Chat\ChatOutput;
 use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 use Drupal\node\NodeInterface;
+use Drupal\tannwald_assistant\Provider\ProviderResolver;
 use Drupal\tannwald_ingest\Chunker;
 use Drupal\tannwald_ingest\Usage\UsageRecorder;
 
@@ -104,6 +105,7 @@ class SummaryGenerator {
     protected KeyValueFactoryInterface $keyValue,
     protected LockBackendInterface $lock,
     protected Connection $database,
+    protected ?ProviderResolver $providerResolver = NULL,
   ) {}
 
   /**
@@ -149,7 +151,11 @@ class SummaryGenerator {
       throw new \RuntimeException(sprintf('Chat provider %s returned no chat output.', $providerId));
     }
     $tokens = self::tokens($output);
-    $this->usage->record($model, 'chat', $tokens['prompt'], $tokens['completion'], 'ingest');
+    // F13: Kosten wie beim Assistenten (providers.<id>.kosten_pro_1k_chf);
+    // ohne tannwald_assistant (kein Resolver) bleibt es bei 0.
+    $costPer1k = $this->providerResolver?->costPer1k($providerId) ?? 0.0;
+    $cost = round(($tokens['prompt'] + $tokens['completion']) / 1000 * $costPer1k, 4);
+    $this->usage->record($model, 'chat', $tokens['prompt'], $tokens['completion'], 'ingest', $cost);
 
     $message = $output->getNormalized();
     $html = SummaryText::toHtml($message instanceof ChatMessage ? $message->getText() : '', $maxWords);
@@ -370,6 +376,10 @@ class SummaryGenerator {
    *   [provider_id, model].
    */
   protected function providerAndModel(): array {
+    // 3.1: aktiver Chat-Provider (provider_chat, providers.<id>.chat_model).
+    if ($this->providerResolver !== NULL) {
+      return [$this->providerResolver->providerId('chat'), $this->providerResolver->model('chat')];
+    }
     $assistant = $this->configFactory->get('tannwald_assistant.settings');
     $default = $this->configFactory->get('ai.settings')->get('default_providers.chat') ?: [];
     $providerId = (string) ($assistant->get('provider') ?: ($default['provider_id'] ?? ''));

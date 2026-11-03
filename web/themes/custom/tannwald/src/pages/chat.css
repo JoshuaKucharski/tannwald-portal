@@ -1,0 +1,72 @@
+/* Assistent (1.3, SDC tannwald:chat): Panel (Spalte ab xl auf /suche), eingebettet (Aside der Maschinenseite,
+   A), Sheet darunter. Lese-Rhythmus: Frage rechts schmal, Antwort links mit Prosa, Quellen als Liste,
+   Vertrauenshinweis klein; Zustände Laden (ein Puls), Fehler/Limit als notice, Sicherheit als notice--warn.
+   Ersetzt die 5.3-Klassen .chat-* (A's Hunk bleibt in src/tailwind.css, bis 1.4 aufräumt). */
+@layer components {
+  .chat { @apply contents; }
+  /* Launcher (Nachtrag 3 tw2-11): runder Akzent-Button unten rechts, 52 px (Phone) / 56 px, ab lg Pille mit Label;
+     ein Schattenlevel, Fokus globaler Ring; als Spalte sichtbar → kein Launcher. */
+  .chat-launcher { @apply fixed bottom-4 left-auto right-4 z-40 inline-flex h-[52px] w-[52px] items-center justify-center gap-2 rounded-full bg-accent text-white shadow-card hover:bg-accent-hover hover:text-white active:bg-accent-active md:bottom-6 md:right-6 md:h-14 md:w-14 lg:w-auto lg:px-5; transition: background-color var(--duration-fast) var(--ease-out-soft); }
+  /* left-auto hebt inset-x-0 der alten Regel in tailwind.css auf (Phone stand der Button links); das Label ist unter lg weg,
+     mit höherer Spezifität als .chat-launcher > span. */
+  .chat-launcher > span { @apply inline-flex; }
+  .chat-launcher > .chat-launcher-label { @apply hidden text-base font-semibold lg:inline-flex; }
+  .chat--panel .chat-launcher { @apply xl:hidden; }
+  .chat--embedded .chat-launcher { @apply md:hidden; }
+
+  /* Panel: geschlossen verborgen; offen als Sheet (A's .sheet); als Spalte (xl bzw. md) in der Fläche. */
+  .chat-panel { @apply hidden flex-col bg-panel; }
+  .chat-panel.is-open { @apply fixed inset-x-0 bottom-0 z-50 flex max-h-[88dvh] rounded-t-card border-t border-line shadow-card md:inset-auto md:bottom-6 md:right-6 md:max-h-[72vh] md:w-[440px] md:rounded-card md:border; }
+  .chat--panel .chat-panel { @apply xl:static xl:flex xl:max-h-[calc(100vh-7rem)] xl:min-h-[520px] xl:w-auto xl:rounded-card xl:border xl:border-line xl:shadow-none; }
+  .chat--embedded .chat-panel { @apply md:static md:flex md:max-h-none md:w-auto md:rounded-none md:border-0 md:shadow-none; }
+  .chat--panel .chat-panel { @apply xl:sticky xl:top-6; }
+  /* Modus sheet ab md (Nachtrag 3): Panel 400 × 620 über dem Launcher verankert, Radius 20, nicht modal;
+     Einblenden 180 ms (Deckkraft, 12 px von unten), unter prefers-reduced-motion 0 s über die globale Regel. */
+  .chat--sheet .chat-panel.is-open { @apply md:bottom-[92px] md:right-6 md:h-[620px] md:max-h-[calc(100dvh-7.5rem)] md:w-[400px] md:rounded-[20px]; transition: opacity var(--duration-base) var(--ease-out-soft), transform var(--duration-base) var(--ease-out-soft); @starting-style { opacity: 0; transform: translateY(12px); } }
+  /* Nachtrag 4 (b): der Griff (.chat-handle) ist entfernt — er diente nicht zum Ziehen und wirkte wie eine Scrollleiste. */
+  .chat-head { @apply flex items-center gap-3 border-b border-line px-4 py-3; }
+  .chat--embedded .chat-head { @apply md:hidden; }
+  .chat-head-close { @apply ml-auto shrink-0; }
+
+  /* Verlauf: Fläche chat, Frage rechts schmal, Antwort links. */
+  .chat-history { @apply flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto bg-chat p-4; }
+  .chat--embedded .chat-history { @apply md:max-h-[560px] md:min-h-[240px]; }
+  .chat-intro { @apply flex flex-col gap-3; }
+  .chat-intro-text { @apply m-0 text-sm text-muted; }
+  .chat-examples { @apply flex flex-wrap gap-2; }
+  .chat-examples .chip { @apply h-auto min-h-11 whitespace-normal py-2 text-left; }
+  .chat-entry { @apply flex flex-col gap-2; }
+  .chat-question { @apply max-w-[85%] self-end rounded-card bg-private-bg px-4 py-3 text-base font-medium; }
+  .chat-answer { @apply flex max-w-[92%] flex-col gap-3 self-start rounded-card border border-line bg-panel p-4 shadow-card; }
+  .chat-answer--safety { @apply max-w-[92%] self-start rounded-control border border-l-4 border-warn-line bg-warn-bg px-4 py-3 text-warn shadow-none; }
+  .chat-answer--safety .chat-sources { @apply border-warn-line; }
+  .chat-answer--safety .chat-sources a { @apply font-semibold; }
+  .chat-answer--muted { @apply border-0 bg-transparent p-0 shadow-none; }
+  .chat-safety-badge { @apply self-start rounded-pill bg-warn-strong px-2.5 py-[3px] text-sm font-semibold text-white; }
+  .chat-prose { @apply text-base leading-copy; }
+  .chat-prose p { @apply m-0; }
+  .chat-prose p + p { @apply mt-2; }
+  .chat-prose ul { @apply my-1 list-disc pl-5; }
+  .chat-prose ol { @apply my-1 list-decimal pl-5; }
+  .chat-cite { @apply font-semibold text-accent no-underline hover:underline; }
+  .chat-sources { @apply flex flex-col gap-1 border-t border-line-soft pt-3 text-sm; }
+  .chat-sources-label { @apply font-medium text-muted; }
+  .chat-sources ol { @apply m-0 flex list-none flex-col gap-1 p-0; }
+  .chat-sources li { @apply flex flex-wrap items-center gap-1.5; }
+  .chat-lang { @apply inline-flex items-center rounded-pill border border-line bg-panel px-2 py-[3px] text-sm font-medium text-muted; }
+  .chat-trust { @apply m-0 text-sm text-muted; }
+  .chat-feedback { @apply flex flex-wrap items-center gap-2 text-sm text-muted; }
+  .chat-feedback .btn-icon { @apply h-11 w-11; }
+  .chat-pending { @apply flex items-center gap-3 self-start rounded-card border border-line bg-panel px-4 py-3 text-sm text-muted; }
+  .chat-pulse { @apply inline-block h-2.5 w-2.5 rounded-full bg-accent; animation: chat-pulse 1.2s ease-in-out infinite; }
+  @keyframes chat-pulse { 0%, 100% { opacity: 0.25; } 50% { opacity: 1; } }
+  .chat-notice { @apply mx-4 mb-3 text-sm; }
+  .chat-form { @apply flex flex-col gap-2 border-t border-line px-4 py-3; }
+  /* Nachtrag 2 (a), 2026-11-03: Zeile unter dem Feld — Zähler links, Button rechts (Phone: Button volle Breite, Zähler darüber). */
+  .chat-form-row { @apply flex flex-wrap items-center justify-between gap-2; }
+  .chat-send { @apply w-full sm:w-auto; }
+  /* Feld volle Breite, drei Zeilen, wächst bis acht Zeilen (8 × 22.5 px + 20 px Innenabstand + 2 px Rand = 202 px), danach scrollt es. */
+  .chat-input { @apply h-auto min-h-11 w-full min-w-0 max-w-full resize-none overflow-y-auto rounded-control border border-control bg-panel px-3 py-2.5 text-base leading-copy text-ink hover:border-ink; max-height: 202px; transition: border-color var(--duration-fast) var(--ease-out-soft); }
+  .chat-count { @apply text-sm text-muted tabular-nums; }
+  .chat-footer { @apply border-t border-line px-4 py-2.5 text-sm text-muted; }
+}

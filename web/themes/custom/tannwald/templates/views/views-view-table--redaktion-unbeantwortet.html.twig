@@ -1,19 +1,20 @@
 {#
 /**
  * @file
- * Tabelle „Unbeantwortete Fragen“ (Wireframe 03): Frage, Anzahl „n×“, Maschinentyp, Zuletzt, Buttons
- * „Dokument anlegen“ (nur mit Recht, ?title= vorbelegt) und „An Support“. rows[].question/url_create/url_support
- * aus tannwald_preprocess_views_view_table__redaktion_unbeantwortet() (includes/redaktion.inc).
+ * Tabelle „Unbeantwortete Fragen“ (Wireframe 03, 1.3): Zeilenraster, Spalten Frage, Anzahl „n×“ (rechts),
+ * Maschinentyp, Zuletzt, Aktionen „Dokument anlegen“ (Node-Formular, nur mit Recht, ?title= vorbelegt) und
+ * „An Support“. rows[].question/url_create/url_support aus
+ * tannwald_preprocess_views_view_table__redaktion_unbeantwortet() (includes/redaktion.inc).
  */
 #}
 {# relative: der visually-hidden-Kopf der Aktionsspalte ist absolut positioniert und darf nicht aus dem Scroll-Container ragen (gemessen: scrollWidth 551 bei 390). #}
-<div class="relative overflow-x-auto rounded-card border border-line bg-panel">
-<table{{ attributes.addClass('redaktion-table', 'views-table', 'min-w-[720px]') }}>
+<div class="redaktion-table-wrap relative">
+<table{{ attributes.addClass('table', 'redaktion-table', 'views-table', 'min-w-[720px]') }}>
   <thead>
     <tr>
       {% for key, column in header %}
         {% if key != 'nothing' %}
-          <th scope="col"{{ column.attributes.removeAttribute('class') }}>{{ column.content }}</th>
+          <th scope="col"{{ column.attributes.removeAttribute('class') }}{% if key == 'id' %} class="num"{% endif %}>{{ column.content }}</th>
         {% endif %}
       {% endfor %}
       <th scope="col"><span class="visually-hidden">{{ 'Actions'|t }}</span></th>
@@ -24,16 +25,16 @@
       <tr{{ row.attributes }} data-question="{{ row.question }}">
         {% for key, column in row.columns %}
           {% if key != 'nothing' %}
-            <td{{ column.attributes.removeAttribute('class') }}{% if key == 'frage_normalisiert' %} class="font-medium"{% endif %}>
+            <td{{ column.attributes.removeAttribute('class') }}{% if key == 'frage_normalisiert' %} class="font-medium"{% elseif key == 'id' %} class="num whitespace-nowrap"{% elseif key == 'last_created' %} class="whitespace-nowrap text-muted"{% endif %}>
               {%- for content in column.content %}{{ content.separator }}{{ content.field_output }}{% endfor -%}
               {%- if key == 'id' %}×{% endif -%}
             </td>
           {% endif %}
         {% endfor %}
         <td class="whitespace-nowrap">
-          <span class="flex flex-wrap gap-2">
-            {% if row.url_create %}<a href="{{ row.url_create }}" class="btn btn-outline px-3 text-sm">{{ 'Create document'|t }}</a>{% endif %}
-            <a href="{{ row.url_support }}" class="btn btn-outline px-3 text-sm">{{ 'To support'|t }}</a>
+          <span class="flex flex-wrap items-center gap-3">
+            {% if row.url_create %}<a href="{{ row.url_create }}" class="btn btn-secondary">{{ 'Create document'|t }}</a>{% endif %}
+            <a href="{{ row.url_support }}" class="btn-text">{{ 'To support'|t }}</a>
           </span>
         </td>
       </tr>

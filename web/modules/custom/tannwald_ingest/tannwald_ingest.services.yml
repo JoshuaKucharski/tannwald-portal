@@ -20,12 +20,12 @@ services:
 
   tannwald_ingest.embedding:
     class: Drupal\tannwald_ingest\Embedding\EmbeddingService
-    arguments: ['@ai.provider', '@config.factory', '@tannwald_ingest.usage']
+    arguments: ['@ai.provider', '@config.factory', '@tannwald_ingest.usage', '@?tannwald_assistant.provider_resolver']
   Drupal\tannwald_ingest\Embedding\EmbeddingService: '@tannwald_ingest.embedding'
 
   tannwald_ingest.summary_generator:
     class: Drupal\tannwald_ingest\Summary\SummaryGenerator
-    arguments: ['@entity_type.manager', '@tannwald_ingest.chunker', '@ai.provider', '@config.factory', '@tannwald_ingest.usage', '@datetime.time', '@keyvalue', '@lock', '@database']
+    arguments: ['@entity_type.manager', '@tannwald_ingest.chunker', '@ai.provider', '@config.factory', '@tannwald_ingest.usage', '@datetime.time', '@keyvalue', '@lock', '@database', '@?tannwald_assistant.provider_resolver']
   Drupal\tannwald_ingest\Summary\SummaryGenerator: '@tannwald_ingest.summary_generator'
 
   tannwald_ingest.review_transition:

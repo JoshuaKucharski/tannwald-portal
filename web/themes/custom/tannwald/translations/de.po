@@ -382,6 +382,13 @@ msgstr "Lieber eine Antwort statt einer Trefferliste? Der Assistent fasst die pa
 msgid "Ask the assistant"
 msgstr "Frage an den Assistenten"
 
+# Nachtrag 3 tw2-11: Kontextzeile im Kopf des globalen Panels
+msgid "Asks about: @serial"
+msgstr "Fragt zu: @serial"
+
+msgid "Open the assistant"
+msgstr "Assistent öffnen"
+
 msgid "Too many requests, please wait a moment."
 msgstr "Zu viele Anfragen, bitte kurz warten."
 
@@ -446,16 +453,40 @@ msgstr "Passwort vergessen?"
 msgid "Demo accounts, password demo"
 msgstr "Demo-Zugänge, Passwort demo"
 
-msgctxt "tannwald password"
-msgid "show"
-msgstr "anzeigen"
+# tw2-11 Demo-Hinweis („?“-Modal) und GitHub-Button
+msgid "What this demo shows"
+msgstr "Was diese Demo zeigt"
 
-msgctxt "tannwald password"
-msgid "hide"
-msgstr "verbergen"
+msgid "For Helga as a demo, Felix & David"
+msgstr "Für Helga als Demo, Felix & David"
 
-msgid "Username or password do not match. Please check your entry."
-msgstr "Benutzername oder Passwort stimmen nicht. Bitte prüfen Sie die Eingabe."
+msgid "myTannwald is a customer portal for a fictional Swiss machine builder. Customers see only the documents of their own machines. An assistant answers exclusively from approved documents and names its source. Editorial and compliance approve. Drupal 11, hybrid search, Qwen via API — built as a proof of concept."
+msgstr "myTannwald ist ein Kundenportal für einen fiktiven Schweizer Maschinenbauer. Kunden sehen nur die Dokumente ihrer eigenen Maschinen. Ein Assistent antwortet ausschliesslich aus freigegebenen Dokumenten und nennt die Quelle. Redaktion und Compliance geben frei. Drupal 11, Hybrid-Suche, Qwen über API — gebaut als Proof of Concept."
+
+msgid "Log in with a demo account below, password demo"
+msgstr "Anmelden mit einem Demo-Konto unten, Passwort demo"
+
+msgid "Try the search and the assistant"
+msgstr "Suche und Assistent probieren"
+
+msgid "Great"
+msgstr "Alles klar"
+
+msgid "Source code on GitHub, opens in a new tab"
+msgstr "Quellcode auf GitHub, öffnet in neuem Tab"
+
+# Nachtrag 5 (e): Icon-Schalter im Passwortfeld
+msgid "Show password"
+msgstr "Passwort anzeigen"
+
+msgid "Hide password"
+msgstr "Passwort verbergen"
+
+msgid "Username or password is incorrect."
+msgstr "Benutzername oder Passwort stimmt nicht."
+
+msgid "Too many failed attempts, please try again later."
+msgstr "Zu viele Fehlversuche, bitte versuchen Sie es später erneut."
 
 # Assistent (5.3)
 
@@ -731,3 +762,379 @@ msgstr "Relevanz"
 
 msgid "Date"
 msgstr "Datum"
+
+# Design-System v2 (1.1): Anmeldeseite, Bildrahmen, Styleguide (nur Split dev)
+msgid "Packaging hall with two blister lines"
+msgstr "Verpackungshalle mit zwei Blisterlinien"
+
+msgid "No image available"
+msgstr "Kein Bild vorhanden"
+
+msgid "Styleguide"
+msgstr "Styleguide"
+
+msgid "Design system v2 · Inter self-hosted · tokens, components and states · only in the dev split"
+msgstr "Design-System v2 · Inter selbst gehostet · Tokens, Komponenten und Zustände · nur im Split dev"
+
+msgid "Contrast table"
+msgstr "Kontrasttabelle"
+
+msgid "Components"
+msgstr "Komponenten"
+
+msgid "Type scale"
+msgstr "Typo-Skala"
+
+msgid "Class"
+msgstr "Klasse"
+
+msgid "Sample"
+msgstr "Beispiel"
+
+msgid "Use"
+msgstr "Verwendung"
+
+msgid "Hero (login brand panel only)"
+msgstr "Hero (nur Markenpanel der Anmeldung)"
+
+msgid "Display: one page title per page"
+msgstr "Display: ein Seitentitel je Seite"
+
+msgid "Title: cards, sections"
+msgstr "Titel: Karten, Abschnitte"
+
+msgid "Lead: document body, intro lines"
+msgstr "Lead: Dokumenttext, Einleitungszeilen"
+
+msgid "Text: interface, forms, tables"
+msgstr "Text: Oberfläche, Formulare, Tabellen"
+
+msgid "Meta: dates, versions, badges, help"
+msgstr "Meta: Daten, Versionen, Badges, Hilfe"
+
+msgid "Three weights (400, 500, 600), six sizes, sentence case, line length up to 80 characters, numbers with ’ as thousands separator (2’141 Tokens), dates as TT.MM.JJJJ."
+msgstr "Drei Gewichte (400, 500, 600), sechs Grössen, Satzschreibung, Zeilenlänge bis 80 Zeichen, Zahlen mit ’ als Tausendertrenner (2’141 Tokens), Datum als TT.MM.JJJJ."
+
+msgid "Grid and spacing"
+msgstr "Raster und Abstände"
+
+msgid "12 columns on 1376 px, gutter 24 px (phone 16 px); 8-pt base, 4-pt fine grid."
+msgstr "12 Spalten auf 1376 px, Gutter 24 px (Phone 16 px); 8-pt-Basis, 4-pt-Feinraster."
+
+msgid "Spacing steps --space-*"
+msgstr "Abstandsstufen --space-*"
+
+msgid "Colour as signal"
+msgstr "Farbe als Signal"
+
+msgid "Contrast measurement"
+msgstr "Kontrastmessung"
+
+msgid "Failed: @n"
+msgstr "Nicht erfüllt: @n"
+
+msgid "All pairs pass"
+msgstr "Alle Paare erfüllt"
+
+msgid "Foreground"
+msgstr "Vordergrund"
+
+msgid "Background"
+msgstr "Hintergrund"
+
+msgid "Ratio"
+msgstr "Verhältnis"
+
+msgid "Minimum"
+msgstr "Mindestwert"
+
+msgid "Result"
+msgstr "Ergebnis"
+
+msgid "ok"
+msgstr "erfüllt"
+
+msgid "too low"
+msgstr "zu niedrig"
+
+msgid "Components and states"
+msgstr "Komponenten und Zustände"
+
+msgid "Rest"
+msgstr "Ruhe"
+
+msgid "Hover"
+msgstr "Hover"
+
+msgid "Focus"
+msgstr "Fokus"
+
+msgid "Active"
+msgstr "Aktiv"
+
+msgid "Disabled"
+msgstr "Deaktiviert"
+
+msgid "hover"
+msgstr "Hover"
+
+msgid "focus"
+msgstr "Fokus"
+
+msgid "Buttons"
+msgstr "Buttons"
+
+msgid "Fields"
+msgstr "Felder"
+
+msgid "Pills and badges"
+msgstr "Pillen und Badges"
+
+msgid "Card with border"
+msgstr "Karte mit Rahmen"
+
+msgid "Card without border"
+msgstr "Karte ohne Rahmen"
+
+msgid "Where the panel surface is enough: lists inside a card, side panels, the login form."
+msgstr "Wo die Panel-Fläche genügt: Listen in einer Karte, Seitenleisten, das Anmeldeformular."
+
+msgid "Table with row grid"
+msgstr "Tabelle mit Zeilenraster"
+
+msgid "Toast and notice"
+msgstr "Toast und Hinweis"
+
+msgid "Sheet"
+msgstr "Sheet"
+
+msgid "Empty state"
+msgstr "Leer-Zustand"
+
+msgid "Page head"
+msgstr "Seitenkopf"
+
+msgid "Image frames"
+msgstr "Bildrahmen"
+
+msgid "Images carry the page: 3:2 for cards and detail pages, 16:9 for the hero, fixed frame before loading, placeholder with the brand mark where a field is empty, alt text names what is visible."
+msgstr "Bilder tragen die Seite: 3:2 für Karten und Detailseiten, 16:9 für den Hero, fester Rahmen vor dem Laden, Platzhalter mit Bildmarke, wo ein Feld leer ist, Alt-Text nennt, was zu sehen ist."
+
+msgid "Icons"
+msgstr "Icons"
+
+msgid "Motion"
+msgstr "Bewegung"
+
+msgid "Transitions only as a response to an action (hover, open, close), never on page load; prefers-reduced-motion switches them off."
+msgstr "Übergänge nur als Antwort auf eine Handlung (Hover, Öffnen, Schliessen), nie beim Laden; prefers-reduced-motion schaltet sie ab."
+
+msgid "Microcopy"
+msgstr "Mikrotexte"
+
+# Seiten I (1.2): Meine Maschinen, Maschine, Dokument, Login-Feinschliff, Fehlerseiten
+msgid "1 document"
+msgstr "1 Dokument"
+
+msgid "@count documents"
+msgstr "@count Dokumente"
+
+msgid "1 open bulletin"
+msgstr "1 offenes Bulletin"
+
+msgid "@count open bulletins"
+msgstr "@count offene Bulletins"
+
+msgid "Machine @serial"
+msgstr "Maschine @serial"
+
+msgid "No machines yet"
+msgstr "Noch keine Maschinen"
+
+msgid "No machines are assigned to your company yet. Your Tannwald contact links them to your account; type documents are available through the search."
+msgstr "Ihrer Firma sind noch keine Maschinen zugeordnet. Ihre Tannwald-Ansprechperson verknüpft sie mit Ihrem Konto; Typdokumente finden Sie über die Suche."
+
+msgid "Type"
+msgstr "Typ"
+
+msgid "Serial number"
+msgstr "Seriennummer"
+
+msgid "Company"
+msgstr "Firma"
+
+msgid "Location"
+msgstr "Standort"
+
+msgid "Year built"
+msgstr "Baujahr"
+
+msgid "Type image @type"
+msgstr "Typbild @type"
+
+msgid "Image"
+msgstr "Bild"
+
+msgid "Languages"
+msgstr "Sprachen"
+
+msgid "Version"
+msgstr "Version"
+
+msgid "No documents yet"
+msgstr "Noch keine Dokumente"
+
+msgid "No documents are available for this machine yet. The editorial team adds them after approval."
+msgstr "Für diese Maschine liegen noch keine Dokumente vor. Die Redaktion ergänzt sie nach der Freigabe."
+
+msgid "No bulletins"
+msgstr "Keine Bulletins"
+
+msgid "Valid until"
+msgstr "Gültig bis"
+
+msgid "not available in your language"
+msgstr "nicht in Ihrer Sprache verfügbar"
+
+msgid "All revisions"
+msgstr "Alle Revisionen"
+
+msgid "Current"
+msgstr "Aktuell"
+
+msgid "This document is export-controlled. Every download is logged with your account and the serial number."
+msgstr "Dieses Dokument unterliegt der Exportkontrolle. Jeder Download wird mit Ihrem Konto und der Seriennummer protokolliert."
+
+msgid "No approved summary yet. The editorial team releases one after review."
+msgstr "Noch keine freigegebene Zusammenfassung. Die Redaktion gibt sie nach der Prüfung frei."
+
+msgid "Confirm the reading on the page of the affected machine (button “Gelesen bestätigen”)."
+msgstr "Bestätigen Sie das Lesen auf der Seite der betroffenen Maschine (Button „Gelesen bestätigen“)."
+
+msgid "Customers and dealers"
+msgstr "Kunden und Händler"
+
+msgid "Tannwald internal"
+msgstr "Tannwald intern"
+
+msgid "No access"
+msgstr "Kein Zugriff"
+
+msgid "This page belongs to another company or your role does not cover it. If you think you should see it, contact your Tannwald contact."
+msgstr "Diese Seite gehört zu einer anderen Firma oder Ihre Rolle deckt sie nicht ab. Wenn Sie sie sehen sollten, wenden Sie sich an Ihre Tannwald-Ansprechperson."
+
+msgid "Please log in to see this page."
+msgstr "Bitte melden Sie sich an, um diese Seite zu sehen."
+
+msgid "The address does not exist or the document has been withdrawn. Use the search or go back to your machines."
+msgstr "Die Adresse gibt es nicht, oder das Dokument wurde zurückgezogen. Nutzen Sie die Suche oder gehen Sie zurück zu Ihren Maschinen."
+
+msgid "To my machines"
+msgstr "Zu meinen Maschinen"
+
+# Seiten-Redesign II (1.3, B): Suche, Assistent, Redaktion, Admin-Views, Formulare
+msgid "Only documents you are allowed to see. Hybrid also finds hits by meaning."
+msgstr "Nur Dokumente, die Sie sehen dürfen. Hybrid findet auch Treffer über Bedeutung."
+
+msgid "Filter (@count)"
+msgstr "Filter (@count)"
+
+msgid "Reset all"
+msgstr "Alle zurücksetzen"
+
+msgid "Show hits"
+msgstr "Treffer anzeigen"
+
+msgid "Try another spelling, switch to Hybrid, or ask the assistant."
+msgstr "Versuchen Sie eine andere Schreibweise, wechseln Sie zu Hybrid oder fragen Sie den Assistenten."
+
+msgid "Examples: a fault code, a part, an activity."
+msgstr "Beispiele: ein Störungscode, ein Teil, eine Tätigkeit."
+
+msgid "Or ask the assistant:"
+msgstr "Oder fragen Sie den Assistenten:"
+
+msgid "How often is the sealing station cleaned?"
+msgstr "Wie oft wird die Siegelstation gereinigt?"
+
+msgid "What does fault code E-4711 mean?"
+msgstr "Was bedeutet der Störungscode E-4711?"
+
+msgid "Which film thickness is approved?"
+msgstr "Welche Folienstärke ist zugelassen?"
+
+msgid "Answers come only from approved documents you are allowed to see. Please check the cited chapters before acting."
+msgstr "Antworten stammen nur aus freigegebenen Dokumenten, die Sie sehen dürfen. Prüfen Sie die zitierten Kapitel, bevor Sie handeln."
+
+msgid "Nothing to review."
+msgstr "Nichts zur Prüfung."
+
+msgid "As soon as the queue generates a summary for a new document revision, it appears here."
+msgstr "Sobald die Queue für eine neue Dokument-Revision eine Zusammenfassung erzeugt, erscheint sie hier."
+
+msgid "Change note"
+msgstr "Änderungsvermerk"
+
+msgid "Reject summary"
+msgstr "Zusammenfassung zurückweisen"
+
+msgid "The summary stays invisible on the document, in search and in the assistant. The queue generates no new one; the editorial team edits the text or publishes a new document revision."
+msgstr "Die Zusammenfassung bleibt am Dokument, in der Suche und im Assistenten unsichtbar. Die Queue erzeugt keine neue; die Redaktion bearbeitet den Text oder veröffentlicht eine neue Dokument-Revision."
+
+msgid "Reason (for your records)"
+msgstr "Begründung (für Ihre Notizen)"
+
+msgid "e.g. names a chapter that does not exist"
+msgstr "z. B. nennt ein Kapitel, das es nicht gibt"
+
+msgid "The reason is not saved; note it in the change note of the next revision."
+msgstr "Die Begründung wird nicht gespeichert; halten Sie sie im Änderungsvermerk der nächsten Revision fest."
+
+msgid "Cancel"
+msgstr "Abbrechen"
+
+msgid "Reject"
+msgstr "Zurückweisen"
+
+msgid "Read confirmations: @confirmed of @total"
+msgstr "Lesebestätigungen: @confirmed von @total"
+
+msgid "Show confirmations"
+msgstr "Bestätigungen anzeigen"
+
+msgid "Calls and tokens of the assistant per day, context and operation."
+msgstr "Aufrufe und Tokens des Assistenten je Tag, Kontext und Operation."
+
+msgid "Period"
+msgstr "Zeitraum"
+
+msgid "30 days"
+msgstr "30 Tage"
+
+msgid "90 days"
+msgstr "90 Tage"
+
+msgid "365 days"
+msgstr "365 Tage"
+
+msgid "No usage in this period."
+msgstr "Keine Nutzung in diesem Zeitraum."
+
+msgid "As soon as the assistant answers, calls and tokens appear here."
+msgstr "Sobald der Assistent antwortet, erscheinen Aufrufe und Tokens hier."
+
+msgid "Tokens, costs in CHF and share of the monthly limit, per month."
+msgstr "Tokens, Kosten in CHF und Anteil am Monatslimit, je Monat."
+
+msgid "No costs yet."
+msgstr "Noch keine Kosten."
+
+msgid "As soon as the assistant answers, tokens and costs appear here per month."
+msgstr "Sobald der Assistent antwortet, erscheinen Tokens und Kosten hier je Monat."
+
+# Seitengerüst (1.4): Demo-Leiste und Konto-Menü
+msgid "Demo"
+msgstr "Demo"
+
+msgid "Account menu"
+msgstr "Kontomenü"

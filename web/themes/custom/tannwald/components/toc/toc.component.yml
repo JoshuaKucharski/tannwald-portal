@@ -1,0 +1,28 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: 'Table of contents'
+status: stable
+description: 'Inhaltsverzeichnis (1.2): Einträge aus den Kapitel-Ankern, ab 1024 px haftend links, aktives Kapitel per Scrollspy (src/modules/toc.js, Alpine toc).'
+props:
+  type: object
+  required:
+    - entries
+  properties:
+    entries:
+      type: array
+      title: Entries
+      description: 'Liste {level (2|3), text, anchor}.'
+      items:
+        type: object
+        properties:
+          level:
+            type: integer
+          text:
+            type: [string, 'null']
+          anchor:
+            type: [string, 'null']
+    heading:
+      type: [string, 'null']
+      title: Heading
+    attributes:
+      type: Drupal\Core\Template\Attribute
+      title: Attributes

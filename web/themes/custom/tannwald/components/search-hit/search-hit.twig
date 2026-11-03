@@ -1,33 +1,49 @@
 {#
 /**
  * @file
- * SDC tannwald:search-hit — ein Treffer: Typ-Badge, Meta, Titel › Kapitel, Snippet, Links.
+ * SDC tannwald:search-hit — Trefferkarte (1.3, Wireframe 02): Thumb 3:2 links (Dokument-Bild, sonst Typbild des
+ * Dokumenttyps, sonst Platzhalter — Slot image aus tannwald_image()), Pillen (Dokumenttyp, Maschinentyp, Sprache,
+ * „Treffer über Bedeutung“ bei vector), Kapitel als Titel, Dokument mit Version und Datum als Meta, Snippet mit
+ * <mark>, Links. Attribute data-nid, data-matched-by und data-matched-pill bleiben (Vertrag 5.2 b).
  */
 #}
 {% set is_bulletin = dokumenttyp and ('ulletin' in dokumenttyp) %}
-{% set meta = [] %}
-{% if maschinentypen %}{% set meta = meta|merge([maschinentypen|join(' / ')]) %}{% endif %}
-{% if version %}{% set meta = meta|merge(['v' ~ version]) %}{% endif %}
-{% if langcode %}{% set meta = meta|merge([langcode|upper]) %}{% endif %}
-{% if freigegeben_am %}{% set meta = meta|merge([freigegeben_am]) %}{% endif %}
-<li{{ attributes.addClass('tannwald-search__hit flex flex-col gap-2 border-b border-line-soft px-6 py-4 last:border-b-0').setAttribute('data-nid', nid).setAttribute('data-matched-by', matched_by|default('keyword')) }}>
-  <div class="flex flex-wrap items-center gap-2.5">
-    {% if dokumenttyp %}
-      {{ include('tannwald:badge', {label: dokumenttyp, variant: is_bulletin ? 'warn' : 'neutral'}, with_context = false) }}
+{% set doc_meta = [titel] %}
+{% if version %}{% set doc_meta = doc_meta|merge(['v' ~ version]) %}{% endif %}
+{% if freigegeben_am %}{% set doc_meta = doc_meta|merge([('approved @date'|t({'@date': freigegeben_am}))]) %}{% endif %}
+{% set image_markup = block('image')|trim %}
+<li{{ attributes.addClass('tannwald-search__hit', 'search-hit').setAttribute('data-nid', nid).setAttribute('data-matched-by', matched_by|default('keyword')) }}>
+  <a href="{{ url_kapitel }}" class="search-hit-thumb" tabindex="-1" aria-hidden="true">
+    {% if image_markup %}
+      {{ image_markup|raw }}
+    {% else %}
+      <div class="tw-image tw-image--3x2 tw-image--placeholder" aria-hidden="true"></div>
     {% endif %}
-    <span class="meta">{{ meta|join(' · ') }}</span>
-    {% if matched_by == 'vector' %}
-      {{ include('tannwald:badge', {label: 'Hit by meaning'|t, variant: 'accent', pill: true, attributes: create_attribute({'data-matched-pill': ''})}, with_context = false) }}
-    {% endif %}
+  </a>
+  <div class="search-hit-body">
+    <div class="search-hit-pills">
+      {% if dokumenttyp %}
+        {{ include('tannwald:badge', {label: dokumenttyp, variant: is_bulletin ? 'warn' : 'neutral', pill: true}, with_context = false) }}
+      {% endif %}
+      {% for typ in maschinentypen|default([]) %}
+        <span class="pill border-line text-muted">{{ typ }}</span>
+      {% endfor %}
+      {% if langcode %}
+        <span class="pill border-line text-muted" lang="{{ langcode }}">{{ langcode|upper }}</span>
+      {% endif %}
+      {% if matched_by == 'vector' %}
+        {{ include('tannwald:badge', {label: 'Hit by meaning'|t, variant: 'accent', pill: true, attributes: create_attribute({'data-matched-pill': ''})}, with_context = false) }}
+      {% endif %}
+    </div>
+    <h3 class="search-hit-title"><a href="{{ url_kapitel }}">{{ heading_path }}</a></h3>
+    <p class="meta m-0">{{ doc_meta|join(' · ') }}</p>
+    <p class="search-hit-snippet">{% block snippet %}{% endblock %}</p>
+    <div class="search-hit-links">
+      <a href="{{ url_kapitel }}" class="btn-text">{{ is_bulletin ? 'Open bulletin'|t : 'Open chapter'|t }}{{ include('tannwald:icon', {name: 'arrow', size: 16}, with_context = false) }}</a>
+      {% if not is_bulletin %}<a href="{{ url_dokument }}">{{ 'Document'|t({}, {'context': 'tannwald search'}) }}</a>{% endif %}
+      {% if url_maschine %}<a href="{{ url_maschine }}">{{ 'To machine @serial'|t({'@serial': maschine_titel}) }}</a>{% endif %}
+      {% if bulletin_bestaetigt_am %}<span class="meta">{{ 'Confirmed on @date'|t({'@date': bulletin_bestaetigt_am}) }}</span>{% endif %}
+    </div>
   </div>
-  <h3 class="m-0 text-base font-semibold leading-snug">
-    <a href="{{ url_kapitel }}" class="text-ink no-underline hover:text-accent"><span class="text-muted font-medium">{{ titel }}</span> <span class="text-muted" aria-hidden="true">›</span> {{ heading_path }}</a>
-  </h3>
-  <p class="m-0 text-sm leading-relaxed">{% block snippet %}{% endblock %}</p>
-  <div class="flex flex-wrap items-center gap-4 text-sm">
-    <a href="{{ url_kapitel }}" class="font-medium">{{ is_bulletin ? 'Open bulletin'|t : 'Open chapter'|t }}</a>
-    {% if not is_bulletin %}<a href="{{ url_dokument }}">{{ 'Document'|t({}, {'context': 'tannwald search'}) }}</a>{% endif %}
-    {% if url_maschine %}<a href="{{ url_maschine }}">{{ 'To machine @serial'|t({'@serial': maschine_titel}) }}</a>{% endif %}
-    {% if bulletin_bestaetigt_am %}<span class="meta">{{ 'Confirmed on @date'|t({'@date': bulletin_bestaetigt_am}) }}</span>{% endif %}
-  </div>
+  {% if false %}{% block image %}{% endblock %}{% endif %}
 </li>

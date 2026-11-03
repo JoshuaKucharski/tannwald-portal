@@ -1,113 +1,136 @@
 {#
 /**
  * @file
- * Maschinen-Detail (Wireframe 01): Kopfkarte, offenes Bulletin, Dokumentliste, Bulletins, Assistent-Platzhalter.
+ * Maschinenseite (1.2, Leitplanken v2): Typenschild-Kopf mit Seriennummernbild (sonst Typbild) rechts,
+ * offene Bulletins als Hinweis mit Formular, Dokumente als Tabelle mit Thumb und Zeilenraster, gruppiert nach
+ * Dokumenttyp, Filter „Nur aktuelle Versionen“ als Chip; Bulletins der Maschine; Assistent (Panel von B).
  *
- * Variablen aus tannwald_preprocess_node() (includes/machine.inc), Vertrag (d) für 5.2/5.3:
- * machine {serial, type_name, type_note, company, location, year, contract_label, contract_until},
- * documents[] (Props für tannwald:doc-row), documents_current, documents_new, documents_older,
- * language_label, fallback_label, banners[] (tannwald_bulletin_banner_data + confirmed_by; offene mit Formular),
- * bulletins[] {id, title, kind_label, url, published, status, status_label, note},
- * bulletins_open, bulletins_confirmed, maschine_nid, cache_bubble.
+ * Variablen aus tannwald_preprocess_node() (includes/machine.inc), Vertrag (a) des Berichts tw2-4:
+ * machine {serial, type_name, type_note, company, location, year, contract_label, contract_until, image, has_own_image},
+ * documents[] (doc-row-Props + type_label, type_slug, image), documents_current, documents_new, documents_older,
+ * language_label, fallback_label, banners[], bulletins[] {id, title, kind_label, url, published, status, status_label, note},
+ * bulletins_open, bulletins_confirmed, maschine_nid, cache_bubble, chat, chat_cache.
  */
 #}
 {{ cache_bubble }}
-<article{{ attributes.addClass('flex flex-col gap-6') }} data-maschine-nid="{{ maschine_nid }}">
+<article{{ attributes.addClass('flex flex-col gap-10') }} data-maschine-nid="{{ maschine_nid }}">
   {{ title_prefix }}{{ title_suffix }}
 
-  <section class="card flex flex-wrap items-start gap-6 p-4 md:p-6" aria-label="{{ 'Machine'|t }}">
-    <div class="flex min-w-0 flex-1 basis-[420px] flex-col gap-1.5">
-      <span class="meta">{{ machine.type_note ?: machine.company }}</span>
-      <h1 class="m-0 text-[28px] font-semibold leading-tight">{{ machine.type_name }} · {{ 'Serial number @serial'|t({'@serial': machine.serial}) }}</h1>
-      <p class="m-0 text-muted">
-        {%- if machine.location %}{{ 'Location @location'|t({'@location': machine.location}) }}{% endif %}
-        {%- if machine.year %} · {{ 'Year built @year'|t({'@year': machine.year}) }}{% endif -%}
-      </p>
+  <header class="head-split" aria-label="{{ 'Machine'|t }}">
+    <div class="flex min-w-0 flex-col gap-5">
+      <div class="flex flex-col gap-1">
+        <span class="meta">{{ machine.type_name }}{% if machine.type_note %} · {{ machine.type_note }}{% endif %}</span>
+        <h1 class="page-title">{{ machine.serial }}</h1>
+      </div>
+      {{ include('tannwald:plate', {rows: [
+        {label: 'Type'|t, value: machine.type_name},
+        {label: 'Serial number'|t, value: machine.serial},
+        {label: 'Company'|t, value: machine.company},
+        {label: 'Location'|t, value: machine.location},
+        {label: 'Year built'|t, value: machine.year},
+        {label: 'Contract'|t, value: machine.contract_label ? (machine.contract_until ? machine.contract_label ~ ' · ' ~ 'until @date'|t({'@date': machine.contract_until}) : machine.contract_label) : null},
+        {label: 'Documents'|t, value: '@count current'|t({'@count': documents_current}) ~ (documents_new ? ' · ' ~ (documents_new == 1 ? '1 new version'|t : '@count new versions'|t({'@count': documents_new})) : '')},
+        {label: 'Bulletins'|t, value: '@count open'|t({'@count': bulletins_open}) ~ ' · ' ~ '@count confirmed'|t({'@count': bulletins_confirmed}), tone: bulletins_open ? 'warn' : null},
+      ]}, with_context = false) }}
     </div>
-    <dl class="m-0 grid flex-1 basis-[420px] grid-cols-1 gap-4 sm:grid-cols-3">
-      <div class="flex flex-col gap-1 rounded-control bg-surface px-4 py-3">
-        <dt class="text-xs text-muted">{{ 'Contract'|t }}</dt>
-        <dd class="m-0 font-semibold">{{ machine.contract_label ?: '—' }}</dd>
-        {% if machine.contract_until %}<dd class="m-0 meta">{{ 'until @date'|t({'@date': machine.contract_until}) }}</dd>{% endif %}
-      </div>
-      <div class="flex flex-col gap-1 rounded-control bg-surface px-4 py-3">
-        <dt class="text-xs text-muted">{{ 'Documents'|t }}</dt>
-        <dd class="m-0 font-semibold">{{ '@count current'|t({'@count': documents_current}) }}</dd>
-        <dd class="m-0 meta">{{ documents_new == 1 ? '1 new version'|t : '@count new versions'|t({'@count': documents_new}) }}</dd>
-      </div>
-      <div class="flex flex-col gap-1 rounded-control bg-surface px-4 py-3">
-        <dt class="text-xs text-muted">{{ 'Bulletins'|t }}</dt>
-        <dd class="m-0 font-semibold {{ bulletins_open ? 'text-warn' : '' }}">{{ '@count open'|t({'@count': bulletins_open}) }}</dd>
-        <dd class="m-0 meta">{{ '@count confirmed'|t({'@count': bulletins_confirmed}) }}</dd>
-      </div>
-    </dl>
-  </section>
-
-  {% for banner in banners %}
-    {% embed 'tannwald:bulletin-banner' with {
-      id: banner.id,
-      titel: banner.titel,
-      art: banner.art,
-      veroeffentlicht_am: banner.veroeffentlicht_am,
-      bestaetigung_pflicht: banner.bestaetigung_pflicht,
-      bestaetigt_am: banner.bestaetigt_am,
-      confirmed_by: banner.confirmed_by,
-      url_bulletin: banner.url_bulletin,
-      attributes: create_attribute(),
-    } %}
-      {% block actions %}{{ banner.form }}{% endblock %}
+    {% embed 'tannwald:figure' with {ratio: 'card', placeholder_label: 'No image available'|t, image: machine.image, caption: machine.has_own_image ? 'Serial number @serial'|t({'@serial': machine.serial}) : 'Type image @type'|t({'@type': machine.type_name})} only %}
+      {% block image %}{{ image }}{% endblock %}
     {% endembed %}
-  {% endfor %}
+  </header>
 
-  <div class="flex flex-wrap items-start gap-6">
-    <div class="flex min-w-0 flex-[999_1_560px] flex-col gap-6">
-
-      <section class="card flex flex-col" aria-labelledby="documents-heading" x-data="{ currentOnly: true }">
-        <div class="card-head">
-          <h2 id="documents-heading" class="card-title">{{ 'Documents for this machine'|t }}</h2>
-          <span class="meta">{{ 'Language: @language'|t({'@language': language_label}) }}{% if fallback_label %} · {{ 'Fallback @language'|t({'@language': fallback_label}) }}{% endif %}</span>
-          <label class="flex items-center gap-2 text-sm md:ml-auto">
-            <input type="checkbox" x-model="currentOnly" class="h-[18px] w-[18px] accent-accent"{% if not documents_older %} disabled{% endif %}>
-            {{ 'Current versions only'|t }}
-          </label>
+  {% if banners %}
+    <div class="flex flex-col gap-3" data-open-bulletins>
+      {% for banner in banners %}
+        {% set is_safety = banner.art == 'sicherheit' %}
+        <div class="notice {{ is_safety ? 'notice--warn' : 'notice--neutral' }} flex flex-wrap items-center gap-x-4 gap-y-2" data-bulletin-id="{{ banner.id }}">
+          {{ include('tannwald:icon', {name: is_safety ? 'warning' : 'bulletin', size: 22}, with_context = false) }}
+          <div class="flex min-w-0 flex-1 basis-80 flex-col gap-0.5">
+            <span class="font-medium">{{ is_safety ? 'Safety bulletin'|t : 'Service bulletin'|t }} {{ banner.id }} · {{ banner.titel }}</span>
+            <span class="meta">{{ 'Published @date'|t({'@date': banner.veroeffentlicht_am|format_date('tannwald_datum')}) }} · {{ 'concerns this serial number'|t }} · {{ 'Read confirmation pending'|t }}</span>
+          </div>
+          <a href="{{ banner.url_bulletin }}" class="btn-text">{{ 'Read bulletin'|t }}</a>
+          {{ banner.form }}
         </div>
-        {% for row in documents %}
-          {% if row.is_current %}
-            {{ include('tannwald:doc-row', row, with_context = false) }}
-          {% else %}
-            {{ include('tannwald:doc-row', row|merge({attributes: create_attribute({'x-show': '!currentOnly', 'x-cloak': ''})}), with_context = false) }}
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <div class="grid grid-cols-1 items-start gap-10">
+    <div class="flex min-w-0 flex-col gap-10">
+
+      <section class="flex flex-col gap-4" aria-labelledby="documents-heading" x-data="{ currentOnly: true }">
+        <div class="flex flex-wrap items-end gap-x-6 gap-y-2">
+          <div class="flex flex-col gap-1">
+            <h2 id="documents-heading" class="m-0 text-xl">{{ 'Documents'|t }}</h2>
+            <span class="meta">{{ 'Language: @language'|t({'@language': language_label}) }}{% if fallback_label %} · {{ 'Fallback @language'|t({'@language': fallback_label}) }}{% endif %}</span>
+          </div>
+          {% if documents_older %}
+            <button type="button" class="chip md:ml-auto" :aria-pressed="currentOnly ? 'true' : 'false'" @click="currentOnly = !currentOnly">{{ include('tannwald:icon', {name: 'filter', size: 16}, with_context = false) }}{{ 'Current versions only'|t }}</button>
           {% endif %}
-        {% else %}
-          <p class="m-0 px-6 py-4 text-muted">{{ 'No documents are available for this machine. As soon as the editorial team approves one, it appears here.'|t }}</p>
-        {% endfor %}
-      </section>
-
-      <section class="card flex flex-col" aria-labelledby="bulletins-heading">
-        <div class="card-head">
-          <h2 id="bulletins-heading" class="card-title">{{ 'Bulletins for this machine'|t }}</h2>
         </div>
-        {% for item in bulletins %}
-          <div class="flex flex-wrap items-center gap-4 border-b border-line-soft px-6 py-4 last:border-b-0" data-bulletin-status="{{ item.status }}">
-            {{ include('tannwald:badge', {label: item.status_label, variant: item.status == 'open' ? 'warn' : (item.status == 'confirmed' ? 'ok' : 'neutral'), pill: true}, with_context = false) }}
-            <div class="flex min-w-0 flex-1 basis-80 flex-col gap-0.5">
-              <a href="{{ item.url }}" class="font-semibold text-ink no-underline hover:text-accent">{{ item.id }} {{ item.kind_label }} · {{ item.title }}</a>
-              <span class="meta">{{ item.published }} · {{ item.note }}</span>
-            </div>
+        {% if documents %}
+          <div class="table-wrap">
+            <table class="table table--stack doc-table">
+              <thead>
+                <tr><th><span class="visually-hidden">{{ 'Image'|t }}</span></th><th>{{ 'Document'|t }}</th><th>{{ 'Version'|t }}</th><th>{{ 'Approved'|t }}</th><th>{{ 'Languages'|t }}</th><th><span class="visually-hidden">{{ 'Actions'|t }}</span></th></tr>
+              </thead>
+              <tbody>
+                {% set previous_type = null %}
+                {% for row in documents %}
+                  {% if row.type_label != previous_type %}
+                    <tr class="table-group"><th colspan="6" scope="colgroup">{{ row.type_label }}</th></tr>
+                    {% set previous_type = row.type_label %}
+                  {% endif %}
+                  <tr data-revision="{{ row.is_current ? 'current' : 'older' }}"{% if not row.is_current %} x-show="!currentOnly" x-cloak{% endif %}>
+                    <td>{% if row.is_current %}<span class="doc-thumb">{{ row.image }}</span>{% endif %}</td>
+                    <td>
+                      <span class="flex flex-wrap items-center gap-2">
+                        {% if row.url_dokument %}<a href="{{ row.url_dokument }}" class="doc-title">{{ row.title }}</a>{% else %}<span class="doc-title">{{ row.title }}</span>{% endif %}
+                        {% if row.is_new %}{{ include('tannwald:badge', {label: 'New version'|t, variant: 'ok', pill: true}, with_context = false) }}{% endif %}
+                        {% for badge in row.badges %}{{ include('tannwald:badge', badge, with_context = false) }}{% endfor %}
+                      </span>
+                      {% if not row.is_current or row.audit_hint %}<span class="meta">{% if not row.is_current %}{{ 'Older version'|t }}{% endif %}{% if not row.is_current and row.audit_hint %} · {% endif %}{% if row.audit_hint %}{{ 'Access is logged'|t }}{% endif %}</span>{% endif %}
+                    </td>
+                    <td class="num whitespace-nowrap">{{ row.version }}</td>
+                    <td class="num whitespace-nowrap">{{ row.freigegeben_am ?: '—' }}</td>
+                    <td>{% if row.languages %}{{ include('tannwald:lang-pills', {languages: row.languages}, with_context = false) }}{% endif %}</td>
+                    <td class="whitespace-nowrap">{% if row.url_download %}<a href="{{ row.url_download }}" class="btn-text">{{ include('tannwald:icon', {name: 'download', size: 18}, with_context = false) }}{{ 'Download'|t({}, {'context': 'tannwald'}) }}</a>{% endif %}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
           </div>
         {% else %}
-          <p class="m-0 px-6 py-4 text-muted">{{ 'No bulletins for this machine. New bulletins appear here as soon as they are released.'|t }}</p>
-        {% endfor %}
+          <div class="empty-state">
+            <p class="empty-state-title">{{ 'No documents yet'|t }}</p>
+            <p class="empty-state-text">{{ 'No documents are available for this machine yet. The editorial team adds them after approval.'|t }}</p>
+          </div>
+        {% endif %}
+      </section>
+
+      <section class="flex flex-col gap-4" aria-labelledby="bulletins-heading">
+        <h2 id="bulletins-heading" class="m-0 text-xl">{{ 'Bulletins'|t }}</h2>
+        {% if bulletins %}
+          <ul class="m-0 flex list-none flex-col p-0">
+            {% for item in bulletins %}
+              <li class="flex flex-wrap items-center gap-x-4 gap-y-1 border-b border-line-soft py-3 last:border-b-0" data-bulletin-status="{{ item.status }}">
+                {{ include('tannwald:badge', {label: item.status_label, variant: item.status == 'open' ? 'warn' : (item.status == 'confirmed' ? 'ok' : 'neutral'), pill: true}, with_context = false) }}
+                <div class="flex min-w-0 flex-1 basis-80 flex-col gap-0.5">
+                  <a href="{{ item.url }}" class="doc-title">{{ item.id }} {{ item.kind_label }} · {{ item.title }}</a>
+                  <span class="meta">{{ item.published }} · {{ item.note }}</span>
+                </div>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <div class="empty-state">
+            <p class="empty-state-title">{{ 'No bulletins'|t }}</p>
+            <p class="empty-state-text">{{ 'No bulletins for this machine. New bulletins appear here as soon as they are released.'|t }}</p>
+          </div>
+        {% endif %}
       </section>
     </div>
 
-    <aside aria-label="{{ 'Assistant'|t }}" class="card flex min-w-0 flex-[1_1_400px] flex-col lg:max-w-[440px]" data-maschine-nid="{{ maschine_nid }}">
-      <div class="flex flex-col gap-1 border-b border-line px-6 py-4">
-        <h2 class="card-title">{{ 'Assistant'|t }}</h2>
-        <span class="meta">{{ 'Answers only from approved documents of this machine'|t }}</span>
-      </div>
-      {# 5.3: chat #}
-      {{ chat_cache }}
-      {% if chat %}{{ include('tannwald:chat', chat, with_context = false) }}{% endif %}
-    </aside>
+    {# Nachtrag 6 (tw2-11): keine eingebettete Assistenten-Spalte mehr; der globale Launcher trägt „Fragt zu: <Seriennummer>“. #}
   </div>
 </article>

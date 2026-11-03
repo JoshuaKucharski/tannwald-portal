@@ -909,6 +909,68 @@ $config['ai_provider_ollama.settings']['host_name'] = ($tannwald_ollama['scheme'
 $config['ai_provider_ollama.settings']['port'] = (int) ($tannwald_ollama['port'] ?? 11434);
 unset($tannwald_ollama);
 
+// DashScope (Qwen über API, 3.1): Endpoint aus DASHSCOPE_ENDPOINT_EU; der Schlüssel kommt über die Key-Entity
+// dashscope_api_key (Provider env, DASHSCOPE_API_KEY_EU). Nie Werte hier oder in config/sync. Leer → Provider
+// nicht nutzbar (Formular und Assistent melden es). DDEV: .ddev/.env; Server: /etc/mytannwald/env (deploy/).
+$config['tannwald_qwen.settings']['endpoint'] = rtrim((string) getenv('DASHSCOPE_ENDPOINT_EU'), '/');
+
+// Server (deploy/, 4.1, ADR-012): nativer Betrieb auf dem geteilten nginx/php-fpm-Server. Der php-fpm-Pool
+// „mytannwald“ (deploy/php/mytannwald.conf) und drush/Cron (deploy/deploy.sh, tannwald-cron.service) setzen
+// TANNWALD_DEPLOY=1 und reichen die Werte aus /etc/mytannwald/env durch — hier stehen nur Namen, nie Werte.
+// OLLAMA_HOST und DASHSCOPE_* gelten über die beiden Blöcke oben unverändert (Server: http://127.0.0.1:11434).
+if (getenv('TANNWALD_DEPLOY') === '1') {
+  $databases['default']['default'] = [
+    'driver' => 'mysql',
+    'namespace' => 'Drupal\\mysql\\Driver\\Database\\mysql',
+    'autoload' => 'core/modules/mysql/src/Driver/Database/mysql/',
+    'host' => getenv('DB_HOST') ?: '127.0.0.1',
+    'port' => getenv('DB_PORT') ?: '3306',
+    'database' => (string) getenv('DB_NAME'),
+    'username' => (string) getenv('DB_USER'),
+    'password' => (string) getenv('DB_PASSWORD'),
+    'prefix' => '',
+    'collation' => 'utf8mb4_general_ci',
+    'isolation_level' => 'READ COMMITTED',
+  ];
+  $settings['hash_salt'] = (string) getenv('DRUPAL_HASH_SALT');
+  // Mehrere Muster durch Komma getrennt (deploy/.env.example).
+  $settings['trusted_host_patterns'] = array_values(array_filter(array_map('trim', explode(',', (string) getenv('TRUSTED_HOST_PATTERN')))));
+  // Private Dateien ausserhalb des Docroots; config_sync_directory (../config/sync) gilt von oben.
+  $settings['file_private_path'] = getenv('PRIVATE_PATH') ?: '/var/www/mytannwald-private';
+  // Split „dev“ (masquerade, queue_ui) aus; einen Split „prod“ gibt es nicht (config/split: ci, dev).
+  $config['config_split.config_split.dev']['status'] = FALSE;
+  // Demo-Server (D9, 2026-11-03: Site offen): die Konten-Chips der Anmeldeseite (Theme, includes/layout.inc) auch
+  // ohne masquerade — ein Klick füllt kunde-a … compliance mit dem Passwort demo aus.
+  $settings['tannwald_demo_login'] = TRUE;
+  // nginx spricht FastCGI direkt mit dem Pool: REMOTE_ADDR ist die Adresse des Clients, HTTPS kommt aus
+  // fastcgi_params. Ein reverse_proxy würde nur X-Forwarded-For vom Client glauben (Bericht 4.1, §3 (c)).
+  $settings['reverse_proxy'] = FALSE;
+  // Cache-Backend bleibt die Datenbank (Drupal-Standard; kein Redis in Phase 2).
+  // Jede Mail geht an Mailpit (127.0.0.1:1025, UI unter mail.<DOMAIN>), nie an den Mailserver der Maschine:
+  // symfony_mailer (Bulletins) über diesen SMTP-Override, Core-php_mail über sendmail_path im Pool und in
+  // deploy/php/mytannwald-cli.ini (mailpit sendmail).
+  $config['mailer_transport.settings']['default_transport'] = 'sendmail';
+  $config['mailer_transport.mailer_transport.sendmail']['plugin'] = 'smtp';
+  $config['mailer_transport.mailer_transport.sendmail']['configuration']['user'] = '';
+  $config['mailer_transport.mailer_transport.sendmail']['configuration']['pass'] = '';
+  $config['mailer_transport.mailer_transport.sendmail']['configuration']['host'] = '127.0.0.1';
+  $config['mailer_transport.mailer_transport.sendmail']['configuration']['port'] = getenv('MAILPIT_SMTP_PORT') ?: '1025';
+  $config['system.logging']['error_level'] = 'hide';
+  // Kostendeckel fest (F14, 2026-11-03): die offene Demo hat ein Konto mit „administer tannwald assistant“; über die Umgebung
+  // gesetzt kann das Formular das Monatslimit nicht anheben. 2'000'000 Tokens × CHF 0.0008/1k = höchstens CHF 1.60 im Monat.
+  $config['tannwald_assistant.settings']['monthly_token_limit'] = 2000000;
+  // Provider ebenfalls fest (F14-Restrisiko): auf dem Server gibt es kein Chat-Modell in Ollama — ein Umschalten im
+  // Formular würde den Assistenten für alle abschalten. Embeddings bleiben bge-m3 über Ollama (D11 Variante 2).
+  $config['tannwald_assistant.settings']['provider_chat'] = 'dashscope';
+  $config['tannwald_assistant.settings']['provider_embeddings'] = 'ollama';
+  $config['tannwald_assistant.settings']['providers']['dashscope']['chat_model'] = 'qwen-plus';
+  $config['tannwald_assistant.settings']['providers']['ollama']['embedding_model'] = 'bge-m3';
+  // Absender der Demo (4.2): SITE_MAIL aus der env-Datei statt admin@example.com aus config/sync.
+  if (getenv('SITE_MAIL')) {
+    $config['system.site']['mail'] = (string) getenv('SITE_MAIL');
+  }
+}
+
 // Automatically generated include for settings managed by ddev.
 if (getenv('IS_DDEV_PROJECT') == 'true' && file_exists(__DIR__ . '/settings.ddev.php')) {
   include __DIR__ . '/settings.ddev.php';

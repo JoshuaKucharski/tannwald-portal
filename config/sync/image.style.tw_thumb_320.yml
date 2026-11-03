@@ -1,0 +1,21 @@
+uuid: b20c03e2-396e-48d4-9bf1-b51328396079
+langcode: de
+status: true
+dependencies: {  }
+name: tw_thumb_320
+label: 'Tannwald Vorschau 320 (3:2)'
+effects:
+  883428d8-17d5-447c-af07-b1f7c58859ee:
+    uuid: 883428d8-17d5-447c-af07-b1f7c58859ee
+    id: image_scale_and_crop
+    weight: 1
+    data:
+      width: 320
+      height: 213
+      anchor: center-center
+  bfeafdea-fc50-4a2d-9a8e-1c7f2b86986d:
+    uuid: bfeafdea-fc50-4a2d-9a8e-1c7f2b86986d
+    id: image_convert
+    weight: 2
+    data:
+      extension: webp

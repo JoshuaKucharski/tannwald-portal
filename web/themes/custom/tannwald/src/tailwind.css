@@ -1,4 +1,6 @@
-/* Tailwind 4 des Themes myTannwald. Tokens aus den Wireframes (docs/wireframes/README.md, 01-maschinen-detail.html).
+/* Tailwind 4 des Themes myTannwald — Design-System v2 (Aufgabe 1.1, Leitplanken v2 in
+   docs/tannwald/design-leitplanken.md). Tokens aus 5.1 bleiben Vertrag (Bericht 2018 §3 (a));
+   neu: Webfont Inter (selbst gehostet), Typo-Skala, Abstandsstufen, Seitenverhältnisse, Bewegung.
    Quellen für die Klassensuche: Templates, Komponenten, Theme-PHP. */
 @import "tailwindcss";
 
@@ -7,13 +9,115 @@
 @source "../includes";
 @source "../tannwald.theme";
 
-@theme {
-  /* Schrift: Inter mit Systemschrift-Fallback, kein Webfont (keine Binärdatei ohne Lizenzprüfung). */
-  --font-sans: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+/* Zustände im Styleguide erzwingen: data-state="hover" und "active" lösen dieselben Utilities aus wie
+   :hover und :active (nur Darstellung, keine Logik). */
+@custom-variant hover {
+  @media (hover: hover) { &:hover { @slot } }
+  &[data-state="hover"] { @slot }
+}
+@custom-variant active (&:active, &[data-state="active"]);
 
-  /* Farben (Wireframe-Werte, Kontrast ≥ 4.5:1 auf ihren Flächen). */
-  --color-accent: #1F4E79;
-  --color-accent-hover: #15385A;
+/* Webfont Inter (SIL OFL 1.1, Lizenz in fonts/LICENSE-Inter.txt), Schnitte 400/500/600 für latin und
+   latin-ext aus dem npm-Paket @fontsource/inter. Vite legt die Dateien unter dist/fonts/ ab (feste Namen,
+   vite.config.js) und schreibt die URLs relativ zur CSS-Datei. Kein externer Request. */
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("@fontsource/inter/files/inter-latin-400-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("@fontsource/inter/files/inter-latin-500-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("@fontsource/inter/files/inter-latin-600-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("@fontsource/inter/files/inter-latin-ext-400-normal.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("@fontsource/inter/files/inter-latin-ext-500-normal.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("@fontsource/inter/files/inter-latin-ext-600-normal.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@theme {
+  /* Schrift: Inter als Webfont (oben), Systemschrift als Fallback bis zum Laden (font-display: swap). */
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  /* Typo-Skala v2 — sechs Grössen, sonst keine (Leitplanken v2 §2). text-sm Meta 13, text-base Text 15,
+     text-lg Lead 17, text-xl Titel 22, text-2xl Display 32, text-3xl Hero 44; Zeilenhöhe hängt an der Grösse. */
+  --text-*: initial;
+  --text-sm: 13px;
+  --text-sm--line-height: 1.5;
+  --text-base: 15px;
+  --text-base--line-height: 1.5;
+  --text-lg: 17px;
+  --text-lg--line-height: 1.5;
+  --text-xl: 22px;
+  --text-xl--line-height: 1.3;
+  --text-2xl: 32px;
+  --text-2xl--line-height: 1.2;
+  --text-3xl: 44px;
+  --text-3xl--line-height: 1.1;
+  /* Zeilenhöhen als eigene Utilities (leading-copy …), nur die vier der Skala plus 1. */
+  --leading-*: initial;
+  --leading-none: 1;
+  --leading-copy: 1.5;
+  --leading-title: 1.3;
+  --leading-display: 1.2;
+  --leading-hero: 1.1;
+  /* Drei Gewichte: 400 Text, 500 Label und Navigation, 600 Titel und Primärbutton. */
+  --font-weight-*: initial;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+
+  /* Raster: 4-pt fein (--spacing 0.25rem bleibt), 8-pt Basis; Abstandsstufen als Vertrag für Komponenten
+     (keine --spacing-*-Namen, Falle 5.1 (a): max-w-page nähme sonst den Abstand). */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --gutter: 24px;
+  --gutter-phone: 16px;
+
+  /* Farben (Wireframe-Werte, Kontrast ≥ 4.5:1 auf ihren Flächen — Messung im Styleguide). */
+  --color-accent: #1F4E8C;
+  --color-accent-hover: #163865;
+  --color-accent-active: #112B4D;
   --color-ink: #1C2024;
   --color-muted: #5B6470;
   --color-surface: #F3F4F2;
@@ -21,6 +125,7 @@
   --color-chat: #F8F9F8;
   --color-line: #D6DAE0;
   --color-line-soft: #ECEEF1;
+  --color-control: #848E9B;
   --color-bar: #1C2024;
   --color-bar-muted: #C9CED6;
   --color-ok: #1E6B3A;
@@ -33,40 +138,184 @@
   --color-danger-bg: #FBEAEA;
   --color-dualuse: #4A2378;
   --color-dualuse-bg: #EEE7F7;
-  --color-private: #1F4E79;
+  --color-private: #1F4E8C;
   --color-private-bg: #E8EEF5;
+  --color-mark: #FFF3B0;
 
-  /* Radien und Seitenbreite der Wireframes (Seitenrand 32 px = px-8; kein --spacing-page, weil
-     max-w-page sonst den Abstand statt --container-page nimmt — gemessen 5.1). */
+  /* Radien, Breiten und Seitenverhältnisse. */
   --radius-card: 8px;
   --radius-control: 6px;
   --radius-pill: 12px;
   --container-page: 1376px;
+  --container-form: 400px;
+  --container-prose: 720px;
+  --aspect-card: 3 / 2;
+  --aspect-hero: 16 / 9;
+
+  /* Ein Schattenlevel, ein Fokusring, zwei Dauern (Bewegung nur als Antwort, ≤ 200 ms). */
+  --shadow-*: initial;
+  --shadow-card: 0 1px 2px rgba(28, 32, 36, 0.06);
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 2px;
+  --duration-fast: 120ms;
+  --duration-base: 180ms;
+  --ease-out-soft: cubic-bezier(0.2, 0, 0, 1);
 }
 
 @layer base {
-  html { font-size: 16px; line-height: 1.5; }
-  body { @apply bg-surface text-ink font-sans antialiased; }
-  a { @apply text-accent hover:text-accent-hover; }
-  :focus-visible { @apply outline-2 outline-offset-2 outline-accent; }
+  html { font-size: 16px; }
+  body { @apply bg-surface text-base text-ink font-sans antialiased; }
+  a { @apply text-accent hover:text-accent-hover; transition: color var(--duration-fast) var(--ease-out-soft); }
+  :focus-visible, [data-state="focus"] { outline: var(--focus-ring-width) solid var(--color-accent); outline-offset: var(--focus-ring-offset); }
+  h1, h2, h3, h4 { @apply font-semibold text-ink; text-wrap: balance; }
+  ::placeholder { @apply text-muted; opacity: 1; }
+  /* 1.4: kein Browser-eigenes Lösch-Kreuz im Suchfeld (das Theme hat seinen eigenen Button). */
+  input[type="search"]::-webkit-search-cancel-button, input[type="search"]::-webkit-search-decoration { -webkit-appearance: none; appearance: none; }
+  ::selection { @apply bg-private-bg text-ink; }
+  /* Ersatz für Core system/base (im Theme abgeschaltet, tannwald.info.yml): visually-hidden, js-hide. */
+  .visually-hidden { position: absolute !important; overflow: hidden; clip: rect(1px, 1px, 1px, 1px); width: 1px; height: 1px; word-wrap: normal; }
+  .visually-hidden.focusable:active, .visually-hidden.focusable:focus { position: static !important; overflow: visible; clip: auto; width: auto; height: auto; }
+  html.js .js-hide { display: none; }
   /* Alpine: Elemente vor der Initialisierung verbergen (x-cloak). */
   [x-cloak] { display: none !important; }
+  /* Bewegung nur als Antwort und nur, wenn das System sie erlaubt (Leitplanken v2 §8). */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition-duration: 0s !important; animation-duration: 0s !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
+  }
 }
 
 @layer components {
-  .btn { @apply inline-flex h-11 items-center justify-center gap-2 rounded-control px-4 font-semibold no-underline; }
-  .btn-primary { @apply bg-accent text-white hover:bg-accent-hover hover:text-white; }
-  .btn-outline { @apply border border-accent text-accent hover:text-accent-hover hover:border-accent-hover; }
-  .btn-warn { @apply bg-warn-strong text-white hover:bg-warn hover:text-white; }
-  .btn-secondary { @apply border border-line bg-panel text-ink hover:border-accent hover:text-accent; }
-  .btn-text { @apply inline-flex items-center font-medium text-accent no-underline hover:text-accent-hover hover:underline; }
-  .chip { @apply inline-flex h-9 items-center rounded-pill border border-line bg-panel px-3 text-sm text-ink hover:border-accent hover:text-accent; }
+  /* Buttons: drei Stufen (primary, secondary, text), dazu warn (Gelesen bestätigen) und icon (quadratisch).
+     Zustände: Ruhe, Hover, Fokus (globaler Ring), Aktiv, Deaktiviert (disabled oder aria-disabled). */
+  .btn { @apply inline-flex h-11 select-none items-center justify-center gap-2 whitespace-nowrap rounded-control px-4 font-medium no-underline; transition: background-color var(--duration-base) var(--ease-out-soft), border-color var(--duration-base) var(--ease-out-soft), color var(--duration-base) var(--ease-out-soft); }
+  .btn:disabled, .btn[aria-disabled="true"] { @apply cursor-not-allowed opacity-45; }
+  .btn-primary { @apply bg-accent font-semibold text-white hover:bg-accent-hover hover:text-white active:bg-accent-active; }
+  .btn-secondary { @apply border border-control bg-panel text-ink hover:border-ink hover:text-ink active:bg-surface; }
+  .btn-text { @apply inline-flex min-h-11 items-center gap-1.5 rounded-control px-1 font-medium text-accent no-underline hover:text-accent-hover hover:underline active:text-accent-active; transition: color var(--duration-fast) var(--ease-out-soft); }
+  .btn-text:disabled, .btn-text[aria-disabled="true"] { @apply cursor-not-allowed text-muted no-underline opacity-60; }
+  .btn-warn { @apply bg-warn-strong font-semibold text-white hover:bg-warn hover:text-white active:bg-warn; }
+  .btn-icon { @apply w-11 px-0; }
+  .btn-block { @apply w-full; }
+  /* Chip: wählbare Pille (Filter, Demo-Konten); gewählt über aria-pressed oder .is-selected. */
+  .chip { @apply inline-flex h-11 items-center gap-1.5 rounded-pill border border-control bg-panel px-3 text-sm text-ink no-underline hover:border-ink active:bg-surface; transition: border-color var(--duration-fast) var(--ease-out-soft), background-color var(--duration-fast) var(--ease-out-soft), color var(--duration-fast) var(--ease-out-soft); }
+  .chip[aria-pressed="true"], .chip.is-selected { @apply border-accent bg-private-bg font-medium text-accent; }
+  .chip:disabled, .chip[aria-disabled="true"] { @apply cursor-not-allowed opacity-45; }
+
+  /* Karten: mit Rahmen (card) und ohne (card--plain, wo Fläche genügt); Kopf, Körper, Fuss. */
   .card { @apply rounded-card border border-line bg-panel shadow-card; }
-  .card-head { @apply flex flex-wrap items-center gap-4 border-b border-line px-6 py-4; }
-  .card-title { @apply m-0 text-xl font-semibold leading-snug; }
-  .meta { @apply text-sm leading-[1.45] text-muted; }
-  .pill { @apply rounded-pill border px-2 py-[3px] text-xs font-medium; }
-  .prose-doc h2 { @apply mt-8 mb-3 scroll-mt-24 text-xl font-semibold; }
+  .card--plain { @apply rounded-card border-0 bg-panel shadow-none; }
+  .card-head { @apply flex flex-wrap items-center gap-4 border-b border-line px-4 py-4 md:px-6; }
+  .card-title { @apply m-0 text-xl font-semibold; }
+  .card-body { @apply p-4 md:p-6; }
+  .card-foot { @apply flex flex-wrap items-center gap-3 border-t border-line-soft px-4 py-3 md:px-6; }
+  .meta { @apply text-sm text-muted; }
+  .num { @apply tabular-nums; }
+
+  /* Seitenkopf: Titel (Display, einmal je Seite), Meta-Zeile, Aktionen rechts. */
+  .page-head { @apply flex flex-col gap-3 md:flex-row md:items-end md:justify-between md:gap-6; }
+  .page-title { @apply m-0 text-2xl font-semibold; }
+  .page-meta { @apply m-0 text-sm text-muted; }
+  .page-actions { @apply flex flex-wrap items-center gap-3; }
+
+  /* Pillen und Badges: statische Kennzeichnung, 13 px, Farbwelt aus den Tokens (SDC badge). */
+  .pill { @apply inline-flex items-center rounded-pill border px-2 py-[3px] text-sm font-medium; }
+  .badge { @apply inline-flex items-center whitespace-nowrap rounded px-2 py-[2px] text-sm font-semibold; }
+
+  /* Felder: Label oben, Eingabe 44 px, Hilfe und Fehler darunter; Zustände Hover, Fokus, Ungültig, Deaktiviert. */
+  .field { @apply relative mb-4 flex flex-col gap-1.5; }
+  .field-label { @apply text-sm font-medium text-ink; }
+  .field-help { @apply text-sm text-muted; }
+  .field-error { @apply text-sm text-danger; }
+  .input, .form-input { @apply h-11 w-full min-w-0 max-w-full rounded-control border border-control bg-panel px-3 text-base text-ink hover:border-ink; transition: border-color var(--duration-fast) var(--ease-out-soft); }
+  .input:disabled, .form-input:disabled { @apply cursor-not-allowed bg-surface text-muted hover:border-control; }
+  .input.is-invalid, .input[aria-invalid="true"], .input.error { @apply border-danger; }
+  .input--textarea { @apply h-auto min-h-28 py-2.5; }
+  .input--select { @apply appearance-none bg-no-repeat pr-10; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%235B6470' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-position: right 10px center; }
+  /* Core-Formulare (Login, Bestätigung): dieselben Regeln über die Core-Klassen. */
+  .form-item { @apply relative mb-4 flex flex-col gap-1.5; }
+  .form-item label { @apply text-sm font-medium text-ink; }
+  .form-item .description { @apply text-sm text-muted; }
+  .form-type-password input { @apply pr-24; }
+  .form-type-password .field-suffix { @apply absolute right-1 top-[26px] inline-flex items-center; }
+  .form-item input.error, .form-item textarea.error, .form-item select.error { @apply border-danger; }
+  .form-item input[type="text"], .form-item input[type="password"], .form-item input[type="email"], .form-item input[type="search"], .form-item input[type="number"],
+  .form-item textarea, .form-item select { @apply h-11 w-full max-w-full min-w-0 rounded-control border border-control bg-panel px-3 text-base hover:border-ink; transition: border-color var(--duration-fast) var(--ease-out-soft); }
+  .form-item input:disabled, .form-item textarea:disabled, .form-item select:disabled { @apply cursor-not-allowed bg-surface text-muted; }
+  .form-item textarea { @apply h-auto py-2.5; }
+  .form-actions { @apply mt-2 flex flex-wrap gap-3; }
+
+  /* Tabellen: Zeilenraster statt Rahmen, Kopf gedämpft, Zahlen tabellarisch. */
+  .table { @apply w-full border-collapse text-base; }
+  .table th { @apply border-b border-line px-3 py-2 text-left text-sm font-medium text-muted; }
+  .table td { @apply border-b border-line-soft px-3 py-3 align-top; }
+  .table tr:last-child td { @apply border-b-0; }
+  @media (hover: hover) { .table tbody tr:hover td { @apply bg-surface; } }
+  .table--compact td { @apply py-2; }
+  .table-wrap { @apply w-full overflow-x-auto; }
+
+  /* Reiter mit Unterstrich (Core Local tasks und Views-Reiter). */
+  .tabs { @apply mb-6 gap-0 border-b border-line; }
+  .tabs a { @apply inline-flex border-b-2 border-transparent px-3 py-2 text-sm text-muted no-underline hover:text-ink; }
+  .tabs .is-active a { @apply border-accent text-ink; }
+  .tab-list { @apply m-0 flex list-none flex-wrap gap-x-6 gap-y-1 border-b border-line p-0; }
+  .tab { @apply -mb-px inline-flex min-h-11 items-center border-b-2 border-transparent text-muted no-underline hover:text-ink; transition: color var(--duration-fast) var(--ease-out-soft), border-color var(--duration-fast) var(--ease-out-soft); }
+  .tab.is-active, .tab[aria-selected="true"] { @apply border-accent font-medium text-ink; }
+
+  /* Toast (Statusmeldung oben rechts) und Inline-Meldung; Farbwelt ok / warn / danger. */
+  .toast-stack { @apply pointer-events-none fixed right-4 top-4 z-50 flex w-[calc(100%-2rem)] max-w-sm flex-col gap-2; }
+  .toast { @apply pointer-events-auto flex items-start gap-3 rounded-card border border-l-4 bg-panel px-4 py-3 text-base shadow-card; }
+  .notice { @apply rounded-control border border-l-4 px-4 py-3 text-base; }
+  /* Meldungs-Karte (tw2-11 Nachtrag 5 (h)): eine Karte je Meldung, Rand und Fläche im Ton, Icon im Ton, Text in Tinte. */
+  .message-list { @apply mb-4 flex flex-col gap-2; }
+  .message-card { @apply flex items-start gap-3 rounded-[12px] border bg-panel px-4 py-3 text-base leading-copy text-ink; }
+  .message-card--toast { @apply pointer-events-auto shadow-card; }
+  .message-card-icon { @apply mt-0.5 shrink-0; }
+  .message-card-text { @apply min-w-0 flex-1 self-center; }
+  .message-card-text a { @apply font-medium; }
+  .message-card-close { @apply -my-2 -mr-2 inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-control text-muted hover:text-ink; transition: color var(--duration-fast) var(--ease-out-soft); }
+  .message-card--ok { @apply border-ok bg-ok-bg; } .message-card--ok .message-card-icon { @apply text-ok; }
+  .message-card--warn { @apply border-warn-line bg-warn-bg; } .message-card--warn .message-card-icon { @apply text-warn; }
+  .message-card--danger { @apply border-danger bg-danger-bg; } .message-card--danger .message-card-icon { @apply text-danger; }
+  .message-card--neutral { @apply border-line bg-panel; } .message-card--neutral .message-card-icon { @apply text-muted; }
+  .toast--ok, .notice--ok { @apply border-ok bg-ok-bg text-ok; }
+  .toast--warn, .notice--warn { @apply border-warn-line bg-warn-bg text-warn; }
+  .toast--danger, .notice--danger { @apply border-danger bg-danger-bg text-danger; }
+  .toast--neutral, .notice--neutral { @apply border-line bg-panel text-ink; }
+  .messages { @apply max-w-full; }
+
+  /* Sheet: Panel von unten (Phone) bzw. rechts unten (Desktop), Scrim flach ohne Verlauf. */
+  .sheet-scrim { @apply fixed inset-0 z-40 bg-ink/40; }
+  .sheet { @apply fixed inset-x-0 bottom-0 z-50 flex max-h-[88dvh] flex-col rounded-t-card border-t border-line bg-panel shadow-card md:inset-auto md:bottom-6 md:right-6 md:max-h-[72vh] md:w-[440px] md:rounded-card md:border; }
+  .sheet-head { @apply flex items-center gap-3 border-b border-line px-4 py-3; }
+  .sheet-body { @apply min-h-0 flex-1 overflow-y-auto p-4; }
+
+  /* Leer-Zustand: Aufforderung statt Entschuldigung (Titel, Satz, höchstens eine Aktion). */
+  .empty-state { @apply flex flex-col items-start gap-2 rounded-card border border-dashed border-line px-4 py-8 md:px-6; }
+  .empty-state-title { @apply m-0 text-lg font-medium text-ink; }
+  .empty-state-text { @apply m-0 max-w-prose text-muted; }
+
+  /* Bildrahmen: festes Seitenverhältnis (3:2 Karten und Detail, 16:9 Hero), Bild füllt, Platzhalter mit Bildmarke. */
+  .figure { @apply relative m-0 overflow-hidden rounded-card bg-line-soft; }
+  .figure--card { @apply aspect-card; }
+  .figure--hero { @apply aspect-hero; }
+  .figure--square { @apply aspect-square; }
+  .figure--bleed { @apply rounded-none; }
+  .figure img { @apply block h-full w-full object-cover; }
+  .figure-placeholder { @apply absolute inset-0 flex items-center justify-center text-line; }
+  .figure-caption { @apply mt-2 text-sm text-muted; }
+  /* Bilder aus tannwald_image() (C, includes/images.inc): img oder Platzhalter-div mit Bildmarke. */
+  .tw-image { @apply block w-full bg-line-soft object-cover; }
+  .tw-image--3x2 { @apply aspect-card; }
+  .tw-image--16x9 { @apply aspect-hero; }
+  .figure .tw-image { @apply h-full; }
+  .tw-image--placeholder { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 36 36' fill='none' stroke='%23D6DAE0' stroke-width='1.5'%3E%3Crect x='4' y='20' width='28' height='10' rx='2.5'/%3E%3Crect x='7' y='13' width='22' height='10' rx='2.5'/%3E%3Crect x='10' y='6' width='16' height='10' rx='2.5'/%3E%3C/svg%3E"); background-position: center; background-repeat: no-repeat; background-size: 48px 48px; }
+
+  /* Icons: inline-SVG, 1.5 px Strich, Farbe aus dem Text (SDC icon). */
+  .icon { @apply inline-block shrink-0 align-[-0.125em]; }
+
+  /* Dokument-Typografie: ruhige Lesespalte, Tabellen scrollen in sich. */
+  .prose-doc { @apply max-w-prose text-lg leading-copy; }
+  .prose-doc h2 { @apply mt-10 mb-3 scroll-mt-24 text-xl font-semibold; }
   .prose-doc h3 { @apply mt-6 mb-2 scroll-mt-24 text-base font-semibold; }
   .prose-doc p { @apply my-3; }
   .prose-doc ul { @apply my-3 list-disc pl-6; }
@@ -74,31 +323,16 @@
   .prose-doc li { @apply my-1; }
   .prose-doc code { @apply rounded bg-surface px-1 text-[0.95em]; }
   .prose-doc .table-wrap { @apply my-4 w-full overflow-x-auto; }
-  .prose-doc table { @apply w-full min-w-[480px] border-collapse text-sm; }
-  .prose-doc th { @apply border-b border-line bg-surface px-3 py-2 text-left font-semibold; }
+  .prose-doc table { @apply w-full min-w-[480px] border-collapse text-base; }
+  .prose-doc th { @apply border-b border-line px-3 py-2 text-left text-sm font-medium text-muted; }
   .prose-doc td { @apply border-b border-line-soft px-3 py-2 align-top; }
-  .form-input { @apply h-11 w-full rounded-control border border-line bg-panel px-3; }
-  /* Core-Formulare (Login, Bestätigung): size="60" darf bei 390 px keinen Querlauf erzeugen. */
-  .form-item { @apply relative mb-4 flex flex-col gap-1.5; }
-  .form-item label { @apply text-sm font-medium; }
-  .form-type-password input { @apply pr-24; }
-  .form-type-password .field-suffix { @apply absolute right-3 top-[33px] inline-flex h-8 items-center; }
-  .form-item input.error { @apply border-danger; }
-  .form-item input[type="text"], .form-item input[type="password"], .form-item input[type="email"],
-  .form-item textarea, .form-item select { @apply h-11 w-full max-w-full min-w-0 rounded-control border border-line bg-panel px-3; }
-  .form-item textarea { @apply h-auto py-2; }
-  .form-actions { @apply mt-2 flex flex-wrap gap-3; }
-  .tabs { @apply mb-6 border-b border-line gap-0; }
-  .tabs a { @apply inline-flex border-b-2 border-transparent px-3 py-2 text-sm text-muted no-underline hover:text-ink; }
-  .tabs .is-active a { @apply border-accent text-ink; }
-  .messages { @apply max-w-full; }
 }
 
 /* Suche (5.2): Treffer-Hervorhebung, Pager, Facetten-Details. */
 @layer components {
-  .tannwald-search mark { @apply rounded bg-[#FFF3B0] px-0.5 text-ink; }
+  .tannwald-search mark { @apply rounded bg-mark px-0.5 text-ink; }
   .pager__items { @apply m-0 flex list-none flex-wrap items-center gap-1 p-0; }
-  .pager__item a { @apply inline-flex h-9 min-w-9 items-center justify-center rounded-control border border-line bg-panel px-3 text-sm no-underline hover:border-accent; }
+  .pager__item a { @apply inline-flex h-11 min-w-11 items-center justify-center rounded-control border border-control bg-panel px-3 text-sm no-underline hover:border-ink; }
   .pager__item.is-active a { @apply border-accent bg-accent text-white; }
   details > summary::-webkit-details-marker { display: none; }
 }
@@ -106,10 +340,6 @@
 /* 5.3: hier anhängen */
 
 /* Assistent und Redaktion (5.3): Chat-Karte, Bottom-Sheet, Zitat-Links, Redaktions-Layout, Review-Reiter, Tabellen. */
-@theme {
-  /* Ein Schattenlevel (Design-Leitplanken §3). */
-  --shadow-card: 0 1px 2px rgba(28, 32, 36, 0.06);
-}
 @layer components {
   .chat-root--embedded { @apply contents; }
   .chat-launcher { @apply fixed inset-x-0 bottom-0 z-40 h-14 w-full rounded-none border-0 border-t border-line bg-panel md:inset-x-auto md:bottom-6 md:right-6 md:h-11 md:w-auto md:rounded-control md:border md:shadow-card; }
@@ -130,44 +360,58 @@
   .chat-answer-text p + p { @apply mt-2; }
   .chat-answer-text ul { @apply my-1 list-disc pl-5; }
   .chat-cite { @apply font-semibold text-accent no-underline hover:underline; }
-  .chat-safety-badge { @apply self-start rounded-pill bg-warn-strong px-2.5 py-[3px] text-xs font-semibold text-white; }
-  .chat-sources { @apply flex flex-col gap-1 border-t border-line-soft pt-2 text-[13px]; }
+  .chat-safety-badge { @apply self-start rounded-pill bg-warn-strong px-2.5 py-[3px] text-sm font-semibold text-white; }
+  .chat-sources { @apply flex flex-col gap-1 border-t border-line-soft pt-2 text-sm; }
   .chat-answer--safety .chat-sources a { @apply font-semibold; }
-  .chat-lang { @apply ml-1 border-line bg-panel text-[11px] text-muted; }
-  .chat-feedback { @apply flex flex-wrap items-center gap-2 text-[13px] text-muted; }
-  .chat-thumb { @apply inline-flex h-11 w-11 items-center justify-center rounded-control border border-line bg-panel text-ink hover:border-accent; }
+  .chat-lang { @apply ml-1 border-line bg-panel text-sm text-muted; }
+  .chat-feedback { @apply flex flex-wrap items-center gap-2 text-sm text-muted; }
+  .chat-thumb { @apply inline-flex h-11 w-11 items-center justify-center rounded-control border border-line bg-panel text-ink hover:border-muted; }
   .chat-pending { @apply flex items-center gap-2 text-sm text-muted; }
   .chat-spinner { @apply inline-block h-4 w-4 animate-spin rounded-full border-2 border-line border-t-accent; }
   .chat-notice { @apply border-t border-warn-line bg-warn-bg px-4 py-2.5 text-sm text-warn; }
   .chat-form { @apply flex flex-col gap-1.5 border-t border-line px-4 py-3; }
   .chat-input { @apply h-auto min-h-11 resize-none py-2.5; }
-  .chat-footer { @apply border-t border-line px-4 py-2.5 text-[12px] text-muted; }
+  .chat-footer { @apply border-t border-line px-4 py-2.5 text-sm text-muted; }
 
   .redaktion-layout { @apply grid grid-cols-[minmax(0,1fr)] items-start gap-6 md:grid-cols-[240px_minmax(0,1fr)]; }
   .redaktion-nav { @apply flex flex-col gap-0.5 rounded-card border border-line bg-panel p-2; }
-  .redaktion-nav a { @apply flex items-center gap-2 rounded-control px-3 py-2 text-ink no-underline hover:bg-surface; }
+  .redaktion-nav a { @apply flex min-h-11 items-center gap-2 rounded-control px-3 py-2 text-ink no-underline hover:bg-surface; }
   .redaktion-nav a.is-active { @apply bg-private-bg font-semibold text-accent; }
-  .redaktion-nav .count { @apply ml-auto rounded-pill bg-surface px-2 py-[1px] text-xs text-muted; }
+  .redaktion-nav .count { @apply ml-auto rounded-pill bg-surface px-2 py-[1px] text-sm text-muted; }
   .redaktion-nav a.is-active .count { @apply bg-panel text-accent; }
-  .redaktion-queue { @apply mt-2 flex flex-col gap-0.5 border-t border-line-soft px-3 pt-3 text-[13px] text-muted; }
+  .redaktion-queue { @apply mt-2 flex flex-col gap-0.5 border-t border-line-soft px-3 pt-3 text-sm text-muted; }
   .redaktion-main { @apply flex min-w-0 flex-col gap-4; }
   .tannwald-review-tabs { @apply m-0 flex list-none flex-wrap gap-x-6 gap-y-1 border-b border-line p-0; }
-  .tannwald-review-tabs li a { @apply -mb-px inline-flex border-b-2 border-transparent py-2 text-muted no-underline hover:text-ink; }
+  .tannwald-review-tabs li a { @apply -mb-px inline-flex min-h-11 items-center border-b-2 border-transparent text-muted no-underline hover:text-ink; }
   .tannwald-review-tabs li.is-active a { @apply border-accent font-semibold text-ink; }
   .review-check { @apply flex items-center gap-2 text-sm; }
   .review-check[data-ok="1"] .mark { @apply text-ok; }
   .review-check[data-ok="0"] .mark { @apply text-warn; }
-  .redaktion-main table { @apply w-full border-collapse text-sm; }
-  .redaktion-main th { @apply border-b border-line bg-surface px-3 py-2 text-left text-[13px] font-semibold text-muted; }
+  .redaktion-main table { @apply w-full border-collapse text-base; }
+  .redaktion-main th { @apply border-b border-line bg-surface px-3 py-2 text-left text-sm font-medium text-muted; }
   .redaktion-main td { @apply border-b border-line-soft px-3 py-2.5 align-top; }
   .redaktion-main tr:last-child td { @apply border-b-0; }
   .redaktion-main .view-content > table, .redaktion-main form > table, .redaktion-main > table { @apply overflow-hidden rounded-card border border-line bg-panel; }
   .redaktion-main .item-list + table { @apply mt-2; }
   .redaktion-main details { @apply mb-4 rounded-card border border-line bg-panel p-4; }
   .redaktion-main details > summary { @apply cursor-pointer font-semibold; }
-  .redaktion-main .form-item .description { @apply text-[13px] text-muted; }
+  .redaktion-main .form-item .description { @apply text-sm text-muted; }
   .four-eyes-notice { @apply rounded-control border border-warn-line bg-warn-bg px-4 py-3 text-sm text-warn; }
-  .review-textarea { @apply min-h-40 w-full rounded-control border border-line bg-panel px-3 py-2 leading-relaxed; }
+  .review-textarea { @apply min-h-40 w-full rounded-control border border-line bg-panel px-3 py-2 leading-copy; }
   .review-actions .form-actions { @apply mt-3; }
   .redaktion-main a[href$="/compliance/audit.csv"]:not(.btn) { @apply hidden; }
 }
+
+/* 1.2 (A): Seiten I — Maschinen, Dokument, Login (src/pages/). */
+@import "./pages/machine.css";
+@import "./pages/document.css";
+@import "./pages/login.css";
+@import "./pages/shell.css";
+
+/* 1.3: hier anhängen */
+
+/* 1.3 (B): Seitenmuster der zweiten Welle — Suche, Assistent, Redaktion, Admin-Views; je eine Datei unter src/pages/. */
+@import "./pages/search.css";
+@import "./pages/chat.css";
+@import "./pages/redaktion.css";
+@import "./pages/admin.css";

@@ -1,0 +1,19 @@
+# myTannwald — Nacht-Backup (deploy/systemd, 4.3): mysqldump der Datenbank, files/ (ohne erzeugbare css/js/php/styles)
+# und private/ nach @BACKUP_DIR@, 7 Tage — ein Minimum, kein Versprechen (RunBook §5). Läuft als root (MySQL über den
+# root-Socket). Ausgelöst von tannwald-backup.timer um 03:30; deploy.sh löst den ersten Lauf einmal aus.
+# Log: @APP_LOG_DIR@/backup.log
+[Unit]
+Description=myTannwald: Backup (DB, files, private)
+After=mysql.service
+
+[Service]
+Type=oneshot
+Environment=APP=@APP@
+Environment=PRIVATE=@PRIVATE@
+Environment=ENV_FILE=@ENV_FILE@
+Environment=BACKUP_DIR=@BACKUP_DIR@
+ExecStart=/bin/bash @APP@/deploy/backup.sh
+StandardOutput=append:@APP_LOG_DIR@/backup.log
+StandardError=append:@APP_LOG_DIR@/backup.log
+Nice=15
+IOSchedulingClass=idle

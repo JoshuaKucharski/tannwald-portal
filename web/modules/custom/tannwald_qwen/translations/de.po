@@ -1,0 +1,41 @@
+# German translation of tannwald_qwen (de-CH, Anrede Sie).
+msgid ""
+msgstr ""
+"Project-Id-Version: tannwald_qwen\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: de\n"
+
+msgid "DashScope (Qwen)"
+msgstr "DashScope (Qwen)"
+
+msgid "Alibaba Cloud Model Studio: key and endpoint from the environment."
+msgstr "Alibaba Cloud Model Studio: Schlüssel und Endpoint aus der Umgebung."
+
+msgid "Endpoint (DASHSCOPE_ENDPOINT_EU): @value"
+msgstr "Endpoint (DASHSCOPE_ENDPOINT_EU): @value"
+
+msgid "API key (DASHSCOPE_API_KEY_EU): @value"
+msgstr "API-Schlüssel (DASHSCOPE_API_KEY_EU): @value"
+
+msgctxt "tannwald_status"
+msgid "set"
+msgstr "gesetzt"
+
+msgctxt "tannwald_status"
+msgid "empty"
+msgstr "leer"
+
+msgid "API key"
+msgstr "API-Schlüssel"
+
+msgid "Key entity with the provider \"Environment\"; the value is never stored in configuration."
+msgstr "Key-Entity mit dem Provider „Environment“; der Wert wird nie in der Konfiguration gespeichert."
+
+msgid "Models of the endpoint (GET /models, cached for one hour)"
+msgstr "Modelle des Endpoints (GET /models, eine Stunde zwischengespeichert)"
+
+msgid "The endpoint did not return any models."
+msgstr "Der Endpoint hat keine Modelle geliefert."

@@ -1,6 +1,8 @@
 // Einstieg des Themes myTannwald: Alpine 3 global starten (defer-Skript, siehe tannwald.libraries.yml).
 // Komponenten nutzen x-data direkt im Twig; Plugins und Stores kommen hier dazu.
 import Alpine from 'alpinejs';
+import toc from './modules/toc.js';
+import docHistory from './modules/history.js';
 
 window.Alpine = Alpine;
 
@@ -73,10 +75,23 @@ const chatSession = () => {
   return id;
 };
 
+// Verlauf je Browser-Sitzung (Nachtrag 3 tw2-11): abgeschlossene Einträge, höchstens 20, damit das globale
+// Panel beim Seitenwechsel denselben Verlauf zeigt.
+// Nachtrag 7: je Konto (tannwald.chat.history.<uid>), geladen in configure(), damit ein anderes Konto im selben Tab
+// nicht den fremden Verlauf sieht.
+const historyKey = (config) => `tannwald.chat.history.${Number(config && config.uid) || 0}`;
+const loadHistory = (config) => {
+  try { const raw = window.sessionStorage.getItem(historyKey(config)); return raw ? JSON.parse(raw) : []; } catch { return []; }
+};
+
 Alpine.store('chat', {
   config: null,
   session: chatSession(),
   history: [],
+  persist() {
+    const done = this.history.filter((e) => e.status !== 'pending').slice(-20).map((e) => ({ ...e, supporting: false }));
+    try { window.sessionStorage.setItem(historyKey(this.config), JSON.stringify(done)); } catch { /* voller Speicher: still */ }
+  },
   busy: false,
   elapsed: 0,
   limitNotice: null,
@@ -85,6 +100,7 @@ Alpine.store('chat', {
   timer: null,
   configure(config) {
     this.config = config;
+    this.history = loadHistory(config);
     if (config.limitNotice) this.limitNotice = config.limitNotice;
   },
   async csrfToken(renew = false) {
@@ -267,6 +283,19 @@ Alpine.data('reviewActions', (config) => ({
   },
   label() { return `${this.words} ${config.labels.words} · ${config.labels.target}`; },
 }));
+
+// 1.2 (A): Inhaltsverzeichnis mit Scrollspy und Änderungshistorie (src/modules/).
+Alpine.data('toc', toc);
+Alpine.data('docHistory', docHistory);
+
+/* 1.3: hier anhängen */
+
+// 1.3 (B): Sheet-Helfer, Facetten-Sheet der Suche, Assistent als Panel/Sheet (src/modules/). ES-Importe werden
+// gehoben und laufen vor diesem Modul; sie registrieren nur Alpine.data(), Alpine.start() bleibt unten.
+import './modules/sheet.js';
+import './modules/filters.js';
+import './modules/chat.js';
+import './modules/search-overlay.js';
 
 // Start zuletzt: alle Alpine.data()-Registrierungen (5.1, 5.2 und A's 5.3-Hunk) müssen davor stehen.
 Alpine.start();

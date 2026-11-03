@@ -9,6 +9,7 @@ use Drupal\tannwald_assistant\Eval\EvalQuestion;
 use Drupal\tannwald_assistant\Eval\EvalReport;
 use Drupal\tannwald_assistant\Eval\EvalRunner;
 use Drupal\tannwald_assistant\Eval\EvalSetException;
+use Drupal\tannwald_assistant\Provider\ProviderResolver;
 use Drush\Attributes as CLI;
 use Drush\Commands\AutowireTrait;
 use Drush\Commands\DrushCommands;
@@ -32,6 +33,8 @@ final class EvalCommands extends DrushCommands {
     private readonly EvalRunner $runner,
     #[Autowire(service: 'datetime.time')]
     private readonly TimeInterface $time,
+    #[Autowire(service: 'tannwald_assistant.provider_resolver')]
+    private readonly ProviderResolver $resolver,
   ) {
     parent::__construct();
   }
@@ -46,8 +49,11 @@ final class EvalCommands extends DrushCommands {
   #[CLI\Option(name: 'dry', description: 'Retrieval only (hit@5), no LLM.')]
   #[CLI\Option(name: 'ids', description: 'Comma-separated question ids, e.g. q-001,q-002 (writes a _teil file).')]
   #[CLI\Option(name: 'out', description: 'Result file path instead of docs/evals/ergebnisse-<YYYY-MM-DD_HHMM>.md.')]
+  #[CLI\Option(name: 'chat-provider', description: 'Chat provider for this run only (ollama|dashscope); the stored configuration stays unchanged.')]
+  #[CLI\Option(name: 'chat-model', description: 'Chat model (raw name) for this run only, with --chat-provider.')]
   #[CLI\Usage(name: 'drush tannwald:eval --dry', description: 'hit@5 over all 60 questions without LLM.')]
   #[CLI\Usage(name: 'drush tannwald:eval --limit=5', description: 'First five questions with LLM answers.')]
+  #[CLI\Usage(name: 'drush tannwald:eval --chat-provider=dashscope', description: 'All questions with chat over DashScope, embeddings as configured.')]
   public function evaluate(
     array $options = [
       'set' => self::DEFAULT_SET,
@@ -56,12 +62,21 @@ final class EvalCommands extends DrushCommands {
       'dry' => FALSE,
       'ids' => self::REQ,
       'out' => self::REQ,
+      'chat-provider' => self::REQ,
+      'chat-model' => self::REQ,
     ],
   ): int {
     $root = dirname(DRUPAL_ROOT);
     $set = (string) ($options['set'] ?: self::DEFAULT_SET);
     $setPath = str_starts_with($set, '/') ? $set : $root . '/' . $set;
     try {
+      if ($chatProvider = (string) ($options['chat-provider'] ?? '')) {
+        // Nur dieser Prozess; die geteilte Konfiguration bleibt unverändert.
+        $this->resolver->overrideForProcess('chat', $chatProvider, ($options['chat-model'] ?? NULL) ?: NULL);
+      }
+      elseif (!empty($options['chat-model'])) {
+        throw new EvalSetException(['chat-model' => 'requires --chat-provider']);
+      }
       $questions = EvalQuestion::loadSet($setPath);
       [$questions, $selection] = self::select($questions, $options['ids'] ?? NULL, $options['limit'] ?? NULL);
       $report = $this->runner->run($questions, !empty($options['dry']), ($options['as'] ?? NULL) ?: NULL, $set);

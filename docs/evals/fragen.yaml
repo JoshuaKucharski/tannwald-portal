@@ -1,5 +1,5 @@
 # Eval-Set myTannwald PoC (Pflichtenheft §8, RunBook 1.1 und D8).
-# 60 Fragen: q-001 bis q-030 antwort/ablehnung, q-031 bis q-060 safety (TC-09).
+# 80 Fragen: q-001 bis q-030 antwort/ablehnung, q-031 bis q-060 safety (TC-09), q-061 bis q-080 antwort (3.3).
 # Format: id, frage, als (Demo-Konto), sprache (Sprache der Frage), erwartete_quellen (dokument = Manifest-id,
 # version optional, kapitel = h2/h3-Text wörtlich), erwartet (antwort | ablehnung | safety).
 # Geprüft durch fixtures/check.php; die Antwortsprache ist die Sprache der Frage, Quellen in anderer Sprache
@@ -533,3 +533,188 @@
       version: "3.2"
       kapitel: "2.5 Produits de nettoyage"
   erwartet: safety
+# 3.3 (2026-11-02): q-061 bis q-080 antwort (de 10, en 7, fr 3), Kapitel, die q-001 bis q-030 nicht prüfen; Fragen ohne
+# Sicherheitsbegriffe, Konto mit Zugriff auf das Dokument. Eine zweite Quelle nur, wo das Kapitel ausdrücklich auf sie verweist.
+- id: q-061
+  frage: "Wie viele Takte pro Minute schafft die TB-400 je Bahn?"
+  als: kunde-a
+  sprache: de
+  erwartete_quellen:
+    - dokument: ba-tb400
+      version: "2.0"
+      kapitel: "1.2 Technische Daten"
+  erwartet: antwort
+- id: q-062
+  frage: "Wirken Start und Stopp am Bedienpanel der TB-400 auf beide Bahnen?"
+  als: kunde-a
+  sprache: de
+  erwartete_quellen:
+    - dokument: ba-tb400
+      version: "2.0"
+      kapitel: "5.1 Bedienpanel mit zwei Bahnen"
+  erwartet: antwort
+- id: q-063
+  frage: "Was ist an der TB-400 monatlich zu prüfen?"
+  als: kunde-a
+  sprache: de
+  erwartete_quellen:
+    - dokument: ba-tb400
+      version: "2.0"
+      kapitel: "7.1 Wartungsintervalle"
+  erwartet: antwort
+- id: q-064
+  frage: "Wie lege ich die Faltschachteln beim Nachfüllen in das Magazin der KT-500?"
+  als: kunde-a
+  sprache: de
+  erwartete_quellen:
+    - dokument: ba-kt500
+      version: "1.3"
+      kapitel: "5.2 Nachfüllen von Schachteln und Beipackzetteln"
+  erwartet: antwort
+- id: q-065
+  frage: "Warum hält der Verschluss einer Schachtel an der KT-500 nicht?"
+  als: kunde-a
+  sprache: de
+  erwartete_quellen:
+    - dokument: ba-kt500
+      version: "1.3"
+      kapitel: "9.3 Störungen am Verschluss"
+  erwartet: antwort
+- id: q-066
+  frage: "Wie sind die Teilenummern im Ersatzteilkatalog der TB-400 aufgebaut?"
+  als: kunde-a
+  sprache: de
+  erwartete_quellen:
+    - dokument: ek-tb400
+      version: "1.2"
+      kapitel: "1.1 Aufbau der Teilenummern"
+  erwartet: antwort
+- id: q-067
+  frage: "Welche Verschleissteile haben TB-400 und TB-200 gemeinsam?"
+  als: techniker
+  sprache: de
+  erwartete_quellen:
+    - dokument: ek-tb400
+      version: "1.2"
+      kapitel: "10 Unterschiede zum Ersatzteilkatalog TB-200"
+  erwartet: antwort
+- id: q-068
+  frage: "Was prüft die Fachkraft halbjährlich an der Siegelstation der TB-400?"
+  als: kunde-a
+  sprache: de
+  erwartete_quellen:
+    - dokument: wp-tb400
+      version: "1.0"
+      kapitel: "3.3 Siegelstation halbjährlich"
+  erwartet: antwort
+- id: q-069
+  frage: "Von welcher Maschine her wird eine Linie angefahren, und warum?"
+  als: techniker
+  sprache: de
+  erwartete_quellen:
+    - dokument: su-linie
+      version: "1.0"
+      kapitel: "4 Anfahren der Linie"
+  erwartet: antwort
+- id: q-070
+  frage: "Bis wann gilt das Zertifikat Hygienedesign, und wie wird es verlängert?"
+  als: compliance
+  sprache: de
+  erwartete_quellen:
+    - dokument: zert-hygiene
+      version: "1.0"
+      kapitel: "7 Gültigkeit und Verlängerung"
+  erwartet: antwort
+- id: q-071
+  frage: "What is the maximum output of the KT-500 in cartons per minute?"
+  als: kunde-b
+  sprache: en
+  erwartete_quellen:
+    - dokument: ba-kt500
+      version: "1.3"
+      kapitel: "1.2 Technical data"
+  erwartet: antwort
+- id: q-072
+  frage: "The detection cell of the KT-500 keeps reporting a carton as not erected although it is erected. What should I do?"
+  als: kunde-b
+  sprache: en
+  erwartete_quellen:
+    - dokument: ba-kt500
+      version: "1.3"
+      kapitel: "9.2 Faults at the detection cell"
+    - dokument: wp-kt500
+      version: "2.0"
+      kapitel: "3.2 Calibration of the carton detection cell"
+  erwartet: antwort
+- id: q-073
+  frage: "How often are the folding rollers of the KT-500 leaflet feeder checked, and which part replaces them?"
+  als: kunde-b
+  sprache: en
+  erwartete_quellen:
+    - dokument: wp-kt500
+      version: "2.0"
+      kapitel: "5 Leaflet feeder"
+  erwartet: antwort
+- id: q-074
+  frage: "What changed in version 2.0 of the KT-500 maintenance schedule?"
+  als: kunde-b
+  sprache: en
+  erwartete_quellen:
+    - dokument: wp-kt500
+      version: "2.0"
+      kapitel: "10 Changes in version 2.0"
+  erwartet: antwort
+- id: q-075
+  frage: "May an operator calibrate the detection cell of the KT-500?"
+  als: kunde-b
+  sprache: en
+  erwartete_quellen:
+    - dokument: su-kt500
+      version: "1.0"
+      kapitel: "7 Roles and responsibilities"
+  erwartet: antwort
+- id: q-076
+  frage: "What must be set after a roll change on one web of the TB-400?"
+  als: kunde-b
+  sprache: en
+  erwartete_quellen:
+    - dokument: ba-tb400
+      version: "2.0"
+      kapitel: "5.2 Roll change on both webs"
+  erwartet: antwort
+- id: q-077
+  frage: "Which wear parts does the TB-200 spare parts catalogue list?"
+  als: haendler
+  sprache: en
+  erwartete_quellen:
+    - dokument: ek-tb200
+      version: "2.0"
+      kapitel: "9 Wear parts and stocking"
+  erwartet: antwort
+- id: q-078
+  frage: "Quelle est la cadence maximale de la TB-200 ?"
+  als: kunde-a
+  sprache: fr
+  erwartete_quellen:
+    - dokument: ba-tb200
+      version: "3.2"
+      kapitel: "1.2 Caractéristiques techniques"
+  erwartet: antwort
+- id: q-079
+  frage: "Comment les défauts sont-ils affichés sur le panneau de commande de la TB-200 ?"
+  als: kunde-a
+  sprache: fr
+  erwartete_quellen:
+    - dokument: ba-tb200
+      version: "3.2"
+      kapitel: "5.1 Panneau de commande"
+  erwartet: antwort
+- id: q-080
+  frage: "Que contrôle le personnel qualifié chaque semestre à la station de scellage de la TB-200 ?"
+  als: compliance
+  sprache: fr
+  erwartete_quellen:
+    - dokument: wp-tb200
+      version: "1.1"
+      kapitel: "3.3 Station de scellage semestriel"
+  erwartet: antwort

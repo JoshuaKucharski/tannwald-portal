@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - field.field.node.maschine.field_baujahr
+    - field.field.node.maschine.field_bild
     - field.field.node.maschine.field_firma
     - field.field.node.maschine.field_maschinentyp
     - field.field.node.maschine.field_standort
@@ -75,4 +76,5 @@ content:
     weight: 100
     region: content
 hidden:
+  field_bild: true
   langcode: true

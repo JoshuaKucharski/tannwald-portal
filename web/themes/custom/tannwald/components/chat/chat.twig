@@ -1,10 +1,17 @@
 {#
 /**
  * @file
- * SDC tannwald:chat — Assistent (Wireframe 01 rechte Spalte). Verhalten in src/app.js (Alpine.data('chat'),
- * Alpine.store('chat')). Markup-Regeln (Vertrag 5.3 b): Antwort-HTML vom Server in [data-chat-answer] per x-html;
- * danach wandelt linkCitations() jedes [n] im Text in <a class="chat-cite" data-n href="quellen[n].url">[n]</a>;
- * Quellenliste als <ol data-chat-sources> mit <a data-n> je Quelle und <span data-langcode> als Sprach-Pille.
+ * SDC tannwald:chat — Assistent (1.3, Leitplanken v2). Verhalten: Alpine chatPanel (src/modules/chat.js) über
+ * dem Store chat (A, src/app.js). Markup-Regeln bleiben (Vertrag 5.3 b): Antwort-HTML in [data-chat-answer]
+ * per x-html, danach linkCitations() → <a class="chat-cite" data-n>; Quellen als <ol data-chat-sources> mit
+ * <a data-n> je Quelle und <span data-langcode> als Sprach-Pille; data-chat-support, data-chat-support-done,
+ * data-chat-feedback-done, data-chat-limit, data-tannwald-chat[data-mode].
+ *
+ * Modi: panel (Spalte ab xl, sonst Sheet; /suche), embedded (Aside der Maschinenseite ab md, sonst Sheet),
+ * sheet (Nachtrag 3 tw2-11: Launcher auf jeder Seite; ab md ein Panel 400 × 620 über dem Launcher, nicht modal,
+ * Zustand offen/zu in sessionStorage, einmal je Sitzung automatisch offen; Phone das Sheet). Zustände: leer (Einleitung und Beispielfragen), Laden (ein Puls),
+ * beantwortet (Prosa, Quellen, Vertrauenshinweis, „War das hilfreich?“), safety (notice--warn mit Kapitel-Link),
+ * abgelehnt („Support-Anfrage erstellen“), limit/error (notice).
  */
 #}
 {% set mode = mode|default('embedded') %}
@@ -36,127 +43,164 @@
   limitNotice: limit_notice|default(null),
   mode: mode,
   labels: labels,
+  uid: uid|default(0),
 } %}
-<div{{ attributes.addClass('chat-root', mode == 'sheet' ? 'chat-root--sheet' : 'chat-root--embedded') }} data-tannwald-chat data-mode="{{ mode }}" x-data="chat({{ config|json_encode }})" @tannwald:ask.window="onAsk($event.detail)" @keydown.escape.window="if (open) close()">
+{% set examples = examples|default([]) %}
+{% set input_id = 'chat-input-' ~ mode %}
+<div{{ attributes.addClass('chat', 'chat--' ~ mode, 'chat-root') }} data-tannwald-chat data-mode="{{ mode }}" x-data="chatPanel({{ config|json_encode }})" @tannwald:ask.window="onAsk($event.detail)" @tannwald:chat-open.window="onAsk($event.detail)" @keydown.window="onSheetKeydown($event)">
 
-  {# Launcher: sekundär (ein Primärbutton je Ansicht, Leitplanken §5); Phone als fixe Leiste unten, Sheet-Modus auf md+ als Button unten rechts. #}
-  <div class="h-14 md:hidden" x-show="!open" aria-hidden="true"></div>
-  <button type="button" class="chat-launcher btn btn-outline" :class="{ 'md:hidden': mode === 'embedded' }" x-show="!open" x-cloak @click="toggle()">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-    {{ 'Ask the assistant'|t }}
+  {# Launcher (Nachtrag 3 tw2-11): runder Akzent-Button unten rechts, 56 px (Phone 52), Label „Assistent“ ab lg als Pille;
+     im Modus sheet bleibt er beim offenen Desktop-Panel sichtbar und klappt zu (Icon close); als Spalte sichtbar entfällt er (CSS). #}
+  <button type="button" class="chat-launcher" x-show="!open || (mode === 'sheet' && !sheetActive())" x-cloak @click="toggle($el)" aria-controls="{{ input_id }}-panel" :aria-expanded="open ? 'true' : 'false'" aria-label="{{ 'Assistant'|t }}">
+    <span x-show="!open">{{ include('tannwald:icon', {name: 'chat', size: 24}, with_context = false) }}</span>
+    <span x-show="open" x-cloak>{{ include('tannwald:icon', {name: 'close', size: 24}, with_context = false) }}</span>
+    <span class="chat-launcher-label">{{ 'Assistant'|t }}</span>
   </button>
 
-  <div class="chat-panel" :class="{ 'is-open': open }" x-ref="panel" role="{{ mode == 'sheet' ? 'dialog' : 'region' }}" aria-label="{{ 'Assistant'|t }}" x-cloak>
-    {# Kopf nur im Sheet (die Aside der Maschinenseite hat ihren eigenen Kopf); Schliessen auf dem Phone immer. #}
-    <div class="chat-head" :class="{ 'md:hidden': mode === 'embedded' }">
+  {# Scrim nur, wenn das Panel als Sheet erscheint (Phone); das Desktop-Panel (sheet-Modus ab md) ist nicht modal. #}
+  <div class="sheet-scrim" x-show="open && !inline() && sheetActive()" x-cloak @click="close()" aria-hidden="true"></div>
+
+  <section id="{{ input_id }}-panel" class="chat-panel" :class="{ 'is-open': open }" x-ref="sheet" tabindex="-1" @click.outside="onOutside($event)" :role="open && !inline() ? 'dialog' : 'region'" :aria-modal="open && !inline() && sheetActive() ? 'true' : null" aria-label="{{ 'Assistant'|t }}" x-cloak data-chat-panel>
+    <div class="chat-head">
       <div class="flex min-w-0 flex-col gap-0.5">
         <span class="font-semibold">{{ 'Assistant'|t }}</span>
-        {% if intro %}<span class="meta truncate">{{ intro }}</span>{% endif %}
+        {# Nachtrag 2 (b): zwei Zeilen statt abschneiden, voller Satz als title. #}
+        {% if intro %}<span class="meta line-clamp-2" title="{{ intro }}">{{ intro }}</span>{% endif %}
+        {# Nachtrag 3 (d): Kontext der Seite im Kopf (Dokumentseite: Maschine des Dokuments). #}
+        {% if mode == 'sheet' and machine_label %}<span class="meta font-medium text-ink" data-chat-scope>{{ 'Asks about: @serial'|t({'@serial': machine_label}) }}</span>{% endif %}
       </div>
-      <button type="button" class="ml-auto inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-control hover:bg-black/5" aria-label="{{ 'Close'|t }}" @click="close()">×</button>
+      <button type="button" class="chat-head-close btn btn-secondary btn-icon" :class="{ 'xl:hidden': mode === 'panel' }" aria-label="{{ 'Close'|t }}" @click="close()">
+        {{ include('tannwald:icon', {name: 'close', size: 20}, with_context = false) }}
+      </button>
     </div>
 
-    <div class="chat-history" x-ref="history" data-chat-history>
-      <p class="m-0 text-sm text-muted" x-show="!$store.chat.history.length && !$store.chat.limitNotice">
-        {%- if maschine_nid -%}
-          {{ 'Ask a question about this machine, for example about cleaning intervals or fault codes.'|t }}
-        {%- else -%}
-          {{ 'Ask a question about your documents, for example about cleaning intervals or fault codes.'|t }}
-        {%- endif -%}
-      </p>
+    <div class="chat-history" x-ref="history" data-chat-history aria-live="polite">
+      <div class="chat-intro" x-show="!$store.chat.history.length && !$store.chat.limitNotice">
+        <p class="chat-intro-text">
+          {%- if maschine_nid -%}
+            {{ 'Ask a question about this machine, for example about cleaning intervals or fault codes.'|t }}
+          {%- else -%}
+            {{ 'Ask a question about your documents, for example about cleaning intervals or fault codes.'|t }}
+          {%- endif -%}
+        </p>
+        {% if examples %}
+          <div class="chat-examples" data-chat-examples>
+            {% for example in examples %}
+              <button type="button" class="chip" @click="ask({{ example|json_encode }})">{{ example }}</button>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
 
       <template x-for="entry in $store.chat.history" :key="entry.id">
         <div class="chat-entry" :data-status="entry.status">
           <div class="chat-question" x-text="entry.frage"></div>
 
-          {# Antwort: beantwortet / safety (Warnkasten) / abgelehnt (Support) / limit / Fehler #}
-          <div class="chat-answer" :class="{ 'chat-answer--safety': entry.status === 'safety', 'chat-answer--muted': entry.status === 'abgelehnt' || entry.status === 'error' || entry.status === 'limit' }">
-            <template x-if="entry.status === 'safety'">
-              <span class="chat-safety-badge">{{ 'Safety notice'|t }}</span>
-            </template>
-            <template x-if="entry.antwort_html">
-              <div class="chat-answer-text" data-chat-answer x-html="entry.antwort_html" x-init="$nextTick(() => linkCitations($el, entry))"></div>
-            </template>
-            <template x-if="entry.text">
+          {# Laden: ein Puls, solange der Eintrag pending ist. #}
+          <template x-if="entry.status === 'pending'">
+            <div class="chat-pending" role="status">
+              <span class="chat-pulse" aria-hidden="true"></span>
+              <span x-text="labels.generating + ($store.chat.elapsed ? ' (' + $store.chat.elapsed + ' s)' : '')"></span>
+            </div>
+          </template>
+
+          {# Limit und Fehler: Hinweis statt Karte. #}
+          <template x-if="entry.status === 'limit' || entry.status === 'error'">
+            <div class="notice" :class="entry.status === 'limit' ? 'notice--warn' : 'notice--danger'" role="status">
               <p class="m-0" x-text="entry.text"></p>
-            </template>
+            </div>
+          </template>
 
-            <template x-if="entry.quellen && entry.quellen.length">
-              <div class="chat-sources">
-                <span class="text-muted font-semibold">{{ 'Sources'|t }}</span>
-                <ol class="m-0 list-none p-0" data-chat-sources>
-                  <template x-for="q in entry.quellen" :key="q.n">
-                    <li>
-                      <a :href="q.url" :data-n="q.n" x-text="sourceLabel(q)"></a>
-                      <template x-if="q.langcode && q.langcode !== uiLangcode">
-                        <span class="pill chat-lang" :data-langcode="q.langcode" x-text="languageName(q.langcode)"></span>
-                      </template>
-                    </li>
+          {# Antwort: beantwortet (Karte) / safety (Warnhinweis mit Kapitel-Link) / abgelehnt (Support) #}
+          <template x-if="entry.status === 'beantwortet' || entry.status === 'safety' || entry.status === 'abgelehnt'">
+            <div class="chat-answer" :class="{ 'chat-answer--safety': entry.status === 'safety', 'chat-answer--muted': entry.status === 'abgelehnt' }">
+              <template x-if="entry.status === 'safety'">
+                <span class="chat-safety-badge">{{ 'Safety notice'|t }}</span>
+              </template>
+              <template x-if="entry.antwort_html">
+                <div class="chat-prose" data-chat-answer x-html="entry.antwort_html" x-init="$nextTick(() => linkCitations($el, entry))"></div>
+              </template>
+              <template x-if="entry.text">
+                <p class="m-0" x-text="entry.text"></p>
+              </template>
+
+              <template x-if="entry.quellen && entry.quellen.length">
+                <div class="chat-sources">
+                  <span class="chat-sources-label">{{ 'Sources'|t }}</span>
+                  <ol data-chat-sources>
+                    <template x-for="q in entry.quellen" :key="q.n">
+                      <li>
+                        <a :href="q.url" :data-n="q.n" x-text="sourceLabel(q)"></a>
+                        <template x-if="q.langcode && q.langcode !== uiLangcode">
+                          <span class="chat-lang" :data-langcode="q.langcode" x-text="languageName(q.langcode)"></span>
+                        </template>
+                      </li>
+                    </template>
+                  </ol>
+                </div>
+              </template>
+
+              <template x-if="entry.status === 'beantwortet' || entry.status === 'safety'">
+                <p class="chat-trust">{{ 'Answers come only from approved documents you are allowed to see. Please check the cited chapters before acting.'|t }}</p>
+              </template>
+
+              <template x-if="entry.status === 'beantwortet' || entry.status === 'safety'">
+                <div class="chat-feedback">
+                  <template x-if="entry.bewertung === null">
+                    <span class="contents">
+                      <span>{{ 'Was this helpful?'|t }}</span>
+                      <button type="button" class="btn btn-secondary btn-icon" aria-label="{{ 'Answer helpful'|t }}" @click="$store.chat.feedback(entry, 1)">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 10v11"/><path d="M3 10h4l4-7a2 2 0 0 1 2 2v5h5a2 2 0 0 1 2 2l-1 7a2 2 0 0 1-2 2H7"/></svg>
+                      </button>
+                      <button type="button" class="btn btn-secondary btn-icon" aria-label="{{ 'Answer not helpful'|t }}" @click="$store.chat.feedback(entry, -1)">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 14V3"/><path d="M21 14h-4l-4 7a2 2 0 0 1-2-2v-5H6a2 2 0 0 1-2-2l1-7a2 2 0 0 1 2-2h10"/></svg>
+                      </button>
+                    </span>
                   </template>
-                </ol>
-              </div>
-            </template>
+                  <template x-if="entry.bewertung !== null">
+                    <span class="text-ok" data-chat-feedback-done>{{ 'Thank you for your feedback.'|t }}</span>
+                  </template>
+                </div>
+              </template>
 
-            <template x-if="entry.status === 'beantwortet' || entry.status === 'safety'">
-              <div class="chat-feedback">
-                <template x-if="entry.bewertung === null">
-                  <span class="contents">
-                    <span>{{ 'Was this helpful?'|t }}</span>
-                    <button type="button" class="chat-thumb" aria-label="{{ 'Answer helpful'|t }}" @click="$store.chat.feedback(entry, 1)">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 10v11"/><path d="M3 10h4l4-7a2 2 0 0 1 2 2v5h5a2 2 0 0 1 2 2l-1 7a2 2 0 0 1-2 2H7"/></svg>
-                    </button>
-                    <button type="button" class="chat-thumb" aria-label="{{ 'Answer not helpful'|t }}" @click="$store.chat.feedback(entry, -1)">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 14V3"/><path d="M21 14h-4l-4 7a2 2 0 0 1-2-2v-5H6a2 2 0 0 1-2-2l1-7a2 2 0 0 1 2-2h10"/></svg>
-                    </button>
-                  </span>
-                </template>
-                <template x-if="entry.bewertung !== null">
-                  <span class="text-ok" data-chat-feedback-done>{{ 'Thank you for your feedback.'|t }}</span>
-                </template>
-              </div>
-            </template>
-
-            <template x-if="entry.status === 'abgelehnt'">
-              <div class="flex flex-col gap-2">
-                <template x-if="!entry.support_id">
-                  <div class="flex flex-col gap-1.5">
-                    <button type="button" class="btn btn-outline self-start bg-panel" :disabled="entry.supporting" @click="$store.chat.support(entry)" data-chat-support>{{ 'Create support request'|t }}</button>
-                    <span class="meta">{{ 'Question, history and serial number are sent along.'|t }}</span>
-                  </div>
-                </template>
-                <template x-if="entry.support_id">
-                  <span class="font-medium text-ok" data-chat-support-done x-text="supportCreated(entry)"></span>
-                </template>
-                <template x-if="entry.support_error">
-                  <span class="text-danger" x-text="entry.support_error"></span>
-                </template>
-              </div>
-            </template>
-          </div>
+              <template x-if="entry.status === 'abgelehnt'">
+                <div class="flex flex-col gap-2">
+                  <template x-if="!entry.support_id">
+                    <div class="flex flex-col gap-1.5">
+                      <button type="button" class="btn btn-secondary self-start" :disabled="entry.supporting" @click="$store.chat.support(entry)" data-chat-support>{{ 'Create support request'|t }}</button>
+                      <span class="meta">{{ 'Question, history and serial number are sent along.'|t }}</span>
+                    </div>
+                  </template>
+                  <template x-if="entry.support_id">
+                    <span class="font-medium text-ok" data-chat-support-done x-text="supportCreated(entry)"></span>
+                  </template>
+                  <template x-if="entry.support_error">
+                    <span class="text-danger" x-text="entry.support_error"></span>
+                  </template>
+                </div>
+              </template>
+            </div>
+          </template>
         </div>
       </template>
-
-      <div class="chat-pending" x-show="$store.chat.busy" x-cloak role="status">
-        <span class="chat-spinner" aria-hidden="true"></span>
-        <span x-text="labels.generating + ' (' + $store.chat.elapsed + ' s)'"></span>
-      </div>
     </div>
 
-    <div class="chat-notice" x-show="$store.chat.limitNotice" x-cloak role="status" data-chat-limit x-text="$store.chat.limitNotice"></div>
+    <div class="chat-notice notice notice--warn" x-show="$store.chat.limitNotice" x-cloak role="status" data-chat-limit x-text="$store.chat.limitNotice"></div>
 
     <form class="chat-form" @submit.prevent="send()">
-      <label for="{{ 'chat-input-' ~ mode }}" class="text-sm font-medium">{{ 'Your question'|t }}</label>
-      <div class="flex items-end gap-2">
-        <textarea id="{{ 'chat-input-' ~ mode }}" class="form-input chat-input" rows="2" maxlength="1000" x-model="input" x-ref="input" :disabled="disabled()" @keydown.enter="onEnter($event)" placeholder="{{ 'e.g. Which film thickness is approved?'|t }}"></textarea>
-        <button type="submit" class="btn btn-primary h-11 w-11 shrink-0 px-0" :disabled="disabled() || !input.trim()" aria-label="{{ 'Send question'|t }}">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7z"/></svg>
-        </button>
+      <label for="{{ input_id }}" class="field-label">{{ 'Your question'|t }}</label>
+      {# Nachtrag 2 (a): Feld volle Breite, drei Zeilen, wächst mit dem Text bis acht Zeilen (grow() in chat.js, max-height im CSS);
+         Button darunter rechts (Phone volle Breite), Zähler links in derselben Zeile. Enter sendet, Shift-Enter bricht um (onEnter). #}
+      <textarea id="{{ input_id }}" class="chat-input" rows="3" maxlength="1000" x-model="input" x-ref="input" :disabled="disabled()" @input="grow()" @keydown.enter="onEnter($event)" placeholder="{{ 'e.g. Which film thickness is approved?'|t }}"></textarea>
+      <div class="chat-form-row">
+        <span class="chat-count" x-text="input.length + ' / 1000'"></span>
+        {# 1.4 (A): ein Primär je Seite — eingebettet (Maschinenseite) ist der Assistent der Primär, als Panel/Sheet neben „Suchen“ sekundär. #}
+        <button type="submit" class="btn {{ mode == 'embedded' ? 'btn-primary' : 'btn-secondary' }} chat-send" :disabled="disabled() || !input.trim()">{{ 'Ask the assistant'|t }}</button>
       </div>
-      <span class="meta self-end" x-text="input.length + ' / 1000'"></span>
     </form>
 
     <div class="chat-footer">
       {{ 'Answers only from approved documents'|t }} · {{ 'Model: @model'|t({'@model': model_label|default('—')}) }} · {{ 'History pseudonymised, 12 months'|t }}
     </div>
-  </div>
+  </section>
 </div>

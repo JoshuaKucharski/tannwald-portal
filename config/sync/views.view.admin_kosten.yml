@@ -120,3 +120,17 @@ display:
         - 'languages:language_interface'
         - user.roles
       tags: {  }
+  page_portal:
+    id: page_portal
+    display_title: 'Seite (Portal)'
+    display_plugin: page
+    position: 2
+    display_options:
+      display_extenders: {  }
+      path: redaktion/kosten
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_interface'
+        - user.roles
+      tags: {  }

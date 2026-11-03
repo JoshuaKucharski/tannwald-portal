@@ -5,6 +5,7 @@ dependencies:
   config:
     - field.field.node.dokument.body
     - field.field.node.dokument.field_aenderungsvermerk
+    - field.field.node.dokument.field_bild
     - field.field.node.dokument.field_datei
     - field.field.node.dokument.field_dokumenttyp
     - field.field.node.dokument.field_exportklasse
@@ -121,4 +122,5 @@ content:
     weight: 5
     region: content
 hidden:
+  field_bild: true
   langcode: true

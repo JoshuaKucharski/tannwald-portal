@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Drupal\tannwald_assistant;
 
 use Drupal\Component\Datetime\TimeInterface;
-use Drupal\Component\Plugin\Factory\FactoryInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Session\AccountInterface;
@@ -13,6 +12,7 @@ use Drupal\Core\Site\Settings;
 use Drupal\ai\OperationType\Chat\ChatMessage;
 use Drupal\ai\OperationType\Chat\ChatOutput;
 use Drupal\tannwald_assistant\Limit\LimitCheckInterface;
+use Drupal\tannwald_assistant\Provider\ProviderResolver;
 use Drupal\tannwald_assistant\Result\AnswerResult;
 use Drupal\tannwald_assistant\Result\RetrievalResult;
 use Psr\Log\LoggerInterface;
@@ -27,8 +27,8 @@ use Psr\Log\LoggerInterface;
  * eine Zeile in tannwald_assistant_log. Usage schreibt seit 4.2 nur der
  * UsageTracker (Event des AI-Moduls, Tag tannwald_assistant).
  *
- * ai.provider ist als FactoryInterface getippt (AiProviderPluginManager ist
- * final); createInstance() liefert den ProviderProxy des AI-Moduls.
+ * Provider und Chat-Modell liefert seit 3.1 der ProviderResolver
+ * (tannwald_assistant.settings: provider_chat, providers.<id>.chat_model).
  */
 final class AnswerService {
 
@@ -49,7 +49,7 @@ final class AnswerService {
     private readonly OutputFilter $outputFilter,
     private readonly LanguageDetector $languageDetector,
     private readonly InjectionHeuristic $injectionHeuristic,
-    private readonly FactoryInterface $aiProvider,
+    private readonly ProviderResolver $providerResolver,
     private readonly LimitCheckInterface $limitCheck,
     private readonly Connection $database,
     private readonly ConfigFactoryInterface $configFactory,
@@ -135,15 +135,15 @@ final class AnswerService {
       return $this->finish($context, $langcode, AnswerResult::STATUS_SAFETY, $template['html'], self::sources($result, $template['citations']), [], TRUE);
     }
 
-    $settings = $this->configFactory->get('tannwald_assistant.settings');
     $input = $this->promptBuilder->build($context->frage, $result, $langcode, FALSE);
     try {
-      $provider = $this->aiProvider->createInstance((string) $settings->get('provider'));
+      $chat = $this->providerResolver->chat();
+      $provider = $chat->provider;
       $provider->setConfiguration([
         'temperature' => PromptBuilder::TEMPERATURE,
         'max_tokens' => PromptBuilder::MAX_TOKENS,
       ]);
-      $output = $provider->chat($input, (string) $settings->get('chat_model'), [self::CHAT_TAG]);
+      $output = $provider->chat($input, $chat->model, [self::CHAT_TAG]);
     }
     catch (\Throwable $e) {
       $this->logger->error('Chat provider failed: @message', ['@message' => $e->getMessage()]);

@@ -1,0 +1,16 @@
+{#
+/**
+ * @file
+ * SDC tannwald:plate — dl mit Zeilenraster (Label links 13 px gedämpft, Wert rechts 15 px, Zahlen tabellarisch).
+ */
+#}
+<dl{{ attributes.addClass('plate') }}>
+  {% for row in rows %}
+    {% if row.value is not empty %}
+      <div class="plate-row">
+        <dt class="plate-label">{{ row.label }}</dt>
+        <dd class="plate-value{% if row.tone %} plate-value--{{ row.tone }}{% endif %}">{% if row.url %}<a href="{{ row.url }}">{{ row.value }}</a>{% else %}{{ row.value }}{% endif %}</dd>
+      </div>
+    {% endif %}
+  {% endfor %}
+</dl>

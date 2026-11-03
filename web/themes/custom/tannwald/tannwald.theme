@@ -15,6 +15,7 @@ use Drupal\Component\Serialization\Json;
 use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Markup;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 
@@ -91,19 +92,36 @@ function tannwald_form_user_login_form_alter(array &$form, FormStateInterface $f
   $form['name']['#attributes']['autofocus'] = 'autofocus';
   $form['pass']['#description'] = '';
   $form['pass']['#attributes']['autocomplete'] = 'current-password';
-  // Passwort anzeigen: Textbutton im Feld, Zustand showPassword (Alpine).
+  // Passwort anzeigen (tw2-11 Nachtrag 5 (e)): Icon-Schalter Auge / durch-
+  // gestrichenes Auge rechts im Feld, 44-px-Ziel, aria-pressed, Zustand
+  // showPassword (Alpine); das Feld bekommt rechts Platz für den Schalter.
   $form['pass']['#attributes'][':type'] = "showPassword ? 'text' : 'password'";
+  $form['pass']['#attributes']['class'][] = 'pr-12';
+  $renderer = \Drupal::service('renderer');
+  $icon = static fn (string $name, array $attributes): array => [
+    '#type' => 'component',
+    '#component' => 'tannwald:icon',
+    '#props' => ['name' => $name, 'size' => 20],
+    '#attributes' => $attributes,
+  ];
+  // renderInIsolation() nimmt das Array per Referenz: erst in Variablen.
+  $eye = $icon('eye', ['x-show' => '!showPassword']);
+  $eyeOff = $icon('eye-off', ['x-show' => 'showPassword', 'x-cloak' => '']);
+  $icons = (string) $renderer->renderInIsolation($eye) . (string) $renderer->renderInIsolation($eyeOff);
   $form['pass']['#field_suffix'] = [
     '#type' => 'html_tag',
     '#tag' => 'button',
-    '#value' => t('show', [], ['context' => 'tannwald password']),
+    '#value' => Markup::create($icons),
     '#attributes' => [
       'type' => 'button',
-      // 6.1 (E): 44-px-Trefffläche (Leitplanken §7.2).
-      'class' => ['btn-text', 'text-sm', 'h-11', 'px-2'],
+      'class' => ['login-pass-toggle'],
       '@click' => 'showPassword = !showPassword',
-      'x-text' => 'showPassword ? ' . Json::encode((string) t('hide', [], ['context' => 'tannwald password']))
-      . ' : ' . Json::encode((string) t('show', [], ['context' => 'tannwald password'])),
+      'aria-label' => t('Show password'),
+      ':aria-label' => 'showPassword ? ' . Json::encode((string) t('Hide password'))
+      . ' : ' . Json::encode((string) t('Show password')),
+      'aria-pressed' => 'false',
+      ':aria-pressed' => "showPassword ? 'true' : 'false'",
+      ':class' => "{ 'is-on': showPassword }",
       'aria-controls' => 'edit-pass',
     ],
   ];
@@ -120,8 +138,16 @@ function _tannwald_login_error_message(array &$form, FormStateInterface $form_st
   if ($errors === [] || !isset($errors['name'])) {
     return;
   }
+  // Nachtrag 5 (h): ein Satz; die Flood-Sperre von Core („failed login
+  // attempts“, Konto oder IP) bekommt ihren eigenen Satz.
+  $error = $errors['name'];
+  $source = $error instanceof TranslatableMarkup ? $error->getUntranslatedString() : (string) $error;
   $form_state->clearErrors();
-  $form_state->setErrorByName('name', t('Username or password do not match. Please check your entry.'));
+  if (str_contains($source, 'login attempts')) {
+    $form_state->setErrorByName('name', t('Too many failed attempts, please try again later.'));
+    return;
+  }
+  $form_state->setErrorByName('name', t('Username or password is incorrect.'));
 }
 
 /**
@@ -141,23 +167,11 @@ require_once __DIR__ . '/includes/chat.inc';
 require_once __DIR__ . '/includes/redaktion.inc';
 
 /**
- * Implements hook_preprocess_HOOK() for node--maschine templates.
- *
- * Chat in der Aside der Maschinenseite (Marker 5.3: chat).
- */
-function tannwald_preprocess_node__maschine(array &$variables): void {
-  if (($variables['view_mode'] ?? '') !== 'full' || empty($variables['maschine_nid'])) {
-    return;
-  }
-  $variables['chat'] = _tannwald_chat_props((int) $variables['maschine_nid'], $variables['machine']['serial'] ?? NULL, 'embedded');
-  $variables['chat_cache'] = _tannwald_chat_cache_bubble();
-}
-
-/**
  * Implements hook_preprocess().
  *
  * Seite: Navigationseintrag „Redaktion“ für die Redaktionsrollen und der Chat
- * als Sheet auf /suche (Brücke tannwald:ask von 5.2).
+ * als Launcher mit Sheet/Panel auf jeder Seite (Nachtrag 3 tw2-11; vorher nur
+ * auf /suche als Brücke tannwald:ask von 5.2).
  */
 function tannwald_preprocess(array &$variables, string $hook): void {
   if ($hook !== 'page') {
@@ -174,9 +188,15 @@ function tannwald_preprocess(array &$variables, string $hook): void {
       'active' => _tannwald_redaktion_is_path(_tannwald_redaktion_current_path()),
     ];
   }
-  if ($account->isAuthenticated() && \Drupal::routeMatch()->getRouteName() === 'tannwald_assistant.search') {
-    $variables['chat'] = _tannwald_chat_props(NULL, NULL, 'sheet');
-    $variables['chat_cache'] = _tannwald_chat_cache_bubble();
+  // Nachtrag 3 (tw2-11): Launcher und Sheet/Panel auf jeder Seite für
+  // angemeldete Nutzer; Ausnahmen und Kontext (Maschine der Dokumentseite)
+  // entscheidet _tannwald_chat_sheet_context() in includes/chat.inc.
+  if ($account->isAuthenticated()) {
+    $context = _tannwald_chat_sheet_context();
+    if ($context !== NULL) {
+      $variables['chat'] = _tannwald_chat_props($context['maschine_nid'], $context['machine_label'], 'sheet');
+      $variables['chat_cache'] = _tannwald_chat_cache_bubble(['route'], $context['tags']);
+    }
   }
 }
 
@@ -220,16 +240,23 @@ function tannwald_preprocess_views_view_table__redaktion_unbeantwortet(array &$v
  * Zurückweisen Warnfarbe); Textarea trägt den Wortzähler (SDC review-actions).
  */
 function tannwald_form_tannwald_ingest_review_form_alter(array &$form, FormStateInterface $form_state): void {
-  $classes = [
-    'freigeben' => ['btn', 'btn-primary'],
-    'entwurf_speichern' => ['btn', 'btn-outline'],
-    'zurueckweisen' => ['btn', 'btn-warn'],
+  // Nachtrag 5 (tw2-12): Sichtreihenfolge links nach rechts Zurückweisen ·
+  // Entwurf speichern · Freigeben; Freigeben ganz rechts als Primär der Karte
+  // (je Karte ein Formular, Leitplanken-Ausnahme „Listen aus Formular-Karten“),
+  // die anderen sekundär. DOM-Reihenfolge = Sichtreihenfolge über #weight,
+  // kein CSS order; das Sheet „Zurückweisen“ behält seinen Warn-Button.
+  $buttons = [
+    'zurueckweisen' => [0, ['btn', 'btn-secondary']],
+    'entwurf_speichern' => [1, ['btn', 'btn-secondary']],
+    'freigeben' => [2, ['btn', 'btn-primary']],
   ];
-  foreach ($classes as $transition => $class) {
+  foreach ($buttons as $transition => [$weight, $class]) {
     if (isset($form['actions'][$transition])) {
       $form['actions'][$transition]['#attributes']['class'] = $class;
+      $form['actions'][$transition]['#weight'] = $weight;
     }
   }
+  $form['actions']['#attributes']['class'][] = 'review-buttons';
   $form['body']['#attributes']['data-review-body'] = '';
   $form['body']['#attributes']['class'][] = 'review-textarea';
   // Die Redaktion sieht Text, nicht HTML: Absätze als Leerzeilen, Listen als
@@ -351,4 +378,94 @@ function tannwald_preprocess_views_view_field(array &$variables): void {
       '#attributes' => ['class' => ['ml-2']],
     ],
   ];
+}
+
+/*
+ * Aufgabe 1.1 (A, Phase 2): Design-System v2. Styleguide-Seite (/styleguide,
+ * Route von C in tannwald_demo), Logik in includes/styleguide.inc.
+ */
+require_once __DIR__ . '/includes/styleguide.inc';
+// Bild-Helfer tannwald_image() von C (2.2), eigene Datei.
+require_once __DIR__ . '/includes/images.inc';
+
+/**
+ * Implements hook_theme().
+ *
+ * Theme-Hook der Styleguide-Seite; C's Controller gibt #theme
+ * tannwald_styleguide zurück, das Template liegt im Theme.
+ */
+function tannwald_theme(array $existing, string $type, string $theme, string $path): array {
+  return [
+    'tannwald_styleguide' => [
+      'variables' => [],
+      'template' => 'styleguide',
+      'path' => $path . '/templates',
+    ],
+  ];
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for tannwald_styleguide templates.
+ */
+function tannwald_preprocess_tannwald_styleguide(array &$variables): void {
+  _tannwald_styleguide_prepare($variables);
+}
+
+/*
+ * Aufgabe 1.3 (B, Phase 2): Seiten-Redesign II. Logik in includes/admin.inc
+ * (Zeitraum-Chips der Nutzungs-View) und includes/redaktion.inc (Lese-Quote);
+ * hier nur die Hook-Funktionen. Ein Hunk am Ende, wie 5.3.
+ */
+require_once __DIR__ . '/includes/admin.inc';
+
+/**
+ * Implements hook_preprocess_HOOK() for views-view--admin-nutzung templates.
+ */
+function tannwald_preprocess_views_view__admin_nutzung(array &$variables): void {
+  _tannwald_admin_nutzung_prepare($variables);
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for views-view-unformatted--portal-bulletins templates.
+ *
+ * Lese-Quote je Bulletin für die Redaktion (1.3).
+ */
+function tannwald_preprocess_views_view_unformatted__portal_bulletins(array &$variables): void {
+  _tannwald_bulletin_quotas($variables);
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter() for user_pass.
+ *
+ * Passwort-Formular (1.3, Portal-Formulare): ein Seitentitel (die Nutzerseiten
+ * blenden den Titelblock aus), Feld ohne Hilfetext, Button als Primäraktion.
+ */
+function tannwald_form_user_pass_alter(array &$form, FormStateInterface $form_state): void {
+  $form['#prefix'] = '<h1 class="page-title mb-6">' . t('Reset your password') . '</h1>';
+  $form['name']['#attributes']['autocomplete'] = 'username';
+  $form['actions']['submit']['#attributes']['class'] = ['btn', 'btn-primary', 'w-full'];
+}
+
+/**
+ * Implements hook_page_attachments_alter().
+ *
+ * Favicon der Bildmarke (tw2-12, Nachtrag 3): favicon.svg, favicon-32.png und
+ * apple-touch-icon-180.png aus dem Theme statt des Core-Favicons. Gilt für
+ * Seiten im Theme tannwald; Claro behält das Core-Favicon.
+ */
+function tannwald_page_attachments_alter(array &$attachments): void {
+  $base = base_path() . \Drupal::service('extension.list.theme')->getPath('tannwald') . '/images/';
+  foreach ($attachments['#attached']['html_head_link'] ?? [] as $key => $link) {
+    if (($link[0]['rel'] ?? '') === 'icon') {
+      unset($attachments['#attached']['html_head_link'][$key]);
+    }
+  }
+  $icons = [
+    ['rel' => 'icon', 'href' => $base . 'favicon.svg', 'type' => 'image/svg+xml'],
+    ['rel' => 'icon', 'href' => $base . 'favicon-32.png', 'type' => 'image/png', 'sizes' => '32x32'],
+    ['rel' => 'apple-touch-icon', 'href' => $base . 'apple-touch-icon-180.png', 'sizes' => '180x180'],
+  ];
+  foreach ($icons as $icon) {
+    $attachments['#attached']['html_head_link'][] = [$icon];
+  }
 }

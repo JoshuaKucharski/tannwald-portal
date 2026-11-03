@@ -1,0 +1,10 @@
+tannwald_qwen.settings:
+  type: config_object
+  label: 'DashScope (Qwen) settings'
+  mapping:
+    api_key:
+      type: string
+      label: 'Key entity ID (key module, provider env)'
+    endpoint:
+      type: string
+      label: 'OpenAI-compatible base URL (overridden from DASHSCOPE_ENDPOINT_EU in settings.php)'

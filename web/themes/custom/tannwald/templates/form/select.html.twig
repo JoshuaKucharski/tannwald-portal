@@ -1,15 +1,11 @@
 {#
 /**
  * @file
- * Theme override for a select element.
- *
- * Available variables:
- * - attributes: HTML attributes for the <select> tag.
- * - options: The <option> element children.
- *
- * @see \Drupal\Core\Form\FormPreprocess::preprocessSelect()
+ * Auswahl (1.3): Feld-Muster input input--select (eigener Pfeil aus A's CSS); Mehrfachauswahl ohne Pfeil.
  */
 #}
+{% set attributes = attributes.addClass('input', attributes.multiple ? 'input--multiple' : 'input--select') %}
+{% if attributes.hasClass('error') %}{% set attributes = attributes.setAttribute('aria-invalid', 'true') %}{% endif %}
 <select{{ attributes }}>
   {% for option in options %}
     {% if option.type == 'optgroup' %}

@@ -19,3 +19,8 @@ regions:
   content: Content
   sidebar: 'Sidebar (assistant)'
   footer: Footer
+# Core-CSS system/base (align, hidden, form, details …) liegt ausserhalb der Cascade-Layer und schlägt damit
+# Tailwinds @layer utilities (gemessen 1.1: .hidden{display:none} aus hidden.module.css gewinnt gegen lg:flex).
+# Das Theme liefert alles selbst (src/tailwind.css @layer base: visually-hidden, js-hide, hidden).
+libraries-override:
+  system/base: false

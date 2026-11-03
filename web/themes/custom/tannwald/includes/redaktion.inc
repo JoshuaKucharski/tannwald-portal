@@ -86,9 +86,11 @@ function _tannwald_redaktion_nav_items(): array {
     ],
     [
       'label' => t('Usage and costs'),
-      'url' => Url::fromUserInput('/admin/tannwald/nutzung'),
+      // 1.3: Portal-Theme (Anzeige page_portal der Views admin_nutzung und
+      // admin_kosten); /admin/tannwald/* bleibt für Claro und D's Tests.
+      'url' => Url::fromUserInput('/redaktion/nutzung'),
       'count' => NULL,
-      'match' => '/admin/tannwald',
+      'match' => '/redaktion/nutzung',
     ],
     [
       'label' => t('Export rules'),
@@ -113,7 +115,8 @@ function _tannwald_redaktion_nav_items(): array {
         'label' => $candidate['label'],
         'url' => $candidate['url']->toString(),
         'count' => $candidate['count'],
-        'active' => str_starts_with($current, $candidate['match']),
+        'active' => str_starts_with($current, $candidate['match'])
+        || ($candidate['match'] === '/redaktion/nutzung' && str_starts_with($current, '/redaktion/kosten')),
       ];
     }
     catch (\Exception) {
@@ -231,7 +234,7 @@ function _tannwald_review_cards(array &$variables): void {
  *
  * @return array
  *   card (Props tannwald:review-card), body_html, form, checks[], word_count,
- *   word_target, language_label, nid.
+ *   word_target, language_label, document_type, machine_types, nid.
  */
 function _tannwald_review_card_props(NodeInterface $summary): array {
   $data = function_exists('tannwald_ingest_review_card') ? tannwald_ingest_review_card($summary) : [];
@@ -241,6 +244,8 @@ function _tannwald_review_card_props(NodeInterface $summary): array {
   // Änderungsvermerk und Sprache aus der zusammengefassten Dokument-Revision.
   $changeNote = NULL;
   $languageMatches = FALSE;
+  $documentType = NULL;
+  $machineTypes = [];
   $vid = $summary->hasField('field_dokument_revision') ? (int) $summary->get('field_dokument_revision')->value : 0;
   if ($vid > 0) {
     $revision = \Drupal::entityTypeManager()->getStorage('node')->loadRevision($vid);
@@ -251,6 +256,15 @@ function _tannwald_review_card_props(NodeInterface $summary): array {
       }
       if ($revision->hasField('field_aenderungsvermerk') && !$revision->get('field_aenderungsvermerk')->isEmpty()) {
         $changeNote = trim(strip_tags((string) $revision->get('field_aenderungsvermerk')->value));
+      }
+      // 1.3: Typ und Maschinentypen als Pillen im Kartenkopf.
+      if ($revision->hasField('field_dokumenttyp') && $revision->get('field_dokumenttyp')->entity !== NULL) {
+        $documentType = (string) $revision->get('field_dokumenttyp')->entity->label();
+      }
+      if ($revision->hasField('field_maschinentyp')) {
+        foreach ($revision->get('field_maschinentyp')->referencedEntities() as $term) {
+          $machineTypes[] = (string) $term->label();
+        }
       }
     }
   }
@@ -276,6 +290,8 @@ function _tannwald_review_card_props(NodeInterface $summary): array {
       'safety_mentioned' => $safety,
     ],
     'language_label' => _tannwald_language_name($langcode),
+    'document_type' => $documentType,
+    'machine_types' => $machineTypes,
     'body_html' => $data['body_html'] ?? '',
     'form' => $data['form'] ?? [],
     'word_count' => $words,
@@ -329,4 +345,45 @@ function _tannwald_review_html_to_text(string $html): string {
   $text = preg_replace("/[ \t]+\n/u", "\n", $text) ?? $text;
   $text = preg_replace("/\n{3,}/u", "\n\n", $text) ?? $text;
   return trim($text);
+}
+
+/**
+ * Lese-Quote je Bulletin für die Redaktion (1.3, Wireframe 03 „Bulletins“).
+ *
+ * Ergebnis quotas[] parallel zu rows: {confirmed, total, percent, url} oder
+ * NULL
+ * (Kunden sehen keine Quote; Bulletins ohne Bestätigungspflicht auch nicht).
+ * Fällig = offene Paare Nutzer × Maschine aus C's ConfirmationService.
+ */
+function _tannwald_bulletin_quotas(array &$variables): void {
+  $variables['quotas'] = [];
+  $view = $variables['view'];
+  if (!_tannwald_redaktion_visible(\Drupal::currentUser()) || !\Drupal::hasService('tannwald_bulletin.confirmations')) {
+    return;
+  }
+  /** @var \Drupal\tannwald_bulletin\ConfirmationService $confirmations */
+  $confirmations = \Drupal::service('tannwald_bulletin.confirmations');
+  $storage = \Drupal::entityTypeManager()->getStorage('lesebestaetigung');
+  foreach ($view->result as $index => $row) {
+    $bulletin = $row->_entity ?? NULL;
+    $variables['quotas'][$index] = NULL;
+    if (!$bulletin instanceof NodeInterface || $bulletin->bundle() !== 'bulletin') {
+      continue;
+    }
+    if ($bulletin->hasField('field_bestaetigung_pflicht') && !(bool) $bulletin->get('field_bestaetigung_pflicht')->value) {
+      continue;
+    }
+    $confirmed = (int) $storage->getQuery()->accessCheck(FALSE)->condition('bulletin_nid', $bulletin->id())->count()->execute();
+    $open = 0;
+    foreach ($confirmations->openConfirmations($bulletin) as $recipient) {
+      $open += count($recipient['maschinen']);
+    }
+    $total = $confirmed + $open;
+    $variables['quotas'][$index] = [
+      'confirmed' => $confirmed,
+      'total' => $total,
+      'percent' => $total > 0 ? (int) round($confirmed / $total * 100) : 0,
+      'url' => Url::fromUserInput('/redaktion/bulletins/' . $bulletin->id() . '/bestaetigungen')->toString(),
+    ];
+  }
 }

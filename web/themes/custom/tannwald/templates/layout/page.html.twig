@@ -2,58 +2,112 @@
 /**
  * @file
  * Seitenlayout (Wireframe 01 oben): Demo-Leiste, Kopfzeile mit Wortmarke, Hauptnavigation und Konto,
- * Brotkrumen, Inhalt, Seitenleiste, Fusszeile.
+ * Brotkrumen, Inhalt, Seitenleiste, Fusszeile. 1.4: Phone-Kopf ≤ 120 px (Klassen in src/pages/shell.css).
  *
- * Variablen aus tannwald_preprocess_page(): site_name, nav {home_url, items[] {label, url, active}},
+ * Variablen aus tannwald_preprocess_page(): site_name, nav {home_url, items[] {label, url, active},
+ * search {url, active}}, language_switcher[] {code, label, url, current},
  * account {display_name, company, initials, logout} oder null, demo {account_name, company, role_label,
- * switch_links[] {label, url}, back_url, back_name} oder null, cache_bubble.
+ * switch_links[] {label, url}, back_url, back_name} oder null, error_page {code, title, text, back_url, back_label} oder null
+ * (1.2), cache_bubble.
  */
 #}
 {{ cache_bubble }}
 <div class="flex min-h-screen flex-col">
+  {# 1.4: Phone-Kopf ≤ 120 px — Demo-Leiste einzeilig, Konto und Wechsel-Links im Avatar-Menü, Navigation als Tab-Zeile. #}
   {% if demo %}
-    <div class="flex flex-wrap items-center gap-x-4 gap-y-1 bg-bar px-4 py-2 text-sm text-white md:px-8" data-demo-bar>
-      <span class="font-semibold">{{ 'Demo mode'|t }}</span>
-      <span>{{ 'logged in as'|t }} <strong>{{ demo.account_name }}</strong>{% if demo.company %} · {{ demo.company }}{% endif %} · {{ 'Role @role'|t({'@role': demo.role_label}) }}</span>
+    <div class="demo-bar" data-demo-bar>
+      <span class="font-semibold">{{ 'Demo'|t }}</span>
+      <span class="demo-bar-account">{{ demo.account_name }}{% if demo.company %} · {{ demo.company }}{% endif %}</span>
+      <span class="demo-bar-role">· {{ 'Role @role'|t({'@role': demo.role_label}) }}</span>
       {% if demo.switch_links %}
-        <span class="text-bar-muted md:ml-auto">{{ 'Switch:'|t }}</span>
-        {% for link in demo.switch_links %}
-          <a href="{{ link.url }}" class="text-white underline hover:text-white" title="{{ link.title }}">{{ link.label }}</a>
-        {% endfor %}
+        <span class="demo-bar-switch">
+          <span class="text-bar-muted">{{ 'Switch:'|t }}</span>
+          {% for link in demo.switch_links %}
+            <a href="{{ link.url }}" class="text-white underline hover:text-white" title="{{ link.title }}">{{ link.label }}</a>
+          {% endfor %}
+        </span>
       {% endif %}
       {% if demo.back_url %}
-        <a href="{{ demo.back_url }}" class="text-white underline hover:text-white{{ demo.switch_links ? '' : ' md:ml-auto' }}">{{ 'Back to @name'|t({'@name': demo.back_name}) }}</a>
+        <a href="{{ demo.back_url }}" class="demo-bar-back text-white underline hover:text-white">{{ 'Back to @name'|t({'@name': demo.back_name}) }}</a>
       {% endif %}
     </div>
   {% endif %}
   {{ page.demo_bar }}
 
-  <header class="border-b border-line bg-panel">
-    <div class="mx-auto flex max-w-page flex-wrap items-center gap-x-8 gap-y-1 px-4 py-2 md:min-h-16 md:px-8 md:py-0">
-      <a href="{{ nav.home_url }}" class="text-lg font-bold text-accent no-underline hover:text-accent-hover">{{ site_name }}</a>
-      <nav aria-label="{{ 'Main navigation'|t }}" class="flex flex-wrap gap-x-6 font-medium">
+  {# tw2-12: Kopfzeile — Bildmarke + Wortmarke · Navigation · rechts Lupe, Sprachwechsler DE · EN · FR, Name, Avatar, Abmelden.
+     Tab-Weg: Wortmarke → Navigation → Lupe → Sprache → Avatar → Abmelden. Phone: Lupe und Avatar in Zeile 1, Sprache im Avatar-Menü. #}
+  <header class="site-header border-b border-line bg-panel">
+    <div class="site-header-inner">
+      <a href="{{ nav.home_url }}" class="site-brand">
+        {# Bildmarke (Nachtrag 3): SDC tannwald:logo in currentColor, 28 px, Phone 24 (Klasse site-brand-mark). #}
+        {{ include('tannwald:logo', {size: 28, attributes: create_attribute({'class': ['site-brand-mark']})}, with_context = false) }}
+        <span class="site-brand-name">{{ site_name }}</span>
+      </a>
+      <nav aria-label="{{ 'Main navigation'|t }}" class="site-nav">
         {% for item in nav.items %}
-          <a href="{{ item.url }}" class="py-2 no-underline md:py-5 {{ item.active ? 'border-b-2 border-accent text-ink' : 'text-muted hover:text-ink' }}"{% if item.active %} aria-current="page"{% endif %}>{{ item.label }}</a>
+          <a href="{{ item.url }}" class="site-nav-link{{ item.active ? ' is-active' : '' }}"{% if item.active %} aria-current="page"{% endif %}>{{ item.label }}</a>
         {% endfor %}
         {# 5.3: hier anhängen (Redaktion) #}
         {% if redaktion_link %}
-          <a href="{{ redaktion_link.url }}" class="py-2 no-underline md:py-5 {{ redaktion_link.active ? 'border-b-2 border-accent text-ink' : 'text-muted hover:text-ink' }}"{% if redaktion_link.active %} aria-current="page"{% endif %}>{{ redaktion_link.label }}</a>
+          <a href="{{ redaktion_link.url }}" class="site-nav-link{{ redaktion_link.active ? ' is-active' : '' }}"{% if redaktion_link.active %} aria-current="page"{% endif %}>{{ redaktion_link.label }}</a>
         {% endif %}
       </nav>
       {{ page.primary_menu }}
-      {% if account %}
-        <div class="flex items-center gap-4 text-sm md:ml-auto">
-          <span class="text-muted">{{ account.display_name }}{% if account.company %} · {{ account.company }}{% endif %}</span>
-          <span class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-private-bg text-[13px] font-semibold text-accent" aria-hidden="true">{{ account.initials }}</span>
-          {{ account.logout }}
-        </div>
-      {% endif %}
+      <div class="site-tools">
+        <a href="{{ nav.search.url }}" class="site-search{{ nav.search.active ? ' is-active' : '' }}" aria-label="{{ 'Search'|t }}"{% if nav.search.active %} aria-current="page"{% endif %}>{{ include('tannwald:icon', {name: 'search', size: 22}, with_context = false) }}</a>
+        {% if language_switcher %}
+          <nav aria-label="{{ 'Language'|t }}" class="site-lang{{ account ? '' : ' site-lang--bare' }}">
+            {% for language in language_switcher %}
+              <a href="{{ language.url }}" class="site-lang-link{{ language.current ? ' is-active' : '' }}" lang="{{ language.code }}" hreflang="{{ language.code }}" aria-label="{{ language.label }}" title="{{ language.label }}"{% if language.current %} aria-current="true"{% endif %}>{{ language.code|upper }}</a>
+            {% endfor %}
+          </nav>
+        {% endif %}
+        {% if account %}
+          <div class="site-account" x-data="{ open: false }" @keydown.escape.window="open = false" @click.outside="open = false">
+            <span class="site-account-name">{{ account.display_name }}{% if account.company %} · {{ account.company }}{% endif %}</span>
+            <button type="button" class="site-avatar" :aria-expanded="open ? 'true' : 'false'" aria-controls="account-menu" aria-label="{{ 'Account menu'|t }}" @click="open = !open">{{ account.initials }}</button>
+            {# Nachtrag 7: Abmelden nur als Icon (44 px), damit die rechte Kopfzeile beim Sprachwechsel nicht springt; im Menü bleibt der
+               Text. Inline-SVG (Tür mit Pfeil, 24er-Raster, 1.5 px) statt tannwald:icon, weil A das Icon-Set gerade offen hat. #}
+            <a href="{{ path('user.logout') }}" class="site-logout" aria-label="{{ 'Log out'|t }}" title="{{ 'Log out'|t }}"><svg class="icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4m7 14 5-5-5-5m5 5H9"/></svg></a>
+            <div id="account-menu" class="site-menu" x-show="open" x-cloak x-transition.opacity.duration.180ms>
+              <p class="site-menu-head">{{ account.display_name }}{% if account.company %}<span class="meta">{{ account.company }}</span>{% endif %}{% if demo %}<span class="meta">{{ 'Role @role'|t({'@role': demo.role_label}) }}</span>{% endif %}</p>
+              {% if language_switcher %}
+                {# Phone: Sprachwechsler im Avatar-Menü (Kopf bleibt ≤ 120 px); ab md steht er inline in der Kopfzeile. #}
+                <p class="site-menu-label md:hidden">{{ 'Language'|t }}</p>
+                <nav aria-label="{{ 'Language'|t }}" class="site-menu-lang md:hidden">
+                  {% for language in language_switcher %}
+                    <a href="{{ language.url }}" class="site-lang-link{{ language.current ? ' is-active' : '' }}" lang="{{ language.code }}" hreflang="{{ language.code }}" aria-label="{{ language.label }}" title="{{ language.label }}"{% if language.current %} aria-current="true"{% endif %}>{{ language.code|upper }}</a>
+                  {% endfor %}
+                </nav>
+              {% endif %}
+              {% if demo and demo.switch_links %}
+                <p class="site-menu-label">{{ 'Switch:'|t }}</p>
+                <ul class="site-menu-list">
+                  {% for link in demo.switch_links %}<li><a href="{{ link.url }}" class="site-menu-link" title="{{ link.title }}">{{ link.label }}</a></li>{% endfor %}
+                </ul>
+              {% endif %}
+              {% if demo and demo.back_url %}<a href="{{ demo.back_url }}" class="site-menu-link">{{ 'Back to @name'|t({'@name': demo.back_name}) }}</a>{% endif %}
+              <a href="{{ path('user.logout') }}" class="site-menu-link site-menu-logout">{{ 'Log out'|t }}</a>
+            </div>
+          </div>
+        {% endif %}
+      </div>
       {{ page.header }}
     </div>
   </header>
 
   <main id="main-content" class="mx-auto flex w-full max-w-page flex-1 flex-col gap-6 px-4 pb-12 pt-6 md:px-8">
     {{ page.breadcrumb }}
+    {# 1.2: Fehlerseiten 403/404 als Leer-Zustand mit Weg zurück (error_page aus layout.inc). #}
+    {% if error_page %}
+      <div class="flex flex-col gap-6" data-error-page="{{ error_page.code }}">
+        <h1 class="page-title">{{ error_page.title }}</h1>
+        <div class="empty-state">
+          <p class="empty-state-text">{{ error_page.text }}</p>
+          <a href="{{ error_page.back_url }}" class="btn btn-secondary mt-2">{{ include('tannwald:icon', {name: 'arrow', size: 18, attributes: create_attribute({'class': ['rotate-180']})}, with_context = false) }}{{ error_page.back_label }}</a>
+        </div>
+      </div>
+    {% endif %}
     {{ page.content }}
     {{ page.sidebar }}
   </main>
@@ -66,4 +120,5 @@
   {# 5.3: hier anhängen #}
   {{ chat_cache }}
   {% if chat %}{{ include('tannwald:chat', chat, with_context = false) }}{% endif %}
+  {# 1.3: hier anhängen #}
 </div>

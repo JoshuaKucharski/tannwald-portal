@@ -78,13 +78,25 @@ final class DemoCommands extends DrushCommands {
   }
 
   /**
-   * Demo-Daten nur lokal (IS_DDEV_PROJECT) oder in CI (CI).
+   * Demo-Daten nur in DDEV (IS_DDEV_PROJECT), CI (CI) oder auf dem Demo-Server.
+   *
+   * Der Demo-Server (deploy/, 4.1, ADR-012) ist kein Produktivbetrieb:
+   * deploy/deploy.sh setzt TANNWALD_DEMO=1 ausschliesslich beim Seeder-Aufruf.
+   * TANNWALD_DEPLOY allein erlaubt es nicht — ein echter Betrieb bekommt nie
+   * aus Versehen Demo-Konten mit dem Passwort demo.
+   */
+  public static function seedingAllowed(): bool {
+    return (bool) getenv('IS_DDEV_PROJECT') || (bool) getenv('CI') || getenv('TANNWALD_DEMO') === '1';
+  }
+
+  /**
+   * Prüft seedingAllowed() und meldet die Verweigerung.
    */
   protected function allowed(): bool {
-    if (getenv('IS_DDEV_PROJECT') || getenv('CI')) {
+    if (self::seedingAllowed()) {
       return TRUE;
     }
-    $this->logger()->error(dt('Demo data only in DDEV (IS_DDEV_PROJECT) or CI (CI); nothing changed.'));
+    $this->logger()->error(dt('Demo data only in DDEV (IS_DDEV_PROJECT), CI (CI) or on the demo server (TANNWALD_DEMO=1); nothing changed.'));
     return FALSE;
   }
 
@@ -128,6 +140,15 @@ final class DemoCommands extends DrushCommands {
       foreach ($migration['messages'] as $message) {
         $this->logger()->warning($id . ': ' . $message);
       }
+    }
+    $images = $report['images'];
+    $this->io()->writeln(dt('Images: @files assigned (@targets targets), @assets theme asset.', [
+      '@files' => $images['files_assigned'],
+      '@targets' => $images['targets'],
+      '@assets' => $images['theme_assets'],
+    ]));
+    foreach ($images['missing'] as $missing) {
+      $this->logger()->warning(dt('Image without target: @missing', ['@missing' => $missing]));
     }
     $this->io()->writeln(dt('Node access rebuilt in @seconds s.', ['@seconds' => $report['rebuild_seconds']]));
 

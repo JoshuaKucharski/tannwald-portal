@@ -2,15 +2,36 @@ tannwald_assistant.settings:
   type: config_object
   label: 'Tannwald assistant settings'
   mapping:
-    provider:
+    provider_chat:
       type: string
-      label: 'AI provider ID (drupal/ai plugin)'
-    chat_model:
+      label: 'AI provider for chat (ollama or dashscope)'
+    provider_embeddings:
       type: string
-      label: 'Chat model (raw provider name)'
-    embedding_model:
-      type: string
-      label: 'Embedding model (raw provider name)'
+      label: 'AI provider for embeddings (ollama or dashscope); a change requires tannwald:reindex'
+    providers:
+      type: sequence
+      label: 'Models and costs per provider'
+      sequence:
+        type: mapping
+        label: 'Provider'
+        mapping:
+          chat_model:
+            type: string
+            label: 'Chat model (raw provider name)'
+          embedding_model:
+            type: string
+            label: 'Embedding model (raw provider name)'
+          embedding_dimensions:
+            type: integer
+            label: 'Embedding dimensions (chunk store: 1024)'
+          # DashScope-Platzhalter 0.0008 (Betreiber bestätigt): Alibaba Model Studio, Preisliste
+          # docs.modelstudio.console.alibabacloud.com/en/model-studio/model-pricing, Tab Germany (Frankfurt),
+          # Scope EU, qwen-plus <= 256K ohne Thinking: Eingabe USD 0.40, Ausgabe USD 1.20 je 1M Tokens
+          # (gelesen 2026-11-02); gewichtet Eingabe:Ausgabe 1:3 = USD 1.00 je 1M; EZB 2026-11-02:
+          # 1 USD = 0.8196 CHF → CHF 0.00082 je 1k, gerundet 0.0008.
+          kosten_pro_1k_chf:
+            type: float
+            label: 'Chat cost per 1000 tokens in CHF'
     top_k:
       type: integer
       label: 'Number of chunks in the prompt'
@@ -20,9 +41,6 @@ tannwald_assistant.settings:
     monthly_token_limit:
       type: integer
       label: 'Monthly token limit'
-    kosten_pro_1k_chf:
-      type: float
-      label: 'Cost per 1000 tokens in CHF'
     safety_terms:
       type: mapping
       label: 'Safety terms per language'

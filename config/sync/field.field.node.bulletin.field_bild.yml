@@ -1,0 +1,38 @@
+uuid: 3d5c9881-b2d9-4177-a9ef-18864a677a53
+langcode: de
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_bild
+    - node.type.bulletin
+  module:
+    - image
+id: node.bulletin.field_bild
+field_name: field_bild
+entity_type: node
+bundle: bulletin
+label: Titelbild
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:file'
+  handler_settings: {  }
+  file_directory: bilder
+  file_extensions: 'webp jpg png'
+  max_filesize: '400 KB'
+  max_resolution: ''
+  min_resolution: ''
+  alt_field: true
+  alt_field_required: true
+  title_field: false
+  title_field_required: false
+  default_image:
+    uuid: null
+    alt: ''
+    title: ''
+    width: null
+    height: null
+field_type: image

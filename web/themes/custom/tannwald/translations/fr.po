@@ -236,6 +236,34 @@ msgstr "Filtre (@count actifs)"
 msgid "Forgot your password?"
 msgstr "Mot de passe oublié ?"
 
+# tw2-11 Demo-Hinweis („?“-Modal) et bouton GitHub (Nachtrag 5)
+msgid "What this demo shows"
+msgstr "Ce que montre cette démo"
+
+msgid "For Helga as a demo, Felix & David"
+msgstr "Pour Helga, en démo, Felix & David"
+
+msgid "myTannwald is a customer portal for a fictional Swiss machine builder. Customers see only the documents of their own machines. An assistant answers exclusively from approved documents and names its source. Editorial and compliance approve. Drupal 11, hybrid search, Qwen via API — built as a proof of concept."
+msgstr "myTannwald est un portail client pour un constructeur de machines suisse fictif. Les clients ne voient que les documents de leurs propres machines. Un assistant répond exclusivement à partir de documents approuvés et cite sa source. La rédaction et la conformité approuvent. Drupal 11, recherche hybride, Qwen via API — réalisé comme preuve de concept."
+
+msgid "Log in with a demo account below, password demo"
+msgstr "Connectez-vous avec un compte de démo ci-dessous, mot de passe demo"
+
+msgid "Try the search and the assistant"
+msgstr "Essayez la recherche et l’assistant"
+
+msgid "Great"
+msgstr "Parfait"
+
+msgid "Show password"
+msgstr "Afficher le mot de passe"
+
+msgid "Hide password"
+msgstr "Masquer le mot de passe"
+
+msgid "Source code on GitHub, opens in a new tab"
+msgstr "Code source sur GitHub, s’ouvre dans un nouvel onglet"
+
 msgid "Four-eyes principle: the person who created the bulletin must not approve it."
 msgstr "Principe des quatre yeux : l’auteur du bulletin ne peut pas l’approuver."
 
@@ -530,8 +558,11 @@ msgstr "Mis à jour"
 msgid "Usage and costs"
 msgstr "Utilisation et coûts"
 
-msgid "Username or password do not match. Please check your entry."
-msgstr "Le nom d’utilisateur ou le mot de passe est incorrect. Veuillez vérifier votre saisie."
+msgid "Username or password is incorrect."
+msgstr "Nom d’utilisateur ou mot de passe incorrect."
+
+msgid "Too many failed attempts, please try again later."
+msgstr "Trop de tentatives échouées, veuillez réessayer plus tard."
 
 msgid "Version @version"
 msgstr "Version @version"
@@ -623,14 +654,6 @@ msgctxt "tannwald pager"
 msgid "Next"
 msgstr "Suivant"
 
-msgctxt "tannwald password"
-msgid "hide"
-msgstr "masquer"
-
-msgctxt "tannwald password"
-msgid "show"
-msgstr "afficher"
-
 msgctxt "tannwald review"
 msgid "Summary"
 msgstr "Résumé"
@@ -652,3 +675,223 @@ msgstr "Pertinence"
 
 msgid "Date"
 msgstr "Date"
+
+# Design-System v2 (1.1): page de connexion, cadre d'image
+msgid "Packaging hall with two blister lines"
+msgstr "Hall de conditionnement avec deux lignes de blisters"
+
+msgid "No image available"
+msgstr "Aucune image disponible"
+
+# Pages I (1.2)
+msgid "1 document"
+msgstr "1 document"
+
+msgid "@count documents"
+msgstr "@count documents"
+
+msgid "1 open bulletin"
+msgstr "1 bulletin ouvert"
+
+msgid "@count open bulletins"
+msgstr "@count bulletins ouverts"
+
+msgid "Machine @serial"
+msgstr "Machine @serial"
+
+msgid "No machines yet"
+msgstr "Pas encore de machines"
+
+msgid "No machines are assigned to your company yet. Your Tannwald contact links them to your account; type documents are available through the search."
+msgstr "Aucune machine n’est encore attribuée à votre entreprise. Votre interlocuteur Tannwald les associe à votre compte ; les documents de type sont accessibles par la recherche."
+
+msgid "Type"
+msgstr "Type"
+
+msgid "Serial number"
+msgstr "Numéro de série"
+
+msgid "Company"
+msgstr "Entreprise"
+
+msgid "Location"
+msgstr "Site"
+
+msgid "Year built"
+msgstr "Année de construction"
+
+msgid "Type image @type"
+msgstr "Image du type @type"
+
+msgid "Image"
+msgstr "Image"
+
+msgid "Languages"
+msgstr "Langues"
+
+msgid "Version"
+msgstr "Version"
+
+msgid "No documents yet"
+msgstr "Pas encore de documents"
+
+msgid "No documents are available for this machine yet. The editorial team adds them after approval."
+msgstr "Aucun document n’est encore disponible pour cette machine. La rédaction les ajoute après validation."
+
+msgid "No bulletins"
+msgstr "Aucun bulletin"
+
+msgid "Valid until"
+msgstr "Valable jusqu’au"
+
+msgid "not available in your language"
+msgstr "non disponible dans votre langue"
+
+msgid "All revisions"
+msgstr "Toutes les révisions"
+
+msgid "Current"
+msgstr "Actuelle"
+
+msgid "This document is export-controlled. Every download is logged with your account and the serial number."
+msgstr "Ce document est soumis au contrôle des exportations. Chaque téléchargement est journalisé avec votre compte et le numéro de série."
+
+msgid "No approved summary yet. The editorial team releases one after review."
+msgstr "Pas encore de résumé validé. La rédaction le publie après vérification."
+
+msgid "Confirm the reading on the page of the affected machine (button “Gelesen bestätigen”)."
+msgstr "Confirmez la lecture sur la page de la machine concernée (bouton « Gelesen bestätigen »)."
+
+msgid "Customers and dealers"
+msgstr "Clients et revendeurs"
+
+msgid "Tannwald internal"
+msgstr "Tannwald interne"
+
+msgid "No access"
+msgstr "Pas d’accès"
+
+msgid "This page belongs to another company or your role does not cover it. If you think you should see it, contact your Tannwald contact."
+msgstr "Cette page appartient à une autre entreprise ou votre rôle ne la couvre pas. Si vous pensez devoir la voir, contactez votre interlocuteur Tannwald."
+
+msgid "Please log in to see this page."
+msgstr "Veuillez vous connecter pour voir cette page."
+
+msgid "The address does not exist or the document has been withdrawn. Use the search or go back to your machines."
+msgstr "L’adresse n’existe pas ou le document a été retiré. Utilisez la recherche ou revenez à vos machines."
+
+msgid "To my machines"
+msgstr "Vers mes machines"
+
+# Refonte des pages II (1.3, B) : recherche, assistant, rédaction, vues d'administration, formulaires
+msgid "Only documents you are allowed to see. Hybrid also finds hits by meaning."
+msgstr "Uniquement les documents que vous pouvez consulter. Hybride trouve aussi des résultats par le sens."
+
+msgid "Filter (@count)"
+msgstr "Filtres (@count)"
+
+msgid "Reset all"
+msgstr "Tout réinitialiser"
+
+msgid "Show hits"
+msgstr "Afficher les résultats"
+
+msgid "Try another spelling, switch to Hybrid, or ask the assistant."
+msgstr "Essayez une autre orthographe, passez en Hybride ou demandez à l'assistant."
+
+msgid "Examples: a fault code, a part, an activity."
+msgstr "Exemples : un code de défaut, une pièce, une activité."
+
+msgid "Asks about: @serial"
+msgstr "Concerne : @serial"
+
+msgid "Open the assistant"
+msgstr "Ouvrir l’assistant"
+
+msgid "Or ask the assistant:"
+msgstr "Ou demandez à l'assistant :"
+
+msgid "How often is the sealing station cleaned?"
+msgstr "À quelle fréquence la station de scellage est-elle nettoyée ?"
+
+msgid "What does fault code E-4711 mean?"
+msgstr "Que signifie le code de défaut E-4711 ?"
+
+msgid "Which film thickness is approved?"
+msgstr "Quelle épaisseur de film est autorisée ?"
+
+msgid "Answers come only from approved documents you are allowed to see. Please check the cited chapters before acting."
+msgstr "Les réponses proviennent uniquement de documents validés que vous pouvez consulter. Vérifiez les chapitres cités avant d'agir."
+
+msgid "Nothing to review."
+msgstr "Rien à vérifier."
+
+msgid "As soon as the queue generates a summary for a new document revision, it appears here."
+msgstr "Dès que la file génère un résumé pour une nouvelle révision de document, il apparaît ici."
+
+msgid "Change note"
+msgstr "Note de modification"
+
+msgid "Reject summary"
+msgstr "Rejeter le résumé"
+
+msgid "The summary stays invisible on the document, in search and in the assistant. The queue generates no new one; the editorial team edits the text or publishes a new document revision."
+msgstr "Le résumé reste invisible sur le document, dans la recherche et dans l'assistant. La file n'en génère pas de nouveau ; la rédaction modifie le texte ou publie une nouvelle révision du document."
+
+msgid "Reason (for your records)"
+msgstr "Motif (pour vos notes)"
+
+msgid "e.g. names a chapter that does not exist"
+msgstr "p. ex. mentionne un chapitre qui n'existe pas"
+
+msgid "The reason is not saved; note it in the change note of the next revision."
+msgstr "Le motif n'est pas enregistré ; notez-le dans la note de modification de la prochaine révision."
+
+msgid "Cancel"
+msgstr "Annuler"
+
+msgid "Reject"
+msgstr "Rejeter"
+
+msgid "Read confirmations: @confirmed of @total"
+msgstr "Confirmations de lecture : @confirmed sur @total"
+
+msgid "Show confirmations"
+msgstr "Afficher les confirmations"
+
+msgid "Calls and tokens of the assistant per day, context and operation."
+msgstr "Appels et jetons de l'assistant par jour, contexte et opération."
+
+msgid "Period"
+msgstr "Période"
+
+msgid "30 days"
+msgstr "30 jours"
+
+msgid "90 days"
+msgstr "90 jours"
+
+msgid "365 days"
+msgstr "365 jours"
+
+msgid "No usage in this period."
+msgstr "Aucune utilisation sur cette période."
+
+msgid "As soon as the assistant answers, calls and tokens appear here."
+msgstr "Dès que l'assistant répond, les appels et les jetons apparaissent ici."
+
+msgid "Tokens, costs in CHF and share of the monthly limit, per month."
+msgstr "Jetons, coûts en CHF et part de la limite mensuelle, par mois."
+
+msgid "No costs yet."
+msgstr "Pas encore de coûts."
+
+msgid "As soon as the assistant answers, tokens and costs appear here per month."
+msgstr "Dès que l'assistant répond, les jetons et les coûts apparaissent ici par mois."
+
+# Structure de page (1.4)
+msgid "Demo"
+msgstr "Démo"
+
+msgid "Account menu"
+msgstr "Menu du compte"

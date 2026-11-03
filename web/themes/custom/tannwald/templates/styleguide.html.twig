@@ -1,0 +1,288 @@
+{#
+/**
+ * @file
+ * Styleguide des Design-Systems v2 (/styleguide, nur Split dev; Aufgabe 1.1). Zeigt Typo-Skala, Raster,
+ * Abstände, Farben mit Kontrastmessung, alle Komponentenklassen in allen Zuständen, Bildrahmen, Icons,
+ * Bewegung und Mikrotext-Regeln. Zustände werden über data-state="hover|active|focus" erzwungen
+ * (Custom-Variants in src/tailwind.css), Deaktiviert über das Attribut disabled.
+ *
+ * Variablen (includes/styleguide.inc): hero_url, colors, contrast[], contrast_failed, type_scale[], spaces[], icons[].
+ * Die Beispieltexte sind bewusst die deutschen Oberflächen-Wörter (Wortliste CLAUDE.md), keine Quellstrings.
+ */
+#}
+{% set states = {rest: 'Rest'|t, hover: 'Hover'|t, focus: 'Focus'|t, active: 'Active'|t, disabled: 'Disabled'|t} %}
+{% macro state_attrs(state) %}{% if state == 'disabled' %} disabled{% elseif state != 'rest' %} data-state="{{ state }}"{% endif %}{% endmacro %}
+{% import _self as sg %}
+
+<div class="flex flex-col gap-12" data-styleguide>
+  <header class="page-head">
+    <div>
+      <h1 class="page-title">{{ 'Styleguide'|t }}</h1>
+      <p class="page-meta">{{ 'Design system v2 · Inter self-hosted · tokens, components and states · only in the dev split'|t }}</p>
+    </div>
+    <div class="page-actions">
+      <a class="btn btn-secondary" href="#colors">{{ 'Contrast table'|t }}</a>
+      <a class="btn btn-primary" href="#components">{{ 'Components'|t }}</a>
+    </div>
+  </header>
+
+  {# 1 Typografie #}
+  <section id="typography" class="flex flex-col gap-6">
+    <h2 class="m-0 text-xl">{{ 'Type scale'|t }}</h2>
+    <div class="card">
+      <div class="table-wrap"><table class="table">
+        <thead><tr><th>{{ 'Class'|t }}</th><th>{{ 'Sample'|t }}</th><th class="num">px / lh / wt</th><th>{{ 'Use'|t }}</th></tr></thead>
+        <tbody>
+        {% for step in type_scale %}
+          <tr>
+            <td class="meta"><code>{{ step.class }}</code></td>
+            <td><span class="{{ step.class }} {{ step.weight == 600 ? 'font-semibold' : '' }}">Siegelstation prüfen, Folie 0,25 mm</span></td>
+            <td class="num meta">{{ step.size }} / {{ step.leading }} / {{ step.weight }}</td>
+            <td class="meta">{{ step.use }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table></div>
+    </div>
+    <p class="m-0 max-w-prose text-muted">{{ 'Three weights (400, 500, 600), six sizes, sentence case, line length up to 80 characters, numbers with ’ as thousands separator (2’141 Tokens), dates as TT.MM.JJJJ.'|t }}</p>
+  </section>
+
+  {# 2 Raster und Abstände #}
+  <section id="grid" class="flex flex-col gap-6">
+    <h2 class="m-0 text-xl">{{ 'Grid and spacing'|t }}</h2>
+    <div class="card card-body">
+      <p class="m-0 mb-4 meta">{{ '12 columns on 1376 px, gutter 24 px (phone 16 px); 8-pt base, 4-pt fine grid.'|t }}</p>
+      <div class="grid grid-cols-12 gap-4 md:gap-6">
+        {% for i in 1..12 %}<div class="h-10 rounded bg-private-bg"></div>{% endfor %}
+        <div class="col-span-12 h-10 rounded bg-private-bg md:col-span-8"></div>
+        <div class="col-span-12 h-10 rounded bg-private-bg md:col-span-4"></div>
+      </div>
+      <p class="m-0 mt-6 mb-3 meta">{{ 'Spacing steps --space-*'|t }}</p>
+      <div class="flex flex-wrap items-end gap-4">
+        {% for s in spaces %}
+          <div class="flex flex-col items-center gap-1"><div class="w-6 bg-accent" style="height: {{ s }}px"></div><span class="meta num">{{ s }}</span></div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  {# 3 Farben und Kontrast #}
+  <section id="colors" class="flex flex-col gap-6">
+    <h2 class="m-0 text-xl">{{ 'Colour as signal'|t }}</h2>
+    <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+      {% for name, hex in colors %}
+        <div class="card--plain border border-line-soft p-2">
+          <div class="h-10 rounded border border-line-soft" style="background: {{ hex }}"></div>
+          <div class="mt-1 meta">{{ name }}</div>
+          <div class="meta num">{{ hex }}</div>
+        </div>
+      {% endfor %}
+    </div>
+    <div class="card">
+      <div class="card-head"><h3 class="card-title">{{ 'Contrast measurement'|t }}</h3><span class="ml-auto {{ contrast_failed ? 'badge bg-danger-bg text-danger' : 'badge bg-ok-bg text-ok' }}">{{ contrast_failed ? 'Failed: @n'|t({'@n': contrast_failed}) : 'All pairs pass'|t }}</span></div>
+      <div class="table-wrap"><table class="table table--compact">
+        <thead><tr><th>{{ 'Use'|t }}</th><th>{{ 'Foreground'|t }}</th><th>{{ 'Background'|t }}</th><th class="num">{{ 'Ratio'|t }}</th><th class="num">{{ 'Minimum'|t }}</th><th>{{ 'Result'|t }}</th></tr></thead>
+        <tbody>
+        {% for row in contrast %}
+          <tr>
+            <td><span class="inline-block rounded px-2 py-0.5" style="color: {{ row.fg_hex }}; background: {{ row.bg_hex }}">{{ row.use }}</span></td>
+            <td class="meta num">{{ row.fg }} {{ row.fg_hex }}</td>
+            <td class="meta num">{{ row.bg }} {{ row.bg_hex }}</td>
+            <td class="num">{{ row.ratio|number_format(2, '.', '’') }}:1</td>
+            <td class="num meta">{{ row.min }}:1</td>
+            <td>{% if row.ok %}<span class="text-ok">{{ include('tannwald:icon', {name: 'check', size: 16}, with_context = false) }} {{ 'ok'|t }}</span>{% else %}<span class="text-danger">{{ include('tannwald:icon', {name: 'warning', size: 16}, with_context = false) }} {{ 'too low'|t }}</span>{% endif %}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table></div>
+    </div>
+  </section>
+
+  {# 4 Komponenten #}
+  <section id="components" class="flex flex-col gap-8">
+    <h2 class="m-0 text-xl">{{ 'Components and states'|t }}</h2>
+
+    <div class="card">
+      <div class="card-head"><h3 class="card-title">{{ 'Buttons'|t }}</h3><span class="meta">btn btn-primary · btn-secondary · btn-text · btn-warn · btn-icon</span></div>
+      <div class="table-wrap"><table class="table">
+        <thead><tr><th></th>{% for key, label in states %}<th>{{ label }}</th>{% endfor %}</tr></thead>
+        <tbody>
+          {% for variant, label in {'btn btn-primary': 'Anmelden', 'btn btn-secondary': 'Änderungshistorie', 'btn-text': 'Passwort vergessen?', 'btn btn-warn': 'Gelesen bestätigen'} %}
+            <tr><td class="meta"><code>{{ variant }}</code></td>
+              {% for key, state in states %}<td><button type="button" class="{{ variant }}"{{ sg.state_attrs(key) }}>{% if variant == 'btn btn-primary' %}{{ include('tannwald:icon', {name: 'download', size: 18}, with_context = false) }}{% endif %}{{ label }}</button></td>{% endfor %}
+            </tr>
+          {% endfor %}
+          <tr><td class="meta"><code>btn btn-secondary btn-icon</code></td>
+            {% for key, state in states %}<td><button type="button" class="btn btn-secondary btn-icon" aria-label="Schliessen"{{ sg.state_attrs(key) }}>{{ include('tannwald:icon', {name: 'close'}, with_context = false) }}</button></td>{% endfor %}
+          </tr>
+          <tr><td class="meta"><code>chip</code></td>
+            <td><button type="button" class="chip">kunde-a · Pharmalog AG</button></td>
+            <td><button type="button" class="chip" data-state="hover">kunde-a · Pharmalog AG</button></td>
+            <td><button type="button" class="chip" data-state="focus">kunde-a · Pharmalog AG</button></td>
+            <td><button type="button" class="chip" aria-pressed="true">kunde-a · Pharmalog AG</button></td>
+            <td><button type="button" class="chip" disabled>kunde-a · Pharmalog AG</button></td>
+          </tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h3 class="card-title">{{ 'Fields'|t }}</h3><span class="meta">field · field-label · input · field-help · field-error · input--select · input--textarea</span></div>
+      <div class="card-body grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div class="field m-0"><label class="field-label" for="sg-rest">Benutzername</label><input id="sg-rest" class="input" type="text" placeholder="z. B. kunde-a"><span class="field-help">Ihr Kontoname, nicht die E-Mail-Adresse.</span></div>
+        <div class="field m-0"><label class="field-label" for="sg-hover">Benutzername ({{ 'hover'|t }})</label><input id="sg-hover" class="input" type="text" value="kunde-a" data-state="hover"></div>
+        <div class="field m-0"><label class="field-label" for="sg-focus">Benutzername ({{ 'focus'|t }})</label><input id="sg-focus" class="input" type="text" value="kunde-a" data-state="focus"></div>
+        <div class="field m-0"><label class="field-label" for="sg-invalid">Passwort</label><input id="sg-invalid" class="input is-invalid" type="password" value="demo1" aria-invalid="true" aria-describedby="sg-invalid-error"><span id="sg-invalid-error" class="field-error">Benutzername oder Passwort stimmen nicht. Bitte prüfen Sie die Eingabe.</span></div>
+        <div class="field m-0"><label class="field-label" for="sg-disabled">Seriennummer</label><input id="sg-disabled" class="input" type="text" value="TB200-2021-0417" disabled><span class="field-help">Wird von Tannwald gepflegt.</span></div>
+        <div class="field m-0"><label class="field-label" for="sg-select">Dokumenttyp</label><select id="sg-select" class="input input--select"><option>Betriebsanleitung</option><option>Ersatzteilkatalog</option><option>Schaltplan</option></select></div>
+        <div class="field m-0 md:col-span-2 lg:col-span-3"><label class="field-label" for="sg-textarea">Frage an den Assistenten</label><textarea id="sg-textarea" class="input input--textarea" rows="3" placeholder="Warum reisst die Folie beim Siegeln?"></textarea><span class="field-help">Der Assistent antwortet nur aus freigegebenen Dokumenten.</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h3 class="card-title">{{ 'Pills and badges'|t }}</h3><span class="meta">tannwald:badge · pill</span></div>
+      <div class="card-body flex flex-wrap items-center gap-3">
+        {% for variant, label in {neutral: 'Betriebsanleitung', accent: 'Treffer über Bedeutung', ok: 'Neue Version', warn: 'Offen', danger: 'Zurückgewiesen', dualuse: 'Dual-Use · Exportklasse 2', private: 'Nur Pharmalog AG'} %}
+          {{ include('tannwald:badge', {label: label, variant: variant}, with_context = false) }}
+        {% endfor %}
+        {% for variant, label in {ok: 'Bestätigt', warn: 'Zur Prüfung', neutral: 'v3.1'} %}
+          {{ include('tannwald:badge', {label: label, variant: variant, pill: true}, with_context = false) }}
+        {% endfor %}
+        <span class="pill border-line bg-panel text-ink">DE</span>
+        <span class="pill border-line-soft bg-surface text-muted" title="Nicht verfügbar">FR</span>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+      <div class="card">
+        <div class="card-head"><h3 class="card-title">{{ 'Card with border'|t }}</h3><span class="meta">card</span></div>
+        <div class="card-body"><p class="m-0">Betriebsanleitung TB-200 · v3.2 · freigegeben 14.10.2026</p></div>
+        <div class="card-foot"><a class="btn btn-secondary" href="#components">Download</a><a class="btn-text" href="#components">Änderungshistorie</a></div>
+      </div>
+      <div class="card--plain">
+        <div class="card-head"><h3 class="card-title">{{ 'Card without border'|t }}</h3><span class="meta">card--plain</span></div>
+        <div class="card-body"><p class="m-0 text-muted">{{ 'Where the panel surface is enough: lists inside a card, side panels, the login form.'|t }}</p></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h3 class="card-title">{{ 'Table with row grid'|t }}</h3><span class="meta">table · table--compact · num</span></div>
+      <div class="table-wrap"><table class="table">
+        <thead><tr><th>Dokument</th><th>Version</th><th>Freigegeben</th><th class="num">Tokens</th><th></th></tr></thead>
+        <tbody>
+          <tr><td>Betriebsanleitung TB-200</td><td>v3.2</td><td class="num">14.10.2026</td><td class="num">2’141</td><td><a class="btn-text" href="#components">Download</a></td></tr>
+          <tr><td>Ersatzteilkatalog TB-200</td><td>v2.0</td><td class="num">02.09.2026</td><td class="num">980</td><td><a class="btn-text" href="#components">Download</a></td></tr>
+          <tr><td>Schaltplan TB-200 <span class="ml-1">{{ include('tannwald:badge', {label: 'Dual-Use · Exportklasse 2', variant: 'dualuse'}, with_context = false) }}</span></td><td>v1.4</td><td class="num">21.08.2026</td><td class="num">1’302</td><td><a class="btn-text" href="#components">Download</a></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+      <div class="card">
+        <div class="card-head"><h3 class="card-title">{{ 'Toast and notice'|t }}</h3><span class="meta">toast toast--ok · notice notice--warn · notice--danger</span></div>
+        <div class="card-body flex flex-col gap-3">
+          <div class="toast toast--ok"><div class="flex-1">Lesebestätigung gespeichert.</div><button type="button" class="btn-text btn-icon -my-2 -mr-2 h-11 w-11 justify-center" aria-label="Meldung schliessen">{{ include('tannwald:icon', {name: 'close'}, with_context = false) }}</button></div>
+          <div class="notice notice--warn">Das Monatslimit des Assistenten ist fast erreicht. Die Suche bleibt verfügbar.</div>
+          <div class="notice notice--danger">Benutzername oder Passwort stimmen nicht. Bitte prüfen Sie die Eingabe.</div>
+          <div class="notice notice--neutral">Für diese Maschine sind noch keine Dokumente verfügbar.</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3 class="card-title">{{ 'Sheet'|t }}</h3><span class="meta">sheet · sheet-head · sheet-body</span></div>
+        <div class="card-body">
+          <div class="sheet !static !w-full !max-h-none !rounded-card !border">
+            <div class="sheet-head"><span class="font-semibold">Frage an den Assistenten</span><button type="button" class="btn btn-secondary btn-icon ml-auto" aria-label="Schliessen">{{ include('tannwald:icon', {name: 'close'}, with_context = false) }}</button></div>
+            <div class="sheet-body"><p class="m-0 text-muted">Antworten stammen nur aus freigegebenen Dokumenten und nennen die Stelle.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h3 class="card-title">{{ 'Tabs'|t }}</h3><span class="meta">tab-list · tab · is-active</span></div>
+      <div class="card-body">
+        <ul class="tab-list" role="tablist">
+          <li><a class="tab is-active" href="#components" aria-selected="true" role="tab">Zur Prüfung · 31</a></li>
+          <li><a class="tab" href="#components" role="tab">Freigegeben · 0</a></li>
+          <li><a class="tab" href="#components" data-state="hover" role="tab">Zurückgewiesen · 0</a></li>
+          <li><a class="tab" href="#components" data-state="focus" role="tab">Unbeantwortete Fragen · 4</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+      <div class="card">
+        <div class="card-head"><h3 class="card-title">{{ 'Empty state'|t }}</h3><span class="meta">empty-state</span></div>
+        <div class="card-body">
+          <div class="empty-state">
+            <p class="empty-state-title">Noch keine Bestätigungen</p>
+            <p class="empty-state-text">Sobald ein Nutzer das Bulletin bestätigt, erscheint er hier.</p>
+            <a class="btn btn-secondary mt-2" href="#components">Bulletin lesen</a>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3 class="card-title">{{ 'Page head'|t }}</h3><span class="meta">page-head · page-title · page-meta · page-actions</span></div>
+        <div class="card-body">
+          <div class="page-head">
+            <div><p class="page-title">TB200-2021-0417</p><p class="page-meta">TB-200 · Pharmalog AG, Basel · Baujahr 2021 · Wartungsvertrag bis 31.12.2027</p></div>
+            <div class="page-actions"><a class="btn btn-secondary" href="#components">{{ include('tannwald:icon', {name: 'document', size: 18}, with_context = false) }}Dokumente</a><a class="btn btn-primary" href="#components">{{ include('tannwald:icon', {name: 'chat', size: 18}, with_context = false) }}Frage an den Assistenten</a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {# 5 Bildsprache #}
+  <section id="images" class="flex flex-col gap-6">
+    <h2 class="m-0 text-xl">{{ 'Image frames'|t }}</h2>
+    <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+      <div class="md:col-span-2">
+        {% embed 'tannwald:figure' with {ratio: 'hero', caption: 'figure--hero 16:9 · hero-login.webp, 1600×900, 86 KB'} only %}
+          {% block image %}<img src="{{ hero_url }}" alt="Verpackungshalle mit zwei Blisterlinien" width="1600" height="900" loading="lazy">{% endblock %}
+        {% endembed %}
+      </div>
+      <div class="flex flex-col gap-6">
+        {{ include('tannwald:figure', {ratio: 'card', caption: 'figure--card 3:2 · Platzhalter', placeholder_label: 'Kein Bild vorhanden'}, with_context = false) }}
+        {{ include('tannwald:figure', {ratio: 'square', caption: 'figure--square 1:1 · Platzhalter'}, with_context = false) }}
+      </div>
+    </div>
+    <p class="m-0 max-w-prose text-muted">{{ 'Images carry the page: 3:2 for cards and detail pages, 16:9 for the hero, fixed frame before loading, placeholder with the brand mark where a field is empty, alt text names what is visible.'|t }}</p>
+  </section>
+
+  {# 6 Icons #}
+  <section id="icons" class="flex flex-col gap-6">
+    <h2 class="m-0 text-xl">{{ 'Icons'|t }}</h2>
+    <div class="card card-body grid grid-cols-4 gap-4 sm:grid-cols-8">
+      {% for name in icons %}
+        <div class="flex flex-col items-center gap-2 py-2">{{ include('tannwald:icon', {name: name, size: 24}, with_context = false) }}<span class="meta">{{ name }}</span></div>
+      {% endfor %}
+    </div>
+  </section>
+
+  {# 7 Bewegung und Mikrotexte #}
+  <section id="motion" class="grid grid-cols-1 gap-6 md:grid-cols-2">
+    <div class="card">
+      <div class="card-head"><h3 class="card-title">{{ 'Motion'|t }}</h3><span class="meta">--duration-fast 120 ms · --duration-base 180 ms</span></div>
+      <div class="card-body flex flex-col gap-3">
+        <p class="m-0 text-muted">{{ 'Transitions only as a response to an action (hover, open, close), never on page load; prefers-reduced-motion switches them off.'|t }}</p>
+        <div x-data="{ open: false }" class="flex flex-col items-start gap-3">
+          <button type="button" class="btn btn-secondary" @click="open = !open" :aria-expanded="open">Details anzeigen</button>
+          <div x-show="open" x-transition.opacity.duration.180ms x-cloak class="notice notice--neutral">Treffer über Bedeutung: Kapitel 9.4 Störungen an der Siegelstation.</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h3 class="card-title">{{ 'Microcopy'|t }}</h3></div>
+      <div class="card-body">
+        <ul class="m-0 flex list-none flex-col gap-2 p-0">
+          <li class="flex gap-2"><span class="text-ok">{{ include('tannwald:icon', {name: 'check'}, with_context = false) }}</span><span>Keine Treffer für «Folie». Versuchen Sie eine andere Schreibweise oder wechseln Sie zu Hybrid.</span></li>
+          <li class="flex gap-2"><span class="text-danger">{{ include('tannwald:icon', {name: 'close'}, with_context = false) }}</span><span class="text-muted">Oops! Leider nichts gefunden!!!</span></li>
+          <li class="flex gap-2"><span class="text-ok">{{ include('tannwald:icon', {name: 'check'}, with_context = false) }}</span><span>Lesebestätigung gespeichert.</span></li>
+          <li class="flex gap-2"><span class="text-danger">{{ include('tannwald:icon', {name: 'close'}, with_context = false) }}</span><span class="text-muted">ERFOLGREICH GESPEICHERT</span></li>
+          <li class="flex gap-2"><span class="text-ok">{{ include('tannwald:icon', {name: 'check'}, with_context = false) }}</span><span>Freigegeben am 14.10.2026 · 2’141 Tokens</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</div>

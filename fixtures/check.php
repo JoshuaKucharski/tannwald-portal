@@ -43,7 +43,7 @@ const LANGCODES = ['de', 'en', 'fr'];
 const CLASS_2_COUNTRIES = ['CH', 'DE', 'AT', 'FR', 'IT', 'NL', 'US', 'JP'];
 
 /** Die sechs Demo-Konten (RunBook 1.1). */
-const DEMO_USERS = ['kunde-a', 'kunde-b', 'haendler', 'techniker', 'redaktion', 'compliance'];
+const DEMO_USERS = ['kunde-a', 'kunde-b', 'haendler', 'techniker', 'redaktion', 'compliance', 'portal-admin'];
 
 /** Rollen der Demo-Konten. */
 const ROLES = ['kunde', 'haendler', 'techniker', 'redaktion', 'compliance', 'portal_admin'];
@@ -486,7 +486,7 @@ foreach ($users as $i => $u) {
 sort($userNames);
 $expectedUsers = DEMO_USERS;
 sort($expectedUsers);
-$report->check($userNames === $expectedUsers, 'Nutzer: genau die sechs Demo-Konten', 'Nutzer sind nicht genau ' . implode(', ', DEMO_USERS), $rel($usersPath));
+$report->check($userNames === $expectedUsers, 'Nutzer: genau die sieben Demo-Konten', 'Nutzer sind nicht genau ' . implode(', ', DEMO_USERS), $rel($usersPath));
 $customerB = $usersByName['kunde-b'] ?? NULL;
 $customerBCompany = $customerB !== NULL ? ($companyByNr[$customerB['firma_sap_nr'] ?? ''] ?? NULL) : NULL;
 if ($customerBCompany !== NULL) {
@@ -930,9 +930,9 @@ foreach ($questions as $index => $q) {
     $sourcesResolved++;
   }
 }
-$report->check(count($questions) === 60, 'Fragen: ' . count($questions), 'nicht genau 60 Fragen', $evalRel);
+$report->check(count($questions) === 80, 'Fragen: ' . count($questions), 'nicht genau 80 Fragen', $evalRel);
 $report->check($expectCounts['safety'] === 30, "erwartet: antwort {$expectCounts['antwort']}, ablehnung {$expectCounts['ablehnung']}, safety {$expectCounts['safety']}", 'nicht genau 30 safety-Fragen', $evalRel);
-$report->check($expectCounts['antwort'] >= 18 && $expectCounts['ablehnung'] >= 8, 'antwort >= 18 und ablehnung >= 8', 'antwort < 18 oder ablehnung < 8', $evalRel);
+$report->check($expectCounts['antwort'] === 42 && $expectCounts['ablehnung'] >= 8, 'antwort = 42 (3.3) und ablehnung >= 8', 'antwort nicht 42 oder ablehnung < 8', $evalRel);
 $report->check($evalLangNonSafety['de'] >= 14 && $evalLangNonSafety['en'] >= 8 && $evalLangNonSafety['fr'] >= 4, "antwort/ablehnung je Sprache: de {$evalLangNonSafety['de']}, en {$evalLangNonSafety['en']}, fr {$evalLangNonSafety['fr']}", 'antwort/ablehnung-Verteilung unter de 14 / en 8 / fr 4', $evalRel);
 $report->check($evalLangSafety['de'] >= 14 && $evalLangSafety['en'] >= 8 && $evalLangSafety['fr'] >= 4, "safety je Sprache: de {$evalLangSafety['de']}, en {$evalLangSafety['en']}, fr {$evalLangSafety['fr']}", 'safety-Verteilung unter de 14 / en 8 / fr 4', $evalRel);
 $missingUsers = array_diff(DEMO_USERS, array_keys($evalUsers));
@@ -970,16 +970,100 @@ foreach ($questions as $q) {
 $report->check($leakQuestion, 'TC-02-Frage: kunde-b zur Anlagendokumentation ' . LEAK_TEST_SERIAL . ' (ablehnung, keine Quellen)', 'TC-02-Frage fehlt', $evalRel);
 $report->check($exportQuestion, 'TC-03-Frage: haendler zum HF-Schaltplan (ablehnung, keine Quellen)', 'TC-03-Frage fehlt', $evalRel);
 
+// --- 5b. Bilder (Aufgabe 2.2) -----------------------------------------------------
+
+// Manifest fixtures/bilder/manifest.json gegen die Dateien: jede Bilddatei steht
+// im Manifest und umgekehrt, Ziele lösen auf, Alt-Texte de/en/fr, Masse 3:2
+// (Hero 16:9) mit ± 1 %, Grösse <= 400 KB. .DS_Store wird ignoriert.
+$imageDir = "{$fixtures}/bilder";
+$imageManifestPath = "{$imageDir}/manifest.json";
+$imageRel = $rel($imageManifestPath);
+$imageEntries = is_file($imageManifestPath) ? load_json($imageManifestPath) : [];
+$report->check($imageEntries !== [], 'Bild-Manifest: ' . count($imageEntries) . ' Einträge', 'Bild-Manifest fehlt oder ist leer', $imageRel);
+$imageFiles = [];
+foreach (glob("{$imageDir}/*") ?: [] as $path) {
+  $name = basename($path);
+  if ($name !== 'manifest.json' && $name !== '.DS_Store' && is_file($path)) {
+    $imageFiles[$name] = $path;
+  }
+}
+$typeCodes = array_map(static fn(string $t): string => str_replace('-', '', $t), MACHINE_TYPES);
+$bulletinIds = array_map(static fn(array $b): string => (string) ($b['id'] ?? ''), $bulletins);
+$imageTargets = [];
+$imageNames = [];
+$heroCount = 0;
+$imageErrorsBefore = $report->errorCount();
+foreach ($imageEntries as $i => $entry) {
+  $name = (string) ($entry['datei'] ?? '');
+  $purpose = (string) ($entry['zweck'] ?? '');
+  $target = (string) ($entry['ziel'] ?? '');
+  $label = "Bild #{$i} {$name} → {$purpose}:{$target}";
+  $imageNames[$name] = TRUE;
+  $resolved = match ($purpose) {
+    'typ' => in_array($target, $typeCodes, TRUE),
+    'dokumenttyp' => in_array($target, DOCUMENT_TYPES, TRUE),
+    'maschine' => isset($serials[$target]),
+    'dokument' => isset($docById[$target]) || in_array($target, $bulletinIds, TRUE),
+    'hero' => $target === 'login',
+    default => FALSE,
+  };
+  if (!$resolved) {
+    $report->error("{$label}: Ziel löst nicht auf (zweck typ|dokumenttyp|maschine|dokument|hero)", $imageRel);
+  }
+  if ($purpose === 'hero') {
+    $heroCount++;
+  }
+  elseif (isset($imageTargets["{$purpose}:{$target}"])) {
+    $report->error("{$label}: Ziel hat schon ein Bild ({$imageTargets["{$purpose}:{$target}"]})", $imageRel);
+  }
+  else {
+    $imageTargets["{$purpose}:{$target}"] = $name;
+  }
+  foreach (LANGCODES as $langcode) {
+    if (trim((string) ($entry['alt'][$langcode] ?? '')) === '') {
+      $report->error("{$label}: Alt-Text {$langcode} fehlt", $imageRel);
+    }
+  }
+  if (!isset($imageFiles[$name])) {
+    $report->error("{$label}: Datei fehlt in fixtures/bilder", $imageRel);
+    continue;
+  }
+  $size = (int) filesize($imageFiles[$name]);
+  if ($size > 400000) {
+    $report->error("{$label}: {$size} Bytes > 400 KB", $rel($imageFiles[$name]));
+  }
+  $dimensions = @getimagesize($imageFiles[$name]);
+  if ($dimensions === FALSE || $dimensions[1] === 0) {
+    $report->error("{$label}: Masse nicht lesbar", $rel($imageFiles[$name]));
+    continue;
+  }
+  $expectedRatio = $purpose === 'hero' ? 16 / 9 : 3 / 2;
+  $ratio = $dimensions[0] / $dimensions[1];
+  if (abs($ratio / $expectedRatio - 1) > 0.01) {
+    $report->error(sprintf('%s: %dx%d, Seitenverhältnis %.3f statt %.3f (± 1 %%)', $label, $dimensions[0], $dimensions[1], $ratio, $expectedRatio), $rel($imageFiles[$name]));
+  }
+}
+foreach (array_diff_key($imageFiles, $imageNames) as $name => $path) {
+  $report->error("Bilddatei ohne Manifest-Eintrag: {$name}", $rel($path));
+}
+$imageBytes = array_sum(array_map('filesize', $imageFiles));
+$report->check(
+  $report->errorCount() === $imageErrorsBefore && $heroCount === 1,
+  sprintf('Bilder: %d Dateien (%d KB), %d Ziele, %d Theme-Asset, Masse 3:2/16:9 ± 1 %%, je <= 400 KB, Alt de/en/fr', count($imageFiles), intdiv($imageBytes, 1000), count($imageTargets), $heroCount),
+  "Bilder: Befunde oben, Theme-Assets {$heroCount} (Soll 1)",
+  $imageRel
+);
+
 // --- 6. Zusammenfassung ----------------------------------------------------------
 
 $words = array_values($wordCounts);
 sort($words);
 $median = $words === [] ? 0 : $words[intdiv(count($words), 2)];
 $summary = sprintf(
-  'Firmen %d, Maschinen %d, Nutzer %d, Dokumente %d, Dateien %d (de %d, en %d, fr %d), Typen %s, Exportklassen keine %d / klasse_1 %d / klasse_2 %d, Dokumente mit mehreren Versionen %d, Bulletins %d, Fragen %d (antwort %d, ablehnung %d, safety %d), Wörter je Datei min %d / median %d / max %d',
+  'Firmen %d, Maschinen %d, Nutzer %d, Dokumente %d, Dateien %d (de %d, en %d, fr %d), Typen %s, Exportklassen keine %d / klasse_1 %d / klasse_2 %d, Dokumente mit mehreren Versionen %d, Bulletins %d, Bilder %d (Ziele %d, Theme-Asset %d), Fragen %d (antwort %d, ablehnung %d, safety %d), Wörter je Datei min %d / median %d / max %d',
   count($companies), count($machines), count($users), count($documents), $fileCount, $langCounts['de'], $langCounts['en'], $langCounts['fr'],
   implode(' ', array_map(static fn(string $t): string => "{$t} {$typeCounts[$t]}", array_keys($typeCounts))),
-  $exportCounts['keine'], $exportCounts['klasse_1'], $exportCounts['klasse_2'], count($multiVersionDocs), count($bulletins),
+  $exportCounts['keine'], $exportCounts['klasse_1'], $exportCounts['klasse_2'], count($multiVersionDocs), count($bulletins), count($imageFiles), count($imageTargets), $heroCount,
   count($questions), $expectCounts['antwort'], $expectCounts['ablehnung'], $expectCounts['safety'],
   $words === [] ? 0 : $words[0], $median, $words === [] ? 0 : $words[count($words) - 1]
 );

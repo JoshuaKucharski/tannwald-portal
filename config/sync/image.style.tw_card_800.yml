@@ -1,0 +1,21 @@
+uuid: 44c1be11-e6bb-43d3-ab71-847d45c85c1a
+langcode: de
+status: true
+dependencies: {  }
+name: tw_card_800
+label: 'Tannwald Karte 800 (3:2)'
+effects:
+  09e0b8e4-7732-4c7e-9aef-3a13d7b68e2d:
+    uuid: 09e0b8e4-7732-4c7e-9aef-3a13d7b68e2d
+    id: image_scale_and_crop
+    weight: 1
+    data:
+      width: 800
+      height: 533
+      anchor: center-center
+  d37b1334-8918-418c-9240-4d9327aa0597:
+    uuid: d37b1334-8918-418c-9240-4d9327aa0597
+    id: image_convert
+    weight: 2
+    data:
+      extension: webp

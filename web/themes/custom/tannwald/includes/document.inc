@@ -9,7 +9,9 @@ declare(strict_types=1);
 
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Render\Markup;
+use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
+use Drupal\taxonomy\TermInterface;
 use Drupal\tannwald_ingest\HeadingSlug;
 
 /**
@@ -21,9 +23,19 @@ function _tannwald_document_preprocess(array &$variables, NodeInterface $documen
   $export = $document->hasField('field_exportklasse') ? (string) $document->get('field_exportklasse')->value : 'keine';
 
   $badges = [];
-  if ($document->hasField('field_dokumenttyp') && ($term = $document->get('field_dokumenttyp')->entity)) {
-    $badges[] = ['label' => (string) $term->label(), 'variant' => 'neutral'];
+  $typeTerm = $document->hasField('field_dokumenttyp') ? $document->get('field_dokumenttyp')->entity : NULL;
+  $typeTerm = $typeTerm instanceof TermInterface ? $typeTerm : NULL;
+  if ($typeTerm !== NULL) {
+    $badges[] = ['label' => (string) $typeTerm->label(), 'variant' => 'neutral'];
   }
+  $machineTypes = [];
+  if ($document->hasField('field_maschinentyp')) {
+    foreach ($document->get('field_maschinentyp')->referencedEntities() as $machineType) {
+      $machineTypes[] = (string) $machineType->label();
+    }
+  }
+  $serial = NULL;
+  $serialUrl = NULL;
   if ($export !== '' && $export !== 'keine') {
     $badges[] = [
       'label' => t('Dual-use · export class @n', ['@n' => (int) filter_var($export, FILTER_SANITIZE_NUMBER_INT)]),
@@ -36,9 +48,27 @@ function _tannwald_document_preprocess(array &$variables, NodeInterface $documen
     if ($company !== NULL) {
       $badges[] = ['label' => t('Only @company', ['@company' => $company]), 'variant' => 'private'];
     }
+    if ($machine instanceof NodeInterface && $machine->access('view')) {
+      $serial = (string) $machine->label();
+      $serialUrl = $machine->toUrl('canonical', ['language' => \Drupal::languageManager()->getCurrentLanguage()])->toString();
+    }
   }
 
   $body = _tannwald_body_with_anchors($variables['content']['body'] ?? []);
+
+  // 1.2: Typenschild-Meta, Titelbild (Dokument, sonst Dokumenttyp) und
+  // Änderungshistorie als Zeitleiste (aktuelle Version zuerst).
+  $variables['type_label'] = $typeTerm ? (string) $typeTerm->label() : NULL;
+  $variables['machine_types'] = $machineTypes;
+  $variables['serial'] = $serial;
+  $variables['serial_url'] = $serialUrl;
+  $imageOptions = ['loading' => 'eager'];
+  if ($typeTerm !== NULL) {
+    $imageOptions['fallback'] = $typeTerm;
+  }
+  $variables['image'] = function_exists('tannwald_image') ? tannwald_image($document, 'tw_card_800', $imageOptions) : [];
+  $variables['has_own_image'] = $document->hasField('field_bild') && !$document->get('field_bild')->isEmpty();
+  $variables['history'] = _tannwald_document_history($document, $langcode);
 
   $variables['badges'] = $badges;
   $variables['version'] = (string) $document->get('field_version')->value;
@@ -136,4 +166,39 @@ function _tannwald_heading_slug(string $heading): string {
   $slug = strtr($slug, ['ä' => 'ae', 'ö' => 'oe', 'ü' => 'ue', 'ß' => 'ss']);
   $slug = (string) preg_replace('/[^a-z0-9]+/', '-', $slug);
   return trim($slug, '-');
+}
+
+/**
+ * Zeitleiste der Versionen eines Dokuments (1.2): aktuelle zuerst.
+ *
+ * @return array<int, array{version: string, date: ?string, note: ?string, url: ?string, current: bool}>
+ *   Einträge für tannwald:timeline.
+ */
+function _tannwald_document_history(NodeInterface $document, string $langcode): array {
+  $entries = [
+    [
+      'version' => (string) $document->get('field_version')->value,
+      'date' => _tannwald_date($document->get('field_freigegeben_am')->value),
+      'note' => $document->hasField('field_aenderungsvermerk') ? ($document->get('field_aenderungsvermerk')->value ?: NULL) : NULL,
+      'url' => NULL,
+      'current' => TRUE,
+    ],
+  ];
+  if (!function_exists('_tannwald_document_versions')) {
+    return $entries;
+  }
+  foreach (_tannwald_document_versions($document, $langcode)['older'] as $revision) {
+    $url = Url::fromRoute('entity.node.revision', [
+      'node' => $document->id(),
+      'node_revision' => $revision->getRevisionId(),
+    ]);
+    $entries[] = [
+      'version' => (string) $revision->get('field_version')->value,
+      'date' => _tannwald_date($revision->get('field_freigegeben_am')->value),
+      'note' => $revision->hasField('field_aenderungsvermerk') ? ($revision->get('field_aenderungsvermerk')->value ?: NULL) : NULL,
+      'url' => $url->access() ? $url->toString() : NULL,
+      'current' => FALSE,
+    ];
+  }
+  return $entries;
 }

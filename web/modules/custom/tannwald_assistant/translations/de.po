@@ -332,3 +332,72 @@ msgstr "Relevanz"
 
 msgid "Date"
 msgstr "Datum"
+
+# 3.1 Provider je Operation (AssistantSettingsForm)
+msgid "Ollama (local)"
+msgstr "Ollama (lokal)"
+
+msgid "DashScope (Qwen, API)"
+msgstr "DashScope (Qwen, API)"
+
+msgid "Provider status"
+msgstr "Status der Provider"
+
+msgid "Active for chat: @provider"
+msgstr "Aktiv für den Chat: @provider"
+
+msgid "Active for embeddings: @provider"
+msgstr "Aktiv für Embeddings: @provider"
+
+msgid "DashScope endpoint (DASHSCOPE_ENDPOINT_EU): @value"
+msgstr "DashScope-Endpoint (DASHSCOPE_ENDPOINT_EU): @value"
+
+msgid "DashScope API key (DASHSCOPE_API_KEY_EU): @value"
+msgstr "DashScope-API-Schlüssel (DASHSCOPE_API_KEY_EU): @value"
+
+msgctxt "tannwald_status"
+msgid "set"
+msgstr "gesetzt"
+
+msgctxt "tannwald_status"
+msgid "empty"
+msgstr "leer"
+
+msgid "Provider for chat"
+msgstr "Provider für den Chat"
+
+msgid "Provider for embeddings"
+msgstr "Provider für Embeddings"
+
+msgid "Changing the embedding provider or model requires <code>drush tannwald:reindex</code> and <code>drush tannwald:queue-run</code>: stored vectors belong to the old model, and search silently returns poor hits until then."
+msgstr "Ein Wechsel des Embedding-Providers oder -Modells verlangt <code>drush tannwald:reindex</code> und <code>drush tannwald:queue-run</code>: Die gespeicherten Vektoren gehören zum alten Modell, und die Suche liefert bis dahin ohne Fehlermeldung schlechte Treffer."
+
+msgid "Raw model name of the provider, e.g. qwen2.5:7b or qwen-plus."
+msgstr "Modellname beim Provider, z. B. qwen2.5:7b oder qwen-plus."
+
+msgid "A change requires a reindex (see above)."
+msgstr "Ein Wechsel verlangt einen Reindex (siehe oben)."
+
+msgid "Embedding dimensions"
+msgstr "Embedding-Dimensionen"
+
+msgid "Fixed by the chunk store."
+msgstr "Vom Chunk-Speicher vorgegeben."
+
+msgid "Chat tokens of this provider; embeddings are recorded without cost."
+msgstr "Chat-Tokens dieses Providers; Embeddings werden ohne Kosten erfasst."
+
+msgid "Unknown provider."
+msgstr "Unbekannter Provider."
+
+msgid "DashScope cannot be selected: the API key or the endpoint is empty (DASHSCOPE_API_KEY_EU, DASHSCOPE_ENDPOINT_EU)."
+msgstr "DashScope ist nicht wählbar: Der API-Schlüssel oder der Endpoint ist leer (DASHSCOPE_API_KEY_EU, DASHSCOPE_ENDPOINT_EU)."
+
+msgid "The embedding provider or model has changed. Run <code>drush tannwald:reindex</code> and <code>drush tannwald:queue-run</code>; until then search results are unreliable."
+msgstr "Der Embedding-Provider oder das Embedding-Modell wurde geändert. Führen Sie <code>drush tannwald:reindex</code> und <code>drush tannwald:queue-run</code> aus; bis dahin sind die Suchergebnisse unzuverlässig."
+
+msgid "DashScope cannot be selected for embeddings: the endpoint does not offer an embedding model (GET /models)."
+msgstr "DashScope ist für Embeddings nicht wählbar: Der Endpoint bietet kein Embedding-Modell an (GET /models)."
+
+msgid "Chat tokens of this provider; embeddings are recorded without cost. Placeholder 0.0008: Alibaba Model Studio list price for qwen-plus (Germany/Frankfurt, EU, read 02.11.2026: input USD 0.40, output USD 1.20 per million tokens), weighted input to output 1:3, at 0.8196 CHF per USD (ECB, 02.11.2026). With the measured token mix (about 40:1) the actual cost is about 2.3 times lower. The operator confirms the value."
+msgstr "Chat-Tokens dieses Providers; Embeddings werden ohne Kosten erfasst. Platzhalter 0.0008: Listenpreis von Alibaba Model Studio für qwen-plus (Deutschland/Frankfurt, EU, gelesen am 02.11.2026: Eingabe USD 0.40, Ausgabe USD 1.20 je Million Tokens), gewichtet Eingabe zu Ausgabe 1:3, zu 0.8196 CHF je USD (EZB, 02.11.2026). Mit dem gemessenen Token-Verhältnis (etwa 40:1) liegen die tatsächlichen Kosten etwa 2.3-mal tiefer. Der Betreiber bestätigt den Wert."

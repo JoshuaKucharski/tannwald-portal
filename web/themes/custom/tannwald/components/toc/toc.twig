@@ -1,0 +1,14 @@
+{#
+/**
+ * @file
+ * SDC tannwald:toc — Navigation mit Scrollspy (data-toc, Alpine „toc“ in src/modules/toc.js).
+ */
+#}
+<nav{{ attributes.addClass('toc') }} aria-label="{{ heading|default('Contents'|t) }}" x-data="toc" data-toc>
+  <p class="toc-heading">{{ heading|default('Contents'|t) }}</p>
+  <ol class="toc-list">
+    {% for entry in entries %}
+      <li class="toc-item toc-item--{{ entry.level }}"><a href="#{{ entry.anchor }}" class="toc-link" :class="{ 'is-active': active === '{{ entry.anchor }}' }" :aria-current="active === '{{ entry.anchor }}' ? 'true' : null">{{ entry.text }}</a></li>
+    {% endfor %}
+  </ol>
+</nav>

@@ -1,0 +1,7 @@
+tannwald_qwen.settings_form:
+  path: '/admin/config/ai/providers/dashscope'
+  defaults:
+    _form: '\Drupal\tannwald_qwen\Form\DashScopeConfigForm'
+    _title: 'DashScope (Qwen)'
+  requirements:
+    _permission: 'administer ai providers'

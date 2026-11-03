@@ -5,13 +5,16 @@ dependencies:
   config:
     - field.field.node.bulletin.body
     - field.field.node.bulletin.field_bestaetigung_pflicht
+    - field.field.node.bulletin.field_bild
     - field.field.node.bulletin.field_bulletin_art
     - field.field.node.bulletin.field_maschinentyp
     - field.field.node.bulletin.field_seriennummern
+    - image.style.tw_thumb_320
     - node.type.bulletin
     - workflows.workflow.redaktion
   module:
     - content_moderation
+    - image
     - path
     - text
 id: node.bulletin.default
@@ -41,6 +44,14 @@ content:
     region: content
     settings:
       display_label: true
+    third_party_settings: {  }
+  field_bild:
+    type: image_image
+    weight: 50
+    region: content
+    settings:
+      progress_indicator: throbber
+      preview_image_style: tw_thumb_320
     third_party_settings: {  }
   field_bulletin_art:
     type: options_select

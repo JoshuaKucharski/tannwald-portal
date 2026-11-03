@@ -1,0 +1,152 @@
+{#
+/**
+ * @file
+ * Suche (1.3, Wireframe 02, Leitplanken v2): Seitenkopf, Suchfeld mit Live-Resultaten und Modus-Reitern
+ * „Hybrid“ / „Nur Volltext“, Facetten als ruhige Seitenleiste (lg+) bzw. Sheet „Filter (n)“ (darunter),
+ * Trefferzeile mit Sortierung als Chip-Paar, Trefferkarten mit Thumb, Leer-Zustände mit Beispielen,
+ * Assistent als Panel (xl+) bzw. Sheet. Überschreibt das Fallback-Template von tannwald_assistant.
+ *
+ * Variablen aus 4.2/6.1 (query, modus, aktuell, filters, hits, facets, total, dauer_ms, pager, live_url, sort,
+ * sort_urls) und aus tannwald_preprocess_tannwald_search_page() (includes/search.inc): form_id, modus_label,
+ * duration_text, active_filters, facet_groups[] {name, label, param, items, reset_url}, reset_all_url,
+ * maschine_nid, examples[] {label, url}, questions[], has_query, search_url, hit_images[nid], chat, chat_cache.
+ */
+#}
+{{ chat_cache }}
+<div class="tannwald-search search-page" data-search-page x-data="searchFilters({ active: {{ active_filters }}, label: {{ 'Filter'|t|json_encode }}, labelActive: {{ 'Filter (@count)'|t({'@count': '@count'})|json_encode }} })" @keydown.window="onSheetKeydown($event)">
+  <header class="page-head">
+    <div>
+      <h1 class="page-title">{{ 'Search your documents'|t }}</h1>
+      <p class="page-meta">{{ 'Only documents you are allowed to see. Hybrid also finds hits by meaning.'|t }}</p>
+    </div>
+  </header>
+
+  <form id="{{ form_id }}" action="{{ search_url }}" method="get" role="search" class="search-form">
+    <label for="tannwald-search-q" class="visually-hidden">{{ 'Search term'|t }}</label>
+    <div class="search-form-row">
+      {{ include('tannwald:search-live', {
+        input_id: 'tannwald-search-q',
+        live_url: live_url,
+        modus_input: 'modus',
+        query: query,
+        maschine_nid: maschine_nid,
+        placeholder: 'e.g. E-4711 or cleaning the sealing station'|t,
+        attributes: create_attribute({'class': ['search-live']}),
+      }, with_context = false) }}
+      <button type="submit" class="btn btn-primary">{{ 'Search'|t({}, {'context': 'tannwald button'}) }}</button>
+    </div>
+    <div role="radiogroup" aria-label="{{ 'Search mode'|t }}" class="search-modes">
+      <label class="search-mode">
+        <input type="radio" name="modus" value="hybrid" class="visually-hidden"{{ modus != 'volltext' ? ' checked' }} @change="$el.form.requestSubmit()">
+        <span>{{ 'Hybrid'|t }}</span>
+      </label>
+      <label class="search-mode">
+        <input type="radio" name="modus" value="volltext" class="visually-hidden"{{ modus == 'volltext' ? ' checked' }} @change="$el.form.requestSubmit()">
+        <span>{{ 'Full text only'|t }}</span>
+      </label>
+    </div>
+    {% if maschine_nid %}<input type="hidden" name="maschine_nid" value="{{ maschine_nid }}">{% endif %}
+    {% if sort == 'datum' %}<input type="hidden" name="sort" value="datum">{% endif %}
+  </form>
+
+  <div class="search-layout">
+    <div class="search-scrim" x-show="open" x-cloak @click="closeSheet()" aria-hidden="true"></div>
+    <aside id="search-facets" class="search-facets" :class="{ 'is-open': open }" x-ref="sheet" tabindex="-1" aria-label="{{ 'Filter'|t }}" :role="open && sheetActive() ? 'dialog' : null" :aria-modal="open && sheetActive() ? 'true' : null">
+      <div class="sheet-handle" aria-hidden="true"></div>
+      <div class="search-facets-head">
+        <span class="font-medium" x-text="label()">{{ active_filters ? 'Filter (@count)'|t({'@count': active_filters}) : 'Filter'|t }}</span>
+        {% if active_filters %}
+          <a href="{{ reset_all_url }}" class="btn-text ml-auto text-sm" data-reset-all>{{ 'Reset all'|t }}</a>
+        {% endif %}
+        <button type="button" class="btn btn-secondary btn-icon lg:hidden{{ active_filters ? '' : ' ml-auto' }}" aria-label="{{ 'Close'|t }}" @click="closeSheet()">
+          {{ include('tannwald:icon', {name: 'close', size: 20}, with_context = false) }}
+        </button>
+      </div>
+      <div class="search-facets-body">
+        <label class="facet-row">
+          <input type="checkbox" name="aktuell" value="1" form="{{ form_id }}"{{ aktuell ? ' checked' }} @change="$el.form.requestSubmit()">
+          <span class="min-w-0 flex-1">{{ 'Current versions only'|t }}</span>
+        </label>
+        {% for group in facet_groups %}
+          {{ include('tannwald:facet-group', group|merge({form_id: form_id}), with_context = false) }}
+        {% endfor %}
+      </div>
+      <div class="search-facets-foot">
+        <button type="button" class="btn btn-secondary flex-1" @click="closeSheet()">{{ 'Show hits'|t }}</button>
+      </div>
+    </aside>
+
+    <section aria-label="{{ 'Search results'|t }}" class="search-results">
+      {% if has_query %}
+        <div class="search-results-head">
+          <p class="m-0 text-sm text-muted" data-search-summary>
+            <strong class="text-ink">{{ total == 1 ? '1 hit'|t : '@total hits'|t({'@total': total}) }}</strong>
+            {{ 'in @seconds s'|t({'@seconds': duration_text}) }} · {{ 'Mode @modus'|t({'@modus': modus_label}) }}
+          </p>
+          <div class="search-tools">
+            <button type="button" class="btn btn-secondary lg:hidden" @click="openSheet()" aria-controls="search-facets" :aria-expanded="open ? 'true' : 'false'">
+              {{ include('tannwald:icon', {name: 'filter', size: 20}, with_context = false) }}
+              <span x-text="label()">{{ active_filters ? 'Filter (@count)'|t({'@count': active_filters}) : 'Filter'|t }}</span>
+            </button>
+            {# 6.1 (E): Sortierung Relevanz/Datum (Wireframe 02), Links aus dem Controller; 1.3: Chip-Paar. #}
+            {% if sort_urls %}
+              <nav class="search-sort" aria-label="{{ 'Sort by'|t }}" data-search-sort>
+                <span class="text-sm text-muted">{{ 'Sort by'|t }}</span>
+                <a href="{{ sort_urls.relevanz }}" class="chip{{ sort == 'relevanz' ? ' is-selected' : '' }}"{{ sort == 'relevanz' ? ' aria-current="true"' }}>{{ 'Relevance'|t }}</a>
+                <a href="{{ sort_urls.datum }}" class="chip{{ sort == 'datum' ? ' is-selected' : '' }}"{{ sort == 'datum' ? ' aria-current="true"' }}>{{ 'Date'|t }}</a>
+              </nav>
+            {% endif %}
+          </div>
+        </div>
+        {% if hits %}
+          <ol class="tannwald-search__hits search-hits">
+            {% for hit in hits %}
+              {% embed 'tannwald:search-hit' with {
+                nid: hit.nid, titel: hit.titel, heading_path: hit.heading_path, langcode: hit.langcode,
+                dokumenttyp: hit.dokumenttyp, maschinentypen: hit.maschinentypen, version: hit.version,
+                freigegeben_am: hit.freigegeben_am, url_kapitel: hit.url_kapitel, url_dokument: hit.url_dokument,
+                url_maschine: hit.url_maschine, maschine_titel: hit.maschine_titel, matched_by: hit.matched_by,
+                bulletin_bestaetigt_am: hit.bulletin_bestaetigt_am, attributes: create_attribute(),
+                image: hit_images[hit.nid]|default(null),
+              } only %}
+                {% block snippet %}{{ hit.snippet_html }}{% endblock %}
+                {% block image %}{% if image %}{{ image }}{% endif %}{% endblock %}
+              {% endembed %}
+            {% endfor %}
+          </ol>
+        {% else %}
+          <div class="empty-state" data-search-empty>
+            <p class="empty-state-title">{{ 'No hits for “@query”.'|t({'@query': query}) }}</p>
+            <p class="empty-state-text">{{ 'Try another spelling, switch to Hybrid, or ask the assistant.'|t }}</p>
+            <div class="search-examples" data-search-questions>
+              {% for question in questions %}
+                <button type="button" class="chip" @click="$dispatch('tannwald:ask', { frage: {{ question|json_encode }} })">{{ question }}</button>
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+      {% else %}
+        <div class="empty-state" data-search-hint>
+          <p class="empty-state-title">{{ 'Enter a search term.'|t }}</p>
+          <p class="empty-state-text">{{ 'Examples: a fault code, a part, an activity.'|t }}</p>
+          <div class="search-examples" data-search-examples>
+            {% for example in examples %}<a href="{{ example.url }}" class="chip">{{ example.label }}</a>{% endfor %}
+          </div>
+          {# Nachtrag 6 (tw2-11): ein Satz mit Button, der den globalen Launcher öffnet (Ereignis tannwald:chat-open). #}
+          <p class="empty-state-text mt-2" x-data>{{ 'Or ask the assistant:'|t }} <button type="button" class="btn-text" @click="$dispatch('tannwald:chat-open')">{{ 'Open the assistant'|t }}</button></p>
+        </div>
+      {% endif %}
+
+      {% if has_query and hits %}
+        {{ pager }}
+        {# 5.3: chat-bridge — nach den Treffern: Frage an den Assistenten mit dem Suchbegriff. #}
+        <div class="flex flex-wrap items-center gap-4 rounded-card border border-dashed border-line px-4 py-4 md:px-6" data-chat-bridge data-question="{{ query }}" x-data>
+          <span class="flex-1 basis-80 text-sm text-muted">{{ 'Prefer an answer instead of a list of hits? The assistant summarises the matching chapters and cites them.'|t }}</span>
+          <button type="button" class="btn btn-secondary" @click="$dispatch('tannwald:ask', { frage: $el.closest('[data-chat-bridge]').dataset.question })">{{ 'Ask the assistant'|t }}</button>
+        </div>
+      {% endif %}
+    </section>
+
+    {# Nachtrag 6 (tw2-11): keine eingebettete Assistenten-Spalte mehr — der globale Launcher übernimmt. #}
+  </div>
+</div>

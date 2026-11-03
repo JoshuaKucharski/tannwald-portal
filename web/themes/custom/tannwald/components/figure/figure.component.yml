@@ -1,0 +1,37 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Figure
+status: stable
+description: 'Bildrahmen mit festem Seitenverhältnis (3:2 Karten und Detail, 16:9 Hero; Leitplanken v2 §5). Slot image nimmt das Render-Array aus tannwald_image() (C, includes/images.inc); leer bleibt die Platzhalter-Fläche mit Bildmarke.'
+props:
+  type: object
+  properties:
+    ratio:
+      type: string
+      title: Ratio
+      enum: [card, hero, square]
+      default: card
+      description: 'card 3:2, hero 16:9, square 1:1.'
+    caption:
+      type: [string, 'null']
+      title: Caption
+      description: 'Bildunterschrift unter dem Rahmen (Meta, 13 px), leer: keine.'
+    placeholder_label:
+      type: [string, 'null']
+      title: Placeholder label
+      description: 'Zugänglicher Name der Platzhalter-Fläche, z. B. „Kein Bild vorhanden“.'
+    image_markup:
+      type: [string, 'null']
+      title: Image markup
+      description: 'Bereits gerendertes Bild-HTML (aus einem anderen SDC, das den Slot nicht per embed füllen kann — Twig-Embeds in SDC-Templates werden als das äussere SDC validiert); leer: Slot image.'
+    bleed:
+      type: boolean
+      title: Bleed
+      default: false
+      description: 'Ohne Radius (randabfallend, z. B. im Markenpanel).'
+    attributes:
+      type: Drupal\Core\Template\Attribute
+      title: Attributes
+slots:
+  image:
+    title: Image
+    description: 'Render-Array oder <img> mit srcset; leer → Platzhalter.'

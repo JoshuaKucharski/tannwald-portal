@@ -1,0 +1,44 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: 'Machine card'
+status: stable
+description: 'Karte der Liste „Meine Maschinen“ (1.2): Typbild 3:2, Seriennummer als Titel, Typ und Standort als Meta, stille Zeile mit Dokumenten und Bulletins. Slot image nimmt tannwald_image().'
+props:
+  type: object
+  required:
+    - serial
+    - url
+  properties:
+    serial:
+      type: string
+      title: Serial
+    url:
+      type: string
+      title: URL
+    type_name:
+      type: [string, integer, 'null']
+      title: Type name
+    location:
+      type: [string, integer, 'null']
+      title: Location
+    year:
+      type: [string, integer, 'null']
+      title: Year built
+    documents_current:
+      type: integer
+      title: Current documents
+      default: 0
+    documents_new:
+      type: integer
+      title: New versions
+      default: 0
+    bulletins_open:
+      type: integer
+      title: Open bulletins
+      default: 0
+    attributes:
+      type: Drupal\Core\Template\Attribute
+      title: Attributes
+slots:
+  image:
+    title: Image
+    description: 'Render-Array aus tannwald_image($machine, "tw_card_800", {fallback: Typ-Term}).'

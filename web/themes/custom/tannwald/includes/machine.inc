@@ -63,6 +63,9 @@ function _tannwald_machine_data(NodeInterface $machine, AccountInterface $accoun
     }
   }
 
+  $typeTerm = $machine->hasField('field_maschinentyp') ? $machine->get('field_maschinentyp')->entity : NULL;
+  $typeTerm = $typeTerm instanceof TermInterface ? $typeTerm : NULL;
+  $hasOwnImage = $machine->hasField('field_bild') && !$machine->get('field_bild')->isEmpty();
   $documents = _tannwald_machine_documents($machine, $typeIds, $account, $langcode);
   $bulletins = _tannwald_machine_bulletins($machine, $typeIds, $account);
 
@@ -83,6 +86,10 @@ function _tannwald_machine_data(NodeInterface $machine, AccountInterface $accoun
       'year' => $machine->hasField('field_baujahr') ? $machine->get('field_baujahr')->value : NULL,
       'contract_label' => _tannwald_list_label($machine, 'field_vertrag'),
       'contract_until' => $machine->hasField('field_vertrag_bis') ? _tannwald_date($machine->get('field_vertrag_bis')->value) : NULL,
+      // 1.2: Seriennummernbild, sonst Typbild, sonst Platzhalter (Kette
+      // Node → Typ → Platzhalter im Helfer von C, Option fallback).
+      'image' => _tannwald_entity_image($machine, 'tw_card_800', $typeTerm, ['loading' => 'eager']),
+      'has_own_image' => $hasOwnImage,
     ],
     'documents' => $documents['rows'],
     'documents_current' => $documents['current'],
@@ -163,10 +170,18 @@ function _tannwald_machine_documents(NodeInterface $machine, array $typeIds, Acc
     $versions = _tannwald_document_versions($node, $langcode);
     $isNew = $versions['older'] !== [] && $versions['current_is_latest'];
     $new += $isNew ? 1 : 0;
-    $rows[] = _tannwald_document_row($translation, $langcode, TRUE, $isNew);
+    $typeTerm = $node->hasField('field_dokumenttyp') ? $node->get('field_dokumenttyp')->entity : NULL;
+    $typeTerm = $typeTerm instanceof TermInterface ? $typeTerm : NULL;
+    $extra = [
+      'type_label' => $typeTerm ? (string) $typeTerm->label() : '',
+      'type_slug' => $typeTerm && $typeTerm->hasField('field_slug') ? (string) $typeTerm->get('field_slug')->value : '',
+      // 1.2: Thumb 320 — Dokumentbild, sonst Titelbild des Dokumenttyps.
+      'image' => _tannwald_entity_image($node, 'tw_thumb_320', $typeTerm),
+    ];
+    $rows[] = _tannwald_document_row($translation, $langcode, TRUE, $isNew) + $extra;
     foreach ($versions['older'] as $revision) {
       $older++;
-      $rows[] = _tannwald_document_row($revision, $langcode, FALSE, FALSE);
+      $rows[] = _tannwald_document_row($revision, $langcode, FALSE, FALSE) + $extra + ['image' => []];
     }
   }
 
@@ -362,14 +377,20 @@ function _tannwald_machine_cards(array &$variables): void {
   $account = \Drupal::currentUser();
   $cards = [];
   $tags = [];
-  foreach ($variables['view']->result as $row) {
+  foreach ($variables['view']->result as $index => $row) {
     $machine = $row->_entity ?? NULL;
     if (!$machine instanceof NodeInterface) {
       continue;
     }
     $data = _tannwald_machine_data($machine, $account);
     $tags = array_merge($tags, $data['cache_bubble']['#cache']['tags']);
+    $typeTerm = $machine->hasField('field_maschinentyp') ? $machine->get('field_maschinentyp')->entity : NULL;
+    $typeTerm = $typeTerm instanceof TermInterface ? $typeTerm : NULL;
     $cards[] = [
+      // 1.2: Bild der Karte (Maschine, sonst Typ), erste Karte eager.
+      'image' => _tannwald_entity_image($machine, 'tw_card_800', $typeTerm, [
+        'loading' => $index === 0 ? 'eager' : 'lazy',
+      ]),
       'serial' => $data['machine']['serial'],
       'url' => $machine->toUrl('canonical', ['language' => \Drupal::languageManager()->getCurrentLanguage()])->toString(),
       'type_name' => $data['machine']['type_name'],
@@ -385,4 +406,20 @@ function _tannwald_machine_cards(array &$variables): void {
   }
   $variables['cards'] = $cards;
   $variables['cache_bubble'] = _tannwald_cache_bubble(['user', 'user.node_grants:view', 'languages:language_interface'], $tags);
+}
+
+/**
+ * Bild einer Entity mit Fallback-Kette Node → Typ-Term → Platzhalter (1.2).
+ *
+ * Ruft C's tannwald_image() (includes/images.inc) mit der Option fallback;
+ * ohne Helfer (z. B. Kernel-Test ohne Theme) ein leeres Render-Array.
+ */
+function _tannwald_entity_image(NodeInterface $node, string $style, ?TermInterface $fallback, array $options = []): array {
+  if (!function_exists('tannwald_image')) {
+    return [];
+  }
+  if ($fallback !== NULL) {
+    $options['fallback'] = $fallback;
+  }
+  return tannwald_image($node, $style, $options);
 }

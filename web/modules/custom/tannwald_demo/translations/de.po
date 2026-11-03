@@ -50,8 +50,8 @@ msgstr "Änderungen: @changes. Fertig in @seconds s."
 msgid "@failed migration rows failed; see the messages above."
 msgstr "@failed Migrationszeilen gescheitert; siehe Meldungen oben."
 
-msgid "Demo data only in DDEV (IS_DDEV_PROJECT) or CI (CI); nothing changed."
-msgstr "Demo-Daten nur in DDEV (IS_DDEV_PROJECT) oder CI (CI); nichts geändert."
+msgid "Demo data only in DDEV (IS_DDEV_PROJECT), CI (CI) or on the demo server (TANNWALD_DEMO=1); nothing changed."
+msgstr "Demo-Daten nur in DDEV (IS_DDEV_PROJECT), CI (CI) oder auf dem Demo-Server (TANNWALD_DEMO=1); nichts geändert."
 
 msgid "Migration"
 msgstr "Migration"
@@ -115,3 +115,13 @@ msgstr "Konto admin: Rolle portal_admin und Mail admin@tannwald.example gesetzt.
 
 msgid "Account admin: unchanged."
 msgstr "Konto admin: unverändert."
+
+msgid "Images: @files assigned (@targets targets), @assets theme asset."
+msgstr "Bilder: @files zugeordnet (@targets Ziele), @assets Theme-Asset."
+
+msgid "Image without target: @missing"
+msgstr "Bild ohne Ziel: @missing"
+
+# tw2-12: Sperre des Nutzerformulars für Demo-Konten
+msgid "Demo account: the e-mail address and the password (demo) are fixed and cannot be changed here."
+msgstr "Demo-Konto: E-Mail-Adresse und Passwort (demo) sind fest und lassen sich hier nicht ändern."

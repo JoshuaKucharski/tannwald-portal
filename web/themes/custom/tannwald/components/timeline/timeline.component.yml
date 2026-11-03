@@ -1,0 +1,29 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Timeline
+status: stable
+description: 'Änderungshistorie als Zeitleiste (1.2): je Version Datum TT.MM.JJJJ, Versionsnummer, Änderungsvermerk, Link auf die Revision; aktuelle Version markiert.'
+props:
+  type: object
+  required:
+    - entries
+  properties:
+    entries:
+      type: array
+      title: Entries
+      description: 'Liste {version, date, note, url, current}, aktuelle zuerst.'
+      items:
+        type: object
+        properties:
+          version:
+            type: [string, 'null']
+          date:
+            type: [string, 'null']
+          note:
+            type: [string, 'null']
+          url:
+            type: [string, 'null']
+          current:
+            type: boolean
+    attributes:
+      type: Drupal\Core\Template\Attribute
+      title: Attributes

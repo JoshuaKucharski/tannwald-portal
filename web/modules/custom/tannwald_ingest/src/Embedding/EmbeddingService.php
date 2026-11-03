@@ -8,6 +8,7 @@ use Drupal\ai\OperationType\Embeddings\EmbeddingsCollectionInput;
 use Drupal\ai\OperationType\Embeddings\EmbeddingsCollectionOutput;
 use Drupal\Component\Plugin\PluginManagerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\tannwald_assistant\Provider\ProviderResolver;
 use Drupal\tannwald_ingest\Store\VectorPack;
 use Drupal\tannwald_ingest\Usage\UsageRecorder;
 
@@ -38,11 +39,15 @@ class EmbeddingService {
    *   Konfiguration (ai.settings, tannwald_assistant.settings).
    * @param \Drupal\tannwald_ingest\Usage\UsageRecorder $usage
    *   Schreibt tannwald_usage.
+   * @param \Drupal\tannwald_assistant\Provider\ProviderResolver|null $providerResolver
+   *   3.1: Provider und Modell aus provider_embeddings/providers.<id>; NULL
+   *   ohne tannwald_assistant (dann ai.settings wie bisher).
    */
   public function __construct(
     protected PluginManagerInterface $providerManager,
     protected ConfigFactoryInterface $configFactory,
     protected UsageRecorder $usage,
+    protected ?ProviderResolver $providerResolver = NULL,
   ) {}
 
   /**
@@ -60,10 +65,17 @@ class EmbeddingService {
     if ($texts === []) {
       return [];
     }
-    [$providerId, $model] = $this->providerAndModel();
-    // ProviderProxy reicht embeddingsCollection() per __call an das Plugin.
-    $provider = $this->providerManager->createInstance($providerId);
-    $model = $this->rawModelName($provider, $model);
+    if ($this->providerResolver !== NULL) {
+      // Rohname, frische Instanz; DashScope bekommt dimensions mit.
+      $resolved = $this->providerResolver->embeddings();
+      [$providerId, $model, $provider] = [$resolved->providerId, $resolved->model, $resolved->provider];
+    }
+    else {
+      [$providerId, $model] = $this->providerAndModel();
+      // ProviderProxy reicht embeddingsCollection() per __call an das Plugin.
+      $provider = $this->providerManager->createInstance($providerId);
+      $model = $this->rawModelName($provider, $model);
+    }
     $keys = array_keys($texts);
     $vectors = [];
     foreach (array_chunk(array_values($texts), self::BATCH_SIZE) as $batch) {
@@ -84,7 +96,7 @@ class EmbeddingService {
       }
       $raw = $output->getRawOutput();
       $raw = is_array($raw) ? $raw : [];
-      $tokens = $raw['usage']['prompt_tokens'] ?? $raw['prompt_eval_count'] ?? NULL;
+      $tokens = $raw['usage']['prompt_tokens'] ?? $raw['usage']['total_tokens'] ?? $raw['prompt_eval_count'] ?? NULL;
       if (!is_numeric($tokens)) {
         // Schätzung, falls der Provider keine Tokens meldet (4 Zeichen/Token).
         $tokens = array_sum(array_map(static fn(string $t): int => (int) ceil(mb_strlen($t) / 4), $batch));
