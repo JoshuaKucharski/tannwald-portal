@@ -9,7 +9,7 @@
 #   bash tannwald-run.sh --deploy --init      legt ~/.config/tannwald/deploy.env an (wenn sie fehlt)
 # Ablauf --deploy: (1) Vorbedingungen, SSH lesend (rsync auf dem Server?) · (2) Stand: origin/dev, Abbruch bei
 # ungepushten Commits auf dev, Export per git archive (der Arbeitsbaum zählt nicht) · (3) andere Sites der Maschine
-# vorher (HTTP-Code) · (4) rsync -rlptz --delete mit deploy/rsync-exclude.txt · (5) DNS beider Namen (dig) → bootstrap.sh
+# vorher (HTTP-Code) · (4) rsync -rlptz --delete --checksum mit deploy/rsync-exclude.txt · (5) DNS beider Namen (dig) → bootstrap.sh
 # mit --tls nur, wenn beide auf den Server zeigen · (6) deploy.sh · (7) Server-Stand (deploy.sh --status: SITE_AUTH,
 # „Chunks eingebettet x/575“), dann Proben vom Mac (/health, robots, Login ohne Passwort 401 bei SITE_AUTH=on bzw. 200
 # mit „myTannwald“ bei off, TLS gültig mit Aussteller, mail. 401) · (8) andere Sites nachher.
@@ -134,7 +134,7 @@ if [ "$DRY" = 1 ]; then
     say "   1 ssh $SSH_OPTS $DEPLOY_SSH 'command -v rsync'   (lesend)"
     say "   2 git fetch origin $BRANCH; Abbruch bei ungepushten Commits; git archive origin/$BRANCH → Export"
     say "   3 curl -s -o /dev/null -w %{http_code} https://<site>/ für: $OTHER_SITES"
-    say "   4 rsync -rlptz --delete --exclude-from=deploy/rsync-exclude.txt -e 'ssh …' <export>/ $DEPLOY_SSH:$DEPLOY_PATH/"
+    say "   4 rsync -rlptz --delete --checksum --exclude-from=deploy/rsync-exclude.txt -e 'ssh …' <export>/ $DEPLOY_SSH:$DEPLOY_PATH/"
     say "   5 dig +short A $DOMAIN mail.$DOMAIN @1.1.1.1 → beide = $ip_server? dann: ssh … bash $DEPLOY_PATH/deploy/bootstrap.sh --tls"
     say "   6 ssh … bash $DEPLOY_PATH/deploy/deploy.sh"
     say "   7 ssh … deploy.sh --status (SITE_AUTH, Zählungen); curl --resolve …:$ip_server https://$DOMAIN/health · /robots.txt · /user/login (401 bei SITE_AUTH=on, 200 bei off) · https://mail.$DOMAIN/ (401)"
@@ -191,7 +191,7 @@ step "Andere Sites der Maschine (vorher)"
 BEFORE=$(others); say "   $BEFORE"
 
 step "rsync nach $DEPLOY_SSH:$DEPLOY_PATH (--delete, Excludes aus deploy/rsync-exclude.txt)"
-rsync -rlptz --delete --stats --exclude-from="$EXPORT/deploy/rsync-exclude.txt" -e "ssh $SSH_OPTS" \
+rsync -rlptz --delete --checksum --stats --exclude-from="$EXPORT/deploy/rsync-exclude.txt" -e "ssh $SSH_OPTS" \
     "$EXPORT/" "$DEPLOY_SSH:$DEPLOY_PATH/" > "$TMPD/rsync.log" 2>&1 || { tail -n 5 "$TMPD/rsync.log"; die "rsync rot."; }
 ok "übertragen: $(grep -iE 'files transferred|Number of (regular )?files transferred' "$TMPD/rsync.log" | head -n 1 | sed 's/^ *//')"
 
