@@ -44,7 +44,14 @@ Alpine.data('chatPanel', (config) => ({
   disabled() { return this.$store.chat.busy || !!this.$store.chat.limitNotice; },
   toggle() { this.open ? this.closeSheet() : this.openSheet(); },
   close() { this.closeSheet(); this.$store.chat.abort(); },
-  onOpened() { this.scrollDown(); if (this.mode === 'sheet') window.sessionStorage.setItem(STATE_KEY, 'open'); },
+  // Nachtrag 4 (a): beim Öffnen per Klick sofort ins Fragefeld (nicht beim automatischen Öffnen, das openSheet() nicht
+  // durchläuft); ist das Feld gesperrt (Limit), bleibt der Fokus auf dem Schliessen-Button aus dem Mixin.
+  onOpened() {
+    this.scrollDown();
+    if (this.mode === 'sheet') window.sessionStorage.setItem(STATE_KEY, 'open');
+    const input = this.$refs.input;
+    if (input && !input.disabled) input.focus({ preventScroll: true });
+  },
   onClosed() { if (this.mode === 'sheet') window.sessionStorage.setItem(STATE_KEY, 'closed'); },
   // Brücke von /suche (5.2): $dispatch('tannwald:ask', {frage}) öffnet das Sheet (falls nötig) und fragt.
   onAsk(detail) {

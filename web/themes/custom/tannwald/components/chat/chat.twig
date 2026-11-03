@@ -60,7 +60,6 @@
   <div class="sheet-scrim" x-show="open && !inline() && sheetActive()" x-cloak @click="close()" aria-hidden="true"></div>
 
   <section id="{{ input_id }}-panel" class="chat-panel" :class="{ 'is-open': open }" x-ref="sheet" tabindex="-1" :role="open && !inline() ? 'dialog' : 'region'" :aria-modal="open && !inline() && sheetActive() ? 'true' : null" aria-label="{{ 'Assistant'|t }}" x-cloak data-chat-panel>
-    <div class="chat-handle" aria-hidden="true"></div>
     <div class="chat-head">
       <div class="flex min-w-0 flex-col gap-0.5">
         <span class="font-semibold">{{ 'Assistant'|t }}</span>

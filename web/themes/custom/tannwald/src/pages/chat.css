@@ -21,9 +21,7 @@
   /* Modus sheet ab md (Nachtrag 3): Panel 400 × 620 über dem Launcher verankert, Radius 20, nicht modal;
      Einblenden 180 ms (Deckkraft, 12 px von unten), unter prefers-reduced-motion 0 s über die globale Regel. */
   .chat--sheet .chat-panel.is-open { @apply md:bottom-[92px] md:right-6 md:h-[620px] md:max-h-[calc(100dvh-7.5rem)] md:w-[400px] md:rounded-[20px]; transition: opacity var(--duration-base) var(--ease-out-soft), transform var(--duration-base) var(--ease-out-soft); @starting-style { opacity: 0; transform: translateY(12px); } }
-  .chat-handle { @apply mx-auto mt-2 h-1 w-10 shrink-0 rounded-pill bg-line; }
-  .chat--panel .chat-handle { @apply xl:hidden; }
-  .chat--embedded .chat-handle { @apply md:hidden; }
+  /* Nachtrag 4 (b): der Griff (.chat-handle) ist entfernt — er diente nicht zum Ziehen und wirkte wie eine Scrollleiste. */
   .chat-head { @apply flex items-center gap-3 border-b border-line px-4 py-3; }
   .chat--embedded .chat-head { @apply md:hidden; }
   .chat-head-close { @apply ml-auto shrink-0; }
