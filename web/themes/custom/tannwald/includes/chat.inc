@@ -44,6 +44,11 @@ function _tannwald_chat_props(?int $maschineNid, ?string $machineLabel, string $
     $limit = \Drupal::service('tannwald_assistant.limit_check');
     $limitNotice = $limit->noticeForUi();
   }
+  // Nachtrag 2 (c): seit 3.1 steht das Modell unter
+  // providers.<provider_chat>.chat_model; der alte Schlüssel chat_model bleibt
+  // als Rückfall (Anzeige „Modell: qwen-plus“ statt „—“).
+  $providerChat = (string) $settings->get('provider_chat');
+  $modelLabel = (string) ($settings->get("providers.$providerChat.chat_model") ?: $settings->get('chat_model') ?: '');
   $names = [];
   foreach (\Drupal::languageManager()->getLanguages() as $code => $language) {
     $names[$code] = _tannwald_language_name($code);
@@ -51,7 +56,7 @@ function _tannwald_chat_props(?int $maschineNid, ?string $machineLabel, string $
   return [
     'maschine_nid' => $maschineNid,
     'machine_label' => $machineLabel,
-    'model_label' => (string) ($settings->get('chat_model') ?: ''),
+    'model_label' => $modelLabel,
     'limit_notice' => $limitNotice,
     'endpoint' => Url::fromUserInput('/api/assistant')->toString(),
     'feedback_endpoint' => Url::fromUserInput('/api/assistant/feedback')->toString(),
