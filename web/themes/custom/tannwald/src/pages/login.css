@@ -23,7 +23,9 @@
   /* Nachtrag 5 (e): Passwort-Schalter als Icon-Button im Feld (Suffix absolut rechts, siehe .form-type-password .field-suffix). */
   .login-pass-toggle { @apply inline-flex h-11 w-11 items-center justify-center rounded-control bg-transparent text-muted hover:text-ink; transition: color var(--duration-fast) var(--ease-out-soft); }
   .login-pass-toggle.is-on { @apply text-accent; }
-  .demo-help { @apply absolute right-4 top-4 inline-flex h-11 w-11 items-center justify-center rounded-full bg-accent font-semibold leading-none text-white hover:bg-accent-hover active:bg-accent-active lg:right-6 lg:top-6 lg:h-12 lg:w-12; font-size: 24px; transition: background-color var(--duration-fast) var(--ease-out-soft); }
+  /* Nachtrag 5 (j): fixed wie der GitHub-Button (bleibt beim Scrollen; 24 px Rand ab md, Phone 16 px / 44 px). Der weisse 2-px-Rand hält
+     den Button auf dem blauen Phone-Kopf sichtbar und ist auf der weissen Fläche unsichtbar (Grösse bleibt 48/44 über border-box). */
+  .demo-help { @apply fixed right-4 top-4 z-30 inline-flex h-11 w-11 items-center justify-center rounded-full border-2 border-white bg-accent font-semibold leading-none text-white shadow-card hover:bg-accent-hover active:bg-accent-active md:right-6 md:top-6 lg:h-12 lg:w-12; font-size: 24px; transition: background-color var(--duration-fast) var(--ease-out-soft); }
   @media (min-width: 64rem) { .demo-help { font-size: 26px; } }
   /* Nachtrag 5 (d): GitHub-Button fixed unten rechts, immer sichtbar; Phone 16 px plus safe-area, ab md 24 px; ein Schattenlevel. */
   .demo-github { @apply fixed right-4 z-30 shadow-card md:right-6; bottom: calc(1rem + env(safe-area-inset-bottom, 0px)); }
