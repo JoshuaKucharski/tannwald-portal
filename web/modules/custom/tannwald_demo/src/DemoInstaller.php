@@ -178,7 +178,7 @@ class DemoInstaller {
    * Setzt die Demo-Daten zurück und spielt sie neu ein.
    *
    * Löscht: alle lesebestaetigung und support_anfrage, alle Nodes der
-   * Bundles RESET_BUNDLES (auch von Hand angelegte), die sechs Demo-Konten
+   * Bundles RESET_BUNDLES (auch von Hand angelegte), die sieben Demo-Konten
    * und die Firmen-Terme der Migration (Rollback, Map-Tabellen leer). Bleibt:
    * Terme maschinentyp/dokumenttyp, tannwald_audit, tannwald_assistant_log,
    * tannwald_usage, alle anderen Nutzer (admin).

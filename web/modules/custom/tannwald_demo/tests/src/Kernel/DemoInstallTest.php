@@ -57,7 +57,7 @@ class DemoInstallTest extends KernelTestBase {
   protected const EXPECTED = [
     'firmen' => 7,
     'maschinen' => 10,
-    'users' => 6,
+    'users' => 7,
     'dokumente' => 20,
     'revisionen' => 22,
     'revision_translations' => 31,
@@ -351,7 +351,12 @@ class DemoInstallTest extends KernelTestBase {
     $this->assertSame('en', $this->account('kunde-b')->getPreferredLangcode());
     $this->assertTrue($this->account('techniker')->get('field_firma')->isEmpty());
     $this->assertSame((int) $kundeA->id(), (int) $this->container->get('user.auth')->authenticateAccount($kundeA, 'demo') ? (int) $kundeA->id() : 0);
-    $this->assertCount(7, $userStorage->loadMultiple(), 'Six demo accounts and admin.');
+    // tw2-12: siebtes Konto portal-admin (Rolle portal_admin, ohne Firma).
+    $portalAdmin = $this->account('portal-admin');
+    $this->assertSame(['authenticated', 'portal_admin'], $portalAdmin->getRoles());
+    $this->assertTrue($portalAdmin->get('field_firma')->isEmpty());
+    $this->assertSame('Jonas Widmer', $portalAdmin->getDisplayName());
+    $this->assertCount(8, $userStorage->loadMultiple(), 'Seven demo accounts and admin.');
     $territory = array_column($this->container->get('entity_type.manager')->getStorage('taxonomy_term')
       ->load($lookup->termId('firma', '200031'))->get('field_haendler_gebiet')->getValue(), 'value');
     $this->assertSame(['BR', 'MX', 'AR', 'CL'], $territory);

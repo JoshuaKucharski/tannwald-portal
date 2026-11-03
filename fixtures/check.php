@@ -43,7 +43,7 @@ const LANGCODES = ['de', 'en', 'fr'];
 const CLASS_2_COUNTRIES = ['CH', 'DE', 'AT', 'FR', 'IT', 'NL', 'US', 'JP'];
 
 /** Die sechs Demo-Konten (RunBook 1.1). */
-const DEMO_USERS = ['kunde-a', 'kunde-b', 'haendler', 'techniker', 'redaktion', 'compliance'];
+const DEMO_USERS = ['kunde-a', 'kunde-b', 'haendler', 'techniker', 'redaktion', 'compliance', 'portal-admin'];
 
 /** Rollen der Demo-Konten. */
 const ROLES = ['kunde', 'haendler', 'techniker', 'redaktion', 'compliance', 'portal_admin'];
@@ -486,7 +486,7 @@ foreach ($users as $i => $u) {
 sort($userNames);
 $expectedUsers = DEMO_USERS;
 sort($expectedUsers);
-$report->check($userNames === $expectedUsers, 'Nutzer: genau die sechs Demo-Konten', 'Nutzer sind nicht genau ' . implode(', ', DEMO_USERS), $rel($usersPath));
+$report->check($userNames === $expectedUsers, 'Nutzer: genau die sieben Demo-Konten', 'Nutzer sind nicht genau ' . implode(', ', DEMO_USERS), $rel($usersPath));
 $customerB = $usersByName['kunde-b'] ?? NULL;
 $customerBCompany = $customerB !== NULL ? ($companyByNr[$customerB['firma_sap_nr'] ?? ''] ?? NULL) : NULL;
 if ($customerBCompany !== NULL) {

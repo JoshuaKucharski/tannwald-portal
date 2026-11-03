@@ -13,16 +13,23 @@ use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use Drupal\user\Entity\User;
 use Drupal\masquerade\Session\MetadataBag;
+use Drupal\tannwald_demo\DisplayNames;
 use Drupal\user\UserInterface;
 
 /**
- * Demo-Konten (Seeder 2.3) für die Wechsel-Links der Demo-Leiste.
+ * Demo-Konten (Seeder 2.3) für die Wechsel-Links der Demo-Leiste und die Chips.
+ *
+ * Quelle ist DisplayNames::ACCOUNTS des Seeders (tw2-12: sieben Konten mit
+ * portal-admin); die Liste hier gilt nur, wenn das Modul fehlt.
  *
  * @return string[]
  *   Kontonamen.
  */
 function _tannwald_demo_accounts(): array {
-  return ['kunde-a', 'kunde-b', 'haendler', 'techniker', 'redaktion', 'compliance'];
+  if (class_exists(DisplayNames::class)) {
+    return DisplayNames::names();
+  }
+  return ['kunde-a', 'kunde-b', 'haendler', 'techniker', 'redaktion', 'compliance', 'portal-admin'];
 }
 
 /**

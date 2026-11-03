@@ -26,3 +26,8 @@ services:
       - '@tannwald_demo.lookup'
       - '@logger.channel.tannwald_demo'
   Drupal\tannwald_demo\DemoInstaller: '@tannwald_demo.installer'
+
+  tannwald_demo.accounts:
+    class: Drupal\tannwald_demo\DemoAccounts
+    arguments: ['@entity_type.manager', '@tannwald_demo.lookup', '@language_manager']
+  Drupal\tannwald_demo\DemoAccounts: '@tannwald_demo.accounts'

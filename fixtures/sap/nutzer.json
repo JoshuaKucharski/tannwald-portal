@@ -43,5 +43,12 @@
     "rolle": "compliance",
     "land": "CH",
     "sprache": "de"
+  },
+  {
+    "name": "portal-admin",
+    "anzeigename": "Jonas Widmer",
+    "rolle": "portal_admin",
+    "land": "CH",
+    "sprache": "de"
   }
 ]
