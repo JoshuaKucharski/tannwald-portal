@@ -41,6 +41,9 @@ error_log $T/log/error.log;
 events { worker_connections 64; }
 http {
     include mime.types;
+    # Standard-Zugriffslog der Maschine (/var/log/nginx/access.log) nie öffnen: nginx -t öffnet es für jeden
+    # server-Block ohne eigenes access_log (Umleitung 80 → 443), und der CI-Runner darf dort nicht schreiben.
+    access_log $T/log/access.log;
     client_body_temp_path $T/nginx/tmp/body;
     fastcgi_temp_path $T/nginx/tmp/fastcgi;
     proxy_temp_path $T/nginx/tmp/proxy;
