@@ -102,6 +102,9 @@ function _tannwald_bulletin_preprocess(array &$variables, NodeInterface $bulleti
   $variables['requires_confirmation'] = $bulletin->hasField('field_bestaetigung_pflicht') && (bool) $bulletin->get('field_bestaetigung_pflicht')->value;
   $variables['toc'] = $body['toc'];
   $variables['body'] = $body['html'];
+  // Titelbild des Bulletins wie im Dokument-Zweig (tw2-11 §18: die Variable
+  // fehlte, die Seite zeigte immer den Platzhalter).
+  $variables['image'] = function_exists('tannwald_image') ? tannwald_image($bulletin, 'tw_card_800', ['loading' => 'eager']) : [];
   // Nachtrag 10 (tw2-11): betroffene Maschinen des Kontos mit Status und
   // „Gelesen bestätigen“ je Zeile (Endpunkt wie das Banner, JSON + CSRF).
   $affected = _tannwald_bulletin_affected_machines($bulletin, \Drupal::currentUser());
