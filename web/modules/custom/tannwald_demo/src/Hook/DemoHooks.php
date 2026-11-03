@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Drupal\tannwald_demo\Hook;
 
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Entity\EntityFormInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Session\AccountInterface;
@@ -67,7 +70,9 @@ final class DemoHooks {
     if ((int) $this->currentUser->id() === 1) {
       return;
     }
-    foreach (['mail', 'pass', 'current_pass'] as $key) {
+    // Nachtrag 8 (F14): auch Name, Status und Rollen der Demo-Konten sind fest
+    // (nur uid 1 darf sie ändern); Konto löschen verbietet userAccess().
+    foreach (['mail', 'pass', 'current_pass', 'name', 'status', 'roles'] as $key) {
       if (isset($form['account'][$key])) {
         $form['account'][$key]['#access'] = FALSE;
       }
@@ -77,6 +82,33 @@ final class DemoHooks {
       '#markup' => $this->t('Demo account: the e-mail address and the password (demo) are fixed and cannot be changed here.'),
       '#weight' => -20,
     ];
+  }
+
+  /**
+   * Implements hook_ENTITY_TYPE_access() for user.
+   *
+   * Nachtrag 8 (F14, tw2-12): uid 1 (admin) darf nur uid 1 selbst bearbeiten
+   * oder löschen — auch mit „administer users“ (ein Demo-Konto mit Passwort
+   * demo darf den Betreiber nie aussperren). Demo-Konten (DisplayNames) darf
+   * niemand ausser uid 1 löschen (user_cancel); forbidden() schlägt jede
+   * Erlaubnis des Zugriffs-Handlers. Alles andere bleibt neutral.
+   */
+  #[Hook('user_access')]
+  public function userAccess(EntityInterface $entity, string $operation, AccountInterface $account): AccessResultInterface {
+    if (!$entity instanceof UserInterface || !in_array($operation, ['update', 'delete'], TRUE)) {
+      return AccessResult::neutral();
+    }
+    $result = AccessResult::neutral()->cachePerUser()->addCacheableDependency($entity);
+    if ((int) $account->id() === 1) {
+      return $result;
+    }
+    if ((int) $entity->id() === 1) {
+      return AccessResult::forbidden('Only uid 1 may edit or delete uid 1.')->cachePerUser()->addCacheableDependency($entity);
+    }
+    if ($operation === 'delete' && DisplayNames::isDemoAccount((string) $entity->getAccountName())) {
+      return AccessResult::forbidden('Demo accounts cannot be cancelled.')->cachePerUser()->addCacheableDependency($entity);
+    }
+    return $result;
   }
 
   /**
