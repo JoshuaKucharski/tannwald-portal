@@ -21,9 +21,9 @@ declare(strict_types=1);
  */
 function _tannwald_color_tokens(): array {
   return [
-    'accent' => '#1F4E79',
-    'accent-hover' => '#15385A',
-    'accent-active' => '#102A44',
+    'accent' => '#1F4E8C',
+    'accent-hover' => '#163865',
+    'accent-active' => '#112B4D',
     'ink' => '#1C2024',
     'muted' => '#5B6470',
     'surface' => '#F3F4F2',
@@ -44,7 +44,7 @@ function _tannwald_color_tokens(): array {
     'danger-bg' => '#FBEAEA',
     'dualuse' => '#4A2378',
     'dualuse-bg' => '#EEE7F7',
-    'private' => '#1F4E79',
+    'private' => '#1F4E8C',
     'private-bg' => '#E8EEF5',
     'mark' => '#FFF3B0',
   ];

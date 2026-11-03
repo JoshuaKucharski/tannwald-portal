@@ -115,9 +115,9 @@
   --gutter-phone: 16px;
 
   /* Farben (Wireframe-Werte, Kontrast ≥ 4.5:1 auf ihren Flächen — Messung im Styleguide). */
-  --color-accent: #1F4E79;
-  --color-accent-hover: #15385A;
-  --color-accent-active: #102A44;
+  --color-accent: #1F4E8C;
+  --color-accent-hover: #163865;
+  --color-accent-active: #112B4D;
   --color-ink: #1C2024;
   --color-muted: #5B6470;
   --color-surface: #F3F4F2;
@@ -138,7 +138,7 @@
   --color-danger-bg: #FBEAEA;
   --color-dualuse: #4A2378;
   --color-dualuse-bg: #EEE7F7;
-  --color-private: #1F4E79;
+  --color-private: #1F4E8C;
   --color-private-bg: #E8EEF5;
   --color-mark: #FFF3B0;
 
