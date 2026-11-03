@@ -265,6 +265,18 @@
   .toast-stack { @apply pointer-events-none fixed right-4 top-4 z-50 flex w-[calc(100%-2rem)] max-w-sm flex-col gap-2; }
   .toast { @apply pointer-events-auto flex items-start gap-3 rounded-card border border-l-4 bg-panel px-4 py-3 text-base shadow-card; }
   .notice { @apply rounded-control border border-l-4 px-4 py-3 text-base; }
+  /* Meldungs-Karte (tw2-11 Nachtrag 5 (h)): eine Karte je Meldung, Rand und Fläche im Ton, Icon im Ton, Text in Tinte. */
+  .message-list { @apply mb-4 flex flex-col gap-2; }
+  .message-card { @apply flex items-start gap-3 rounded-[12px] border bg-panel px-4 py-3 text-base leading-copy text-ink; }
+  .message-card--toast { @apply pointer-events-auto shadow-card; }
+  .message-card-icon { @apply mt-0.5 shrink-0; }
+  .message-card-text { @apply min-w-0 flex-1 self-center; }
+  .message-card-text a { @apply font-medium; }
+  .message-card-close { @apply -my-2 -mr-2 inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-control text-muted hover:text-ink; transition: color var(--duration-fast) var(--ease-out-soft); }
+  .message-card--ok { @apply border-ok bg-ok-bg; } .message-card--ok .message-card-icon { @apply text-ok; }
+  .message-card--warn { @apply border-warn-line bg-warn-bg; } .message-card--warn .message-card-icon { @apply text-warn; }
+  .message-card--danger { @apply border-danger bg-danger-bg; } .message-card--danger .message-card-icon { @apply text-danger; }
+  .message-card--neutral { @apply border-line bg-panel; } .message-card--neutral .message-card-icon { @apply text-muted; }
   .toast--ok, .notice--ok { @apply border-ok bg-ok-bg text-ok; }
   .toast--warn, .notice--warn { @apply border-warn-line bg-warn-bg text-warn; }
   .toast--danger, .notice--danger { @apply border-danger bg-danger-bg text-danger; }

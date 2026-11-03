@@ -558,8 +558,11 @@ msgstr "Mis à jour"
 msgid "Usage and costs"
 msgstr "Utilisation et coûts"
 
-msgid "Username or password do not match. Please check your entry."
-msgstr "Le nom d’utilisateur ou le mot de passe est incorrect. Veuillez vérifier votre saisie."
+msgid "Username or password is incorrect."
+msgstr "Nom d’utilisateur ou mot de passe incorrect."
+
+msgid "Too many failed attempts, please try again later."
+msgstr "Trop de tentatives échouées, veuillez réessayer plus tard."
 
 msgid "Version @version"
 msgstr "Version @version"

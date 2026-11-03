@@ -1,39 +1,25 @@
 {#
 /**
  * @file
- * Statusmeldungen: als Toast oben rechts („Lesebestätigung gespeichert.“, Alpine blendet nach 8 s aus) oder inline
- * im Fluss (Anmeldeseite, Variable inline aus tannwald_preprocess_status_messages). Ohne JavaScript bleiben die
- * Meldungen sichtbar. Klassen toast / notice mit Farbwelt ok / warn / danger (Design-System v2).
+ * Statusmeldungen (tw2-11 Nachtrag 5 (h)): je Meldung eine ruhige Karte — 1-px-Rand und helle Fläche im Ton des Typs
+ * (Fehler danger, Warnung warn, Status ok), Icon 20 px links (alert-circle / warning / check), Text 15 px, Radius 12,
+ * schliessbar (×, 44 px); kein Aufzählungspunkt, keine Liste. Inline im Fluss (Anmeldeseite, Variable inline aus
+ * tannwald_preprocess_status_messages) oder als Toast oben rechts (Alpine blendet nach 8 s aus). Ohne JavaScript
+ * bleiben die Meldungen sichtbar. Phone: volle Breite.
  */
 #}
 {% if message_list %}
 {% set tone = { status: 'ok', warning: 'warn', error: 'danger' } %}
-{% if inline %}
-<div data-drupal-messages class="mb-4 flex flex-col gap-2">
+{% set icon = { status: 'check', warning: 'warning', error: 'alert-circle' } %}
+<div data-drupal-messages class="{{ inline ? 'message-list' : 'toast-stack' }}">
 {% for type, messages in message_list %}
-  <div role="{{ type == 'error' ? 'alert' : 'status' }}" aria-label="{{ status_headings[type] }}" class="notice notice--{{ tone[type]|default('neutral') }}">
-    {% if messages|length > 1 %}
-      <ul class="m-0 list-disc pl-4">{% for message in messages %}<li>{{ message }}</li>{% endfor %}</ul>
-    {% else %}
-      {{ messages|first }}
-    {% endif %}
-  </div>
-{% endfor %}
-</div>
-{% else %}
-<div data-drupal-messages class="toast-stack">
-{% for type, messages in message_list %}
-  <div x-data="toast" x-show="open" x-transition.opacity.duration.180ms role="{{ type == 'error' ? 'alert' : 'status' }}" aria-label="{{ status_headings[type] }}" class="toast toast--{{ tone[type]|default('neutral') }}">
-    <div class="flex-1">
-      {% if messages|length > 1 %}
-        <ul class="m-0 list-disc pl-4">{% for message in messages %}<li>{{ message }}</li>{% endfor %}</ul>
-      {% else %}
-        {{ messages|first }}
-      {% endif %}
+  {% for message in messages %}
+    <div x-data="{{ inline ? '{ open: true }' : 'toast' }}" x-show="open" x-transition.opacity.duration.180ms role="{{ type == 'error' ? 'alert' : 'status' }}" aria-label="{{ status_headings[type] }}" class="message-card message-card--{{ tone[type]|default('neutral') }}{{ inline ? '' : ' message-card--toast' }}">
+      {{ include('tannwald:icon', {name: icon[type]|default('info'), size: 20, attributes: create_attribute({'class': ['message-card-icon']})}, with_context = false) }}
+      <div class="message-card-text">{{ message }}</div>
+      <button type="button" class="message-card-close" aria-label="{{ 'Close message'|t }}" @click="open = false">{{ include('tannwald:icon', {name: 'close', size: 20}, with_context = false) }}</button>
     </div>
-    <button type="button" class="btn-text btn-icon -my-2 -mr-2 h-11 w-11 justify-center" aria-label="{{ 'Close message'|t }}" @click="open = false">{{ include('tannwald:icon', {name: 'close'}, with_context = false) }}</button>
-  </div>
+  {% endfor %}
 {% endfor %}
 </div>
-{% endif %}
 {% endif %}

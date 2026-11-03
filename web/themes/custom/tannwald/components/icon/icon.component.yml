@@ -10,8 +10,8 @@ props:
     name:
       type: string
       title: Name
-      enum: [download, search, arrow, check, warning, info, close, menu, chat, document, machine, bulletin, language, filter, sort, external, eye, eye-off]
-      description: 'Eines der 18 Zeichen (eye und eye-off seit tw2-11 Nachtrag 5 für den Passwort-Schalter).'
+      enum: [download, search, arrow, check, warning, info, close, menu, chat, document, machine, bulletin, language, filter, sort, external, eye, eye-off, alert-circle, logout]
+      description: 'Eines der 20 Zeichen (eye, eye-off, alert-circle seit tw2-11 Nachtrag 5: Passwort-Schalter, Meldungen; logout für die Kopfzeile, tw2-12).'
     size:
       type: integer
       title: Size

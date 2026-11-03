@@ -479,8 +479,11 @@ msgstr "Passwort anzeigen"
 msgid "Hide password"
 msgstr "Passwort verbergen"
 
-msgid "Username or password do not match. Please check your entry."
-msgstr "Benutzername oder Passwort stimmen nicht. Bitte prüfen Sie die Eingabe."
+msgid "Username or password is incorrect."
+msgstr "Benutzername oder Passwort stimmt nicht."
+
+msgid "Too many failed attempts, please try again later."
+msgstr "Zu viele Fehlversuche, bitte versuchen Sie es später erneut."
 
 # Assistent (5.3)
 

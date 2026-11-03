@@ -15,6 +15,7 @@ use Drupal\Component\Serialization\Json;
 use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Markup;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 
@@ -137,8 +138,16 @@ function _tannwald_login_error_message(array &$form, FormStateInterface $form_st
   if ($errors === [] || !isset($errors['name'])) {
     return;
   }
+  // Nachtrag 5 (h): ein Satz; die Flood-Sperre von Core („failed login
+  // attempts“, Konto oder IP) bekommt ihren eigenen Satz.
+  $error = $errors['name'];
+  $source = $error instanceof TranslatableMarkup ? $error->getUntranslatedString() : (string) $error;
   $form_state->clearErrors();
-  $form_state->setErrorByName('name', t('Username or password do not match. Please check your entry.'));
+  if (str_contains($source, 'login attempts')) {
+    $form_state->setErrorByName('name', t('Too many failed attempts, please try again later.'));
+    return;
+  }
+  $form_state->setErrorByName('name', t('Username or password is incorrect.'));
 }
 
 /**
