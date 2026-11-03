@@ -194,8 +194,7 @@ function _tannwald_native_language_names(): array {
 }
 
 /**
- * Such-Overlay der Kopfzeile (tw2-13): Daten für die SDC
- * tannwald:search-overlay.
+ * Such-Overlay der Kopfzeile (tw2-13), Daten für tannwald:search-overlay.
  *
  * Filter-Chips aus den Vokabularen dokumenttyp und maschinentyp (Labels in
  * der Oberflächensprache) und den Sprachen; Beispiele und Fragen wie auf
