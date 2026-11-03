@@ -252,8 +252,8 @@ msgstr "Connectez-vous avec un compte de démo ci-dessous, mot de passe demo"
 msgid "Try the search and the assistant"
 msgstr "Essayez la recherche et l’assistant"
 
-msgid "Understood"
-msgstr "Compris"
+msgid "Great"
+msgstr "Parfait"
 
 msgid "Show password"
 msgstr "Afficher le mot de passe"
