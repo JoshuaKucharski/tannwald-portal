@@ -8,13 +8,18 @@
  * Demo-Konten als Chips in zwei Gruppen (Split dev oder $settings['tannwald_demo_login'], Demo-Server), Klick füllt
  * Benutzername und Passwort „demo“ aus.
  *
+ * tw2-11 (Betreiber-Wunsch 2026-11-03): „?“-Button oben rechts im Formularbereich öffnet ein natives <dialog>
+ * (Demo-Hinweis „Für Helga als Demo, Felix & David“: Fokusfalle, Esc und Klick auf den Hintergrund schliessen,
+ * Fokus kehrt zum Auslöser zurück, ausdrücklich per $refs.help.focus() (Safari fokussiert Buttons beim Klick nicht; sonst landete der Fokus im Autofokus-Feld), Scroll-Lock über body.overflow-hidden); GitHub-Button unten rechts (Phone:
+ * unter dem Formular) zum Repo in neuem Tab. Beides auf allen Umgebungen sichtbar — die ganze Site ist eine Demo.
+ *
  * Variablen: site_name, demo_accounts[] {name, label} (leer ohne masquerade und ohne Schalter), directory (Theme-Pfad),
  * cache_bubble; page.content enthält Meldungen (inline) und das Formular; Reiter und Seitentitel-Block sind
  * auf Nutzerseiten ausgeblendet (layout.inc).
  */
 #}
 {{ cache_bubble }}
-<div class="flex min-h-screen flex-col lg:flex-row" x-data="{ showPassword: false, fill(name) { const form = document.getElementById('user-login-form'); if (!form) { return; } form.elements.name.value = name; form.elements.pass.value = 'demo'; form.elements.name.focus(); } }">
+<div class="flex min-h-screen flex-col lg:flex-row" x-data="{ showPassword: false, fill(name) { const form = document.getElementById('user-login-form'); if (!form) { return; } form.elements.name.value = name; form.elements.pass.value = 'demo'; form.elements.name.focus(); }, openIntro() { this.$refs.intro.showModal(); document.body.classList.add('overflow-hidden'); } }">
   <aside class="brand-panel" aria-label="{{ 'About the portal'|t }}">
     <div class="brand-panel-text">
       <div class="flex items-center gap-3">
@@ -43,7 +48,9 @@
     </figure>
   </aside>
 
-  <main id="main-content" class="flex flex-1 items-start justify-center px-4 py-10 lg:items-center lg:px-16 lg:py-14">
+  <main id="main-content" class="relative flex flex-1 items-start justify-center px-4 py-10 lg:items-center lg:px-16 lg:py-14">
+    {# tw2-11: „?“ oben rechts im hellen Formularbereich (24 px vom Rand, Phone 16 px), erster Tab-Stopp. #}
+    <button type="button" class="demo-help" aria-label="{{ 'What this demo shows'|t }}" aria-haspopup="dialog" aria-controls="demo-intro" x-ref="help" @click="openIntro()"><span aria-hidden="true">?</span></button>
     <div class="w-full max-w-form">
       <h1 class="m-0 mb-8 text-2xl">{{ 'Log in'|t }}</h1>
       {{ page.content }}
@@ -64,6 +71,33 @@
           {% endfor %}
         </div>
       {% endif %}
+      {# tw2-11: GitHub-Button — Desktop unten rechts (24 px vom Rand), Phone unter dem Formular; letzter Tab-Stopp.
+         GitHub-Mark als Inline-SVG (GitHub-Logo-Set, 20 px), keine Bibliothek. #}
+      <a href="https://github.com/JoshuaKucharski/tannwald-portal" target="_blank" rel="noopener" class="btn btn-secondary demo-github" aria-label="{{ 'Source code on GitHub, opens in a new tab'|t }}">
+        <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+        <span>GitHub</span>
+      </a>
     </div>
   </main>
+
+  {# tw2-11: Demo-Hinweis als natives <dialog> (showModal: Fokusfalle, Esc, Fokus zurück zum „?“); Klick auf den
+     Hintergrund trifft das dialog-Element selbst (der Inhalt liegt in .demo-intro-body) und schliesst. #}
+  <dialog id="demo-intro" class="demo-intro" x-ref="intro" aria-labelledby="demo-intro-title" @click="if ($event.target === $el) { $el.close(); }" @close="document.body.classList.remove('overflow-hidden'); $refs.help.focus()">
+    <div class="demo-intro-body">
+      <button type="button" class="demo-intro-close" aria-label="{{ 'Close'|t }}" @click="$refs.intro.close()">
+        {{ include('tannwald:icon', {name: 'close', size: 24}, with_context = false) }}
+      </button>
+      <h2 id="demo-intro-title" class="demo-intro-title">{{ 'For Helga as a demo, Felix & David'|t }}</h2>
+      <p class="demo-intro-text">{{ 'myTannwald is a customer portal for a fictional Swiss machine builder. Customers see only the documents of their own machines. An assistant answers exclusively from approved documents and names its source. Editorial and compliance approve. Drupal 11, hybrid search, Qwen via API — built as a proof of concept.'|t }}</p>
+      <ul class="demo-intro-list">
+        {% for line in ['Log in with a demo account below, password demo'|t, 'Try the search and the assistant'|t, 'Code on GitHub, button at the bottom right'|t] %}
+          <li>
+            {{ include('tannwald:icon', {name: 'check', size: 22, attributes: create_attribute({'class': ['demo-intro-check']})}, with_context = false) }}
+            <span>{{ line }}</span>
+          </li>
+        {% endfor %}
+      </ul>
+      <p class="m-0"><button type="button" class="btn btn-primary" @click="$refs.intro.close()">{{ 'Understood'|t }}</button></p>
+    </div>
+  </dialog>
 </div>

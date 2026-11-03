@@ -9,3 +9,25 @@
   .demo-grid { @apply grid grid-cols-2 gap-2; }
   .demo-grid .chip { @apply w-full justify-start overflow-hidden text-ellipsis whitespace-nowrap; }
 }
+
+/* tw2-11 Demo-Hinweis: „?“-Button (48 px, Phone 44, Akzent gefüllt), natives <dialog> mit Radius 24 (Phone 20),
+   Breite max. 560 px, Einblenden 150 ms (unter prefers-reduced-motion 0 s über die globale Regel), GitHub-Button
+   unten rechts (Phone: statisch unter dem Formular). Schriftgrössen des Modals sind Auftragsvorgabe (28/19 px). */
+@layer components {
+  .demo-help { @apply absolute right-4 top-4 inline-flex h-11 w-11 items-center justify-center rounded-full bg-accent font-semibold leading-none text-white hover:bg-accent-hover active:bg-accent-active lg:right-6 lg:top-6 lg:h-12 lg:w-12; font-size: 24px; transition: background-color var(--duration-fast) var(--ease-out-soft); }
+  @media (min-width: 64rem) { .demo-help { font-size: 26px; } }
+  .demo-github { @apply mt-10 lg:absolute lg:bottom-6 lg:right-6 lg:mt-0; }
+  .demo-intro { @apply m-auto w-[calc(100%-32px)] max-w-[560px] rounded-[20px] border-0 bg-panel p-0 text-ink shadow-card lg:rounded-[24px]; opacity: 0; transition: opacity 150ms var(--ease-out-soft), overlay 150ms allow-discrete, display 150ms allow-discrete; }
+  .demo-intro[open] { opacity: 1; @starting-style { opacity: 0; } }
+  .demo-intro::backdrop { background: rgba(28, 32, 36, 0.5); opacity: 0; transition: opacity 150ms var(--ease-out-soft), overlay 150ms allow-discrete, display 150ms allow-discrete; }
+  .demo-intro[open]::backdrop { opacity: 1; @starting-style { opacity: 0; } }
+  .demo-intro-body { @apply relative flex flex-col gap-6 p-6 lg:gap-8 lg:p-10; }
+  .demo-intro-close { @apply absolute right-3 top-3 inline-flex h-11 w-11 items-center justify-center rounded-full bg-transparent text-muted hover:bg-surface hover:text-ink active:bg-line-soft; transition: background-color var(--duration-fast) var(--ease-out-soft), color var(--duration-fast) var(--ease-out-soft); }
+  .demo-intro-title { @apply m-0 pr-10 font-semibold leading-display; font-size: 28px; }
+  .demo-intro-text { @apply m-0 max-w-[30em] leading-copy; font-size: 19px; }
+  .demo-intro-list { @apply m-0 flex list-none flex-col gap-3 p-0 leading-copy; font-size: 19px; }
+  .demo-intro-list li { @apply flex items-start gap-3; }
+  .demo-intro-check { @apply mt-1 shrink-0 text-accent; }
+}
+/* ::backdrop liegt ausserhalb von *, *::before, *::after — darum eigene Reduced-Motion-Regel. */
+@media (prefers-reduced-motion: reduce) { .demo-intro::backdrop { transition-duration: 0s !important; } }

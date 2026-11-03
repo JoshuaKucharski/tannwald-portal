@@ -446,6 +446,31 @@ msgstr "Passwort vergessen?"
 msgid "Demo accounts, password demo"
 msgstr "Demo-Zugänge, Passwort demo"
 
+# tw2-11 Demo-Hinweis („?“-Modal) und GitHub-Button
+msgid "What this demo shows"
+msgstr "Was diese Demo zeigt"
+
+msgid "For Helga as a demo, Felix & David"
+msgstr "Für Helga als Demo, Felix & David"
+
+msgid "myTannwald is a customer portal for a fictional Swiss machine builder. Customers see only the documents of their own machines. An assistant answers exclusively from approved documents and names its source. Editorial and compliance approve. Drupal 11, hybrid search, Qwen via API — built as a proof of concept."
+msgstr "myTannwald ist ein Kundenportal für einen fiktiven Schweizer Maschinenbauer. Kunden sehen nur die Dokumente ihrer eigenen Maschinen. Ein Assistent antwortet ausschliesslich aus freigegebenen Dokumenten und nennt die Quelle. Redaktion und Compliance geben frei. Drupal 11, Hybrid-Suche, Qwen über API — gebaut als Proof of Concept."
+
+msgid "Log in with a demo account below, password demo"
+msgstr "Anmelden mit einem Demo-Konto unten, Passwort demo"
+
+msgid "Try the search and the assistant"
+msgstr "Suche und Assistent probieren"
+
+msgid "Code on GitHub, button at the bottom right"
+msgstr "Code auf GitHub, Button unten rechts"
+
+msgid "Understood"
+msgstr "Verstanden"
+
+msgid "Source code on GitHub, opens in a new tab"
+msgstr "Quellcode auf GitHub, öffnet in neuem Tab"
+
 msgctxt "tannwald password"
 msgid "show"
 msgstr "anzeigen"
