@@ -62,8 +62,8 @@ Support-Anfrage), bleibt, bis der Betreiber die Demo-Daten zurücksetzt.
 4. **Dokument** Betriebsanleitung TB-200: Download, Änderungshistorie, Inhaltsverzeichnis, freigegebene Zusammenfassung.
 5. **Suche** (Lupe in der Kopfzeile): „Folie reisst beim Siegeln“ findet Kapitel 9.4 nur im Modus Hybrid;
    „E-4711“ trifft die Störungstabelle in beiden Modi; Facetten zählen nur, was das Konto sehen darf.
-6. **Assistent** (auf der Maschinenseite oder neben der Suche): „Wie oft muss die Siegelstation gereinigt werden?“ —
-   Antwort mit Zitaten `[n]` ins Kapitel, 1–8 s über die API. „Schutzhaube überbrücken?“ bekommt die
+6. **Assistent** (Launcher unten rechts auf jeder Seite; Panel am Desktop, Sheet am Phone, Verlauf je Sitzung): „Wie oft
+   muss die Siegelstation gereinigt werden?“ — Antwort mit Zitaten `[n]` ins Kapitel, 1–8 s über die API. „Schutzhaube überbrücken?“ bekommt die
    Sicherheitsvorlage ohne Modellaufruf. „Lieferzeit von Teil 4711?“ wird abgelehnt, mit „Support-Anfrage erstellen“.
 7. **Redaktion:** abmelden, als `redaktion` anmelden, „Freigaben“ — Zusammenfassungen im Status „Zur Prüfung“,
    Freigeben, Entwurf speichern, Zurückweisen; „Unbeantwortete Fragen“ zeigt, wo Dokumentation fehlt.
@@ -481,8 +481,8 @@ drei Knoten; 12'000 Suchanfragen und 2'500 Assistent-Fragen pro Tag sind dafür 
 
 ## Änderungsverlauf Phase 2
 
-Phase 2 lief vom 2. November 2026, 14:32 (`2aed548`) bis zum 3. November 2026 (Branch `dev`), 63 Commits bis `46f640b`
-plus die Case-Study-Commits; der PoC endete am 1. November mit `fb48e50`. Jede Zeile hat einen Bericht mit Messungen
+Phase 2 lief vom 2. November 2026, 14:32 (`2aed548`) bis zum 3. November 2026 (Branch `dev`), 72 Commits bis `366c227`
+(Stand 16:11, weitere folgen bis zum Merge); der PoC endete am 1. November mit `fb48e50`. Jede Zeile hat einen Bericht mit Messungen
 beim Betreiber.
 
 | Datum | Aufgabe | Was | ADR |
@@ -491,12 +491,12 @@ beim Betreiber.
 | 02.11. | 2.2 Bilder | `field_bild` an Typen, Maschinen, Dokumenten, Bulletins; drei Bildstile; Manifest; Seeder-Migration `tannwald_bilder` | ADR-009 |
 | 02.11. | 3.1 Provider | Modul `tannwald_qwen` (DashScope), Resolver je Operation, Schlüssel über `key` aus der Umgebung, Fehlerbild ohne Geheimnisse | ADR-011 |
 | 02.11. | 1.2 Seiten I | Anmelden, Meine Maschinen, Maschine, Dokument, Bulletin, 403/404 — Typenschild, Inhaltsverzeichnis, Zeitleiste, Druckansicht | ADR-010 |
-| 02.11. | 1.3 Seiten II | Suche mit Facetten-Seitenleiste, Assistent als Panel und Sheet, Redaktion, Nutzung und Kosten im Portal, Formulare | ADR-010 |
+| 02.11. | 1.3 Seiten II | Suche mit Facetten-Seitenleiste, Assistent als Panel und Sheet (seit 03.11. mit globalem Launcher auf jeder Seite), Redaktion, Nutzung und Kosten im Portal, Formulare | ADR-010 |
 | 02.11. | 3.2/3.3 Eval 3 | Reindex geprüft (entfällt, D11), Eval 3 und 3b (80 Fragen), Zitat-Fehleranalyse, Kosten je Lauf | ADR-011 |
 | 02.11. | 1.4 Abnahme | Abnahme-Tabellen aller Seiten, Tab-Protokolle, Phone-Kopf 117 px, Storyboard | ADR-010 |
 | 02.11. | 4.1 Server | Deploy nativ statt Docker: `bootstrap.sh`, `deploy.sh`, nginx/Pool/systemd-Vorlagen, Prüfstand, Generalprobe auf dem Mac | ADR-012 |
 | 03.11. | 4.2/4.3/4.5 Live | `--deploy` vom Mac, Let's Encrypt, Mailpit, Cron, Backup, Secrets-Scan in CI, Site offen (D9); erster Deploy 14:47 | ADR-012, ADR-013 |
-| 03.11. | Z1–Z3 Demo-Hinweis, Kopfzeile | „?“-Fenster und GitHub-Button, sieben Demo-Chips, Lupe, Sprachwechsler DE/EN/FR, Markenfarbe `#1F4E8C`, Bildmarke als SVG, Konto `portal-admin`, gesperrte Passwortfelder | ADR-010 |
+| 03.11. | Z1–Z3 Demo-Hinweis, Kopfzeile | „?“-Fenster und GitHub-Button, sieben Demo-Chips, Lupe, Sprachwechsler DE/EN/FR, Markenfarbe `#1F4E8C`, Bildmarke als SVG, Konto `portal-admin`, gesperrte Passwortfelder, Assistent als globaler Launcher unten rechts mit Panel/Sheet und Verlauf je Sitzung | ADR-010 |
 | 03.11. | 5.1 Case Study | Dieses README, Screens und GIF, ADR-Nachträge, LinkedIn-Nachtrag | — |
 
 ## Lizenz
