@@ -13,7 +13,7 @@
   .search-mode:has(input:focus-visible) { outline: var(--focus-ring-width) solid var(--color-accent); outline-offset: var(--focus-ring-offset); }
 
   /* Raster: Facetten 256 px ab lg, Assistent 360 px ab xl; Gutter 24. */
-  .search-layout { @apply grid grid-cols-[minmax(0,1fr)] items-start gap-6 lg:grid-cols-[256px_minmax(0,1fr)] xl:grid-cols-[256px_minmax(0,1fr)_360px]; }
+  .search-layout { @apply grid grid-cols-[minmax(0,1fr)] items-start gap-6 lg:grid-cols-[256px_minmax(0,1fr)] ; }
   .search-results { @apply flex min-w-0 flex-col gap-4; }
   .search-results-head { @apply flex flex-col gap-3 md:flex-row md:items-center md:justify-between; }
   .search-tools { @apply flex flex-wrap items-center gap-2; }

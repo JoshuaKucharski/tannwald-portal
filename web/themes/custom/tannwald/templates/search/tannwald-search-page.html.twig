@@ -132,12 +132,8 @@
           <div class="search-examples" data-search-examples>
             {% for example in examples %}<a href="{{ example.url }}" class="chip">{{ example.label }}</a>{% endfor %}
           </div>
-          <p class="empty-state-text mt-2">{{ 'Or ask the assistant:'|t }}</p>
-          <div class="search-examples" data-search-questions>
-            {% for question in questions %}
-              <button type="button" class="chip" @click="$dispatch('tannwald:ask', { frage: {{ question|json_encode }} })">{{ question }}</button>
-            {% endfor %}
-          </div>
+          {# Nachtrag 6 (tw2-11): ein Satz mit Button, der den globalen Launcher öffnet (Ereignis tannwald:chat-open). #}
+          <p class="empty-state-text mt-2" x-data>{{ 'Or ask the assistant:'|t }} <button type="button" class="btn-text" @click="$dispatch('tannwald:chat-open')">{{ 'Open the assistant'|t }}</button></p>
         </div>
       {% endif %}
 
@@ -151,10 +147,6 @@
       {% endif %}
     </section>
 
-    {% if chat %}
-      <aside class="search-assistant" aria-label="{{ 'Assistant'|t }}">
-        {{ include('tannwald:chat', chat, with_context = false) }}
-      </aside>
-    {% endif %}
+    {# Nachtrag 6 (tw2-11): keine eingebettete Assistenten-Spalte mehr — der globale Launcher übernimmt. #}
   </div>
 </div>

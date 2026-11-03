@@ -802,6 +802,12 @@ msgstr "Essayez une autre orthographe, passez en Hybride ou demandez à l'assist
 msgid "Examples: a fault code, a part, an activity."
 msgstr "Exemples : un code de défaut, une pièce, une activité."
 
+msgid "Asks about: @serial"
+msgstr "Concerne : @serial"
+
+msgid "Open the assistant"
+msgstr "Ouvrir l’assistant"
+
 msgid "Or ask the assistant:"
 msgstr "Ou demandez à l'assistant :"
 

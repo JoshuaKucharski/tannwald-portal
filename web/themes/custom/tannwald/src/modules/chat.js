@@ -68,6 +68,8 @@ Alpine.data('chatPanel', (config) => ({
   },
   onClosed() { if (this.mode === 'sheet') window.sessionStorage.setItem(STATE_KEY, 'closed'); },
   // Brücke von /suche (5.2): $dispatch('tannwald:ask', {frage}) öffnet das Sheet (falls nötig) und fragt.
+  // Nachtrag 6 (tw2-11): dasselbe für das window-Ereignis „tannwald:chat-open“ (Detail optional {frage}) — für B's
+  // Such-Overlay (tw2-13) und den Satz im Leerzustand der Suche; ohne frage nur öffnen und das Feld fokussieren.
   onAsk(detail) {
     const frage = detail && detail.frage ? String(detail.frage) : '';
     if (!this.inline()) this.openSheet();

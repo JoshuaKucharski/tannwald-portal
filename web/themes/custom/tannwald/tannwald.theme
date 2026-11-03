@@ -167,19 +167,6 @@ require_once __DIR__ . '/includes/chat.inc';
 require_once __DIR__ . '/includes/redaktion.inc';
 
 /**
- * Implements hook_preprocess_HOOK() for node--maschine templates.
- *
- * Chat in der Aside der Maschinenseite (Marker 5.3: chat).
- */
-function tannwald_preprocess_node__maschine(array &$variables): void {
-  if (($variables['view_mode'] ?? '') !== 'full' || empty($variables['maschine_nid'])) {
-    return;
-  }
-  $variables['chat'] = _tannwald_chat_props((int) $variables['maschine_nid'], $variables['machine']['serial'] ?? NULL, 'embedded');
-  $variables['chat_cache'] = _tannwald_chat_cache_bubble();
-}
-
-/**
  * Implements hook_preprocess().
  *
  * Seite: Navigationseintrag „Redaktion“ für die Redaktionsrollen und der Chat

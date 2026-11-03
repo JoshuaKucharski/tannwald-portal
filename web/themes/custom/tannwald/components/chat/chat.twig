@@ -46,7 +46,7 @@
 } %}
 {% set examples = examples|default([]) %}
 {% set input_id = 'chat-input-' ~ mode %}
-<div{{ attributes.addClass('chat', 'chat--' ~ mode, 'chat-root') }} data-tannwald-chat data-mode="{{ mode }}" x-data="chatPanel({{ config|json_encode }})" @tannwald:ask.window="onAsk($event.detail)" @keydown.window="onSheetKeydown($event)">
+<div{{ attributes.addClass('chat', 'chat--' ~ mode, 'chat-root') }} data-tannwald-chat data-mode="{{ mode }}" x-data="chatPanel({{ config|json_encode }})" @tannwald:ask.window="onAsk($event.detail)" @tannwald:chat-open.window="onAsk($event.detail)" @keydown.window="onSheetKeydown($event)">
 
   {# Launcher (Nachtrag 3 tw2-11): runder Akzent-Button unten rechts, 56 px (Phone 52), Label „Assistent“ ab lg als Pille;
      im Modus sheet bleibt er beim offenen Desktop-Panel sichtbar und klappt zu (Icon close); als Spalte sichtbar entfällt er (CSS). #}

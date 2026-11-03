@@ -107,15 +107,11 @@ function tannwald_preprocess_tannwald_search_page(array &$variables): void {
     }
   }
 
-  // Assistent als Panel (xl+) bzw. Sheet (darunter) in der dritten Spalte.
-  if (\Drupal::currentUser()->isAuthenticated()) {
-    $variables['chat'] = _tannwald_chat_props(NULL, NULL, 'panel');
-    $variables['chat_cache'] = _tannwald_chat_cache_bubble();
-  }
-  else {
-    $variables['chat'] = NULL;
-    $variables['chat_cache'] = NULL;
-  }
+  // tw2-11 Nachtrag 6: keine eingebettete Spalte mehr — der globale
+  // Launcher (page.html.twig, Modus sheet) gilt auch auf /suche; die Brücke
+  // tannwald:ask erreicht ihn über das window-Ereignis.
+  $variables['chat'] = NULL;
+  $variables['chat_cache'] = NULL;
 }
 
 /**

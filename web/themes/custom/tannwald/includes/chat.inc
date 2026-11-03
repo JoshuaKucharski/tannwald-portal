@@ -27,15 +27,9 @@ use Drupal\node\NodeInterface;
  * @return array
  *   Props: maschine_nid, machine_label, model_label, limit_notice, endpoint,
  *   feedback_endpoint, support_endpoint, token_endpoint, intro, ui_langcode,
- *   language_names, mode, examples. Leer ([]), wenn die Seite den Assistenten
- *   selbst rendert: seit 1.3 zeigt das Such-Template den Assistenten als
- *   Panel; der Sheet-Aufruf aus tannwald_preprocess() (page, Hunk 5.3) für
- *   dieselbe Route liefert darum nichts mehr ({% if chat %} bleibt falsch).
+ *   language_names, mode, examples.
  */
 function _tannwald_chat_props(?int $maschineNid, ?string $machineLabel, string $mode = 'embedded'): array {
-  if ($mode === 'sheet' && \Drupal::routeMatch()->getRouteName() === 'tannwald_assistant.search') {
-    return [];
-  }
   $settings = \Drupal::config('tannwald_assistant.settings');
   $limitNotice = NULL;
   // Abgeschalteter Assistent: derselbe Hinweis, den der Endpunkt als 503
@@ -105,11 +99,11 @@ function _tannwald_chat_cache_bubble(array $contexts = [], array $tags = []): ar
 /**
  * Kontext des globalen Launchers (Nachtrag 3 tw2-11), NULL = kein Launcher.
  *
- * Kein Launcher auf Anmelde- und Konto-Routen (user.*), auf den Fehlerseiten
- * 403/404, auf /suche (dort steht der Assistent als Panel) und auf der
- * Maschinenseite (dort eingebettet, Phone als eigenes Sheet). Auf der
- * Dokumentseite bekommt die Frage die Maschine des Dokuments mit, sofern
- * der Nutzer sie sehen darf (Hinweiszeile „Fragt zu: …“ im Kopf).
+ * Kein Launcher auf Anmelde- und Konto-Routen (user.*) und auf den
+ * Fehlerseiten 403/404 (Nachtrag 6: /suche und Maschinenseite haben keine
+ * eingebettete Fassung mehr, der Launcher gilt überall). Auf der Maschinen-
+ * und der Dokumentseite bekommt die Frage die Maschine mit, sofern der
+ * Nutzer sie sehen darf (Hinweiszeile „Fragt zu: …“ im Kopf).
  *
  * @return array|null
  *   maschine_nid, machine_label und Cache-Tags, oder NULL.
@@ -117,7 +111,7 @@ function _tannwald_chat_cache_bubble(array $contexts = [], array $tags = []): ar
 function _tannwald_chat_sheet_context(): ?array {
   $routeMatch = \Drupal::routeMatch();
   $route = (string) $routeMatch->getRouteName();
-  if (str_starts_with($route, 'user.') || in_array($route, ['system.403', 'system.404', 'tannwald_assistant.search'], TRUE)) {
+  if (str_starts_with($route, 'user.') || in_array($route, ['system.403', 'system.404'], TRUE)) {
     return NULL;
   }
   $context = ['maschine_nid' => NULL, 'machine_label' => NULL, 'tags' => []];
@@ -128,8 +122,13 @@ function _tannwald_chat_sheet_context(): ?array {
   if (!$node instanceof NodeInterface) {
     return $context;
   }
-  if ($node->bundle() === 'maschine') {
-    return NULL;
+  // Nachtrag 6: die Maschinenseite hat keine eingebettete Spalte mehr; der
+  // Launcher trägt die Maschine als Kontext.
+  if ($node->bundle() === 'maschine' && $node->access('view')) {
+    $context['maschine_nid'] = (int) $node->id();
+    $context['machine_label'] = (string) $node->label();
+    $context['tags'] = ['node:' . $node->id()];
+    return $context;
   }
   if ($node->bundle() === 'dokument' && $node->hasField('field_seriennummer')) {
     $machine = $node->get('field_seriennummer')->entity;

@@ -386,6 +386,9 @@ msgstr "Frage an den Assistenten"
 msgid "Asks about: @serial"
 msgstr "Fragt zu: @serial"
 
+msgid "Open the assistant"
+msgstr "Assistent öffnen"
+
 msgid "Too many requests, please wait a moment."
 msgstr "Zu viele Anfragen, bitte kurz warten."
 

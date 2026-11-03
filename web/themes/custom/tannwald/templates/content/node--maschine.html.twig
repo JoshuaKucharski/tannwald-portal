@@ -55,7 +55,7 @@
     </div>
   {% endif %}
 
-  <div class="grid grid-cols-1 items-start gap-10 lg:grid-cols-[minmax(0,1fr)_26rem]">
+  <div class="grid grid-cols-1 items-start gap-10">
     <div class="flex min-w-0 flex-col gap-10">
 
       <section class="flex flex-col gap-4" aria-labelledby="documents-heading" x-data="{ currentOnly: true }">
@@ -131,14 +131,6 @@
       </section>
     </div>
 
-    <aside aria-label="{{ 'Assistant'|t }}" class="card flex min-w-0 flex-col" data-maschine-nid="{{ maschine_nid }}">
-      <div class="flex flex-col gap-1 border-b border-line px-4 py-4 md:px-6">
-        <h2 class="card-title">{{ 'Assistant'|t }}</h2>
-        <span class="meta">{{ 'Answers only from approved documents of this machine'|t }}</span>
-      </div>
-      {# 5.3: chat #}
-      {{ chat_cache }}
-      {% if chat %}{{ include('tannwald:chat', chat, with_context = false) }}{% endif %}
-    </aside>
+    {# Nachtrag 6 (tw2-11): keine eingebettete Assistenten-Spalte mehr; der globale Launcher trägt „Fragt zu: <Seriennummer>“. #}
   </div>
 </article>
