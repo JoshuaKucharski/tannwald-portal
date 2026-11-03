@@ -13,8 +13,9 @@ use PHPUnit\Framework\Attributes\Group;
 /**
  * Härtung der Demo-Konten (tw2-12 Nachtrag 8, F14).
  *
- * Das Konto portal-admin darf uid 1 weder bearbeiten noch löschen, Demo-Konten
- * nicht löschen und sieht Name/Status/Rollen der Demo-Konten nicht im Formular —
+ * Das Konto portal-admin darf uid 1 weder bearbeiten noch löschen,
+ * Demo-Konten nicht löschen und sieht Name/Status/Rollen der Demo-Konten
+ * nicht im Formular —
  * selbst mit „administer users“ (die Rolle hat es seit Nachtrag 8 nicht mehr,
  * der Hook hält auch dann). Gegenproben: admin (uid 1) darf alles, ein Konto
  * ausserhalb der Liste ist nicht geschützt.
@@ -93,7 +94,7 @@ final class DemoHardeningTest extends KernelTestBase {
   }
 
   /**
-   * Schutz von uid 1, Demo-Konten nicht löschbar, Felder versteckt; Gegenproben.
+   * Schutz von uid 1, Demo-Konten nicht löschbar, Felder versteckt.
    */
   public function testHardening(): void {
     $admin = $this->users['admin'];
