@@ -1178,3 +1178,10 @@ msgstr "Welche Reinigungsmittel sind für die KT-500 freigegeben?"
 
 msgid "Why does the closure of a carton on the KT-500 not hold?"
 msgstr "Warum hält der Verschluss einer Schachtel an der KT-500 nicht?"
+
+# tw2-12 Nachtrag 11: Titel der Demo-Chips
+msgid "Customer A"
+msgstr "Kunde A"
+
+msgid "Customer B"
+msgstr "Kunde B"
