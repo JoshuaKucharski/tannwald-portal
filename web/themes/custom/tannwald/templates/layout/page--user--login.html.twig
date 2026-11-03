@@ -56,7 +56,8 @@
       {{ page.content }}
       <p class="m-0 mt-2"><a href="{{ path('user.pass') }}" class="btn-text -ml-1 text-base">{{ 'Forgot your password?'|t }}</a></p>
       {% if demo_accounts %}
-        {# 1.2: zwei Gruppen (Kunden · Intern) als zweispaltiges Raster gleicher Breite. #}
+        {# 1.2: zwei Gruppen (Kunden · Intern) als zweispaltiges Raster gleicher Breite (Phone eine Spalte); ein viertes
+           Konto je Gruppe (Nachtrag 1 (d), portal-admin durch B) nimmt das Raster ohne Änderung auf. #}
         <div class="demo-groups" data-demo-accounts>
           <p class="m-0 meta">{{ 'Demo accounts, password demo'|t }}</p>
           {% for group, heading in {customers: 'Customers and dealers'|t, internal: 'Tannwald internal'|t} %}
@@ -64,7 +65,11 @@
               <span class="text-sm font-medium">{{ heading }}</span>
               <div class="demo-grid">
                 {% for account in demo_accounts|filter(a => a.group == group) %}
-                  <button type="button" class="chip" @click="fill('{{ account.name|e('js') }}')" title="{{ account.label }}">{{ account.name }} · {{ account.label }}</button>
+                  {# Nachtrag 1 (a): zweizeilig — Kontoname 15/600, Firma oder Rolle 13 darunter; nichts abschneiden. #}
+                  <button type="button" class="demo-chip" @click="fill('{{ account.name|e('js') }}')">
+                    <span class="demo-chip-name">{{ account.name }}</span>
+                    <span class="demo-chip-label">{{ account.label }}</span>
+                  </button>
                 {% endfor %}
               </div>
             </div>

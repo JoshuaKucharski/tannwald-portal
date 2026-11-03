@@ -6,8 +6,12 @@
   .brand-photo img { @apply absolute inset-0 h-full w-full object-cover; }
   .demo-groups { @apply mt-12 flex flex-col gap-5 border-t border-line pt-6; }
   .demo-group { @apply flex flex-col gap-2; }
-  .demo-grid { @apply grid grid-cols-2 gap-2; }
-  .demo-grid .chip { @apply w-full justify-start overflow-hidden text-ellipsis whitespace-nowrap; }
+  /* Nachtrag 1 (a), 2026-11-03: Chips zweizeilig statt abgeschnitten — Kontoname 15/600, Firma oder Rolle 13 in muted,
+     Radius 12, ruhiger 1-px-Rand in line (Hover ink, Aktiv surface, Fokus globaler Ring); Phone eine Spalte, Zeilen gleich hoch (Grid). */
+  .demo-grid { @apply grid grid-cols-1 gap-2 sm:grid-cols-2; }
+  .demo-chip { @apply flex min-h-14 w-full flex-col items-start justify-center gap-0.5 rounded-pill border border-line bg-panel px-3 py-2 text-left text-ink hover:border-ink active:bg-surface; transition: border-color var(--duration-fast) var(--ease-out-soft), background-color var(--duration-fast) var(--ease-out-soft); }
+  .demo-chip-name { @apply text-base font-semibold leading-title; }
+  .demo-chip-label { @apply text-sm leading-copy text-muted; }
 }
 
 /* tw2-11 Demo-Hinweis: „?“-Button (48 px, Phone 44, Akzent gefüllt), natives <dialog> mit Radius 24 (Phone 20),
