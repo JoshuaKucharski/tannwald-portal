@@ -26,7 +26,8 @@
   .site-search { @apply inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-control text-muted no-underline hover:bg-surface hover:text-ink; transition: color var(--duration-fast) var(--ease-out-soft), background-color var(--duration-fast) var(--ease-out-soft); }
   .site-search.is-active { @apply bg-private-bg text-accent; }
   /* Sprachwechsler: ruhige Text-Pillen DE · EN · FR, aktive fett in Tinte, Punkt als Trenner (nur sichtbar, nicht im Lesefluss). */
-  /* Nachtrag 7: feste Breiten rechts (Sprachwechsler 104 px, Name 220 px mit Ellipsis), damit die Lupe in de/en/fr an derselben Stelle steht. */
+  /* Nachtrag 7/10: Sprachwechsler fest 104 px, Name höchstens 220 px mit Ellipsis (keine feste Breite — bei kurzen Namen
+     klaffte eine Lücke); die Lupe steht in de/en/fr an derselben Stelle, weil der Name sprachunabhängig ist. */
   .site-lang { @apply hidden w-[104px] shrink-0 items-center justify-center gap-1 md:flex; }
   .site-lang--bare { @apply flex; }
   .site-lang-link { @apply relative inline-flex h-8 min-w-8 items-center justify-center rounded-pill px-1.5 text-sm font-medium text-muted no-underline hover:text-ink; transition: color var(--duration-fast) var(--ease-out-soft); }
@@ -35,7 +36,7 @@
   .site-menu-lang { @apply flex items-center gap-1 px-2 pb-1; }
   /* Konto: Avatar-Button (44 px) mit Menü; Name und Abmelden inline nur ab md. */
   .site-account { @apply relative flex items-center gap-3 text-sm md:gap-4; }
-  .site-account-name { @apply hidden w-[220px] shrink-0 truncate text-right text-muted md:block; }
+  .site-account-name { @apply hidden max-w-[220px] shrink-0 truncate text-right text-muted md:block; }
   .site-logout { @apply hidden h-11 w-11 shrink-0 items-center justify-center rounded-control text-muted no-underline hover:bg-surface hover:text-ink md:inline-flex; transition: color var(--duration-fast) var(--ease-out-soft), background-color var(--duration-fast) var(--ease-out-soft); }
   .site-avatar { @apply inline-flex h-11 w-11 items-center justify-center rounded-full bg-private-bg text-sm font-semibold text-accent hover:bg-accent hover:text-white; transition: background-color var(--duration-fast) var(--ease-out-soft), color var(--duration-fast) var(--ease-out-soft); }
   .site-avatar[aria-expanded="true"] { @apply bg-accent text-white; }

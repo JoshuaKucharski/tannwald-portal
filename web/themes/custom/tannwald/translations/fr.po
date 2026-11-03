@@ -802,6 +802,15 @@ msgstr "Exemples : un code de défaut, une pièce, une activité."
 msgid "Asks about: @serial"
 msgstr "Concerne : @serial"
 
+msgid "Affected machines in your fleet"
+msgstr "Machines concernées de votre parc"
+
+msgid "confirmed on @date"
+msgstr "confirmé le @date"
+
+msgid "The confirmation could not be saved. Please try again."
+msgstr "La confirmation n’a pas pu être enregistrée. Veuillez réessayer."
+
 msgid "Open the assistant"
 msgstr "Ouvrir l’assistant"
 
@@ -925,3 +934,10 @@ msgstr "Quels produits de nettoyage sont homologués pour la KT-500 ?"
 
 msgid "Why does the closure of a carton on the KT-500 not hold?"
 msgstr "Pourquoi la fermeture d’une boîte ne tient-elle pas sur la KT-500 ?"
+
+# tw2-12 Nachtrag 11: Titel der Demo-Chips
+msgid "Customer A"
+msgstr "Client A"
+
+msgid "Customer B"
+msgstr "Client B"

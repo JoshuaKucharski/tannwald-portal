@@ -3,6 +3,8 @@
 import Alpine from 'alpinejs';
 import toc from './modules/toc.js';
 import docHistory from './modules/history.js';
+// Lesebestätigung auf der Bulletinseite (tw2-11 Nachtrag 10).
+import './modules/bulletin.js';
 
 window.Alpine = Alpine;
 

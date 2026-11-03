@@ -386,6 +386,16 @@ msgstr "Frage an den Assistenten"
 msgid "Asks about: @serial"
 msgstr "Fragt zu: @serial"
 
+# Nachtrag 10 (tw2-11): Lesebestätigung auf der Bulletinseite
+msgid "Affected machines in your fleet"
+msgstr "Betroffene Maschinen Ihres Bestands"
+
+msgid "confirmed on @date"
+msgstr "bestätigt am @date"
+
+msgid "The confirmation could not be saved. Please try again."
+msgstr "Die Bestätigung konnte nicht gespeichert werden. Bitte versuchen Sie es erneut."
+
 msgid "Open the assistant"
 msgstr "Assistent öffnen"
 
@@ -1168,3 +1178,10 @@ msgstr "Welche Reinigungsmittel sind für die KT-500 freigegeben?"
 
 msgid "Why does the closure of a carton on the KT-500 not hold?"
 msgstr "Warum hält der Verschluss einer Schachtel an der KT-500 nicht?"
+
+# tw2-12 Nachtrag 11: Titel der Demo-Chips
+msgid "Customer A"
+msgstr "Kunde A"
+
+msgid "Customer B"
+msgstr "Kunde B"

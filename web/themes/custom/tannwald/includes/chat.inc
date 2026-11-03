@@ -7,6 +7,7 @@
 
 declare(strict_types=1);
 
+use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 
@@ -114,9 +115,9 @@ function _tannwald_chat_example_questions(?string $typeCode = NULL): array {
  * Typ-Code für die Beispielfragen (Nachtrag 9 tw2-11).
  *
  * Maschinenseite: Typ der Maschine (field_maschinentyp → field_typ_code);
- * sonst der erste Typ des Kontos aus den Entitlement-Keys (type:<code>,
- * Reihenfolge wie getRealmsForAccount(); kunde-b hat kein TB-200). Intern
- * (role:intern, keine type-Keys) und anonym: TB-200.
+ * sonst der Typ des Kontos aus den Entitlement-Keys (type:<code>) mit
+ * Vorrang TB-200 > TB-400 > KT-500 (kunde-b hat kein TB-200 → TB-400).
+ * Intern (role:intern, keine type-Keys) und anonym: TB-200.
  *
  * @param int|null $maschineNid
  *   Maschine der Seite oder NULL.
@@ -129,15 +130,24 @@ function _tannwald_chat_type_code(?int $maschineNid): string {
     $machine = \Drupal::entityTypeManager()->getStorage('node')->load($maschineNid);
     if ($machine instanceof NodeInterface && $machine->hasField('field_maschinentyp')) {
       $term = $machine->get('field_maschinentyp')->entity;
-      if ($term && $term->hasField('field_typ_code') && ($code = (string) $term->get('field_typ_code')->value) !== '') {
+      if ($term instanceof FieldableEntityInterface && $term->hasField('field_typ_code') && ($code = (string) $term->get('field_typ_code')->value) !== '') {
         return $code;
       }
     }
   }
+  // Vorrang TB-200 > TB-400 > KT-500 unter den Typen des Kontos (Master,
+  // 2026-11-03): die README-Demo nutzt die TB-200-Fragen; kunde-b ohne
+  // TB-200 bekommt TB-400.
   if (\Drupal::hasService('tannwald_access.entitlement')) {
+    $codes = [];
     foreach (\Drupal::service('tannwald_access.entitlement')->getRealmsForAccount(\Drupal::currentUser()) as $realm) {
       if (preg_match('/^type:([A-Z0-9]+)/', (string) $realm, $match)) {
-        return $match[1];
+        $codes[$match[1]] = TRUE;
+      }
+    }
+    foreach (['TB200', 'TB400', 'KT500'] as $code) {
+      if (isset($codes[$code])) {
+        return $code;
       }
     }
   }

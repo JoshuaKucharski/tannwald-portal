@@ -445,37 +445,63 @@ function _tannwald_user_routes(): array {
 }
 
 /**
- * Demo-Konten als Chips für die Anmeldeseite (nur dev): Name, Firma oder Rolle.
+ * Titel der Demo-Chips je Konto (tw2-12 Nachtrag 11), übersetzt.
  *
- * @return array<int, array{name: string, label: string}>
+ * @return array<string, \Drupal\Core\StringTranslation\TranslatableMarkup>
+ *   Kontoname → Titel.
+ */
+function _tannwald_demo_account_titles(): array {
+  return [
+    'kunde-a' => t('Customer A'),
+    'kunde-b' => t('Customer B'),
+    'haendler' => t('Dealer'),
+    'techniker' => t('Technician'),
+    'redaktion' => t('Technical editing'),
+    'compliance' => t('Compliance'),
+    'portal-admin' => t('Portal admin'),
+  ];
+}
+
+/**
+ * Demo-Konten als Chips für die Anmeldeseite (nur dev).
+ *
+ * Nachtrag 11: Titel = übersetztes Label je Konto (Kunde A, Händler, …),
+ * zweite Zeile = Person · Firma bzw. nur die Person (intern); der Login-Name
+ * bleibt im Schlüssel name und füllt beim Klick das Feld.
+ *
+ * @return array<int, array{name: string, title: string, label: string, group: string}>
  *   Chips in der Reihenfolge der Demo-Konten.
  */
 function _tannwald_demo_account_chips(): array {
   $storage = \Drupal::entityTypeManager()->getStorage('user');
-  $labels = _tannwald_role_labels();
+  $roleLabels = _tannwald_role_labels();
+  $titles = _tannwald_demo_account_titles();
   $chips = [];
   foreach (_tannwald_demo_accounts() as $name) {
     $account = current($storage->loadByProperties(['name' => $name]));
     if (!$account instanceof UserInterface) {
       continue;
     }
-    $label = NULL;
+    $company = NULL;
     if ($account->hasField('field_firma') && !$account->get('field_firma')->isEmpty()) {
       $term = $account->get('field_firma')->entity;
-      $label = $term ? (string) $term->label() : NULL;
+      $company = $term ? (string) $term->label() : NULL;
     }
-    if ($label === NULL) {
-      foreach ($labels as $role => $roleLabel) {
+    $title = isset($titles[$name]) ? (string) $titles[$name] : NULL;
+    if ($title === NULL) {
+      foreach ($roleLabels as $role => $roleLabel) {
         if (in_array($role, $account->getRoles(TRUE), TRUE)) {
-          $label = (string) $roleLabel;
+          $title = (string) $roleLabel;
           break;
         }
       }
     }
+    $person = (string) $account->getDisplayName();
     // 1.2: zwei Gruppen für das Chip-Raster (Kunden · Intern).
     $chips[] = [
       'name' => $name,
-      'label' => $label ?? $name,
+      'title' => $title ?? $name,
+      'label' => $company !== NULL ? $person . ' · ' . $company : $person,
       'group' => in_array($name, ['kunde-a', 'kunde-b', 'haendler'], TRUE) ? 'customers' : 'internal',
     ];
   }

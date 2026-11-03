@@ -10,6 +10,7 @@ declare(strict_types=1);
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\Url;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
 use Drupal\taxonomy\TermInterface;
 use Drupal\tannwald_ingest\HeadingSlug;
@@ -101,7 +102,78 @@ function _tannwald_bulletin_preprocess(array &$variables, NodeInterface $bulleti
   $variables['requires_confirmation'] = $bulletin->hasField('field_bestaetigung_pflicht') && (bool) $bulletin->get('field_bestaetigung_pflicht')->value;
   $variables['toc'] = $body['toc'];
   $variables['body'] = $body['html'];
-  $variables['cache_bubble'] = _tannwald_cache_bubble(['user', 'user.node_grants:view', 'languages:language_interface'], []);
+  // Titelbild des Bulletins wie im Dokument-Zweig (tw2-11 §18: die Variable
+  // fehlte, die Seite zeigte immer den Platzhalter).
+  $variables['image'] = function_exists('tannwald_image') ? tannwald_image($bulletin, 'tw_card_800', ['loading' => 'eager']) : [];
+  // Nachtrag 10 (tw2-11): betroffene Maschinen des Kontos mit Status und
+  // „Gelesen bestätigen“ je Zeile (Endpunkt wie das Banner, JSON + CSRF).
+  $affected = _tannwald_bulletin_affected_machines($bulletin, \Drupal::currentUser());
+  $variables['affected'] = $affected['rows'];
+  $variables['confirm_endpoint'] = Url::fromRoute('tannwald_bulletin.confirm', ['node' => $bulletin->id()])->toString();
+  $variables['token_endpoint'] = Url::fromRoute('system.csrftoken')->toString();
+  $variables['cache_bubble'] = _tannwald_cache_bubble(
+    ['user', 'user.node_grants:view', 'languages:language_interface'],
+    array_merge(['lesebestaetigung_list'], $affected['tags'])
+  );
+}
+
+/**
+ * Betroffene Maschinen des Kontos für ein Bulletin (Nachtrag 10 tw2-11).
+ *
+ * Maschinen, die der Nutzer sehen darf (Node-Grants) und die das Bulletin
+ * über Seriennummer oder Maschinentyp trifft. Interne Konten (role:intern,
+ * z. B. redaktion) sehen hier keine Liste — die Übersicht aller
+ * Bestätigungen bleibt in der Redaktion. Je Zeile: Seriennummer, Standort,
+ * Status (Lesebestätigung ausstehend / bestätigt am TT.MM.JJJJ, letzte
+ * Bestätigung irgendeines Kontos wie im Banner) und ob dieses Konto noch
+ * bestätigen darf (wie tannwald_bulletin_banner_data: Pflicht, nicht selbst
+ * bestätigt).
+ *
+ * @return array{rows: array<int, array<string, mixed>>, tags: string[]}
+ *   Zeilen und Cache-Tags.
+ */
+function _tannwald_bulletin_affected_machines(NodeInterface $bulletin, AccountInterface $account): array {
+  $empty = ['rows' => [], 'tags' => []];
+  if (!$account->isAuthenticated() || !function_exists('tannwald_bulletin_banner_data')) {
+    return $empty;
+  }
+  if (\Drupal::hasService('tannwald_access.entitlement')) {
+    foreach (\Drupal::service('tannwald_access.entitlement')->getRealmsForAccount($account) as $realm) {
+      if (str_starts_with((string) $realm, 'role:intern')) {
+        return $empty;
+      }
+    }
+  }
+  $serials = array_map('intval', array_column($bulletin->hasField('field_seriennummern') ? $bulletin->get('field_seriennummern')->getValue() : [], 'target_id'));
+  $types = array_map('intval', array_column($bulletin->hasField('field_maschinentyp') ? $bulletin->get('field_maschinentyp')->getValue() : [], 'target_id'));
+  if ($serials === [] && $types === []) {
+    return $empty;
+  }
+  $storage = \Drupal::entityTypeManager()->getStorage('node');
+  $query = $storage->getQuery()->accessCheck(TRUE)->condition('type', 'maschine')->condition('status', 1)->sort('title');
+  $scope = $query->orConditionGroup();
+  if ($serials !== []) {
+    $scope->condition('nid', $serials, 'IN');
+  }
+  if ($types !== []) {
+    $scope->condition('field_maschinentyp', $types, 'IN');
+  }
+  $rows = [];
+  $tags = [];
+  foreach ($storage->loadMultiple($query->condition($scope)->execute()) as $machine) {
+    $data = tannwald_bulletin_banner_data($bulletin, $machine, $account);
+    $confirmedAt = !empty($data['bestaetigt_am']) ? _tannwald_date_from_timestamp((int) $data['bestaetigt_am']) : NULL;
+    $rows[] = [
+      'nid' => (int) $machine->id(),
+      'serial' => (string) $machine->label(),
+      'url' => $machine->toUrl('canonical', ['language' => \Drupal::languageManager()->getCurrentLanguage()])->toString(),
+      'location' => $machine->hasField('field_standort') ? (string) $machine->get('field_standort')->value : '',
+      'confirmed_at' => $confirmedAt,
+      'can_confirm' => $data['form'] !== NULL,
+    ];
+    $tags = array_merge($tags, $machine->getCacheTags());
+  }
+  return ['rows' => $rows, 'tags' => $tags];
 }
 
 /**
