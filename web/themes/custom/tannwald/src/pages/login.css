@@ -26,7 +26,9 @@
   .demo-help { @apply absolute right-4 top-4 inline-flex h-11 w-11 items-center justify-center rounded-full bg-accent font-semibold leading-none text-white hover:bg-accent-hover active:bg-accent-active lg:right-6 lg:top-6 lg:h-12 lg:w-12; font-size: 24px; transition: background-color var(--duration-fast) var(--ease-out-soft); }
   @media (min-width: 64rem) { .demo-help { font-size: 26px; } }
   /* Nachtrag 5 (d): GitHub-Button fixed unten rechts, immer sichtbar; Phone 16 px plus safe-area, ab md 24 px; ein Schattenlevel. */
-  .demo-github { @apply fixed right-4 z-30 shadow-card md:bottom-6 md:right-6; bottom: calc(1rem + env(safe-area-inset-bottom, 0px)); }
+  .demo-github { @apply fixed right-4 z-30 shadow-card md:right-6; bottom: calc(1rem + env(safe-area-inset-bottom, 0px)); }
+  /* Eigene Media Query: die reine bottom-Deklaration schlug die md-Variante aus @apply (gemessen 16 statt 24 px auf 1440). */
+  @media (min-width: 48rem) { .demo-github { bottom: 1.5rem; } }
   .demo-intro { @apply m-auto w-[calc(100%-32px)] max-w-[560px] rounded-[20px] border-0 bg-panel p-0 text-ink shadow-card lg:rounded-[24px]; opacity: 0; transition: opacity 150ms var(--ease-out-soft), overlay 150ms allow-discrete, display 150ms allow-discrete; }
   .demo-intro[open] { opacity: 1; @starting-style { opacity: 0; } }
   .demo-intro::backdrop { background: rgba(28, 32, 36, 0.5); opacity: 0; transition: opacity 150ms var(--ease-out-soft), overlay 150ms allow-discrete, display 150ms allow-discrete; }
