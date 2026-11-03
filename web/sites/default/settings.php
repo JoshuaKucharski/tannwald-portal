@@ -956,6 +956,9 @@ if (getenv('TANNWALD_DEPLOY') === '1') {
   $config['mailer_transport.mailer_transport.sendmail']['configuration']['host'] = '127.0.0.1';
   $config['mailer_transport.mailer_transport.sendmail']['configuration']['port'] = getenv('MAILPIT_SMTP_PORT') ?: '1025';
   $config['system.logging']['error_level'] = 'hide';
+  // Kostendeckel fest (F14, 2026-11-03): die offene Demo hat ein Konto mit „administer tannwald assistant“; über die Umgebung
+  // gesetzt kann das Formular das Monatslimit nicht anheben. 2'000'000 Tokens × CHF 0.0008/1k = höchstens CHF 1.60 im Monat.
+  $config['tannwald_assistant.settings']['monthly_token_limit'] = 2000000;
   // Absender der Demo (4.2): SITE_MAIL aus der env-Datei statt admin@example.com aus config/sync.
   if (getenv('SITE_MAIL')) {
     $config['system.site']['mail'] = (string) getenv('SITE_MAIL');
