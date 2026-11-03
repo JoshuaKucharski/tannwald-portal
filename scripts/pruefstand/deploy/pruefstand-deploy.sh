@@ -232,6 +232,7 @@ case "$1" in
             *information_schema.TABLES*) cat "$FAKE_STATE/tables" 2>/dev/null || echo 0 ;;
             *"type = 'dokument'"*) cat "$FAKE_STATE/docs" 2>/dev/null || echo 0 ;;
             *"embedding IS NOT NULL"*) cat "$FAKE_STATE/embedded" 2>/dev/null || echo 0 ;;
+            *Sprachfassungen*) echo "7 Firmen, 10 Maschinen, 6 Konten, 20 Dokumente, 22 Zusammenfassungen (31 Sprachfassungen)" ;;
             *"name='tannwald_embed'"*) echo "tannwald_embed 33 offen, tannwald_summarize 31 offen" ;;
             *CONCAT*) echo "10 Maschinen, 20 Dokumente, 6 Konten" ;;
         esac ;;

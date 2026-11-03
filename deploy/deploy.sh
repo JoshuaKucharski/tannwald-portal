@@ -11,7 +11,7 @@
 # meldet das Skript mit dem Aufräum-Befehl, statt darüber zu installieren. Zeigt nie Werte aus der env-Datei; das
 # Besucher-Passwort geht nur über eine netrc-Datei (600) an curl, nie auf eine Befehlszeile.
 # --dry     druckt jeden Schritt (Plan eines ersten Laufs), ändert nichts
-# --status  liest nur: SITE_AUTH, Zählungen, „Chunks eingebettet x/575“, Queues, Usage, Dienste, Timer, Zertifikat, RAM
+# --status  liest nur: SITE_AUTH, Zählungen (Zusammenfassungen: Fassungen und Sprachfassungen), „Chunks eingebettet x/575“, Queues, Usage, Dienste, Timer, Zertifikat, RAM
 # Ende: „FERTIG — … in <n> s“ mit Zählungen; Abbruch: „ABBRUCH (…)“, Exit 1.
 set -euo pipefail
 umask 022
@@ -112,7 +112,7 @@ if [ "$STATUS" = 1 ]; then
     boot=$(drush status --field=bootstrap 2>/dev/null | tr -d '[:space:]' || true)
     say "   Drupal: ${boot:-nicht installiert}"
     if [ "$boot" = Successful ]; then
-        say "   Zählungen: $(sql "SELECT CONCAT((SELECT COUNT(*) FROM taxonomy_term_field_data WHERE vid='firma' AND default_langcode=1), ' Firmen, ', (SELECT COUNT(*) FROM node_field_data WHERE type='maschine' AND default_langcode=1), ' Maschinen, ', (SELECT COUNT(*) FROM users_field_data WHERE uid > 1), ' Konten, ', (SELECT COUNT(*) FROM node_field_data WHERE type='dokument' AND default_langcode=1), ' Dokumente, ', (SELECT COUNT(*) FROM node_field_data WHERE type='zusammenfassung' AND default_langcode=1), ' Zusammenfassungen')")"
+        say "   Zählungen: $(sql "SELECT CONCAT((SELECT COUNT(*) FROM taxonomy_term_field_data WHERE vid='firma' AND default_langcode=1), ' Firmen, ', (SELECT COUNT(*) FROM node_field_data WHERE type='maschine' AND default_langcode=1), ' Maschinen, ', (SELECT COUNT(*) FROM users_field_data WHERE uid > 1), ' Konten, ', (SELECT COUNT(*) FROM node_field_data WHERE type='dokument' AND default_langcode=1), ' Dokumente, ', (SELECT COUNT(*) FROM node_field_data WHERE type='zusammenfassung' AND default_langcode=1), ' Zusammenfassungen (', (SELECT COUNT(*) FROM node_field_data WHERE type='zusammenfassung'), ' Sprachfassungen)')")"
         say "   $(embed_state)"
         say "   Usage (Modell, Operation, Aufrufe, Tokens ein/aus, CHF):"
         sql "SELECT modell, operation, COUNT(*), SUM(prompt_tokens), SUM(completion_tokens), ROUND(SUM(kosten_chf), 4) FROM tannwald_usage GROUP BY modell, operation" | sed 's/^/     /'
