@@ -151,7 +151,11 @@ class SummaryGenerator {
       throw new \RuntimeException(sprintf('Chat provider %s returned no chat output.', $providerId));
     }
     $tokens = self::tokens($output);
-    $this->usage->record($model, 'chat', $tokens['prompt'], $tokens['completion'], 'ingest');
+    // F13: Kosten wie beim Assistenten (providers.<id>.kosten_pro_1k_chf);
+    // ohne tannwald_assistant (kein Resolver) bleibt es bei 0.
+    $costPer1k = $this->providerResolver?->costPer1k($providerId) ?? 0.0;
+    $cost = round(($tokens['prompt'] + $tokens['completion']) / 1000 * $costPer1k, 4);
+    $this->usage->record($model, 'chat', $tokens['prompt'], $tokens['completion'], 'ingest', $cost);
 
     $message = $output->getNormalized();
     $html = SummaryText::toHtml($message instanceof ChatMessage ? $message->getText() : '', $maxWords);
