@@ -1,5 +1,6 @@
-# Fall 18: SITE_AUTH=on (Standard, D9 a) verlangt 401 ohne Passwort — Gegenprobe 200 ohne Passwort → Abbruch.
-# SITE_AUTH=off verlangt 200 ohne Passwort; Mailpit bleibt in beiden Fällen geschützt.
+# Fall 18: SITE_AUTH=on (D9 a) verlangt 401 ohne Passwort — Gegenprobe 200 ohne Passwort → Abbruch.
+# SITE_AUTH=off (D9 seit 2026-11-03) verlangt 200 ohne Passwort; Mailpit bleibt in beiden Fällen geschützt;
+# deploy.sh --status nennt SITE_AUTH (remote.sh liest ihn daraus).
 write_env
 echo 200 > "$FAKE_STATE/login_code"
 run_deploy
@@ -7,3 +8,5 @@ check "SITE_AUTH=on, aber 200 ohne Passwort → Abbruch" 'rc_is 1 && has "statt 
 write_env SITE_AUTH=off
 run_deploy
 check "SITE_AUTH=off: Login 200 ohne Passwort, Mailpit 401/200" 'rc_is 0 && has "Login-Seite 200 mit „myTannwald“ (SITE_AUTH=off)" && has "Mailpit (mail.mytannwald.getleaven.com) 401 ohne, 200"'
+run_deploy --status
+check "deploy.sh --status nennt SITE_AUTH=off (kein Geheimnis), keine Werte" 'rc_is 0 && has "Besucher-Passwort vor der Site: SITE_AUTH=off" && no_secrets'

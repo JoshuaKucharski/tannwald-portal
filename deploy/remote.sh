@@ -10,8 +10,9 @@
 # Ablauf --deploy: (1) Vorbedingungen, SSH lesend (rsync auf dem Server?) · (2) Stand: origin/dev, Abbruch bei
 # ungepushten Commits auf dev, Export per git archive (der Arbeitsbaum zählt nicht) · (3) andere Sites der Maschine
 # vorher (HTTP-Code) · (4) rsync -rlptz --delete mit deploy/rsync-exclude.txt · (5) DNS beider Namen (dig) → bootstrap.sh
-# mit --tls nur, wenn beide auf den Server zeigen · (6) deploy.sh · (7) Proben vom Mac (/health, robots, Login 401,
-# TLS gültig mit Aussteller, mail. 401) und Server-Stand („Chunks eingebettet x/575“) · (8) andere Sites nachher.
+# mit --tls nur, wenn beide auf den Server zeigen · (6) deploy.sh · (7) Server-Stand (deploy.sh --status: SITE_AUTH,
+# „Chunks eingebettet x/575“), dann Proben vom Mac (/health, robots, Login ohne Passwort 401 bei SITE_AUTH=on bzw. 200
+# mit „myTannwald“ bei off, TLS gültig mit Aussteller, mail. 401) · (8) andere Sites nachher.
 # Verändernd auf dem Server nur bootstrap.sh und deploy.sh; alle anderen SSH-Aufrufe lesen. Zeigt nie Werte aus
 # der Server-env-Datei; das Besucher-Passwort (nur --probe) geht über stdin an curl, nie auf eine Befehlszeile.
 # SSH: BatchMode (keine Rückfrage), ServerAliveInterval 30, keine Wiederholschleife (fail2ban der Maschine).
@@ -85,7 +86,15 @@ TMPD="$(mktemp -d "${TMPDIR:-/tmp}/tannwald-deploy-mac.XXXXXX")"
 trap 'rm -rf "$TMPD"' EXIT
 EXPORT="$TMPD/export"
 
-# Proben vom Mac (ohne Passwort): /health, robots, Login 401 bzw. 200, X-Robots-Tag, mail. 401, TLS gültig.
+# Server-Stand (deploy.sh --status, liest nur) nach $TMPD/status; daraus SITE_AUTH_STATE = on | off | leer (unbekannt).
+# SITE_AUTH ist kein Geheimnis; danach richten sich die Login-Probe und die Schlusszeile (D9 seit 2026-11-03: off).
+SITE_AUTH_STATE=""
+server_status() {
+    rsh "bash $DEPLOY_PATH/deploy/deploy.sh --status" > "$TMPD/status" 2>&1 || true
+    SITE_AUTH_STATE=$(sed -nE 's/^ *Besucher-Passwort vor der Site: SITE_AUTH=(on|off)$/\1/p' "$TMPD/status" | head -n 1)
+}
+
+# Proben vom Mac (ohne Passwort): /health, robots, Login 401 (SITE_AUTH=on) bzw. 200 (off), X-Robots-Tag, mail. 401, TLS.
 mac_probes() {
     local code issuer
     code=$(curl -s --max-time 20 $PIN -o "$TMPD/h" -w '%{http_code}' "https://$DOMAIN/health" || echo 000)
@@ -94,10 +103,18 @@ mac_probes() {
     ok "TLS gültig (curl ohne -k), Aussteller: ${issuer:-unbekannt}; /health 200"
     code=$(curl -s --max-time 20 $PIN -o "$TMPD/r" -w '%{http_code}' "https://$DOMAIN/robots.txt" || echo 000)
     [ "$code" = 200 ] && grep -q 'Disallow: /' "$TMPD/r" || die "robots.txt: HTTP $code oder ohne „Disallow: /“."
-    code=$(curl -s --max-time 20 $PIN -D "$TMPD/lh" -o /dev/null -w '%{http_code}' "https://$DOMAIN/user/login" || echo 000)
-    case "$code" in 401|200) ;; *) die "Login-Seite: HTTP $code (erwartet 401 hinter dem Besucher-Passwort)." ;; esac
+    code=$(curl -s --max-time 20 $PIN -D "$TMPD/lh" -o "$TMPD/l0" -w '%{http_code}' "https://$DOMAIN/user/login" || echo 000)
+    case "${SITE_AUTH_STATE:-?}:$code" in
+        on:401|off:200|\?:401|\?:200) ;;
+        on:*) die "Login-Seite ohne Passwort: HTTP $code statt 401 (SITE_AUTH=on: Besucher-Passwort erwartet)." ;;
+        off:*) die "Login-Seite ohne Passwort: HTTP $code statt 200 (SITE_AUTH=off: Site offen erwartet)." ;;
+        *) die "Login-Seite: HTTP $code (erwartet 401 oder 200)." ;;
+    esac
+    [ "$code" != 200 ] || grep -q 'myTannwald' "$TMPD/l0" || die "Login-Seite: HTTP 200, aber ohne „myTannwald“."
     grep -qi '^x-robots-tag: noindex' "$TMPD/lh" || die "X-Robots-Tag: noindex fehlt auf /user/login."
-    ok "robots.txt „Disallow: /“, /user/login $code ohne Passwort$( [ "$code" = 401 ] && echo ' (Besucher-Passwort aktiv)'), X-Robots-Tag noindex"
+    local lmsg=" (Besucher-Passwort aktiv)"; [ "$code" = 200 ] && lmsg=" mit „myTannwald“ (Site offen)"
+    [ -n "$SITE_AUTH_STATE" ] || lmsg="${lmsg} — SITE_AUTH auf dem Server nicht gelesen"
+    ok "robots.txt „Disallow: /“, /user/login ${code} ohne Passwort${lmsg}, X-Robots-Tag noindex"
     code=$(curl -s --max-time 20 $PIN -o /dev/null -w '%{http_code}' "https://mail.$DOMAIN/" || echo 000)
     [ "$code" = 401 ] || die "https://mail.$DOMAIN/: HTTP $code statt 401."
     ok "mail.$DOMAIN 401 ohne Passwort"
@@ -120,7 +137,7 @@ if [ "$DRY" = 1 ]; then
     say "   4 rsync -rlptz --delete --exclude-from=deploy/rsync-exclude.txt -e 'ssh …' <export>/ $DEPLOY_SSH:$DEPLOY_PATH/"
     say "   5 dig +short A $DOMAIN mail.$DOMAIN @1.1.1.1 → beide = $ip_server? dann: ssh … bash $DEPLOY_PATH/deploy/bootstrap.sh --tls"
     say "   6 ssh … bash $DEPLOY_PATH/deploy/deploy.sh"
-    say "   7 curl --resolve …:$ip_server https://$DOMAIN/health · /robots.txt · /user/login (401) · https://mail.$DOMAIN/ (401); ssh … deploy.sh --status"
+    say "   7 ssh … deploy.sh --status (SITE_AUTH, Zählungen); curl --resolve …:$ip_server https://$DOMAIN/health · /robots.txt · /user/login (401 bei SITE_AUTH=on, 200 bei off) · https://mail.$DOMAIN/ (401)"
     say "   8 andere Sites nachher wie 3 — jede Verschlechterung ist ein Abbruch"
     step "Plan von bootstrap.sh (lokal, --dry)"
     bash "$REPO/deploy/bootstrap.sh" --dry --tls 2>&1 | grep -E '^== |\[dry\]|FERTIG' | sed 's/^/   | /'
@@ -139,9 +156,11 @@ ok "ssh $DEPLOY_SSH: erreichbar, rsync und nginx vorhanden"
 
 if [ "$MODE" = probe ]; then
     step "Proben vom Mac (ohne Passwort)"
+    server_status
+    say "   Server: SITE_AUTH=${SITE_AUTH_STATE:-unbekannt} ($( [ "$SITE_AUTH_STATE" = off ] && echo 'Site offen, Mailpit hinter dem Besucher-Passwort' || echo 'Besucher-Passwort vor Site und Mailpit'))"
     mac_probes
     step "Proben mit Besucher-Passwort ($GUEST_USER)"
-    if [ -t 0 ]; then printf '   Besucher-Passwort für %s (wird nicht angezeigt): ' "$GUEST_USER"; read -r -s pw; echo
+    if [ -t 0 ]; then printf '   Besucher-Passwort für %s (Mailpit%s; wird nicht angezeigt): ' "$GUEST_USER" "$( [ "$SITE_AUTH_STATE" = off ] || echo ' und Site')"; read -r -s pw; echo
     else read -r pw; fi
     code=$(printf 'user = "%s:%s"\n' "$GUEST_USER" "$pw" | curl -s --max-time 20 $PIN -K - -o "$TMPD/l" -w '%{http_code}' "https://$DOMAIN/user/login" || echo 000)
     [ "$code" = 200 ] && grep -q 'myTannwald' "$TMPD/l" || die "Login-Seite mit Besucher-Passwort: HTTP $code oder ohne „myTannwald“."
@@ -150,7 +169,7 @@ if [ "$MODE" = probe ]; then
     [ "$code" = 200 ] || die "mail.$DOMAIN mit Besucher-Passwort: HTTP $code statt 200."
     ok "Login-Seite 200 mit „myTannwald“, mail.$DOMAIN 200 — mit Besucher-Passwort"
     step "Stand auf dem Server (deploy.sh --status, liest nur)"
-    rsh "bash $DEPLOY_PATH/deploy/deploy.sh --status" 2>&1 | sed 's/^/   | /' || true
+    sed 's/^/   | /' "$TMPD/status"
     step "Andere Sites der Maschine"
     say "   $(others)"
     dur; say ""; say "FERTIG (probe) in $(( $(date +%s) - T0 )) s — nichts geändert."
@@ -205,10 +224,11 @@ rc=0
 rsh "bash $DEPLOY_PATH/deploy/deploy.sh" 2>&1 | tee "$TMPD/deploy.log" | sed 's/^/   | /' || rc=$?
 [ "$rc" = 0 ] || die "deploy.sh rot (Schritt und Grund oben)."
 
-step "Proben vom Mac und Stand auf dem Server"
-if [ -n "$tls" ]; then mac_probes; else note "ohne Zertifikat keine HTTPS-Proben vom Mac"; fi
-state=$(rsh "bash $DEPLOY_PATH/deploy/deploy.sh --status" 2>/dev/null | grep -E 'Chunks eingebettet|Zählungen' | sed 's/^ *//' || true)
+step "Stand auf dem Server und Proben vom Mac"
+server_status
+state=$(grep -E 'SITE_AUTH=|Chunks eingebettet|Zählungen' "$TMPD/status" | sed 's/^ *//' || true)
 [ -n "$state" ] && printf '%s\n' "$state" | sed 's/^/   /'
+if [ -n "$tls" ]; then mac_probes; else note "ohne Zertifikat keine HTTPS-Proben vom Mac"; fi
 
 step "Andere Sites der Maschine (nachher)"
 AFTER=$(others); say "   $AFTER"
@@ -223,6 +243,13 @@ ok "andere Sites unverändert"
 dur
 say ""
 say "FERTIG (deploy) in $(( $(date +%s) - T0 )) s — origin/$BRANCH $rev auf $DOMAIN."
-say "Erwartet: https://$DOMAIN fragt nach dem Besucher-Passwort ($GUEST_USER), dahinter Login mit kunde-a/demo;"
-say "  https://mail.$DOMAIN zeigt Mailpit (gleiches Passwort); Zertifikat von Let's Encrypt; Cron alle 5 min, Backup 03:30."
-say "  Suche und Assistent sind vollständig, sobald tannwald_embed 0 zeigt — tannwald-run.sh --deploy --probe zeigt den Stand."
+case "$SITE_AUTH_STATE" in
+    off) say "Erwartet: https://$DOMAIN ist offen (SITE_AUTH=off, D9) — Login mit kunde-a/demo;"
+         say "  https://mail.$DOMAIN zeigt Mailpit hinter dem Besucher-Passwort ($GUEST_USER); Zertifikat von Let's Encrypt; Cron alle 5 min, Backup 03:30." ;;
+    on)  say "Erwartet: https://$DOMAIN fragt nach dem Besucher-Passwort ($GUEST_USER), dahinter Login mit kunde-a/demo;"
+         say "  https://mail.$DOMAIN zeigt Mailpit (gleiches Passwort); Zertifikat von Let's Encrypt; Cron alle 5 min, Backup 03:30." ;;
+    *)   say "Erwartet: https://$DOMAIN mit Login kunde-a/demo (SITE_AUTH nicht gelesen — tannwald-run.sh --deploy --probe zeigt ihn);"
+         say "  https://mail.$DOMAIN zeigt Mailpit hinter dem Besucher-Passwort ($GUEST_USER); Zertifikat von Let's Encrypt; Cron alle 5 min, Backup 03:30." ;;
+esac
+grep -q 'tannwald_embed 0 offen' "$TMPD/status" 2>/dev/null \
+    || say "  Suche und Assistent sind vollständig, sobald tannwald_embed 0 zeigt — tannwald-run.sh --deploy --probe zeigt den Stand."

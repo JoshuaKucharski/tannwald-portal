@@ -261,7 +261,7 @@ log-call ssh "$host" "$cmd"
 case "$cmd" in
     *"command -v rsync"*) echo bereit ;;
     *bootstrap.sh*) cat "$FAKE_STATE/bootstrap.out" 2>/dev/null || echo "FERTIG — Server vorbereitet in 9 s"; exit "$(cat "$FAKE_STATE/bootstrap.rc" 2>/dev/null || echo 0)" ;;
-    *"deploy.sh --status"*) printf '   Zählungen: 7 Firmen, 10 Maschinen, 6 Konten, 20 Dokumente, 0 Zusammenfassungen\n   Chunks eingebettet 120/575 (tannwald_embed 21 offen, tannwald_summarize 31 offen)\n' ;;
+    *"deploy.sh --status"*) printf '   Besucher-Passwort vor der Site: SITE_AUTH=%s\n' "$(cat "$FAKE_STATE/site_auth" 2>/dev/null || echo on)"; printf '   Zählungen: 7 Firmen, 10 Maschinen, 6 Konten, 20 Dokumente, 0 Zusammenfassungen\n   Chunks eingebettet 120/575 (tannwald_embed 21 offen, tannwald_summarize 31 offen)\n' ;;
     *deploy.sh*) touch "$FAKE_STATE/after_deploy"; cat "$FAKE_STATE/deploy.out" 2>/dev/null || echo "FERTIG — erstinstalliert in 180 s."; exit "$(cat "$FAKE_STATE/deploy.rc" 2>/dev/null || echo 0)" ;;
     *) echo "unerwarteter Befehl: $cmd" >&2; exit 99 ;;
 esac

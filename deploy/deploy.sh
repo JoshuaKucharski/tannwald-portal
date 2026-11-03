@@ -11,7 +11,7 @@
 # meldet das Skript mit dem Aufräum-Befehl, statt darüber zu installieren. Zeigt nie Werte aus der env-Datei; das
 # Besucher-Passwort geht nur über eine netrc-Datei (600) an curl, nie auf eine Befehlszeile.
 # --dry     druckt jeden Schritt (Plan eines ersten Laufs), ändert nichts
-# --status  liest nur: Zählungen, „Chunks eingebettet x/575“, Queues, Usage, Dienste, Timer, Zertifikat, RAM
+# --status  liest nur: SITE_AUTH, Zählungen, „Chunks eingebettet x/575“, Queues, Usage, Dienste, Timer, Zertifikat, RAM
 # Ende: „FERTIG — … in <n> s“ mit Zählungen; Abbruch: „ABBRUCH (…)“, Exit 1.
 set -euo pipefail
 umask 022
@@ -107,6 +107,8 @@ if [ "$STATUS" = 1 ]; then
     say "myTannwald deploy.sh --status — $(date '+%Y-%m-%d %H:%M') (liest nur)"
     [ -f "$ENV_FILE" ] || { say "   env-Datei $ENV_FILE fehlt — bootstrap.sh noch nicht gelaufen"; exit 1; }
     DOMAIN=$(env_get DOMAIN)
+    # SITE_AUTH ist kein Geheimnis (on/off); remote.sh richtet danach die Proben vom Mac und die Schlusszeile aus.
+    say "   Besucher-Passwort vor der Site: SITE_AUTH=$(env_get SITE_AUTH)"
     boot=$(drush status --field=bootstrap 2>/dev/null | tr -d '[:space:]' || true)
     say "   Drupal: ${boot:-nicht installiert}"
     if [ "$boot" = Successful ]; then
