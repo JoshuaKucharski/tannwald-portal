@@ -27,7 +27,8 @@
   .demo-intro[open]::backdrop { opacity: 1; @starting-style { opacity: 0; } }
   .demo-intro-body { @apply relative flex flex-col gap-6 p-6 lg:gap-8 lg:p-10; }
   .demo-intro-close { @apply absolute right-3 top-3 inline-flex h-11 w-11 items-center justify-center rounded-full bg-transparent text-muted hover:bg-surface hover:text-ink active:bg-line-soft; transition: background-color var(--duration-fast) var(--ease-out-soft), color var(--duration-fast) var(--ease-out-soft); }
-  .demo-intro-title { @apply m-0 pr-10 font-semibold leading-display; font-size: 28px; }
+  /* Titel ohne balance (globale h2-Regel brach nach „als“ um) und ohne rechten Innenabstand: 450 px Text in 480 px, endet 14 px vor dem Schliessen-Button; Phone bricht greedy vor „Felix“. */
+  .demo-intro-title { @apply m-0 font-semibold leading-display; font-size: 28px; text-wrap: wrap; }
   .demo-intro-text { @apply m-0 max-w-[30em] leading-copy; font-size: 19px; }
   .demo-intro-list { @apply m-0 flex list-none flex-col gap-3 p-0 leading-copy; font-size: 19px; }
   .demo-intro-list li { @apply flex items-start gap-3; }
