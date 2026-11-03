@@ -157,7 +157,8 @@ function tannwald_preprocess_node__maschine(array &$variables): void {
  * Implements hook_preprocess().
  *
  * Seite: Navigationseintrag „Redaktion“ für die Redaktionsrollen und der Chat
- * als Sheet auf /suche (Brücke tannwald:ask von 5.2).
+ * als Launcher mit Sheet/Panel auf jeder Seite (Nachtrag 3 tw2-11; vorher nur
+ * auf /suche als Brücke tannwald:ask von 5.2).
  */
 function tannwald_preprocess(array &$variables, string $hook): void {
   if ($hook !== 'page') {
@@ -174,9 +175,15 @@ function tannwald_preprocess(array &$variables, string $hook): void {
       'active' => _tannwald_redaktion_is_path(_tannwald_redaktion_current_path()),
     ];
   }
-  if ($account->isAuthenticated() && \Drupal::routeMatch()->getRouteName() === 'tannwald_assistant.search') {
-    $variables['chat'] = _tannwald_chat_props(NULL, NULL, 'sheet');
-    $variables['chat_cache'] = _tannwald_chat_cache_bubble();
+  // Nachtrag 3 (tw2-11): Launcher und Sheet/Panel auf jeder Seite für
+  // angemeldete Nutzer; Ausnahmen und Kontext (Maschine der Dokumentseite)
+  // entscheidet _tannwald_chat_sheet_context() in includes/chat.inc.
+  if ($account->isAuthenticated()) {
+    $context = _tannwald_chat_sheet_context();
+    if ($context !== NULL) {
+      $variables['chat'] = _tannwald_chat_props($context['maschine_nid'], $context['machine_label'], 'sheet');
+      $variables['chat_cache'] = _tannwald_chat_cache_bubble(['route'], $context['tags']);
+    }
   }
 }
 

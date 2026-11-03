@@ -83,9 +83,10 @@ export function sheetMixin(options = {}) {
       if (opener && typeof opener.focus === 'function') this.$nextTick(() => window.requestAnimationFrame(() => opener.focus({ preventScroll: true })));
     },
     onSheetKeydown(event) {
-      if (!this.open || !this.sheetActive()) return;
+      if (!this.open) return;
+      // Esc schliesst auch das nicht-modale Desktop-Panel (Nachtrag 3 tw2-11); die Falle gilt nur als Sheet.
       if (event.key === 'Escape') { event.preventDefault(); this.closeSheet(); return; }
-      if (this.$refs.sheet) trapTab(event, this.$refs.sheet);
+      if (this.sheetActive() && this.$refs.sheet) trapTab(event, this.$refs.sheet);
     },
   };
 }

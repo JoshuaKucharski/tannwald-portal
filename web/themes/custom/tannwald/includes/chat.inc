@@ -8,9 +8,13 @@
 declare(strict_types=1);
 
 use Drupal\Core\Url;
+use Drupal\node\NodeInterface;
 
 /**
  * Props für tannwald:chat (Vertrag 5.3 a, ergänzt 1.3 um examples und panel).
+ *
+ * Nachtrag 3 tw2-11: Modus sheet auf jeder Seite, Kontext aus
+ * _tannwald_chat_sheet_context().
  *
  * @param int|null $maschineNid
  *   Maschine der Seite, NULL auf /suche.
@@ -91,9 +95,49 @@ function _tannwald_chat_example_questions(): array {
 /**
  * Cache-Element für Seiten mit Chat: Limit-Tag und Konfiguration.
  */
-function _tannwald_chat_cache_bubble(): array {
+function _tannwald_chat_cache_bubble(array $contexts = [], array $tags = []): array {
   return _tannwald_cache_bubble(
-    ['user', 'languages:language_interface'],
-    ['tannwald_assistant_limit', 'config:tannwald_assistant.settings']
+    array_merge(['user', 'languages:language_interface'], $contexts),
+    array_merge(['tannwald_assistant_limit', 'config:tannwald_assistant.settings'], $tags)
   );
+}
+
+/**
+ * Kontext des globalen Launchers (Nachtrag 3 tw2-11), NULL = kein Launcher.
+ *
+ * Kein Launcher auf Anmelde- und Konto-Routen (user.*), auf den Fehlerseiten
+ * 403/404, auf /suche (dort steht der Assistent als Panel) und auf der
+ * Maschinenseite (dort eingebettet, Phone als eigenes Sheet). Auf der
+ * Dokumentseite bekommt die Frage die Maschine des Dokuments mit, sofern
+ * der Nutzer sie sehen darf (Hinweiszeile „Fragt zu: …“ im Kopf).
+ *
+ * @return array|null
+ *   maschine_nid, machine_label und Cache-Tags, oder NULL.
+ */
+function _tannwald_chat_sheet_context(): ?array {
+  $routeMatch = \Drupal::routeMatch();
+  $route = (string) $routeMatch->getRouteName();
+  if (str_starts_with($route, 'user.') || in_array($route, ['system.403', 'system.404', 'tannwald_assistant.search'], TRUE)) {
+    return NULL;
+  }
+  $context = ['maschine_nid' => NULL, 'machine_label' => NULL, 'tags' => []];
+  if ($route !== 'entity.node.canonical') {
+    return $context;
+  }
+  $node = $routeMatch->getParameter('node');
+  if (!$node instanceof NodeInterface) {
+    return $context;
+  }
+  if ($node->bundle() === 'maschine') {
+    return NULL;
+  }
+  if ($node->bundle() === 'dokument' && $node->hasField('field_seriennummer')) {
+    $machine = $node->get('field_seriennummer')->entity;
+    if ($machine instanceof NodeInterface && $machine->access('view')) {
+      $context['maschine_nid'] = (int) $machine->id();
+      $context['machine_label'] = (string) $machine->label();
+      $context['tags'] = ['node:' . $machine->id()];
+    }
+  }
+  return $context;
 }

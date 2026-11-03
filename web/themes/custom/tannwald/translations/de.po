@@ -382,6 +382,10 @@ msgstr "Lieber eine Antwort statt einer Trefferliste? Der Assistent fasst die pa
 msgid "Ask the assistant"
 msgstr "Frage an den Assistenten"
 
+# Nachtrag 3 tw2-11: Kontextzeile im Kopf des globalen Panels
+msgid "Asks about: @serial"
+msgstr "Fragt zu: @serial"
+
 msgid "Too many requests, please wait a moment."
 msgstr "Zu viele Anfragen, bitte kurz warten."
 

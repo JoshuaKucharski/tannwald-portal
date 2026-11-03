@@ -4,11 +4,13 @@
    Ersetzt die 5.3-Klassen .chat-* (A's Hunk bleibt in src/tailwind.css, bis 1.4 aufräumt). */
 @layer components {
   .chat { @apply contents; }
-  /* Launcher: Phone als Leiste unten, Tablet/Desktop als Button unten rechts; als Spalte sichtbar → kein Launcher. */
-  .chat-launcher { @apply fixed inset-x-0 bottom-0 z-40 h-14 w-full rounded-none border-0 border-t border-line bg-panel md:inset-x-auto md:bottom-6 md:right-6 md:h-11 md:w-auto md:rounded-control md:border md:shadow-card; }
+  /* Launcher (Nachtrag 3 tw2-11): runder Akzent-Button unten rechts, 52 px (Phone) / 56 px, ab lg Pille mit Label;
+     ein Schattenlevel, Fokus globaler Ring; als Spalte sichtbar → kein Launcher. */
+  .chat-launcher { @apply fixed bottom-4 right-4 z-40 inline-flex h-[52px] w-[52px] items-center justify-center gap-2 rounded-full bg-accent text-white shadow-card hover:bg-accent-hover hover:text-white active:bg-accent-active md:bottom-6 md:right-6 md:h-14 md:w-14 lg:w-auto lg:px-5; transition: background-color var(--duration-fast) var(--ease-out-soft); }
+  .chat-launcher > span { @apply inline-flex; }
+  .chat-launcher-label { @apply hidden text-base font-semibold lg:inline; }
   .chat--panel .chat-launcher { @apply xl:hidden; }
   .chat--embedded .chat-launcher { @apply md:hidden; }
-  .chat-launcher-space { @apply h-14 md:hidden; }
 
   /* Panel: geschlossen verborgen; offen als Sheet (A's .sheet); als Spalte (xl bzw. md) in der Fläche. */
   .chat-panel { @apply hidden flex-col bg-panel; }
@@ -16,6 +18,9 @@
   .chat--panel .chat-panel { @apply xl:static xl:flex xl:max-h-[calc(100vh-7rem)] xl:min-h-[520px] xl:w-auto xl:rounded-card xl:border xl:border-line xl:shadow-none; }
   .chat--embedded .chat-panel { @apply md:static md:flex md:max-h-none md:w-auto md:rounded-none md:border-0 md:shadow-none; }
   .chat--panel .chat-panel { @apply xl:sticky xl:top-6; }
+  /* Modus sheet ab md (Nachtrag 3): Panel 400 × 620 über dem Launcher verankert, Radius 20, nicht modal;
+     Einblenden 180 ms (Deckkraft, 12 px von unten), unter prefers-reduced-motion 0 s über die globale Regel. */
+  .chat--sheet .chat-panel.is-open { @apply md:bottom-[92px] md:right-6 md:h-[620px] md:max-h-[calc(100dvh-7.5rem)] md:w-[400px] md:rounded-[20px]; transition: opacity var(--duration-base) var(--ease-out-soft), transform var(--duration-base) var(--ease-out-soft); @starting-style { opacity: 0; transform: translateY(12px); } }
   .chat-handle { @apply mx-auto mt-2 h-1 w-10 shrink-0 rounded-pill bg-line; }
   .chat--panel .chat-handle { @apply xl:hidden; }
   .chat--embedded .chat-handle { @apply md:hidden; }
